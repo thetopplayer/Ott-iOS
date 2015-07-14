@@ -8,6 +8,7 @@
 
 import UIKit
 import MapKit
+import CoreData
 
 class TopicDetailViewController: ViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate {
 
@@ -16,7 +17,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private let mapImageName = "paperMap"
     private let tableImageName = "list"
-    
+
     
     //MARK: - Lifecycle
     
@@ -131,9 +132,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Data
     
-    lazy var managedObjectContext = {
+    var managedObjectContext: NSManagedObjectContext {
         return DataManager.sharedInstance.managedObjectContext
-        }()
+    }
     
     
     private var _myTopic: Topic?
@@ -172,8 +173,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private let cellNibName = "PostDetailTableViewCell"
     private let cellIdentifier = "postCell"
-    private let cellHeight = CGFloat(44)
-    
+    private let cellHeight = CGFloat(125)
+    private var headerViewHeight = CGFloat(6.0)
+    private var footerViewHeight = CGFloat(1.0)
+
     
     private func setupTableView() {
         
@@ -211,6 +214,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         return cell
     }
     
+    
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
+        return headerViewHeight
+    }
+    
+    
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+
+        return footerViewHeight
+    }
+    
+
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        return cellHeight
+    }
+
     
     
     //MARK: - MapView

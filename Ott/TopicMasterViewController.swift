@@ -13,7 +13,10 @@ class TopicMasterViewController: TableViewController {
 
     @IBOutlet var noDataLabel: UILabel?
     
-    var selectionSegueIdentifier: String?
+    struct Notification {
+        static let selectionDidChange = "topicMasterViewSelectionDidChange"
+    }
+    
     
     private let cellNibName = "TopicMasterTableViewCell"
     private let cellIdentifier = "topicCell"
@@ -25,6 +28,7 @@ class TopicMasterViewController: TableViewController {
     
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(6.0)
+    var footerViewHeight = CGFloat(1.0)
     
     private var lastRefreshedTableView: NSDate?
     
@@ -106,9 +110,9 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    lazy var managedObjectContext = {
+    var managedObjectContext: NSManagedObjectContext {
         return DataManager.sharedInstance.managedObjectContext
-        }()
+    }
     
     
     private var data: [Topic]?
@@ -130,7 +134,13 @@ class TopicMasterViewController: TableViewController {
         }()
     
     
-    var selection: Topic?
+    var selection: Topic? {
+        
+        didSet {
+            let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)
+            NSNotificationCenter.defaultCenter().postNotification(notification)
+        }
+    }
     
     
     func update() {
@@ -224,7 +234,7 @@ class TopicMasterViewController: TableViewController {
     
     
     override func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 1.0
+        return footerViewHeight
     }
     
     
@@ -253,14 +263,7 @@ class TopicMasterViewController: TableViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         selection = data![indexPath.row]
-        
-        if let identifier = selectionSegueIdentifier {
-            
-            let segueOperation = SegueOperation(presentationController: self, identifer: identifier, conditions: [LocationCondition(usage: .WhenInUse)])
-            operationQueue().addOperation(segueOperation)
-            
-            tableView.deselectRowAtIndexPath(indexPath, animated: false)
-        }
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
     
     

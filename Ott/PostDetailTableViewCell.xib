@@ -90,8 +90,8 @@
                                             </mask>
                                         </variation>
                                     </label>
-                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="Kjr-QR-8Qf">
-                                        <rect key="frame" x="62" y="8" width="514" height="44"/>
+                                    <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="Kjr-QR-8Qf">
+                                        <rect key="frame" x="66" y="8" width="510" height="44"/>
                                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>

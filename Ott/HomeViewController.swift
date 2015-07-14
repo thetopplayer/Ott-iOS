@@ -22,9 +22,12 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
     @IBOutlet weak var tableView: UITableView!
     
     private var topicTableViewController: TopicMasterViewController
-    let tableHeaderNibName = "HomeTableHeaderView"
-    let headerReuseName = "headerView"
-    let headerViewHeight = CGFloat(50)
+    private let tableHeaderNibName = "HomeTableHeaderView"
+    private let headerReuseName = "headerView"
+    private let headerViewHeight = CGFloat(50)
+
+    private let segueToTopicDetail = "homeToTopicDetailSegue"
+    
 
 
     //MARK: - Lifecycle
@@ -57,7 +60,6 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
         topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", myUser!)
         topicTableViewController.tableView = tableView
         topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
-        
         topicTableViewController.viewDidLoad()
         
         startObservations()
@@ -164,6 +166,7 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
         }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUpdateUserNotification:", name: DataManager.Notification.DidUpdateUser, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSelectionDidChangeNotification:", name: TopicMasterViewController.Notification.selectionDidChange, object: topicTableViewController)
         
         didStartObservations = true
     }
@@ -188,10 +191,24 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
     }
     
     
+    func handleSelectionDidChangeNotification(notification: NSNotification) {
+        
+        performSegueWithIdentifier(segueToTopicDetail, sender: self)
+    }
+    
+    
     
     //MARK: - Navigation
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if segue.identifier == segueToTopicDetail {
+            
+            if let destinationController = segue.destinationViewController as? TopicDetailViewController {
+                
+                destinationController.myTopic = topicTableViewController.selection
+            }
+        }
     }
     
     

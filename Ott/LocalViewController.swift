@@ -10,10 +10,12 @@ import UIKit
 
 class LocalViewController: TopicMasterViewController, NavigatorToTopicCreationProtocol {
 
+    
+    //MARK: - Lifecycle
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        selectionSegueIdentifier = "segueToRatingEntry"
         
         //        fetchPredicate = NSPredicate(format: "isLocal = true")
     }
@@ -23,6 +25,20 @@ class LocalViewController: TopicMasterViewController, NavigatorToTopicCreationPr
         
         super.viewWillAppear(animated)
         update()
+    }
+    
+    
+    
+    //MARK: - TableView
+    
+    private let selectionSegueIdentifier = "segueToRatingEntry"
+
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
+        
+        let segueOperation = SegueOperation(presentationController: self, identifer: selectionSegueIdentifier, conditions: [LocationCondition(usage: .WhenInUse)])
+        operationQueue().addOperation(segueOperation)
     }
     
     
