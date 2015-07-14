@@ -46,7 +46,7 @@
         <!--Mine View Controller-->
         <scene sceneID="vFq-1O-IEz">
             <objects>
-                <viewController title="Mine View Controller" automaticallyAdjustsScrollViewInsets="NO" id="shA-4e-zF7" customClass="HomeViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Mine View Controller" automaticallyAdjustsScrollViewInsets="NO" id="shA-4e-zF7" customClass="HomeViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iNj-vn-ExH"/>
                         <viewControllerLayoutGuide type="bottom" id="wmS-9N-Hzy"/>
@@ -183,7 +183,7 @@
         <!--Trending-->
         <scene sceneID="guV-yA-SkD">
             <objects>
-                <tableViewController title="Trending" id="2Td-o6-gbS" customClass="TrendingViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Trending" id="2Td-o6-gbS" customClass="TrendingViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="wJl-l4-zgU">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -217,7 +217,7 @@
         <!--Post Creation Nav Controller-->
         <scene sceneID="312-ak-9R7">
             <objects>
-                <navigationController title="Post Creation Nav Controller" id="cYU-0E-6r7" customClass="DetailNavigationController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <navigationController title="Post Creation Nav Controller" id="cYU-0E-6r7" customClass="DetailNavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="1VK-op-zjR">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -233,7 +233,7 @@
         <!--Post Creation View Controller-->
         <scene sceneID="6fw-v6-rsI">
             <objects>
-                <viewController title="Post Creation View Controller" automaticallyAdjustsScrollViewInsets="NO" id="IkM-mh-TeZ" customClass="PostCreationViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController title="Post Creation View Controller" automaticallyAdjustsScrollViewInsets="NO" id="IkM-mh-TeZ" customClass="PostCreationViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="Pk9-pp-iSC"/>
                         <viewControllerLayoutGuide type="bottom" id="QHC-ab-7Of"/>
@@ -250,7 +250,7 @@
                                     <outlet property="delegate" destination="IkM-mh-TeZ" id="7aa-3D-eZb"/>
                                 </connections>
                             </tableView>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p74-eg-hEY" customClass="PostInputView" customModule="taq" customModuleProvider="target">
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="p74-eg-hEY" customClass="PostInputView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="514" width="600" height="86"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="DGr-eV-MUD">
@@ -262,7 +262,7 @@
                                                     <rect key="frame" x="0.0" y="0.0" width="602" height="86"/>
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
-                                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="Hls-uA-yOX" customClass="TextView" customModule="taq" customModuleProvider="target">
+                                                        <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="Hls-uA-yOX" customClass="TextView" customModule="Ott" customModuleProvider="target">
                                                             <rect key="frame" x="56" y="8" width="531" height="32"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="32" id="cLw-gk-RuH"/>
@@ -371,17 +371,17 @@
                         <outlet property="postInputView" destination="p74-eg-hEY" id="hkl-as-Qaa"/>
                         <outlet property="postInputViewBottomConstraint" destination="gln-bd-5LK" id="Bc3-y3-fDg"/>
                         <outlet property="tableView" destination="YWR-vR-lqV" id="8OA-Gu-Si6"/>
-                        <segue destination="fwP-hs-nKj" kind="showDetail" identifier="segueToTopicDetail" id="yr2-d9-0dd"/>
+                        <segue destination="fwP-hs-nKj" kind="show" identifier="segueToTopicDetail" id="yr2-d9-0dd"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Coe-2X-9O2" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1933" y="-84"/>
         </scene>
-        <!--View Controller-->
+        <!--Topic Detail-->
         <scene sceneID="MDP-OY-Ss5">
             <objects>
-                <viewController id="fwP-hs-nKj" sceneMemberID="viewController">
+                <viewController title="Topic Detail" id="fwP-hs-nKj" customClass="TopicDetailViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="nFP-q8-UlS"/>
                         <viewControllerLayoutGuide type="bottom" id="AG7-xs-1Ze"/>
@@ -389,8 +389,44 @@
                     <view key="view" contentMode="scaleToFill" id="ORD-Pw-uLZ">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="rIh-Ia-6AN">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="Ae1-Vz-kqs">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                            </mapView>
+                        </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstAttribute="trailingMargin" secondItem="rIh-Ia-6AN" secondAttribute="trailing" constant="-20" id="AaF-9x-5QM"/>
+                            <constraint firstItem="rIh-Ia-6AN" firstAttribute="top" secondItem="ORD-Pw-uLZ" secondAttribute="topMargin" id="Bsq-OE-lIj"/>
+                            <constraint firstItem="Ae1-Vz-kqs" firstAttribute="leading" secondItem="ORD-Pw-uLZ" secondAttribute="leadingMargin" constant="-20" id="OO4-2V-VFO"/>
+                            <constraint firstItem="AG7-xs-1Ze" firstAttribute="top" secondItem="Ae1-Vz-kqs" secondAttribute="bottom" id="P11-5h-Lil"/>
+                            <constraint firstItem="rIh-Ia-6AN" firstAttribute="leading" secondItem="ORD-Pw-uLZ" secondAttribute="leadingMargin" constant="-20" id="U0g-dC-Uuz"/>
+                            <constraint firstItem="AG7-xs-1Ze" firstAttribute="top" secondItem="rIh-Ia-6AN" secondAttribute="bottom" id="gc8-75-fF9"/>
+                            <constraint firstItem="Ae1-Vz-kqs" firstAttribute="top" secondItem="ORD-Pw-uLZ" secondAttribute="topMargin" id="yuv-Cf-qzx"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Ae1-Vz-kqs" secondAttribute="trailing" constant="-20" id="z6O-pj-fVl"/>
+                        </constraints>
                     </view>
+                    <navigationItem key="navigationItem" title="Title" id="7YD-aU-aoI">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="dTb-8U-0Fe">
+                            <connections>
+                                <action selector="handleDoneAction:" destination="fwP-hs-nKj" id="vgR-3I-Vd6"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" image="paperMap" id="tdX-KN-2W7">
+                            <connections>
+                                <action selector="handleToggleViewAction:" destination="fwP-hs-nKj" id="3po-yv-aBk"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedNavigationBarMetrics key="simulatedTopBarMetrics" prompted="NO"/>
+                    <connections>
+                        <outlet property="mapView" destination="Ae1-Vz-kqs" id="HrZ-lO-2M7"/>
+                        <outlet property="tableView" destination="rIh-Ia-6AN" id="7pb-aN-a5Z"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="STb-gF-gQH" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
@@ -415,7 +451,7 @@
         <!--Scanning For Topic-->
         <scene sceneID="WYD-S9-p0r">
             <objects>
-                <viewController id="dG5-dL-N8r" customClass="TopicScanningViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <viewController id="dG5-dL-N8r" customClass="TopicScanningViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="tUv-tX-zFs"/>
                         <viewControllerLayoutGuide type="bottom" id="C1B-rA-Rxh"/>
@@ -476,7 +512,7 @@
         <!--New Topic-->
         <scene sceneID="7GH-As-anv">
             <objects>
-                <tableViewController title="New Topic" id="TBG-pD-irF" customClass="TopicCreationViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="New Topic" id="TBG-pD-irF" customClass="TopicCreationViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="HeI-OV-oJd">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -510,7 +546,7 @@
         <!--Local-->
         <scene sceneID="aau-1B-Omy">
             <objects>
-                <tableViewController title="Local" id="KQi-ka-Tsy" customClass="LocalViewController" customModule="taq" customModuleProvider="target" sceneMemberID="viewController">
+                <tableViewController title="Local" id="KQi-ka-Tsy" customClass="LocalViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="scR-MX-oSh">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -565,6 +601,7 @@
         <image name="gears" width="30" height="30"/>
         <image name="home" width="30" height="30"/>
         <image name="local" width="30" height="30"/>
+        <image name="paperMap" width="30" height="30"/>
         <image name="trending" width="30" height="30"/>
     </resources>
     <inferredMetricsTieBreakers>

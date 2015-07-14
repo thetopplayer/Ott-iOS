@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 
-class HomeViewController: ViewController, NavigatorToTopicCreation {
+class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
 
     @IBOutlet weak var userContainerView: UIView!
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -197,7 +197,7 @@ class HomeViewController: ViewController, NavigatorToTopicCreation {
     
     
     
-    //MARK: - NavigatorToTopicCreation
+    //MARK: - NavigatorToTopicCreationProtocol
     
     @IBAction func presentTopicCreationViewController(sender: AnyObject) {
         

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LocalViewController: TopicMasterViewController, NavigatorToTopicCreation {
+class LocalViewController: TopicMasterViewController, NavigatorToTopicCreationProtocol {
 
     override func viewDidLoad() {
         
@@ -27,7 +27,7 @@ class LocalViewController: TopicMasterViewController, NavigatorToTopicCreation {
     
     
     
-    //MARK: - NavigatorToTopicCreation
+    //MARK: - NavigatorToTopicCreationProtocol
     
     @IBAction func presentTopicCreationViewController(sender: AnyObject) {
         

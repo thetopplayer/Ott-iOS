@@ -17,8 +17,8 @@ class Author: Base {
     @NSManaged var handle: String?
     @NSManaged var numberOfReceivedPosts: NSNumber
     @NSManaged var avatar: NSData?
-    @NSManaged var posts: NSSet?
-    @NSManaged var topics: NSSet?
+    @NSManaged var posts: Set<Post>?
+    @NSManaged var topics: Set<Topic>?
     
     
     static func create(inContext context: NSManagedObjectContext) -> Author {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreation {
+class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreationProtocol {
     
     override func viewDidLoad() {
         
@@ -27,7 +27,7 @@ class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreatio
     
     
     
-    //MARK: - NavigatorToTopicCreation
+    //MARK: - NavigatorToTopicCreationProtocol
     
     @IBAction func presentTopicCreationViewController(sender: AnyObject) {
         

@@ -117,7 +117,8 @@ class TopicMasterTableViewCell: TableViewCell {
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(11)
         
-        let darkAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
+        var darkAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
+        darkAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(11)
         
         let s1 = NSMutableAttributedString(string: dateToString(topic.timestamp), attributes: darkAttributes)
         

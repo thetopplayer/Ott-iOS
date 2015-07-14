@@ -16,7 +16,7 @@ class Topic: Base {
     @NSManaged var lastPostLocationName: String?
     @NSManaged var numberOfPosts: NSNumber
     @NSManaged var userDidPostRating: NSNumber
-    @NSManaged var posts: NSSet?
+    @NSManaged var posts: Set<Post>?
     @NSManaged var author: Author
     
     

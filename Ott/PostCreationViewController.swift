@@ -15,7 +15,10 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var postInputView: PostInputView!
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     
+    private let segueToTopicDetailIdentifier = "segueToTopicDetail"
    
+    
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -39,13 +42,32 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
             myTopic = navController.topic
         }
         
-        tableView.reloadData()
         navigationItem.rightBarButtonItem?.enabled = false
+        refreshDisplay()
     }
     
     
     deinit {
         endObservations()
+    }
+    
+    
+    
+    //MARK: - Display
+    
+    private var _shouldRefreshDisplay = false
+    func refreshDisplay() {
+        
+        if isViewLoaded() {
+            
+            _shouldRefreshDisplay = false
+            dispatch_async(dispatch_get_main_queue()) {
+                self.tableView.reloadData()
+            }
+        }
+        else {
+            _shouldRefreshDisplay = true
+        }
     }
     
     
@@ -71,8 +93,8 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
             else {
                 _myTopic = nil
             }
-            
-            tableView.reloadData()
+
+            refreshDisplay()
         }
         
         get {
@@ -101,8 +123,6 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
         managedObjectContext.saveContext()
         
         // TODO - pass along to upload operation and notify user
-        
-        managedObjectContext.reset()
     }
     
     
@@ -118,7 +138,7 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     func postInputViewPostActionDidOccur() {
         
         saveChanges()
-        dismissViewControllerAnimated(true) { () -> Void in }
+        performSegueWithIdentifier(segueToTopicDetailIdentifier, sender: self)
     }
     
     
@@ -322,6 +342,15 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     }
     
     
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        super.prepareForSegue(segue, sender: sender)
+        
+        if segue.identifier == segueToTopicDetailIdentifier {
+            let destinationVC = segue.destinationViewController as! TopicDetailViewController
+            destinationVC.myTopic = myTopic
+        }
+    }
     
     
     //MARK: -  Observations {

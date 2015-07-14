@@ -1,5 +1,5 @@
 //
-//  NavigatorToTopicCreation.swift
+//  NavigatorToTopicCreationProtocol.swift
 //  Ott
 //
 //  Created by Max on 7/1/15.
@@ -13,7 +13,7 @@ import UIKit
     and scanning view controllers
 */
 
-protocol NavigatorToTopicCreation {
+protocol NavigatorToTopicCreationProtocol {
     
     func presentTopicCreationViewController(sender: AnyObject) -> Void
     func presentTopicScanViewController(sender: AnyObject) -> Void

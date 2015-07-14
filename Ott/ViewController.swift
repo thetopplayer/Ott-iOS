@@ -19,29 +19,7 @@ class ViewController: UIViewController {
         return ViewController._operationQueue
     }
     
-    required init(coder aDecoder: NSCoder) {
-        _viewWasLoaded = false
-        super.init(coder: aDecoder)
-    }
     
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        _viewWasLoaded = false
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    
-    private var _viewWasLoaded = false
-    func viewWasLoaded() -> Bool {
-        return _viewWasLoaded
-    }
-    
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        _viewWasLoaded = true
-    }
-
     private var _isVisible = false
     func isVisible() -> Bool {
         return _isVisible
