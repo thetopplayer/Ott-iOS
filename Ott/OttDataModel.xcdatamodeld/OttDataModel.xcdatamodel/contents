@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8118.20" systemVersion="14E46" minimumToolsVersion="Xcode 7.0">
+    <entity name="Author" representedClassName=".Author" parentEntity="Base" syncable="YES">
+        <attribute name="avatar" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="isUser" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="numberOfPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="numberOfReceivedPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="numberOfTopics" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="author" inverseEntity="Post" syncable="YES"/>
+        <relationship name="topics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Topic" inverseName="author" inverseEntity="Topic" syncable="YES"/>
+    </entity>
+    <entity name="Base" representedClassName=".Base" syncable="YES">
+        <attribute name="comment_" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="identifier" optional="YES" attributeType="String" indexed="YES" syncable="YES"/>
+        <attribute name="image_" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
+        <attribute name="imageURL" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="latitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="locationName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="longitude" optional="YES" attributeType="Double" defaultValueString="0.0" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="rating" optional="YES" attributeType="Float" syncable="YES"/>
+        <attribute name="shouldHide" optional="YES" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="timestamp" optional="YES" attributeType="Date" syncable="YES"/>
+    </entity>
+    <entity name="Post" representedClassName=".Post" parentEntity="Base" syncable="YES">
+        <relationship name="author" maxCount="1" deletionRule="Nullify" destinationEntity="Author" inverseName="posts" inverseEntity="Author" syncable="YES"/>
+        <relationship name="topic" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Topic" inverseName="posts" inverseEntity="Topic" syncable="YES"/>
+    </entity>
+    <entity name="Topic" representedClassName=".Topic" parentEntity="Base" syncable="YES">
+        <attribute name="isLocal" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
+        <attribute name="isTrending" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="lastPostLocationName" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="numberOfPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="userDidPostRating" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <relationship name="author" maxCount="1" deletionRule="Nullify" destinationEntity="Author" inverseName="topics" inverseEntity="Author" syncable="YES"/>
+        <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="topic" inverseEntity="Post" syncable="YES"/>
+    </entity>
+    <elements>
+        <element name="Author" positionX="144" positionY="-279" width="128" height="165"/>
+        <element name="Base" positionX="-92" positionY="-441" width="128" height="210"/>
+        <element name="Post" positionX="-90" positionY="147" width="128" height="75"/>
+        <element name="Topic" positionX="160" positionY="192" width="128" height="150"/>
+    </elements>
+</model>
