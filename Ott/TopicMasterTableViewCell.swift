@@ -8,6 +8,7 @@
 
 import UIKit
 import CoreLocation
+import QuartzCore
 
 class TopicMasterTableViewCell: TableViewCell {
 
@@ -15,6 +16,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topBarLabel: UILabel!
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
+    @IBOutlet var innerLabelContainer: UIView!
     @IBOutlet var ratingLabel: UILabel!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var commentLabel: UILabel!
@@ -37,12 +39,19 @@ class TopicMasterTableViewCell: TableViewCell {
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()
         
-        topicImageView?.contentMode = .ScaleAspectFill
-        topicImageView?.clipsToBounds = true
+        if let topicImageView = topicImageView {
+            
+            let startColor = UIColor.whiteColor().CGColor
+            let endColor = UIColor.whiteColor().colorWithAlphaComponent(0.4).CGColor
+            innerLabelContainer.addGradient(startColor, endColor)
+            
+            topicImageView.contentMode = .ScaleAspectFill
+            topicImageView.clipsToBounds = true
+        }
         
         selectionStyle = .None
     }
-
+    
     
     private func updateContents() {
         

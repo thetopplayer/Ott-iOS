@@ -76,7 +76,7 @@ class Base: NSManagedObject, Uploadable {
             let color = r < 0.5 ? UIColor.redColor() : UIColor.fern()
             return color
         }
-        return UIColor.lightGrayColor()
+        return UIColor.darkGrayColor()
     }
     
     

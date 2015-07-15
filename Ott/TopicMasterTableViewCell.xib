@@ -146,6 +146,7 @@
             <connections>
                 <outlet property="commentLabel" destination="Fa9-H8-gRL" id="of4-w1-BkF"/>
                 <outlet property="innerContentContainer" destination="yin-0g-e6x" id="ppy-Yf-3X0"/>
+                <outlet property="innerLabelContainer" destination="hne-Qk-L3v" id="yIg-2s-yi5"/>
                 <outlet property="nameLabel" destination="Drb-r5-dKV" id="vgV-PA-794"/>
                 <outlet property="ratingLabel" destination="w6h-cT-rOE" id="SW1-gI-9np"/>
                 <outlet property="statusBar" destination="iEa-13-NkY" id="uOn-BN-cJM"/>

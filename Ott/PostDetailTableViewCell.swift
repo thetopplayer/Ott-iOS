@@ -42,6 +42,13 @@ class PostDetailTableViewCell: TableViewCell {
     }
     
     
+    override func prepareForReuse() {
+        
+        super.prepareForReuse()
+        updateContents()
+    }
+    
+    
     private func updateContents() {
         
         if let post = displayedPost {
@@ -50,14 +57,16 @@ class PostDetailTableViewCell: TableViewCell {
             
             ratingLabel.text = post.ratingToText()
             ratingLabel.textColor = post.ratingToColor()
-            if post.comment != nil {
-                commentTextView.text = post.comment!
-            }
-            else {
-                commentTextView.text = ""
-            }
+            let comment = post.comment != nil ? post.comment! : ""
+            commentTextView.text = comment
             
             statusLabel.attributedText = attributedDescription(post)
+        }
+        else {
+            
+            topBarLabel.text = ""
+            ratingLabel.text = ""
+            statusLabel.text = ""
         }
     }
     

@@ -64,6 +64,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="comments" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="DAQ-zS-rcB">
                                         <rect key="frame" x="91" y="36" width="478" height="17"/>
@@ -73,6 +74,7 @@
                                         <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                         <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="1000" verticalHuggingPriority="251" text="10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KaJ-lC-HYX">
                                         <rect key="frame" x="12" y="-2" width="65" height="60"/>
@@ -83,6 +85,7 @@
                                         <fontDescription key="fontDescription" name="HelveticaNeue-Thin" family="Helvetica Neue" pointSize="58"/>
                                         <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
+                                        <size key="shadowOffset" width="0.0" height="0.0"/>
                                         <variation key="default">
                                             <mask key="constraints">
                                                 <exclude reference="FVO-hf-Q7F"/>
@@ -154,6 +157,7 @@
             <connections>
                 <outlet property="commentLabel" destination="DAQ-zS-rcB" id="bfU-qd-wH3"/>
                 <outlet property="innerContentContainer" destination="Mxb-yv-nLm" id="nVv-3m-R4g"/>
+                <outlet property="innerLabelContainer" destination="T67-fA-Ydd" id="sVP-Mi-eEA"/>
                 <outlet property="nameLabel" destination="D8E-bq-Yku" id="TRx-Zx-ML8"/>
                 <outlet property="ratingLabel" destination="KaJ-lC-HYX" id="rG2-0J-Nlh"/>
                 <outlet property="statusBar" destination="c3a-Oe-pI2" id="obu-Oe-gSc"/>

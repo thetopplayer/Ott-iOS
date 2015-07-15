@@ -25,25 +25,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
         setupTableView()
         setupMapView()
-        
-//        startObservations()
     }
     
     
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        self.navigationItem.title = self.myTopic?.name
         refreshDisplay()
         displayView(type: .List)
     }
-    
-    
-//    deinit {
-//        endObservations()
-//    }
 
     
     
@@ -69,13 +62,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     //MARK: - Display
     
     private var _shouldRefreshDisplay = false
-    func refreshDisplay() {
+    func refreshDisplay(force force: Bool = false) {
+        
+        if force {
+            _shouldRefreshDisplay = true
+        }
         
         if isViewLoaded() {
             
-            _shouldRefreshDisplay = false
-            dispatch_async(dispatch_get_main_queue()) {
-                self.tableView.reloadData()
+            if _shouldRefreshDisplay {
+                
+                _shouldRefreshDisplay = false
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.tableView.reloadData()
+                }
             }
         }
         else {
@@ -92,7 +92,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var displayedType: ViewType? {
         
         didSet {
-            
             if let type = displayedType {
                 displayView(type: type)
             }
@@ -149,7 +148,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 _myTopic = nil
             }
             
-            refreshDisplay()
+            refreshDisplay(force: true)
         }
         
         get {

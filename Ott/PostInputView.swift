@@ -111,6 +111,10 @@ class PostInputView: UIView, UITextViewDelegate {
     
     
     var comment: String? {
+        
+        if _isDisplayingTextViewPlaceholder {
+            return nil
+        }
         return textView.text
     }
     

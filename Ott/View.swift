@@ -19,20 +19,33 @@ extension UIView {
         self.layer.shadowRadius = 2.5
     }
     
+    
     func addBorder(withColor color: UIColor) {
         
         self.layer.borderColor = color.CGColor
         self.layer.borderWidth = 0.5
     }
     
+    
     func addBorder() {
         
         addBorder(withColor: UIColor.darkGrayColor())
     }
 
+    
     func addRoundedBorder() {
         
         self.layer.cornerRadius = 4.0
         addBorder()
+    }
+    
+    
+    func addGradient(colors: CGColor...) {
+        
+        self.backgroundColor = UIColor.clearColor()
+        let gradient: CAGradientLayer = CAGradientLayer()
+        gradient.frame = self.bounds
+        gradient.colors = colors
+        self.layer.insertSublayer(gradient, atIndex: 0)
     }
 }
