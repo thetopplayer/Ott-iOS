@@ -79,16 +79,12 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             myTopic.locationName = LocationManager.sharedInstance.locationName
             
             let user = Author.user(inContext: managedObjectContext)
+            myTopic.identifier = user.newContentIdentifier()
             user.update(withTopic: myTopic)
             
-            do {
-                try managedObjectContext.save()
-                self.myTopic = nil
-                managedObjectContext.reset()
-            } catch {
-                NSLog("unable to save topic")
-                abort()
-            }
+            managedObjectContext.saveContext()
+            DataManager.sharedInstance.upload(myTopic)
+            managedObjectContext.reset()
         }
     }
     

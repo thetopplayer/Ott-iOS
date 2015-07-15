@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8118.20" systemVersion="14E46" minimumToolsVersion="Xcode 7.0">
     <entity name="Author" representedClassName=".Author" parentEntity="Base" syncable="YES">
-        <attribute name="avatar" optional="YES" attributeType="Binary" allowsExternalBinaryDataStorage="YES" syncable="YES"/>
-        <attribute name="handle" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="handle" attributeType="String" syncable="YES"/>
         <attribute name="isUser" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="lastContentIdentifier" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="numberOfPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="numberOfReceivedPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
         <attribute name="numberOfTopics" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="phone" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="author" inverseEntity="Post" syncable="YES"/>
         <relationship name="topics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Topic" inverseName="author" inverseEntity="Topic" syncable="YES"/>
     </entity>

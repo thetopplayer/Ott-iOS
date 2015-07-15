@@ -11,20 +11,35 @@ import CoreData
 
 class Author: Base {
 
-    @NSManaged var isUser: NSNumber?
-    @NSManaged var numberOfPosts: NSNumber
-    @NSManaged var numberOfTopics: NSNumber
-    @NSManaged var handle: String?
-    @NSManaged var numberOfReceivedPosts: NSNumber
-    @NSManaged var avatar: NSData?
+    @NSManaged var isUser: NSNumber
+    @NSManaged var numberOfPosts: NSNumber?
+    @NSManaged var numberOfTopics: NSNumber?
+    @NSManaged var handle: String
+    @NSManaged var phone: String?
+    @NSManaged var lastContentIdentifier: NSNumber?
     @NSManaged var posts: Set<Post>?
     @NSManaged var topics: Set<Topic>?
     
+    
+    //MARK: - Lifecycle
     
     static func create(inContext context: NSManagedObjectContext) -> Author {
         
         return NSEntityDescription.insertNewObjectForEntityForName("Author", inManagedObjectContext: context) as! Author
     }
+    
+    
+    override func awakeFromInsert() {
+        
+        super.awakeFromInsert()
+        isUser = false
+        handle = "@anonymous"
+        name = "Anonymous"
+    }
+    
+    
+    
+    //MARK: - User
     
     /**
         Returns Author record for user, creating new one if it does not exist
@@ -42,6 +57,9 @@ class Author: Base {
                     inManagedObjectContext: context) as? Author {
                         
                         result.isUser = true
+                        result.lastContentIdentifier = 0
+                        result.numberOfPosts = 0
+                        result.numberOfTopics = 0
                         createdUser = result
                 }
             }
@@ -74,6 +92,9 @@ class Author: Base {
     }
     
     
+    
+    //MARK: - Content
+    
     func update(withPost aPost: Post) {
         
         var thePost: Post
@@ -85,7 +106,7 @@ class Author: Base {
         }
         
         thePost.author = self
-        numberOfPosts = numberOfPosts.integerValue + 1
+        numberOfPosts = (numberOfPosts?.integerValue)! + 1
     }
     
     
@@ -100,11 +121,18 @@ class Author: Base {
         }
         
         theTopic.author = self
-        numberOfTopics = numberOfTopics.integerValue + 1
+        numberOfTopics = (numberOfTopics?.integerValue)! + 1
     }
     
     
+    func newContentIdentifier() -> String {
+        
+        lastContentIdentifier = (lastContentIdentifier?.integerValue)! + 1
+        return handle + ".\(lastContentIdentifier)"
+    }
     
+    
+
     
     //MARK: - Uploadable and Downloadable
     

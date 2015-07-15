@@ -16,7 +16,7 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     
     private let segueToTopicDetailIdentifier = "segueToTopicDetail"
-   
+    var presentTopicDetailAfterEntry = false
     
     
     //MARK: - Lifecycle
@@ -38,7 +38,7 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
         
         super.viewWillAppear(animated)
         
-        if let navController = navigationController as? DetailNavigationController {
+        if let navController = navigationController as? NavigationController {
             myTopic = navController.topic
         }
         
@@ -120,9 +120,14 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
 
         myTopic?.update(withPost: myPost)
         myTopic?.userDidPostRating = true
-        managedObjectContext.saveContext()
         
-        // TODO - pass along to upload operation and notify user
+        let user = Author.user(inContext: managedObjectContext)
+        myPost.identifier = user.newContentIdentifier()
+        user.update(withPost: myPost)
+
+        managedObjectContext.saveContext()
+        DataManager.sharedInstance.upload(myPost)
+        managedObjectContext.reset()
     }
     
     
@@ -138,7 +143,13 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     func postInputViewPostActionDidOccur() {
         
         saveChanges()
-        performSegueWithIdentifier(segueToTopicDetailIdentifier, sender: self)
+        
+        if presentTopicDetailAfterEntry {
+            performSegueWithIdentifier(segueToTopicDetailIdentifier, sender: self)
+        }
+        else {
+            dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     

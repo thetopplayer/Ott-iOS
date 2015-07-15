@@ -14,3 +14,5 @@ func openSettings() {
         UIApplication.sharedApplication().openURL(url)
     }
 }
+
+

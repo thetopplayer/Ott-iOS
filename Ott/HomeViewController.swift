@@ -10,7 +10,7 @@ import UIKit
 import CoreData
 
 
-class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
+class HomeViewController: ViewController {
 
     @IBOutlet weak var userContainerView: UIView!
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -25,8 +25,6 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
     private let tableHeaderNibName = "HomeTableHeaderView"
     private let headerReuseName = "headerView"
     private let headerViewHeight = CGFloat(50)
-
-    private let segueToTopicDetail = "homeToTopicDetailSegue"
     
 
 
@@ -62,6 +60,11 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
         topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
         topicTableViewController.viewDidLoad()
         
+        let scanButton = UIBarButtonItem(image: UIImage(named: "QRCode"), style: .Plain, target: self, action: "presentTopicScanViewController")
+        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction")
+        navigationItem.leftBarButtonItem = scanButton
+        navigationItem.rightBarButtonItem = createButton
+
         startObservations()
     }
     
@@ -130,7 +133,7 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
         var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
         numberAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Bold", size: 15)
         
-        let s1 = NSMutableAttributedString(string: "\(user.numberOfTopics.integerValue)", attributes: numberAttributes)
+        let s1 = NSMutableAttributedString(string: "\(user.numberOfTopics?.integerValue)", attributes: numberAttributes)
         
         var textAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         textAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Regular", size: 12)
@@ -139,13 +142,13 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
         dateFormatter.dateStyle = .MediumStyle
         
         var s2: NSAttributedString
-        let t = user.numberOfTopics.integerValue == 1 ? " TOPIC  -  " : " TOPICS  -  "
+        let t = user.numberOfTopics == 1 ? " TOPIC  -  " : " TOPICS  -  "
         s2 = NSAttributedString(string: t, attributes: textAttributes)
         
-        let s3 = NSMutableAttributedString(string: "\(user.numberOfPosts.integerValue)", attributes: numberAttributes)
+        let s3 = NSMutableAttributedString(string: "\(user.numberOfPosts?.integerValue)", attributes: numberAttributes)
         
         var s4: NSAttributedString
-        let p = user.numberOfTopics.integerValue == 1 ? " POSTS" : " POSTS"
+        let p = user.numberOfPosts == 1 ? " POSTS" : " POSTS"
         s4 = NSAttributedString(string: p, attributes: textAttributes)
         s3.appendAttributedString(s4)
         
@@ -193,60 +196,22 @@ class HomeViewController: ViewController, NavigatorToTopicCreationProtocol {
     
     func handleSelectionDidChangeNotification(notification: NSNotification) {
         
-        performSegueWithIdentifier(segueToTopicDetail, sender: self)
+        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: topicTableViewController.selection)
     }
     
     
     
-    //MARK: - Navigation
+    //MARK: - Actions
     
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+    @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        if segue.identifier == segueToTopicDetail {
-            
-            if let destinationController = segue.destinationViewController as? TopicDetailViewController {
-                
-                destinationController.myTopic = topicTableViewController.selection
-            }
-        }
-    }
-    
-    
-    
-    
-    //MARK: - NavigatorToTopicCreationProtocol
-    
-    @IBAction func presentTopicCreationViewController(sender: AnyObject) {
-        
-        let segueToCreationIdentifier = "segueToTopicCreation"
-        
-        if LocationManager.sharedInstance.permissionGranted {
-            performSegueWithIdentifier(segueToCreationIdentifier, sender: nil)
-        }
-        else {
-            LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
-                if granted {
-                    self.performSegueWithIdentifier(segueToCreationIdentifier, sender: nil)
-                }
-            })
-        }
+        (navigationController as! NavigationController).presentTopicCreationViewController()
     }
     
     
     @IBAction func presentTopicScanViewController(sender: AnyObject) {
         
-        let segueToScanIdentifier = "segueToScan"
-        
-        if LocationManager.sharedInstance.permissionGranted {
-            performSegueWithIdentifier(segueToScanIdentifier, sender: nil)
-        }
-        else {
-            LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
-                if granted {
-                    self.performSegueWithIdentifier(segueToScanIdentifier, sender: nil)
-                }
-            })
-        }
+        (navigationController as! NavigationController).presentTopicScanViewController()
     }
 
 }

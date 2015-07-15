@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+    </dependencies>
+    <scenes>
+        <!--View Topic Nav Controller-->
+        <scene sceneID="J5X-Ok-vJF">
+            <objects>
+                <navigationController storyboardIdentifier="topicCreationViewController" title="View Topic Nav Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="VhW-19-YNM" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="d1U-Rs-2Qf">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Ybo-CA-EXp" kind="relationship" relationship="rootViewController" id="R2j-RI-b7f"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="UgC-r6-9XO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-805" y="2397"/>
+        </scene>
+        <!--Topic-->
+        <scene sceneID="Kp1-t1-qDD">
+            <objects>
+                <tableViewController title="Topic" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ybo-CA-EXp" customClass="TopicCreationViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" bounces="NO" showsVerticalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="jkE-Xa-vOn">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
+                        <connections>
+                            <outlet property="dataSource" destination="Ybo-CA-EXp" id="Fox-0Y-MFe"/>
+                            <outlet property="delegate" destination="Ybo-CA-EXp" id="fPZ-NG-TQC"/>
+                        </connections>
+                    </tableView>
+                    <toolbarItems/>
+                    <navigationItem key="navigationItem" title="New Topic" id="TOH-GS-d47">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="pcf-1Z-lzg">
+                            <connections>
+                                <action selector="handleCancelAction:" destination="Ybo-CA-EXp" id="RD5-vr-zSy"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="done" id="nXJ-40-NPL">
+                            <connections>
+                                <action selector="handleDoneAction:" destination="Ybo-CA-EXp" id="lI5-bg-obt"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="l6r-cb-bT7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="217" y="2397"/>
+        </scene>
+    </scenes>
+</document>

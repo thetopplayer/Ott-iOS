@@ -6,7 +6,7 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
-import Foundation
+import UIKit
 import CoreData
 
 class DataManager {
@@ -87,39 +87,12 @@ class DataManager {
         }()
     
     
-    
-    // MARK: - Data
-    
     func save() {
         
         managedObjectContext.saveContext()
         backgroundManagedObjectContext.saveContext()
     }
     
-    private var _userHasBeenCreated: Bool?
-    var userHasBeenCreated: Bool {
-        
-        if _userHasBeenCreated == nil {
-            
-            let fetchRequest = NSFetchRequest(entityName: "Author")
-            fetchRequest.predicate = NSPredicate(format: "isUser = true")
-            
-            let context = backgroundManagedObjectContext
-            context.performBlockAndWait { () -> Void in
-                
-                do {
-                    let results = try context.executeFetchRequest(fetchRequest)
-                    self._userHasBeenCreated = results.count > 0
-                }
-                catch {
-                    self._userHasBeenCreated = false
-                    abort()
-                }
-            }
-        }
-        
-        return _userHasBeenCreated!
-    }
     
     
     
@@ -146,6 +119,8 @@ class DataManager {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidSaveContextNotification:", name: NSManagedObjectContextDidSaveNotification, object: nil)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        
         didStartObservations = true
     }
     
@@ -167,7 +142,7 @@ class DataManager {
         if let theObjects = objects {
             searchLoop: for object in theObjects {
                 if let author = object as? Author {
-                    if author.isUser!.boolValue {
+                    if author.isUser.boolValue {
                         foundUser = true
                         break searchLoop
                     }
@@ -189,7 +164,6 @@ class DataManager {
             else if theObject == managedObjectContext {
                 
                 if containsUser(notification.userInfo?[NSUpdatedObjectsKey] as? Set<NSManagedObject>) {
-                    
                     NSNotificationCenter.defaultCenter().postNotificationName(Notification.DidUpdateUser, object: self)
                 }
                 
@@ -198,8 +172,75 @@ class DataManager {
     }
     
     
+    @objc func handleDidBecomeActiveNotification(notification: NSNotification) {
+        
+        updateUser(withHandle: userHandle)
+    }
     
-    //MARK: - Server Interactions
+    
+    
+    //MARK: - User
+    
+    private var _userHandle: String?
+    var userHandle: String? {
+        
+        if userHasBeenCreated {
+            return _userHandle
+        }
+        return nil
+    }
+    
+    
+    private var _userHasBeenCreated: Bool?
+    var userHasBeenCreated: Bool {
+        
+        if _userHasBeenCreated == nil {
+            
+            _userHasBeenCreated = false
+            
+            let fetchRequest = NSFetchRequest(entityName: "Author")
+            fetchRequest.predicate = NSPredicate(format: "isUser = true")
+            
+            let context = backgroundManagedObjectContext
+            context.performBlockAndWait { () -> Void in
+                
+                do {
+                    let results = try context.executeFetchRequest(fetchRequest)
+                    if results.count > 0 {
+                        
+                        if let user = results[0] as? Author {
+                            
+                            self._userHandle = user.identifier
+                            self._userHasBeenCreated = true
+                        }
+                    }
+                }
+                catch {
+                    abort()
+                }
+            }
+        }
+        
+        return _userHasBeenCreated!
+    }
+    
+    
+    /**
+    meant to be used primarily to update the current user's info, particularly the lastContentIdentifier, which is used to generate identifiers for topics and tags
+    */
+    
+    func updateUser(withHandle handle: String?) {
+        
+        if let handle = handle {
+            
+            NSLog("updating user with identifier = %@", handle)
+        }
+        
+    }
+    
+    
+    
+    //MARK: - Data
     
     /**
         fetches trending topics from server, updates MOC in background, and posts notification when done
@@ -216,12 +257,8 @@ class DataManager {
     
     func upload(object: Uploadable) {
         
+        NSLog("uploading object...")
         save()
-    }
-    
-    
-    func update(objects: [Downloadable]) {
-        
     }
     
     

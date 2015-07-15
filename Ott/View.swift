@@ -43,9 +43,9 @@ extension UIView {
     func addGradient(colors: CGColor...) {
         
         self.backgroundColor = UIColor.clearColor()
-        let gradient: CAGradientLayer = CAGradientLayer()
-        gradient.frame = self.bounds
-        gradient.colors = colors
-        self.layer.insertSublayer(gradient, atIndex: 0)
+        let gradientLayer = CAGradientLayer()
+        gradientLayer.frame = self.bounds
+        gradientLayer.colors = colors
+        self.layer.insertSublayer(gradientLayer, atIndex: 0)
     }
 }

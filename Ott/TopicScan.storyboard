@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+    </dependencies>
+    <scenes>
+        <!--Scanning Nav Controller-->
+        <scene sceneID="hch-GC-jbA">
+            <objects>
+                <navigationController storyboardIdentifier="topicScanViewController" title="Scanning Nav Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vtN-2v-AdQ" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="HLQ-g2-XPl">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="vbE-Ps-sUH" kind="relationship" relationship="rootViewController" id="Vua-5O-UE2"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eG8-rI-V9O" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2293" y="4289"/>
+        </scene>
+        <!--Scanning For Topic-->
+        <scene sceneID="Y3X-Ms-0DQ">
+            <objects>
+                <viewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="vbE-Ps-sUH" customClass="TopicScanningViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="7fc-Hg-okw"/>
+                        <viewControllerLayoutGuide type="bottom" id="fqY-nt-KqY"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="JAa-pB-uS9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    </view>
+                    <navigationItem key="navigationItem" title="Scanning For Topic" id="cJy-F1-OnC">
+                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Jgh-iB-svE">
+                            <connections>
+                                <action selector="handleCancelAction:" destination="vbE-Ps-sUH" id="9Nf-1d-4gB"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="T25-bY-UJK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1413" y="4289"/>
+        </scene>
+    </scenes>
+</document>

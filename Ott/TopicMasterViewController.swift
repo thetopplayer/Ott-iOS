@@ -27,7 +27,7 @@ class TopicMasterViewController: TableViewController {
     private let imageCellHeight = CGFloat(320)
     
     var headerReuseIdentifier: String?
-    var headerViewHeight = CGFloat(6.0)
+    var headerViewHeight = CGFloat(0.1)
     var footerViewHeight = CGFloat(1.0)
     
     private var lastRefreshedTableView: NSDate?
@@ -310,7 +310,7 @@ class TopicMasterViewController: TableViewController {
 
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if let destinationController = segue.destinationViewController as? DetailNavigationController {
+        if let destinationController = segue.destinationViewController as? NavigationController {
             destinationController.topic = selection
         }
     }

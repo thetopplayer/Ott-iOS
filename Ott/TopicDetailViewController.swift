@@ -33,7 +33,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
-        self.navigationItem.title = self.myTopic?.name
+        
+        // topic can either be set directly with the var, or may be obtained from the navigation controller
+        if let topicPassedThroughNavController = (navigationController as! NavigationController).topic {
+            myTopic = topicPassedThroughNavController
+        }
+        
+        self.navigationItem.title = myTopic?.name
         refreshDisplay()
         displayView(type: .List)
     }
@@ -56,6 +62,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBAction func handleDoneAction(sender: AnyObject) {
         dismissViewControllerAnimated(true) { () -> Void in }
     }
+    
+    
+    @IBAction func handleCreatePostAction(sender: AnyObject) {
+        
+        (navigationController as! NavigationController).presentPostCreationViewController(withTopic: myTopic, presentingTopicDetailThereafter: false)
+    }
+
+    
+    @IBAction func handleMiscellaneousAction(sender: AnyObject) {
+        
+        
+    }
+
+    
     
     
     
@@ -173,7 +193,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let cellNibName = "PostDetailTableViewCell"
     private let cellIdentifier = "postCell"
     private let cellHeight = CGFloat(125)
-    private var headerViewHeight = CGFloat(6.0)
+    private var headerViewHeight = CGFloat(0.1)
     private var footerViewHeight = CGFloat(1.0)
 
     

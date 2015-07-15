@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreationProtocol {
+class TrendingViewController: TopicMasterViewController {
     
     
     
@@ -17,7 +17,13 @@ class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreatio
     override func viewDidLoad() {
         
         super.viewDidLoad()
-         
+        
+        let scanButton = UIBarButtonItem(image: UIImage(named: "QRCode"), style: .Plain, target: self, action: "presentTopicScanViewController")
+        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction")
+        navigationItem.leftBarButtonItem = scanButton
+        navigationItem.rightBarButtonItem = createButton
+        
+
 //        fetchPredicate = NSPredicate(format: "isTrending = true")
     }
 
@@ -32,51 +38,27 @@ class TrendingViewController: TopicMasterViewController, NavigatorToTopicCreatio
     
     //MARK: - TableView
     
-    private let selectionSegueIdentifier = "segueToRatingEntry"
-    
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        
-        let segueOperation = SegueOperation(presentationController: self, identifer: selectionSegueIdentifier, conditions: [LocationCondition(usage: .WhenInUse)])
-        operationQueue().addOperation(segueOperation)
+        (navigationController as! NavigationController).presentPostCreationViewController(withTopic: selection, presentingTopicDetailThereafter: true)
     }
     
     
     
-    //MARK: - NavigatorToTopicCreationProtocol
+    //MARK: - Actions
     
-    @IBAction func presentTopicCreationViewController(sender: AnyObject) {
+    @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        let segueToCreationIdentifier = "segueToTopicCreation"
-
-        if LocationManager.sharedInstance.permissionGranted {
-            performSegueWithIdentifier(segueToCreationIdentifier, sender: nil)
-        }
-        else {
-            LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
-                if granted {
-                    self.performSegueWithIdentifier(segueToCreationIdentifier, sender: nil)
-                }
-            })
-        }
+        (navigationController as! NavigationController).presentTopicCreationViewController()
     }
     
     
     @IBAction func presentTopicScanViewController(sender: AnyObject) {
         
-        let segueToScanIdentifier = "segueToScan"
-        
-        if LocationManager.sharedInstance.permissionGranted {
-            performSegueWithIdentifier(segueToScanIdentifier, sender: nil)
-        }
-        else {
-            LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
-                if granted {
-                    self.performSegueWithIdentifier(segueToScanIdentifier, sender: nil)
-                }
-            })
-        }
+        (navigationController as! NavigationController).presentTopicScanViewController()
     }
+    
+    
 }
 
