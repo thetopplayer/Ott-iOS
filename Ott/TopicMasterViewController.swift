@@ -164,6 +164,7 @@ class TopicMasterViewController: TableViewController {
             
             do {
                 
+                NSLog("fetching topic data")
                 let fetchResults = try self.managedObjectContext.executeFetchRequest(self.fetchRequest)
                 self.data = fetchResults as? [Topic]
                 self.refreshTableView()
@@ -179,6 +180,7 @@ class TopicMasterViewController: TableViewController {
         
         // TODO - compare previous and new data sets and insert/delete rows, instead of reloading all
         
+        NSLog("refreshing table view")
         dispatch_async(dispatch_get_main_queue(), {
             
             self.updateNoDataLabel()

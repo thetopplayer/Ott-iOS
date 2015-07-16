@@ -264,9 +264,6 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if let destinationController = segue.destinationViewController as? PostCreationViewController {
-            destinationController.myTopic = recognizedTopic
-        }
     }
     
     

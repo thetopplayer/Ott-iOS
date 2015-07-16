@@ -60,27 +60,13 @@ class NavigationController: UINavigationController {
     
     func presentTopicDetailViewController(withTopic topic: Topic?) {
         
-        presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)
-    }
-    
-    
-    func presentPostCreationViewController(withTopic topic: Topic?, presentingTopicDetailThereafter: Bool) {
-        
-        func presentController() {
-            
-            let navController = presentViewController(storyboard: "PostCreation", identifier: "postCreationViewController", topic: topic, completion: nil) as! NavigationController
-            
-            (navController.topViewController as! PostCreationViewController).presentTopicDetailAfterEntry = presentingTopicDetailThereafter
-        }
-        
-        
         if LocationManager.sharedInstance.permissionGranted {
-            presentController()
+            presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)
         }
         else {
             LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
                 if granted {
-                    presentController()
+                    self.presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)
                 }
             })
         }

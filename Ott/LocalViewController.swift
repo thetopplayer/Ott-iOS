@@ -41,7 +41,7 @@ class LocalViewController: TopicMasterViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        (navigationController as! NavigationController).presentPostCreationViewController(withTopic: selection, presentingTopicDetailThereafter: true)
+        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: selection)
     }
     
     
