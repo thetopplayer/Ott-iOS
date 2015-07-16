@@ -55,6 +55,7 @@ class TopicMasterViewController: TableViewController {
     
     override func viewDidLayoutSubviews() {
         
+        super.viewDidLayoutSubviews()
         if let label = noDataLabel {
             label.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
         }
@@ -175,6 +176,8 @@ class TopicMasterViewController: TableViewController {
     
     
     private func refreshTableView() {
+        
+        // TODO - compare previous and new data sets and insert/delete rows, instead of reloading all
         
         dispatch_async(dispatch_get_main_queue(), {
             
