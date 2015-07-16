@@ -11,11 +11,11 @@ import CoreData
 
 class Topic: Base {
     
-    @NSManaged var isLocal: NSNumber
-    @NSManaged var isTrending: NSNumber
+    @NSManaged var isLocal_: NSNumber
+    @NSManaged var isTrending_: NSNumber
     @NSManaged var lastPostLocationName: String?
-    @NSManaged var numberOfPosts: NSNumber
-    @NSManaged var userDidPostRating: NSNumber
+    @NSManaged var numberOfPosts_: NSNumber
+    @NSManaged var userDidPostRating_: NSNumber
     @NSManaged var posts: Set<Post>?
     @NSManaged var author: Author
     
@@ -23,6 +23,16 @@ class Topic: Base {
     static func create(inContext context: NSManagedObjectContext) -> Topic {
         
         return NSEntityDescription.insertNewObjectForEntityForName("Topic", inManagedObjectContext: context) as! Topic
+    }
+    
+    
+    override func awakeFromInsert() {
+        
+        super.awakeFromInsert()
+        userDidPostRating = false
+        isLocal = false
+        isTrending = false
+        numberOfPosts = 0
     }
     
     
@@ -39,10 +49,10 @@ class Topic: Base {
         thePost.topic = self
         
         let postRating = thePost.rating!.floatValue
-        let updatedNumberOfPosts = numberOfPosts.integerValue + 1
+        let updatedNumberOfPosts = numberOfPosts + 1
         if let ar = rating?.floatValue {
             
-            var r = ar * numberOfPosts.floatValue
+            var r = ar * Float(numberOfPosts)
             r += postRating
             rating = r / Float(updatedNumberOfPosts)
         }
@@ -54,8 +64,56 @@ class Topic: Base {
     }
     
     
+    var isLocal: Bool {
+        
+        get {
+            return isLocal_.boolValue
+        }
+        
+        set {
+            isLocal_ = newValue
+        }
+    }
     
     
+    var isTrending: Bool {
+        
+        get {
+            return isTrending_.boolValue
+        }
+        
+        set {
+            isTrending_ = newValue
+        }
+    }
+    
+    
+    var numberOfPosts: Int {
+        
+        get {
+            return numberOfPosts_.integerValue
+        }
+        
+        set {
+            numberOfPosts_ = newValue
+        }
+    }
+    
+    
+    var userDidPostRating: Bool {
+        
+        get {
+            return userDidPostRating_.boolValue
+        }
+        
+        set {
+            userDidPostRating_ = newValue
+        }
+    }
+    
+    
+
+
     //MARK: - Uploadable and Downloadable
     
     static let authorIDKey = "authID"

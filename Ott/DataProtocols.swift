@@ -19,6 +19,6 @@ protocol Uploadable {
 
 protocol Downloadable {
     
-    func updateFromDictionary([String : String]) -> Void
+    func updateFromDictionary(_: [String : String]) -> Void
 }
 

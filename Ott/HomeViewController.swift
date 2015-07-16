@@ -30,7 +30,7 @@ class HomeViewController: ViewController {
 
     //MARK: - Lifecycle
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         
         topicTableViewController = TopicMasterViewController()
         

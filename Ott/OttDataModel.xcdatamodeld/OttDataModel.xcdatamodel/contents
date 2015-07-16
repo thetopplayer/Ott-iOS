@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8118.20" systemVersion="14E46" minimumToolsVersion="Xcode 7.0">
+<model userDefinedModelVersionIdentifier="" type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="8154.4" systemVersion="14E46" minimumToolsVersion="Xcode 7.0">
     <entity name="Author" representedClassName=".Author" parentEntity="Base" syncable="YES">
         <attribute name="handle" attributeType="String" syncable="YES"/>
         <attribute name="isUser" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
@@ -28,11 +28,11 @@
         <relationship name="topic" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Topic" inverseName="posts" inverseEntity="Topic" syncable="YES"/>
     </entity>
     <entity name="Topic" representedClassName=".Topic" parentEntity="Base" syncable="YES">
-        <attribute name="isLocal" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
-        <attribute name="isTrending" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="isLocal_" attributeType="Boolean" defaultValueString="NO" indexed="YES" syncable="YES"/>
+        <attribute name="isTrending_" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <attribute name="lastPostLocationName" optional="YES" attributeType="String" syncable="YES"/>
-        <attribute name="numberOfPosts" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
-        <attribute name="userDidPostRating" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
+        <attribute name="numberOfPosts_" attributeType="Integer 16" defaultValueString="0" syncable="YES"/>
+        <attribute name="userDidPostRating_" attributeType="Boolean" defaultValueString="NO" syncable="YES"/>
         <relationship name="author" maxCount="1" deletionRule="Nullify" destinationEntity="Author" inverseName="topics" inverseEntity="Author" syncable="YES"/>
         <relationship name="posts" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Post" inverseName="topic" inverseEntity="Post" syncable="YES"/>
     </entity>

@@ -93,13 +93,50 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
             else {
                 _myTopic = nil
             }
-
+            
+            _arrangedPosts = nil
             refreshDisplay()
         }
         
         get {
             return _myTopic;
         }
+    }
+    
+    
+    private func postsArrangedByTimestamp(posts: Set<Post>?) -> [Post] {
+        
+        var result: [Post]?
+        if let posts = _myTopic!.posts {
+            
+            result = posts.sort({ (first, second) -> Bool in
+                let d1 = first.timestamp
+                let d2 = second.timestamp
+                return d1.compare(d2) == .OrderedAscending
+            })
+        }
+        else {
+            result = []
+        }
+        return result!
+    }
+    
+    
+    private var _arrangedPosts: [Post]?
+    var arrangedPosts: [Post] {
+        
+        if let _arrangedPosts = _arrangedPosts {
+            return _arrangedPosts
+        }
+        else {
+            if let myTopic = myTopic {
+                _arrangedPosts = postsArrangedByTimestamp(myTopic.posts)
+            }
+            else {
+                _arrangedPosts = []
+            }
+        }
+        return _arrangedPosts!
     }
     
     
@@ -127,7 +164,6 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
 
         managedObjectContext.saveContext()
         DataManager.sharedInstance.upload(myPost)
-        managedObjectContext.reset()
     }
     
     
@@ -143,19 +179,20 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     func postInputViewPostActionDidOccur() {
         
         saveChanges()
-        
-        if presentTopicDetailAfterEntry {
-            performSegueWithIdentifier(segueToTopicDetailIdentifier, sender: self)
-        }
-        else {
-            dismissViewControllerAnimated(true, completion: nil)
-        }
+        refreshDisplay()
+//        if presentTopicDetailAfterEntry {
+//            performSegueWithIdentifier(segueToTopicDetailIdentifier, sender: self)
+//        }
+//        else {
+//            dismissViewControllerAnimated(true, completion: nil)
+//        }
     }
     
     
     
     //MARK: - TableView
     
+    private let topicSection = 0
     private let titleCellViewNibName = "TopicTitleTableViewCell"
     private let titleCellViewIdentifier = "titleCell"
     private let commentCellViewNibName = "TopicCommentTableViewCell"
@@ -164,15 +201,23 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     private let imageCellViewIdentifer = "imageCell"
     private let authorCellViewNibName = "TopicAuthorTableViewCell"
     private let authorCellViewIdentifer = "authorCell"
-    
     private let titleCellViewHeight = CGFloat(77)
     private let commentCellViewHeight = CGFloat(100)
     private let imageCellViewHeight = CGFloat(275)
     private let authorCellViewHeight = CGFloat(44)
     
+    private let postsSection = 1
+    private let postCellNibName = "PostDetailTableViewCell"
+    private let postCellIdentifier = "postCell"
+    private let postCellHeight = CGFloat(125)
+    
+    
     private func setupTableView() {
         
-        tableView.backgroundColor = UIColor.whiteColor()
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.backgroundColor = UIColor.background()
         tableView.separatorStyle = .None
         adjustTableViewInsets(withBottom: postInputView.frame.size.height)
         
@@ -187,6 +232,9 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
         
         let nib3 = UINib(nibName: authorCellViewNibName, bundle: nil)
         tableView.registerNib(nib3, forCellReuseIdentifier: authorCellViewIdentifer)
+        
+        let nib4 = UINib(nibName: postCellNibName, bundle: nil)
+        tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
     }
     
     
@@ -202,12 +250,22 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 2
+        
+        var number: Int = 0
+        if let myTopic = myTopic {
+            number = myTopic.userDidPostRating ? 2 : 1
+        }
+        return number
     }
-    
-    
+
+
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return 0.1
+        
+        if section == 0 {
+            return 0.1
+        }
+        
+        return 6
     }
     
     
@@ -218,38 +276,40 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        var number: Int?
+        if myTopic == nil {
+            return 0
+        }
         
-        if section == 0 {
+        let topic = myTopic!
+        var number = 0
+        
+        if section == topicSection {
             
-            if let myTopic = myTopic {
-                
-                number = 1
-                
-                if myTopic.hasComment {
-                    number!++
-                    if myTopic.hasImage {
-                        number!++
-                    }
-                }
-                else if myTopic.hasImage {
-                    number!++
+            number = 2  // one for name cell, one for author cell
+            
+            if topic.hasComment {
+                number++
+                if topic.hasImage {
+                    number++
                 }
             }
+            else if topic.hasImage {
+                number++
+            }
         }
-        else if section == 1 {
-            number = 1
+        else if section == postsSection {
+            number = arrangedPosts.count
         }
         
-        return number!
+        return number
     }
     
     
     func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
-        var height: CGFloat?
+        var height: CGFloat = 0
         
-        if indexPath.section == 0 {
+        if indexPath.section == topicSection {
             
             switch indexPath.row {
                 
@@ -260,22 +320,34 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
                 if myTopic!.hasComment {
                     height = commentCellViewHeight
                 }
-                else {
+                else if myTopic!.hasImage {
                     height = imageCellViewHeight
+                }
+                else {
+                    height = authorCellViewHeight
                 }
                 
             case 2:
-                height = imageCellViewHeight
+                if myTopic!.hasComment && myTopic!.hasImage {
+                    height = imageCellViewHeight
+                }
+                else {
+                    height = authorCellViewHeight
+                }
+                
+            case 3:
+                height = authorCellViewHeight
                 
             default:
-                height = nil
+                NSLog("too many rows for section %d", indexPath.section)
+                assert(false)
             }
         }
-        else if indexPath.section == 1 {
-            height = authorCellViewHeight
+        else if indexPath.section == postsSection {
+            height = postCellHeight
         }
         
-        return height!
+        return height
     }
     
     
@@ -309,9 +381,17 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
             return cell
         }
         
+        func initializePostCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
+            cell.displayedPost = arrangedPosts[indexPath.row]
+            return cell
+        }
+        
+        
         var cell: UITableViewCell?
         
-        if indexPath.section == 0 {
+        if indexPath.section == topicSection {
             
             switch indexPath.row {
                 
@@ -322,22 +402,34 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
                 if myTopic!.hasComment {
                     cell = initializeCommentCell()
                 }
-                else {
+                else if myTopic!.hasImage {
                     cell = initializeImageCell()
+                }
+                else {
+                    cell = initializeAuthorCell()
                 }
                 
             case 2:
-                cell = initializeImageCell()
+                if myTopic!.hasComment && myTopic!.hasImage {
+                    cell = initializeImageCell()
+                }
+                else {
+                    cell = initializeAuthorCell()
+                }
+                
+            case 3:
+                cell = initializeAuthorCell()
                 
             default:
-                ()
+                NSLog("too many rows for section %d", indexPath.section)
+                assert(false)
             }
         }
-        else if indexPath.section == 1 {
-            cell = initializeAuthorCell()
+        else if indexPath.section == postsSection {
+            cell = initializePostCell()
         }
         
-        cell!.contentView.backgroundColor = UIColor.whiteColor()
+//        cell!.contentView.backgroundColor = UIColor.whiteColor()
         return cell!
     }
     
@@ -362,6 +454,7 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
             destinationVC.myTopic = myTopic
         }
     }
+    
     
     
     //MARK: -  Observations {
@@ -424,7 +517,7 @@ class PostCreationViewController: ViewController, UITableViewDelegate, UITableVi
         
         func keyboardIsCoveringContent() -> Bool {
             
-            let rectForFooter = tableView.rectForSection(1)
+            let rectForFooter = tableView.rectForSection(tableView.numberOfSections - 1)
             let contentHeight = tableView.contentSize.height + tableView.contentOffset.y
             return contentHeight < (rectForFooter.origin.y + rectForFooter.size.height)
         }

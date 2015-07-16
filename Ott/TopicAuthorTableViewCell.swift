@@ -51,7 +51,7 @@ class TopicAuthorTableViewCell: TableViewCell {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = .MediumStyle
         
-        let s2 = NSAttributedString(string: "\(dateFormatter.stringFromDate(topic.timestamp!))", attributes: boldAttributes)
+        let s2 = NSAttributedString(string: "\(dateFormatter.stringFromDate(topic.timestamp))", attributes: boldAttributes)
         
         let s3 = NSAttributedString(string: " by ", attributes: normalAttributes)
         

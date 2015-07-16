@@ -21,7 +21,7 @@ class Base: NSManagedObject, Uploadable {
     @NSManaged var name: String?
     @NSManaged var rating: NSNumber?
     @NSManaged var shouldHide: NSNumber?
-    @NSManaged var timestamp: NSDate?
+    @NSManaged var timestamp: NSDate
 
     
     override func awakeFromInsert() {

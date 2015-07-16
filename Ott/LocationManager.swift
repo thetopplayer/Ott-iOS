@@ -59,10 +59,10 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
 //                parts.append(placemark.thoroughfare)
 //            }
             if placemark.locality != nil {
-                parts.append(placemark.locality)
+                parts.append(placemark.locality!)
             }
             if placemark.administrativeArea != nil {
-                parts.append(placemark.administrativeArea)
+                parts.append(placemark.administrativeArea!)
             }
             
             for placemarkPart in parts {

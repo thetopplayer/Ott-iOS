@@ -83,12 +83,12 @@ class TopicMasterTableViewCell: TableViewCell {
         var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(12)
         
-        let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts.integerValue)", attributes: boldAttributes)
+        let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = .MediumStyle
         
-        let p = topic.numberOfPosts.integerValue == 1 ? " post " : " posts "
+        let p = topic.numberOfPosts == 1 ? " post " : " posts "
         let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
         let authorName = topic.author.name != nil ? topic.author.name! : "Anonymous"
         let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)

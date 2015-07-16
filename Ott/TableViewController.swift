@@ -29,7 +29,7 @@ class TableViewController: UITableViewController {
     }
     
     
-    required init(coder aDecoder: NSCoder) {
+    required init?(coder aDecoder: NSCoder) {
         _viewWasLoaded = false
         super.init(coder: aDecoder)
     }
