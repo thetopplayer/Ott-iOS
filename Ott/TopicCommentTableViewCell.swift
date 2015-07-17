@@ -16,7 +16,8 @@ class TopicCommentTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        innerContentContainer?.addRoundedBorder()
+        contentView.backgroundColor = UIColor.whiteColor()
+        innerContentContainer?.addBorder(withColor: UIColor(white: 0.85, alpha: 1.0))
         
         textView.editable = false
         textView.selectable = false

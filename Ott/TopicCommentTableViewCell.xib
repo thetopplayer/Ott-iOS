@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -16,10 +16,10 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="3ml-Bc-QET">
-                        <rect key="frame" x="8" y="0.0" width="584" height="91"/>
+                        <rect key="frame" x="-1" y="0.0" width="601" height="99"/>
                         <subviews>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" editable="NO" text="comment" selectable="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Eqq-bQ-gY5">
-                                <rect key="frame" x="8" y="8" width="568" height="75"/>
+                                <rect key="frame" x="16" y="8" width="569" height="83"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
@@ -27,18 +27,18 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="Eqq-bQ-gY5" firstAttribute="leading" secondItem="3ml-Bc-QET" secondAttribute="leading" constant="8" id="Du2-4c-ZZN"/>
+                            <constraint firstItem="Eqq-bQ-gY5" firstAttribute="leading" secondItem="3ml-Bc-QET" secondAttribute="leading" constant="16" id="Du2-4c-ZZN"/>
                             <constraint firstItem="Eqq-bQ-gY5" firstAttribute="top" secondItem="3ml-Bc-QET" secondAttribute="top" constant="8" id="cBw-3q-rGl"/>
-                            <constraint firstAttribute="trailing" secondItem="Eqq-bQ-gY5" secondAttribute="trailing" constant="8" id="res-g6-AGm"/>
+                            <constraint firstAttribute="trailing" secondItem="Eqq-bQ-gY5" secondAttribute="trailing" constant="16" id="res-g6-AGm"/>
                             <constraint firstAttribute="bottom" secondItem="Eqq-bQ-gY5" secondAttribute="bottom" constant="8" id="yrN-Xu-ZCZ"/>
                         </constraints>
                         <edgeInsets key="layoutMargins" top="0.0" left="8" bottom="0.0" right="8"/>
                     </view>
                 </subviews>
                 <constraints>
-                    <constraint firstItem="3ml-Bc-QET" firstAttribute="trailing" secondItem="mOK-br-IA7" secondAttribute="trailingMargin" id="JCW-vV-iPa"/>
-                    <constraint firstItem="3ml-Bc-QET" firstAttribute="leading" secondItem="mOK-br-IA7" secondAttribute="leadingMargin" id="Rix-ZN-ObF"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="3ml-Bc-QET" secondAttribute="bottom" id="YHX-uO-bp9"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="3ml-Bc-QET" secondAttribute="trailing" constant="-8" id="C7P-9K-ATb"/>
+                    <constraint firstItem="3ml-Bc-QET" firstAttribute="leading" secondItem="mOK-br-IA7" secondAttribute="leadingMargin" constant="-9" id="Rix-ZN-ObF"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="3ml-Bc-QET" secondAttribute="bottom" constant="-8" id="YHX-uO-bp9"/>
                     <constraint firstItem="3ml-Bc-QET" firstAttribute="top" secondItem="mOK-br-IA7" secondAttribute="topMargin" constant="-8" id="omd-5S-Yji"/>
                 </constraints>
             </tableViewCellContentView>

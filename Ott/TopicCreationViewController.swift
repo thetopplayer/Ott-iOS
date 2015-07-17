@@ -12,7 +12,7 @@ import CoreData
 class TopicCreationViewController: TableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, TopicCreationTitleTableViewCellDelegate, TopicCreationButtonTableViewCellDelegate {
 
     private var titleCellView: TopicCreationTitleTableViewCell?
-    private var imageCellView: TopicImageTableViewCell?
+    private var imageCellView: ImageTableViewCell?
     
     
     //MARK: - Lifecycle
@@ -101,7 +101,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     private let titleCellViewNibName = "TopicCreationTitleTableViewCell"
     private let titleCellViewIdentifier = "titleCell"
-    private let imageCellViewNibName = "TopicImageTableViewCell"
+    private let imageCellViewNibName = "TopicCreationImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
     private let buttonCellViewNibName = "TopicCreationButtonTableViewCell"
     private let buttonCellViewIdentifer = "buttonCell"
@@ -173,7 +173,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             
             if imageLoaded() {
                 
-                imageCellView = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as? TopicImageTableViewCell
+                imageCellView = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as? ImageTableViewCell
                 imageCellView!.topicImageView?.image = myTopic?.image
                 cell = imageCellView!
             }

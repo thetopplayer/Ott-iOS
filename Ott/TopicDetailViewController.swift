@@ -347,20 +347,21 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let titleCellViewIdentifier = "titleCell"
     private let commentCellViewNibName = "TopicCommentTableViewCell"
     private let commentCellViewIdentifier = "commentCell"
-    private let imageCellViewNibName = "TopicImageTableViewCell"
+    private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
-    private let authorCellViewNibName = "TopicAuthorTableViewCell"
-    private let authorCellViewIdentifer = "authorCell"
-    private let titleCellViewHeight = CGFloat(77)
+    private let summaryCellViewNibName = "TopicDetailSummayTableViewCell"
+    private let summaryCellViewIdentifer = "summaryCell"
+    private let titleCellViewHeight = CGFloat(56)
     private let commentCellViewHeight = CGFloat(100)
     private let imageCellViewHeight = CGFloat(275)
-    private let authorCellViewHeight = CGFloat(44)
+    private let summaryCellViewHeight = CGFloat(90)
     
     private let postsSection = 1
     private let postCellNibName = "PostDetailTableViewCell"
     private let postCellIdentifier = "postCell"
     private let postCellHeight = CGFloat(125)
     
+    private let footerHeight = CGFloat(0.1)
     
     private func setupTableView() {
         
@@ -380,8 +381,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let nib2 = UINib(nibName: imageCellViewNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: imageCellViewIdentifer)
         
-        let nib3 = UINib(nibName: authorCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: authorCellViewIdentifer)
+        let nib3 = UINib(nibName: summaryCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: summaryCellViewIdentifer)
         
         let nib4 = UINib(nibName: postCellNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
@@ -412,15 +413,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
         if section == 0 {
-            return 0.1
+            return 1.0
         }
         
-        return 6
+        return 8
+    }
+    
+    
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        
+        let view = UITableViewHeaderFooterView(frame: CGRectZero)
+        view.contentView.backgroundColor = UIColor.background()
+        return view
     }
     
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 0.1
+        
+        return footerHeight
     }
     
     
@@ -474,7 +484,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     height = imageCellViewHeight
                 }
                 else {
-                    height = authorCellViewHeight
+                    height = summaryCellViewHeight
                 }
                 
             case 2:
@@ -482,11 +492,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     height = imageCellViewHeight
                 }
                 else {
-                    height = authorCellViewHeight
+                    height = summaryCellViewHeight
                 }
                 
             case 3:
-                height = authorCellViewHeight
+                height = summaryCellViewHeight
                 
             default:
                 NSLog("too many rows for section %d", indexPath.section)
@@ -519,14 +529,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func initializeImageCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! TopicImageTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
             cell.topicImageView?.image = myTopic?.image
             return cell
         }
         
         func initializeAuthorCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(authorCellViewIdentifer) as! TopicAuthorTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(summaryCellViewIdentifer) as! TopicDetailSummayTableViewCell
             cell.displayedTopic = myTopic
             return cell
         }

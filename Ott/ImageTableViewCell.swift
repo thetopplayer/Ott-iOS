@@ -1,5 +1,5 @@
 //
-//  TopicImageTableViewCell.swift
+//  ImageTableViewCell.swift
 //  Ott
 //
 //  Created by Max on 7/6/15.
@@ -8,9 +8,11 @@
 
 import UIKit
 
-class TopicImageTableViewCell: TableViewCell {
+class ImageTableViewCell: TableViewCell {
     
     @IBOutlet var topicImageView: UIImageView!
+    
+    var roundedBorder = false
     
     var topicImage: UIImage? {
         
@@ -33,7 +35,9 @@ class TopicImageTableViewCell: TableViewCell {
         
         topicImageView.contentMode = .ScaleAspectFill
         topicImageView.clipsToBounds = true
-        topicImageView.addRoundedBorder()
+        if roundedBorder {
+            topicImageView.addRoundedBorder()
+        }
     }
     
 }

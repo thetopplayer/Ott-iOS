@@ -85,9 +85,6 @@ class TopicMasterTableViewCell: TableViewCell {
         
         let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
         
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .MediumStyle
-        
         let p = topic.numberOfPosts == 1 ? " post " : " posts "
         let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
         let authorName = topic.author.name != nil ? topic.author.name! : "Anonymous"
