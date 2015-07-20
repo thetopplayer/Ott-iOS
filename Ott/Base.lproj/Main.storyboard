@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -29,7 +29,6 @@
         <!--Mine Nav Controller-->
         <scene sceneID="oA5-uc-Dmk">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="h7X-gU-nqA" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController title="Mine Nav Controller" id="nzE-nJ-Srz" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <tabBarItem key="tabBarItem" title="Me" image="home" id="H84-UX-ciX"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="OkQ-nW-ibp">
@@ -40,13 +39,13 @@
                         <segue destination="shA-4e-zF7" kind="relationship" relationship="rootViewController" id="RXR-ft-tOh"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="h7X-gU-nqA" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-800" y="1957"/>
         </scene>
         <!--Mine View Controller-->
         <scene sceneID="vFq-1O-IEz">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="2gl-ek-rUe" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController title="Mine View Controller" automaticallyAdjustsScrollViewInsets="NO" id="shA-4e-zF7" customClass="HomeViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="iNj-vn-ExH"/>
@@ -169,6 +168,7 @@
                         <outlet property="userContainerView" destination="QP4-8O-BfA" id="A5X-uC-YIn"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="2gl-ek-rUe" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="19" y="1957"/>
         </scene>
@@ -185,7 +185,7 @@
                             <outlet property="delegate" destination="2Td-o6-gbS" id="Vb2-u2-PJ8"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Trending" id="rbE-Ly-ogE">
+                    <navigationItem key="navigationItem" title="Trending Topics" id="rbE-Ly-ogE">
                         <barButtonItem key="leftBarButtonItem" image="QRCode" id="O1y-TQ-tZe"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="JAD-3s-XUH"/>
                     </navigationItem>
@@ -225,7 +225,7 @@
                             <outlet property="delegate" destination="KQi-ka-Tsy" id="rfk-Vg-4g1"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Near Me" id="Xdb-Bk-FuD">
+                    <navigationItem key="navigationItem" title="Local Topics" id="Xdb-Bk-FuD">
                         <barButtonItem key="leftBarButtonItem" image="QRCode" id="hkD-fY-XWY">
                             <connections>
                                 <action selector="presentTopicScanViewController:" destination="KQi-ka-Tsy" id="uGz-D5-UTO"/>

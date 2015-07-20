@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <customFonts key="customFonts">
@@ -45,7 +45,7 @@
                         <rect key="frame" x="8" y="8" width="584" height="84"/>
                         <subviews>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Ocq-Ug-dWS" userLabel="Top Bar">
-                                <rect key="frame" x="0.0" y="0.0" width="584" height="24"/>
+                                <rect key="frame" x="0.0" y="-1" width="584" height="25"/>
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME | LOCATION" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="maL-aq-AFu">
                                         <rect key="frame" x="16" y="3" width="548" height="19"/>
@@ -61,7 +61,7 @@
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="maL-aq-AFu" secondAttribute="trailing" constant="20" id="D8K-5c-hqt"/>
                                     <constraint firstItem="maL-aq-AFu" firstAttribute="top" secondItem="Ocq-Ug-dWS" secondAttribute="top" constant="3" id="o2q-k2-14f"/>
-                                    <constraint firstAttribute="height" constant="24" id="tJs-kV-Za0"/>
+                                    <constraint firstAttribute="height" constant="25" id="tJs-kV-Za0"/>
                                     <constraint firstItem="maL-aq-AFu" firstAttribute="leading" secondItem="Ocq-Ug-dWS" secondAttribute="leading" constant="16" id="ucl-OW-rGo"/>
                                     <constraint firstItem="maL-aq-AFu" firstAttribute="centerY" secondItem="Ocq-Ug-dWS" secondAttribute="centerY" id="yXo-HE-dZG"/>
                                 </constraints>
@@ -110,7 +110,7 @@
                         <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="hne-Qk-L3v" secondAttribute="trailing" id="5e0-qb-gtH"/>
-                            <constraint firstItem="Ocq-Ug-dWS" firstAttribute="top" secondItem="yin-0g-e6x" secondAttribute="top" id="8Sf-w5-pt4"/>
+                            <constraint firstItem="Ocq-Ug-dWS" firstAttribute="top" secondItem="yin-0g-e6x" secondAttribute="top" constant="-1" id="8Sf-w5-pt4"/>
                             <constraint firstItem="hne-Qk-L3v" firstAttribute="top" secondItem="Ocq-Ug-dWS" secondAttribute="bottom" id="NM7-lF-aQq"/>
                             <constraint firstAttribute="bottom" secondItem="hne-Qk-L3v" secondAttribute="bottom" id="T6Y-do-Uht"/>
                             <constraint firstItem="Ocq-Ug-dWS" firstAttribute="leading" secondItem="yin-0g-e6x" secondAttribute="leading" id="VVW-a1-hyn"/>

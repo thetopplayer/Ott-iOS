@@ -19,8 +19,10 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        contentView.backgroundColor = UIColor.whiteColor()
-        innerContentContainer?.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
+        contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
+        innerContentContainer?.backgroundColor = UIColor(white: 0.97, alpha: 1.0)
+        innerContentContainer?.addBorder()
+
         authorImageView.clipsToBounds = true
     }
     

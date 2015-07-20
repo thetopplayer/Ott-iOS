@@ -16,7 +16,8 @@ class TopicTitleTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        contentView.backgroundColor = UIColor.whiteColor()
+        contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
+        innerContentContainer?.addBorder()
     }
 
     

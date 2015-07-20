@@ -35,7 +35,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <rect key="frame" x="4" y="0.0" width="592" height="556"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6Ch-ty-LY7">
@@ -147,7 +147,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="trailingMargin" secondItem="Y5K-j4-5dG" secondAttribute="trailing" constant="-20" id="9Ra-hf-xhb"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Y5K-j4-5dG" secondAttribute="trailing" constant="-16" id="9Ra-hf-xhb"/>
                             <constraint firstAttribute="bottomMargin" secondItem="N7I-Dk-brQ" secondAttribute="bottom" id="Aah-Oo-Wt2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fhB-VS-06h" secondAttribute="trailing" constant="-20" id="Al6-KO-brV"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="top" secondItem="6Ch-ty-LY7" secondAttribute="bottom" id="Dsc-SK-Q8U"/>
@@ -160,7 +160,7 @@
                             <constraint firstItem="N7I-Dk-brQ" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="eit-wa-jk8"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="gBh-op-jTk"/>
                             <constraint firstAttribute="trailingMargin" secondItem="N7I-Dk-brQ" secondAttribute="trailing" constant="-20" id="h76-Os-Wiv"/>
-                            <constraint firstItem="Y5K-j4-5dG" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="uiA-Bd-UHm"/>
+                            <constraint firstItem="Y5K-j4-5dG" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-16" id="uiA-Bd-UHm"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="xsj-vc-ee9">

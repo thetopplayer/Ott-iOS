@@ -41,6 +41,7 @@ class PostInputView: UIView, UITextViewDelegate {
         
         containerView.backgroundColor = UIColor(white: 0.9, alpha: 0.8)
         containerView.addBorder()
+        containerView.addUpShadow()
         
         textView.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         textView.textContainerInset = UIEdgeInsetsMake(6, 4, 2, 4)
@@ -70,7 +71,7 @@ class PostInputView: UIView, UITextViewDelegate {
     
     //MARK: - Display
     
-    private func reset() {
+    func reset() {
         
         slider.setValue(0, animated: false)
         rating = nil

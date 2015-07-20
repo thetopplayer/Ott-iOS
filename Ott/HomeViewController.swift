@@ -49,7 +49,7 @@ class HomeViewController: ViewController {
 
         userContainerView.backgroundColor = UIColor.whiteColor()
         userContainerView.addBorder()
-        userContainerView.addShadow()
+        userContainerView.addDownShadow()
         
         avatarImageView.addRoundedBorder()
         summaryContainerView.backgroundColor = UIColor.whiteColor()

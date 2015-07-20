@@ -31,12 +31,15 @@ class PostDetailTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
+        innerContentContainer?.addRoundedBorder()
+
         topBar.backgroundColor = UIColor.whiteColor()
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()
         
         commentTextView.editable = false
         commentTextView.selectable = false
+        commentTextView.scrollEnabled = false
         
         selectionStyle = .None
     }

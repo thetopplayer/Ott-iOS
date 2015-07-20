@@ -24,7 +24,7 @@ class TopicMasterViewController: TableViewController {
     
     private let imageCellNibName = "TopicWithImageMasterTableViewCell"
     private let imageCellIdentifier = "topicImageCell"
-    private let imageCellHeight = CGFloat(320)
+    private let imageCellHeight = CGFloat(125)
     
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(0.1)

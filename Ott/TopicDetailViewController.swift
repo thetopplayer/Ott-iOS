@@ -155,6 +155,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         case .PostCreation:
             
             showCancelButton()
+            postInputView.reset()
             showPostInputView()
             mapToggleButton?.enabled = false
             

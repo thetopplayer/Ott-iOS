@@ -16,8 +16,6 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topBarLabel: UILabel!
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
-    @IBOutlet var innerLabelContainer: UIView!
-    @IBOutlet var ratingLabel: UILabel!
     @IBOutlet var nameLabel: UILabel!
     @IBOutlet var commentLabel: UILabel!
     @IBOutlet var topicImageView: UIImageView?
@@ -34,16 +32,13 @@ class TopicMasterTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-
+        
+        innerContentContainer?.addRoundedBorder()
         topBar.backgroundColor = UIColor.whiteColor()
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()
         
         if let topicImageView = topicImageView {
-            
-            let startColor = UIColor.whiteColor().CGColor
-            let endColor = UIColor.whiteColor().colorWithAlphaComponent(0.4).CGColor
-            innerLabelContainer.addGradient(startColor, endColor)
             
             topicImageView.contentMode = .ScaleAspectFill
             topicImageView.clipsToBounds = true
@@ -59,8 +54,8 @@ class TopicMasterTableViewCell: TableViewCell {
             
             topBarLabel.attributedText = timeAndLocationAttributedString(topic)
             
-            ratingLabel.text = topic.ratingToText()
-            ratingLabel.textColor = topic.ratingToColor()
+//            ratingLabel.text = topic.ratingToText()
+//            ratingLabel.textColor = topic.ratingToColor()
             nameLabel.text = topic.name!
             if topic.comment != nil {
                 commentLabel.text = topic.comment!
@@ -85,7 +80,7 @@ class TopicMasterTableViewCell: TableViewCell {
         
         let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
         
-        let p = topic.numberOfPosts == 1 ? " post " : " posts "
+        let p = topic.numberOfPosts == 1 ? " rating " : " ratings "
         let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
         let authorName = topic.author.name != nil ? topic.author.name! : "Anonymous"
         let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)

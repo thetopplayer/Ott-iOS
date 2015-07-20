@@ -23,7 +23,7 @@ class TableViewCell: UITableViewCell {
         
         contentView.backgroundColor = UIColor.background()
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
-        innerContentContainer?.addBorder()
+        innerContentContainer?.clipsToBounds = true
     }
     
     
