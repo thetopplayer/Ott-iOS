@@ -1,5 +1,5 @@
 //
-//  TopicDetailSummayTableViewCell.swift
+//  TopicDetailSummaryTableViewCell.swift
 //  Ott
 //
 //  Created by Max on 7/10/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TopicDetailSummayTableViewCell: TableViewCell {
+class TopicDetailSummaryTableViewCell: TableViewCell {
 
     @IBOutlet var summaryLabel: UILabel!
     @IBOutlet var authorNameLabel: UILabel!
@@ -20,8 +20,8 @@ class TopicDetailSummayTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         contentView.backgroundColor = UIColor.whiteColor()
+        innerContentContainer?.backgroundColor = UIColor(white: 0.95, alpha: 1.0)
         authorImageView.clipsToBounds = true
-//        authorImageView.addRoundedBorder()
     }
     
     

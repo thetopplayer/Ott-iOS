@@ -20,23 +20,36 @@
                 <rect key="frame" x="0.0" y="0.0" width="600" height="55"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Topiclabel  10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Af-9l-DZe">
-                        <rect key="frame" x="16" y="6" width="568" height="41"/>
-                        <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="32"/>
-                        <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <nil key="highlightedColor"/>
-                    </label>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="8b3-S9-yVJ">
+                        <rect key="frame" x="-1" y="0.0" width="602" height="55"/>
+                        <subviews>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Topiclabel  10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6Af-9l-DZe">
+                                <rect key="frame" x="17" y="7" width="568" height="41"/>
+                                <fontDescription key="fontDescription" name="HelveticaNeue-Light" family="Helvetica Neue" pointSize="32"/>
+                                <color key="textColor" red="0.29803922770000002" green="0.29803922770000002" blue="0.29803922770000002" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="6Af-9l-DZe" firstAttribute="top" secondItem="8b3-S9-yVJ" secondAttribute="top" constant="7" id="NlT-ui-cMZ"/>
+                            <constraint firstAttribute="trailing" secondItem="6Af-9l-DZe" secondAttribute="trailing" constant="17" id="Psz-BK-l3A"/>
+                            <constraint firstAttribute="bottom" secondItem="6Af-9l-DZe" secondAttribute="bottom" constant="7" id="nlR-Cs-RnU"/>
+                            <constraint firstItem="6Af-9l-DZe" firstAttribute="leading" secondItem="8b3-S9-yVJ" secondAttribute="leading" constant="17" id="t5L-EO-aAx"/>
+                        </constraints>
+                    </view>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailingMargin" secondItem="6Af-9l-DZe" secondAttribute="trailing" constant="8" id="Nfi-G1-cnl"/>
-                    <constraint firstItem="6Af-9l-DZe" firstAttribute="leading" secondItem="mOK-br-IA7" secondAttribute="leadingMargin" constant="8" id="Z0o-9t-Zqt"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="6Af-9l-DZe" secondAttribute="bottom" id="dJL-Md-wG4"/>
-                    <constraint firstItem="6Af-9l-DZe" firstAttribute="top" secondItem="mOK-br-IA7" secondAttribute="topMargin" constant="-2" id="lai-l5-9Kz"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="8b3-S9-yVJ" secondAttribute="trailing" constant="-9" id="3fm-xH-hNh"/>
+                    <constraint firstItem="8b3-S9-yVJ" firstAttribute="top" secondItem="mOK-br-IA7" secondAttribute="topMargin" constant="-8" id="Elu-zF-da5"/>
+                    <constraint firstItem="8b3-S9-yVJ" firstAttribute="leading" secondItem="mOK-br-IA7" secondAttribute="leadingMargin" constant="-9" id="WKF-rZ-ihv"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="8b3-S9-yVJ" secondAttribute="bottom" constant="-8" id="p0G-Ks-BgJ"/>
                 </constraints>
                 <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
             </tableViewCellContentView>
             <edgeInsets key="layoutMargins" top="8" left="8" bottom="8" right="8"/>
             <connections>
+                <outlet property="innerContentContainer" destination="8b3-S9-yVJ" id="fhY-Kd-Wgp"/>
                 <outlet property="titleLabel" destination="6Af-9l-DZe" id="biz-Rg-Qam"/>
             </connections>
             <point key="canvasLocation" x="559" y="492"/>

@@ -34,7 +34,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="22" sectionFooterHeight="22" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                             </tableView>
@@ -61,7 +61,7 @@
                                 </items>
                             </toolbar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N7I-Dk-brQ" customClass="PostInputView" customModule="Ott" customModuleProvider="target">
-                                <rect key="frame" x="0.0" y="470" width="600" height="86"/>
+                                <rect key="frame" x="0.0" y="514" width="600" height="86"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="urz-ip-t9q">
                                         <rect key="frame" x="-1" y="0.0" width="602" height="86"/>
@@ -148,6 +148,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="Y5K-j4-5dG" secondAttribute="trailing" constant="-20" id="9Ra-hf-xhb"/>
+                            <constraint firstAttribute="bottomMargin" secondItem="N7I-Dk-brQ" secondAttribute="bottom" id="Aah-Oo-Wt2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fhB-VS-06h" secondAttribute="trailing" constant="-20" id="Al6-KO-brV"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="top" secondItem="6Ch-ty-LY7" secondAttribute="bottom" id="Dsc-SK-Q8U"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="top" secondItem="Y5K-j4-5dG" secondAttribute="bottom" id="Gbq-73-1TC"/>
@@ -156,7 +157,6 @@
                             <constraint firstItem="6Ch-ty-LY7" firstAttribute="top" secondItem="gyZ-E2-gK4" secondAttribute="topMargin" id="UtA-2R-OaH"/>
                             <constraint firstAttribute="trailingMargin" secondItem="6Ch-ty-LY7" secondAttribute="trailing" constant="-20" id="Z5g-I1-8qi"/>
                             <constraint firstItem="Y5K-j4-5dG" firstAttribute="top" secondItem="gyZ-E2-gK4" secondAttribute="topMargin" id="adT-9O-Lgh"/>
-                            <constraint firstItem="fhB-VS-06h" firstAttribute="top" secondItem="N7I-Dk-brQ" secondAttribute="bottom" id="ed4-hy-8PN"/>
                             <constraint firstItem="N7I-Dk-brQ" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="eit-wa-jk8"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="gBh-op-jTk"/>
                             <constraint firstAttribute="trailingMargin" secondItem="N7I-Dk-brQ" secondAttribute="trailing" constant="-20" id="h76-Os-Wiv"/>
@@ -174,7 +174,7 @@
                     <connections>
                         <outlet property="mapView" destination="6Ch-ty-LY7" id="ODM-Yv-QYD"/>
                         <outlet property="postInputView" destination="N7I-Dk-brQ" id="CL8-nq-AyE"/>
-                        <outlet property="postInputViewBottomConstraint" destination="ed4-hy-8PN" id="DFN-k3-35x"/>
+                        <outlet property="postInputViewBottomConstraint" destination="Aah-Oo-Wt2" id="lvj-pF-fvv"/>
                         <outlet property="tableView" destination="Y5K-j4-5dG" id="fyV-8u-CwC"/>
                         <outlet property="toolbar" destination="fhB-VS-06h" id="GrT-kY-bdg"/>
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>

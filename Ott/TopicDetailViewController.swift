@@ -127,15 +127,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func showPostInputView() {
             
-            toolbarBottomConstraint.constant = -toolbar.frame.size.height
-            postInputView.hidden = false
+            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .LayoutSubviews, animations: { () -> Void in
+                
+                self.postInputViewBottomConstraint.constant = 0
+                self.toolbarBottomConstraint.constant = -self.toolbar.frame.size.height
+                
+                }) { (_) -> Void in }
         }
         
         
         func showToolbar() {
             
-            toolbarBottomConstraint.constant = 0
-            postInputView.hidden = true
+            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .LayoutSubviews, animations: { () -> Void in
+                
+                self.postInputViewBottomConstraint.constant = -self.postInputView.frame.size.height
+                self.toolbarBottomConstraint.constant = 0
+                
+                }) { (_) -> Void in }
+            
         }
         
     
@@ -349,7 +358,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let commentCellViewIdentifier = "commentCell"
     private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
-    private let summaryCellViewNibName = "TopicDetailSummayTableViewCell"
+    private let summaryCellViewNibName = "TopicDetailSummaryTableViewCell"
     private let summaryCellViewIdentifer = "summaryCell"
     private let titleCellViewHeight = CGFloat(56)
     private let commentCellViewHeight = CGFloat(100)
@@ -413,10 +422,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
         if section == 0 {
-            return 1.0
+            return 0.1
         }
         
-        return 8
+        return 16
     }
     
     
@@ -536,7 +545,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func initializeAuthorCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(summaryCellViewIdentifer) as! TopicDetailSummayTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(summaryCellViewIdentifer) as! TopicDetailSummaryTableViewCell
             cell.displayedTopic = myTopic
             return cell
         }

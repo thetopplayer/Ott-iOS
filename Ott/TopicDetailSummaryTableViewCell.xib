@@ -7,7 +7,7 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <view contentMode="scaleToFill" restorationIdentifier="summaryCell" id="Ej5-P2-nX4" customClass="TopicDetailSummayTableViewCell" customModule="Ott" customModuleProvider="target">
+        <view contentMode="scaleToFill" restorationIdentifier="summaryCell" id="Ej5-P2-nX4" customClass="TopicDetailSummaryTableViewCell" customModule="Ott" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="600" height="90"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
@@ -34,7 +34,7 @@
                             <nil key="highlightedColor"/>
                         </label>
                     </subviews>
-                    <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                    <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="LOS-bD-3Bi" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="7Nl-ik-6mL"/>
                         <constraint firstItem="IZQ-U4-WaG" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="Gls-ao-2G0"/>
