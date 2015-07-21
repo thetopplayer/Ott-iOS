@@ -79,8 +79,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         // enter edit mode if the user has not yet posted to this topic
-        let displayMode: DisplayMode = myTopic!.userDidPostRating ? .PostDisplay : .PostCreation
-        setDisplayMode(displayMode)
+        displayMode = myTopic!.userDidPostRating ? .PostDisplay : .PostCreation
         setDisplayType(.List)
         
         // rearrange posts and reload table
@@ -97,6 +96,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         operation.completionBlock = {
             dispatch_async(dispatch_get_main_queue()) {
                 self.tableView.reloadData()
+                self.setMapAnnotations(forPosts: self.arrangedPosts)
             }
         }
         
@@ -109,7 +109,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private func setDisplayMode(mode: DisplayMode) {
+    private var displayMode: DisplayMode? {
+        
+        didSet {
+            _setDisplayMode(displayMode!)
+        }
+    }
+    
+    
+    private func _setDisplayMode(mode: DisplayMode) {
         
         func showCancelButton() {
             
@@ -132,6 +140,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.postInputViewBottomConstraint.constant = 0
                 self.toolbarBottomConstraint.constant = -self.toolbar.frame.size.height
                 
+                let bottom = self.postInputView.frame.size.height
+                self.adjustTableViewInsets(withBottom: bottom)
+
                 }) { (_) -> Void in }
         }
         
@@ -143,8 +154,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.postInputViewBottomConstraint.constant = -self.postInputView.frame.size.height
                 self.toolbarBottomConstraint.constant = 0
                 
+                let bottom = self.toolbar.frame.size.height
+                self.adjustTableViewInsets(withBottom: bottom)
+
                 }) { (_) -> Void in }
-            
         }
         
     
@@ -315,7 +328,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBAction func handleEnterEditModeAction(sender: AnyObject) {
 
-        setDisplayMode(.PostCreation)
+        displayMode = .PostCreation
     }
     
     
@@ -332,7 +345,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if let userDidPost = myTopic?.userDidPostRating {
             if userDidPost {
-                setDisplayMode(.PostDisplay)
+                displayMode = .PostDisplay
             }
             else {
                 dismissViewControllerAnimated(true) { () -> Void in }
@@ -552,30 +565,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         return height
     }
-
-    
-    /*
-    var _sizingCommentCell: TopicCommentTableViewCell?
-    
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        func commentCellHeight() -> CGFloat {
-            
-            if _sizingCommentCell == nil {
-                _sizingCommentCell = tableView.dequeueReusableCellWithIdentifier("TopicCommentTableViewCell") as? TopicCommentTableViewCell
-            }
-            
-            let sizingCell = _sizingCommentCell!
-            sizingCell.setNeedsLayout()
-            sizingCell.layoutIfNeeded()
-            
-            let size = sizingCell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
-            return size.height
-        }
-        
-        
-    }
-*/
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -644,11 +633,53 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
 
     //MARK: - MapView
     
-
     private func setupMapView() {
         
         mapView.delegate = self
     }
+    
+    
+    private func setMapAnnotations(forPosts posts: [Post]) {
+        
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.addAnnotations(posts)
+        mapView.showAnnotations(posts, animated: true)
+    }
+    
+    
+    func mapViewWillStartRenderingMap(mapView: MKMapView) {
+        
+        mapView.alpha = 0
+    }
+    
+    
+    func mapViewDidFinishRenderingMap(mapView: MKMapView) {
+        
+        UIView.animateWithDuration(0.3) { () -> Void in
+            mapView.alpha = 1.0
+        }
+    }
+    
+    
+    func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
+        
+        if annotation is MKUserLocation {
+            return nil
+        }
+        
+        let identifier = "annotation"
+        
+        var view = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
+        if view == nil {
+            view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        }
+        else {
+            view?.annotation = annotation
+        }
+        
+        return view
+    }
+    
     
     
     //MARK: -  Observations {
@@ -732,7 +763,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
 
             if keyboardIsCoveringContent() == false {
                 // only animate if not covering content to avoid drawing artifacts
-                let bottom = self.postInputView.frame.size.height
+                let bottom = self.displayMode == .PostCreation ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                 self.adjustTableViewInsets(withBottom: bottom)
             }
 
@@ -742,7 +773,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
                 if keyboardIsCoveringContent() {
                     
-                    let bottom = self.postInputView.frame.size.height
+                    let bottom = self.displayMode == .PostCreation ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                     self.adjustTableViewInsets(withBottom: bottom)
                 }}
     }

@@ -17,10 +17,6 @@ class TopicCommentTableViewCell: TableViewCell {
         super.awakeFromNib()
         contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         innerContentContainer?.addBorder(withColor: UIColor(white: 0.85, alpha: 1.0))
-//        
-//        textView.editable = false
-//        textView.selectable = false
-//        textView.scrollEnabled = false
     }
 
     

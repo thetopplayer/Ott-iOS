@@ -60,4 +60,16 @@ extension UIView {
         gradientLayer.colors = colors
         self.layer.insertSublayer(gradientLayer, atIndex: 0)
     }
+    
+    
+    func image() -> UIImage {
+        
+        UIGraphicsBeginImageContextWithOptions(self.frame.size, false, 0.0)
+        let context = UIGraphicsGetCurrentContext()
+        layer.renderInContext(context)
+        let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext();
+        
+        return snapshotImage;
+    }
 }

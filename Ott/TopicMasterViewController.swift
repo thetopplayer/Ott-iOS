@@ -199,6 +199,8 @@ class TopicMasterViewController: TableViewController {
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
         
+        tableView.estimatedRowHeight = cellHeight
+        
         let nib = UINib(nibName: cellNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: cellIdentifier)
         
@@ -233,7 +235,6 @@ class TopicMasterViewController: TableViewController {
     
     
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        
         return headerViewHeight
     }
     
@@ -255,14 +256,14 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-
-        let theTopic = data![indexPath.row]
-        if theTopic.hasImage {
-            return imageCellHeight
-        }
-        return cellHeight
-    }
+//    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+//
+//        let theTopic = data![indexPath.row]
+//        if theTopic.hasImage {
+//            return imageCellHeight
+//        }
+//        return cellHeight
+//    }
     
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {

@@ -19,7 +19,7 @@
                         <rect key="frame" x="-1" y="0.0" width="601" height="99"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MqX-mB-rtm">
-                                <rect key="frame" x="15" y="8" width="571" height="83"/>
+                                <rect key="frame" x="15" y="16" width="571" height="67"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="17"/>
                                 <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                                 <nil key="highlightedColor"/>
@@ -27,10 +27,10 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="MqX-mB-rtm" firstAttribute="top" secondItem="3ml-Bc-QET" secondAttribute="top" constant="8" id="BJi-4S-YLF"/>
+                            <constraint firstItem="MqX-mB-rtm" firstAttribute="top" secondItem="3ml-Bc-QET" secondAttribute="top" constant="16" id="BJi-4S-YLF"/>
                             <constraint firstItem="MqX-mB-rtm" firstAttribute="leading" secondItem="3ml-Bc-QET" secondAttribute="leading" constant="15" id="GA9-rd-tWD"/>
                             <constraint firstAttribute="trailing" secondItem="MqX-mB-rtm" secondAttribute="trailing" constant="15" id="Qpw-nX-SoU"/>
-                            <constraint firstAttribute="bottom" secondItem="MqX-mB-rtm" secondAttribute="bottom" constant="8" id="gGy-ap-zCU"/>
+                            <constraint firstAttribute="bottom" secondItem="MqX-mB-rtm" secondAttribute="bottom" constant="16" id="gGy-ap-zCU"/>
                         </constraints>
                         <edgeInsets key="layoutMargins" top="0.0" left="8" bottom="0.0" right="8"/>
                     </view>

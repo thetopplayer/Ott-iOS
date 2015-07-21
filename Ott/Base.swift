@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
+import MapKit
 
-class Base: NSManagedObject, Uploadable {
+class Base: NSManagedObject, Uploadable, MKAnnotation {
 
     @NSManaged var comment_: String?
     @NSManaged var identifier: String?
@@ -139,6 +140,27 @@ class Base: NSManagedObject, Uploadable {
         return locationName != nil
     }
     
+    
+    
+    //MARK: - MKAnnotation
+    
+    var coordinate: CLLocationCoordinate2D {
+        
+        return CLLocationCoordinate2D(latitude: latitude!.doubleValue, longitude: longitude!.doubleValue)
+    }
+    
+    
+    var title: String? {
+        return name
+    }
+    
+    
+    var subTitle: String? {
+
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = .MediumStyle
+        return dateFormatter.stringFromDate(timestamp)
+    }
     
     
     

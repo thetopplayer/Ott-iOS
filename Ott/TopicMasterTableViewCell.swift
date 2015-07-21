@@ -16,8 +16,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topBarLabel: UILabel!
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
-    @IBOutlet var nameLabel: UILabel!
-    @IBOutlet var commentLabel: UILabel!
+    @IBOutlet var contentLabel: UILabel!
     @IBOutlet var topicImageView: UIImageView?
     
     
@@ -53,18 +52,31 @@ class TopicMasterTableViewCell: TableViewCell {
         if let topic = displayedTopic {
             
             topBarLabel.attributedText = timeAndLocationAttributedString(topic)
-            
-            nameLabel.text = topic.name!
-            if topic.comment != nil {
-                commentLabel.text = topic.comment!
-            }
-            else {
-                commentLabel.text = ""
-            }
-            
+            contentLabel.attributedText = attributedContent(topic)
             statusLabel.attributedText = attributedDescription(topic)
             topicImageView?.image = topic.image
         }
+    }
+    
+    
+    private func attributedContent(topic: Topic) -> NSAttributedString {
+        
+        var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
+        boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(22)
+        
+        let s1 = NSMutableAttributedString(string: topic.name!, attributes: boldAttributes)
+        
+        if let comment = topic.comment {
+            
+            var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
+            normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)
+            
+            let text = "\n" + comment
+            let s2 = NSAttributedString(string: text, attributes: normalAttributes)
+            s1.appendAttributedString(s2)
+        }
+        
+        return s1
     }
     
     

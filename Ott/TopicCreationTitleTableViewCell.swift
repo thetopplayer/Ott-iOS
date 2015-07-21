@@ -26,6 +26,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         
         super.awakeFromNib()
 
+        innerContentContainer?.addBorder()
         textField.addRoundedBorder()
         textField.delegate = self
         textView.addRoundedBorder()
