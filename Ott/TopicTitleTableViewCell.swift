@@ -18,17 +18,48 @@ class TopicTitleTableViewCell: TableViewCell {
         super.awakeFromNib()
         contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         innerContentContainer?.addBorder()
+        
+        selectionStyle = .None
     }
 
     
-    var title: String? {
+    var displayedTopic: Topic? {
         
-        set {
-            titleLabel.text = newValue
-        }
-        
-        get {
-            return titleLabel.text
+        didSet {
+            updateContents()
         }
     }
+    
+    
+    private func updateContents() {
+        
+        if let userDidPost = displayedTopic?.userDidPostRating {
+            
+            titleLabel.attributedText = attributedTitle(displayedTopic!, displayingRating: userDidPost)
+        }
+    }
+
+    
+    private func attributedTitle(topic: Topic, displayingRating: Bool) -> NSAttributedString {
+        
+        var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
+        normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(32)
+        
+        let s1 = NSMutableAttributedString(string: topic.name!, attributes: normalAttributes)
+        
+        if displayingRating {
+            
+            let color = topic.ratingToColor()
+            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : color]
+            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(32)
+            
+            let text = "  \u{00b7}  " + topic.ratingToText()
+            let s2 = NSAttributedString(string: text, attributes: boldAttributes)
+            
+            s1.appendAttributedString(s2)
+        }
+        
+        return s1
+    }
+    
 }

@@ -15,7 +15,7 @@ class PostDetailTableViewCell: TableViewCell {
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var ratingLabel: UILabel!
-    @IBOutlet var commentTextView: UITextView!
+    @IBOutlet var commentLabel: UILabel!
 
     
     
@@ -37,10 +37,6 @@ class PostDetailTableViewCell: TableViewCell {
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()
         
-        commentTextView.editable = false
-        commentTextView.selectable = false
-        commentTextView.scrollEnabled = false
-        
         selectionStyle = .None
     }
     
@@ -61,7 +57,7 @@ class PostDetailTableViewCell: TableViewCell {
             ratingLabel.text = post.ratingToText()
             ratingLabel.textColor = post.ratingToColor()
             let comment = post.comment != nil ? post.comment! : ""
-            commentTextView.text = comment
+            commentLabel.text = comment
             
             statusLabel.attributedText = attributedDescription(post)
         }

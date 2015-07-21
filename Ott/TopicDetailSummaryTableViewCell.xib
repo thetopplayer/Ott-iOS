@@ -11,6 +11,15 @@
             <rect key="frame" x="0.0" y="0.0" width="600" height="90"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
             <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1004 posts since creation on July 5, 2015" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gin-y1-KE3">
+                    <rect key="frame" x="16" y="4" width="568" height="18"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="18" id="32G-Sb-PSK"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                    <nil key="highlightedColor"/>
+                </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="wVt-mt-xss">
                     <rect key="frame" x="-1" y="26" width="602" height="64"/>
                     <subviews>
@@ -47,18 +56,10 @@
                         <constraint firstAttribute="height" constant="64" id="wn0-p5-XFJ"/>
                     </constraints>
                 </view>
-                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1004 posts since creation on July 5, 2015" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="gin-y1-KE3">
-                    <rect key="frame" x="16" y="4" width="568" height="18"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="18" id="32G-Sb-PSK"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                    <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                    <nil key="highlightedColor"/>
-                </label>
             </subviews>
             <constraints>
                 <constraint firstAttribute="trailing" secondItem="wVt-mt-xss" secondAttribute="trailing" constant="-1" id="FXc-PJ-aqx"/>
+                <constraint firstItem="wVt-mt-xss" firstAttribute="top" secondItem="gin-y1-KE3" secondAttribute="bottom" constant="4" id="Oo7-gp-bZc"/>
                 <constraint firstAttribute="trailing" secondItem="gin-y1-KE3" secondAttribute="trailing" constant="16" id="Q8V-zO-pjL"/>
                 <constraint firstItem="gin-y1-KE3" firstAttribute="leading" secondItem="Ej5-P2-nX4" secondAttribute="leading" constant="16" id="RkK-zE-I6a"/>
                 <constraint firstAttribute="bottom" secondItem="wVt-mt-xss" secondAttribute="bottom" id="fXt-Nr-4K1"/>

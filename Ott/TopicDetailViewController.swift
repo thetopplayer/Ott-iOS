@@ -164,7 +164,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             showDoneButton()
             showToolbar()
             if let userDidPost = myTopic?.userDidPostRating {
-                mapToggleButton?.enabled = userDidPost == false
+                mapToggleButton?.enabled = userDidPost
             }
          }
     }
@@ -377,6 +377,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         tableView.delegate = self
         tableView.dataSource = self
+        tableView.rowHeight = UITableViewAutomaticDimension
         
         tableView.backgroundColor = UIColor.background()
         tableView.separatorStyle = .None
@@ -475,38 +476,43 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    enum TableCellType {
+        case TopicTitle, TopicComment, TopicImage, TopicSummary, Post
+    }
+    
+    
+    func cellTypeForIndexPath(indexPath: NSIndexPath) -> TableCellType {
         
-        var height: CGFloat = 0
+        var cellType: TableCellType?
         
         if indexPath.section == topicSection {
             
             switch indexPath.row {
                 
             case 0:
-                height = titleCellViewHeight
+                cellType = .TopicTitle
                 
             case 1:
                 if myTopic!.hasComment {
-                    height = commentCellViewHeight
+                    cellType = .TopicComment
                 }
                 else if myTopic!.hasImage {
-                    height = imageCellViewHeight
+                    cellType = .TopicImage
                 }
                 else {
-                    height = summaryCellViewHeight
+                    cellType = .TopicSummary
                 }
                 
             case 2:
                 if myTopic!.hasComment && myTopic!.hasImage {
-                    height = imageCellViewHeight
+                    cellType = .TopicImage
                 }
                 else {
-                    height = summaryCellViewHeight
+                    cellType = .TopicSummary
                 }
                 
             case 3:
-                height = summaryCellViewHeight
+                cellType = .TopicSummary
                 
             default:
                 NSLog("too many rows for section %d", indexPath.section)
@@ -514,11 +520,62 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
         else if indexPath.section == postsSection {
+            cellType = .Post
+        }
+        
+        return cellType!
+    }
+    
+    
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var height: CGFloat = 0
+        
+        switch cellTypeForIndexPath(indexPath) {
+            
+        case .TopicTitle:
+            height = titleCellViewHeight
+            
+        case .TopicComment:
+            height = commentCellViewHeight
+            
+        case .TopicImage:
+            height = imageCellViewHeight
+            
+        case .TopicSummary:
+            height = summaryCellViewHeight
+            
+        case .Post:
             height = postCellHeight
+            
         }
         
         return height
     }
+
+    
+    /*
+    var _sizingCommentCell: TopicCommentTableViewCell?
+    
+    func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        func commentCellHeight() -> CGFloat {
+            
+            if _sizingCommentCell == nil {
+                _sizingCommentCell = tableView.dequeueReusableCellWithIdentifier("TopicCommentTableViewCell") as? TopicCommentTableViewCell
+            }
+            
+            let sizingCell = _sizingCommentCell!
+            sizingCell.setNeedsLayout()
+            sizingCell.layoutIfNeeded()
+            
+            let size = sizingCell.contentView.systemLayoutSizeFittingSize(UILayoutFittingCompressedSize)
+            return size.height
+        }
+        
+        
+    }
+*/
     
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
@@ -526,7 +583,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializeTitleCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(titleCellViewIdentifier) as! TopicTitleTableViewCell
-            cell.title = myTopic?.name
+            cell.displayedTopic = myTopic
             return cell
         }
         
@@ -544,7 +601,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return cell
         }
         
-        func initializeAuthorCell() -> UITableViewCell {
+        func initializeSummaryCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(summaryCellViewIdentifer) as! TopicDetailSummaryTableViewCell
             cell.displayedTopic = myTopic
@@ -561,45 +618,25 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         var cell: UITableViewCell?
         
-        if indexPath.section == topicSection {
+        switch cellTypeForIndexPath(indexPath) {
             
-            switch indexPath.row {
-                
-            case 0:
-                cell = initializeTitleCell()
-                
-            case 1:
-                if myTopic!.hasComment {
-                    cell = initializeCommentCell()
-                }
-                else if myTopic!.hasImage {
-                    cell = initializeImageCell()
-                }
-                else {
-                    cell = initializeAuthorCell()
-                }
-                
-            case 2:
-                if myTopic!.hasComment && myTopic!.hasImage {
-                    cell = initializeImageCell()
-                }
-                else {
-                    cell = initializeAuthorCell()
-                }
-                
-            case 3:
-                cell = initializeAuthorCell()
-                
-            default:
-                NSLog("too many rows for section %d", indexPath.section)
-                assert(false)
-            }
-        }
-        else if indexPath.section == postsSection {
+        case .TopicTitle:
+            cell = initializeTitleCell()
+            
+        case .TopicComment:
+            cell = initializeCommentCell()
+            
+        case .TopicImage:
+            cell = initializeImageCell()
+            
+        case .TopicSummary:
+            cell = initializeSummaryCell()
+            
+        case .Post:
             cell = initializePostCell()
+            
         }
         
-//        cell!.contentView.backgroundColor = UIColor.whiteColor()
         return cell!
     }
     

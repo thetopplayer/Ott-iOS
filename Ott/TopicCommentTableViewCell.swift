@@ -10,31 +10,30 @@ import UIKit
 
 class TopicCommentTableViewCell: TableViewCell {
 
-    @IBOutlet var textView: UITextView!
-    
-    
+    @IBOutlet var label: UILabel!
+        
     override func awakeFromNib() {
         
         super.awakeFromNib()
         contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         innerContentContainer?.addBorder(withColor: UIColor(white: 0.85, alpha: 1.0))
-        
-        textView.editable = false
-        textView.selectable = false
-        textView.scrollEnabled = false
+//        
+//        textView.editable = false
+//        textView.selectable = false
+//        textView.scrollEnabled = false
     }
 
     
     var comment: String? {
         
         set {
-            textView.text = newValue
-            textView.font = UIFont.systemFontOfSize(16)
-            textView.textColor = UIColor.darkGrayColor()
+            label.text = newValue
+            label.font = UIFont.systemFontOfSize(16)
+            label.textColor = UIColor.darkGrayColor()
         }
         
         get {
-            return textView.text
+            return label.text
         }
     }
 }

@@ -54,8 +54,6 @@ class TopicMasterTableViewCell: TableViewCell {
             
             topBarLabel.attributedText = timeAndLocationAttributedString(topic)
             
-//            ratingLabel.text = topic.ratingToText()
-//            ratingLabel.textColor = topic.ratingToColor()
             nameLabel.text = topic.name!
             if topic.comment != nil {
                 commentLabel.text = topic.comment!
