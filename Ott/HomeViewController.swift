@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import CoreData
+
 
 
 class HomeViewController: ViewController {
@@ -43,8 +43,6 @@ class HomeViewController: ViewController {
 
         super.viewDidLoad()
         
-        myUser = Author.user(inContext: managedObjectContext)
-
         view.backgroundColor = UIColor.background()
 
         userContainerView.backgroundColor = UIColor.whiteColor()
@@ -55,7 +53,7 @@ class HomeViewController: ViewController {
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         
-        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", myUser!)
+        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser()!)
         topicTableViewController.tableView = tableView
         topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
         topicTableViewController.viewDidLoad()
@@ -96,18 +94,12 @@ class HomeViewController: ViewController {
     
     //MARK: - Data
     
-    private var myUser: Author? {
+    private var myUser: AuthorObject? {
         
         didSet {
             updateDisplayedInformation()
         }
     }
-    
-    
-    var managedObjectContext: NSManagedObjectContext = {
-        
-        return DataManager.sharedInstance.managedObjectContext
-        }()
     
     
     
@@ -116,11 +108,11 @@ class HomeViewController: ViewController {
     
     private func updateDisplayedInformation() {
         
-        if let theUser = myUser {
+        if let theUser = currentUser() {
             
             dispatch_async(dispatch_get_main_queue(), {
                 
-                self.nameTextLabel.text = theUser.name
+                self.nameTextLabel.text = theUser.username
                 self.handleTextLabel.text = theUser.handle
                 self.summaryTextLabel.attributedText = self.attributedUserDetails(theUser)
             })
@@ -128,12 +120,12 @@ class HomeViewController: ViewController {
     }
     
     
-    private func attributedUserDetails(user: Author) -> NSAttributedString {
+    private func attributedUserDetails(user: AuthorObject) -> NSAttributedString {
         
         var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
         numberAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Bold", size: 15)
         
-        let s1 = NSMutableAttributedString(string: "\(user.numberOfTopics?.integerValue)", attributes: numberAttributes)
+        let s1 = NSMutableAttributedString(string: "\(user.numberOfTopics)", attributes: numberAttributes)
         
         var textAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         textAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Regular", size: 12)
@@ -145,7 +137,7 @@ class HomeViewController: ViewController {
         let t = user.numberOfTopics == 1 ? " TOPIC  -  " : " TOPICS  -  "
         s2 = NSAttributedString(string: t, attributes: textAttributes)
         
-        let s3 = NSMutableAttributedString(string: "\(user.numberOfPosts?.integerValue)", attributes: numberAttributes)
+        let s3 = NSMutableAttributedString(string: "\(user.numberOfPosts)", attributes: numberAttributes)
         
         var s4: NSAttributedString
         let p = user.numberOfPosts == 1 ? " POSTS" : " POSTS"
@@ -189,8 +181,8 @@ class HomeViewController: ViewController {
     func handleDidUpdateUserNotification(notification: NSNotification) {
         
         // refetch to update info
-        myUser = nil
-        myUser = Author.user(inContext: managedObjectContext)
+//        myUser = nil
+//        myUser = Author.user(inContext: managedObjectContext)
     }
     
     

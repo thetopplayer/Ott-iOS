@@ -20,7 +20,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topicImageView: UIImageView?
     
     
-    var displayedTopic: Topic? {
+    var displayedTopic: TopicObject? {
         
         didSet {
             updateContents()
@@ -52,52 +52,67 @@ class TopicMasterTableViewCell: TableViewCell {
         if let topic = displayedTopic {
             
             topBarLabel.attributedText = timeAndLocationAttributedString(topic)
-            contentLabel.attributedText = attributedContent(topic)
-            statusLabel.attributedText = attributedDescription(topic)
-            topicImageView?.image = topic.image
+            contentLabel.attributedText = attributedContent()
+            statusLabel.attributedText = attributedDescription()
+            
+            if topic.hasImage {
+
+            }
+            
+//            topicImageView?.image = topic.image
         }
     }
     
     
-    private func attributedContent(topic: Topic) -> NSAttributedString {
+    private func attributedContent() -> NSAttributedString {
         
-        var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
-        boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(22)
+        if let topic = displayedTopic {
+            
+            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
+            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(22)
+            
+            let s1 = NSMutableAttributedString(string: topic.name!, attributes: boldAttributes)
+            
+            if let comment = topic.comment {
+                
+                var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
+                normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)
+                
+                let text = "\n" + comment
+                let s2 = NSAttributedString(string: text, attributes: normalAttributes)
+                s1.appendAttributedString(s2)
+            }
+            
+            return s1
+        }
         
-        let s1 = NSMutableAttributedString(string: topic.name!, attributes: boldAttributes)
+        return NSAttributedString(string: "")
+    }
+    
+    
+    private func attributedDescription() -> NSAttributedString {
         
-        if let comment = topic.comment {
+        if let topic = displayedTopic {
             
             var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-            normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)
+            normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)
             
-            let text = "\n" + comment
-            let s2 = NSAttributedString(string: text, attributes: normalAttributes)
+            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
+            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(12)
+            
+            let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
+            
+            let p = topic.numberOfPosts == 1 ? " rating " : " ratings "
+            let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
+            let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
+            let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)
+            
             s1.appendAttributedString(s2)
+            s1.appendAttributedString(s3)
+            return s1
         }
         
-        return s1
-    }
-    
-    
-    private func attributedDescription(topic: Topic) -> NSAttributedString {
-        
-        var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-        normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)
-        
-        var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-        boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(12)
-        
-        let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
-        
-        let p = topic.numberOfPosts == 1 ? " rating " : " ratings "
-        let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
-        let authorName = topic.author.name != nil ? topic.author.name! : "Anonymous"
-        let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)
-        
-        s1.appendAttributedString(s2)
-        s1.appendAttributedString(s3)
-        return s1
+        return NSAttributedString(string: "")
     }
     
 }

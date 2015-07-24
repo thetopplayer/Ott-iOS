@@ -27,7 +27,7 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     }
     
     
-    var displayedTopic: Topic? {
+    var displayedTopic: TopicObject? {
         
         didSet {
             updateContents()
@@ -43,7 +43,7 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     }
     
     
-    private func attributedDescription(topic: Topic) -> NSAttributedString {
+    private func attributedDescription(topic: TopicObject) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)
@@ -58,7 +58,7 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
         
         let p = topic.numberOfPosts == 1 ? " post " : " posts "
         let s2 = NSAttributedString(string: p + "since creation on ", attributes: normalAttributes)
-        let dateString = dateFormatter.stringFromDate(topic.timestamp)
+        let dateString = dateFormatter.stringFromDate(topic.createdAt!)
         let s3 = NSAttributedString(string: dateString, attributes: boldAttributes)
         
         s1.appendAttributedString(s2)

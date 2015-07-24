@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import CoreData
+
 
 class TopicCreationViewController: TableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, TopicCreationTitleTableViewCellDelegate, TopicCreationButtonTableViewCellDelegate {
 
@@ -29,7 +29,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         super.viewWillAppear(animated)
         
         if myTopic == nil {
-            myTopic = Topic.create(inContext: managedObjectContext)
+            myTopic = TopicObject()
             navigationItem.rightBarButtonItem?.enabled = false
         }
         
@@ -50,49 +50,28 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     }
     
     
-    func imageLoaded() -> Bool {
-        return myTopic?.image != nil
-    }
-    
-    
     
     //MARK: - Data
     
-    var myTopic: Topic?
-    
-    private lazy var managedObjectContext: NSManagedObjectContext = {
-        
-        let moc = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-        moc.parentContext = DataManager.sharedInstance.managedObjectContext
-        return moc
-        }()
-    
+    var myTopic: TopicObject?
     
     private func saveChanges() {
         
-        if let myTopic = myTopic {
-            
-            myTopic.name = titleCellView!.title
-            myTopic.comment = titleCellView!.comment
-            myTopic.latitude = LocationManager.sharedInstance.location?.coordinate.latitude
-            myTopic.longitude = LocationManager.sharedInstance.location?.coordinate.longitude
-            myTopic.locationName = LocationManager.sharedInstance.locationName
-            
-            let user = Author.user(inContext: managedObjectContext)
-            myTopic.identifier = user.newContentIdentifier()
-            user.update(withTopic: myTopic)
-            
-            managedObjectContext.saveContext()
-            DataManager.sharedInstance.upload(myTopic)
-            managedObjectContext.reset()
-        }
+        let topic = myTopic!
+        
+        topic.name = titleCellView!.title
+        topic.comment = titleCellView!.comment
+        topic.location = LocationManager.sharedInstance.location?.coordinate
+        topic.locationName = LocationManager.sharedInstance.locationName
+        currentUser()?.addTopic(topic)
+        
+        currentUser()!.save()
     }
     
     
     private func discardChanges() {
         
         myTopic = nil
-        managedObjectContext.reset()
     }
 
     
@@ -146,7 +125,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             return titleCellHeight
         }
         
-        if imageLoaded() {
+        if myTopic!.hasImage {
             return imageCellHeight
         }
         else {
@@ -171,10 +150,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         }
         else {
             
-            if imageLoaded() {
+            if myTopic!.hasImage {
                 
                 imageCellView = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as? ImageTableViewCell
-                imageCellView!.topicImageView?.image = myTopic?.image
+//                imageCellView!.topicImageView?.image = myTopic?.image
                 cell = imageCellView!
             }
             else {
@@ -234,10 +213,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     func buttonViewButtonDidPress(action: TopicCreationButtonTableViewCell.ButtonAction) {
         
-        if let myTopic = myTopic {
-            myTopic.name = titleCellView?.title
-            myTopic.comment = titleCellView?.comment
-        }
+        myTopic!.name = titleCellView?.title
+        myTopic!.comment = titleCellView?.comment
+        
         
         if action == .Camera {
             

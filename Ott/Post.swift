@@ -2,37 +2,14 @@
 //  Post.swift
 //  Ott
 //
-//  Created by Max on 6/25/15.
+//  Created by Max on 7/22/15.
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
-import Foundation
-import CoreData
+import UIKit
 
-class Post: Base {
-
-    @NSManaged var topic: Topic?
-    @NSManaged var author: Author
+protocol Post: Creation {
     
-    
-    static func create(inContext context: NSManagedObjectContext) -> Post {
-        
-        return NSEntityDescription.insertNewObjectForEntityForName("Post", inManagedObjectContext: context) as! Post
-    }
-
-
-    
-    //MARK: - Uploadable and Downloadable
-    
-    static let authorIDKey = "authID"
-    
-    override func toDictionary() -> [String : String] {
-        
-        var result = super.toDictionary()
-        
-        result[Base.typeKey] = "Post"
-        result[Post.authorIDKey] = author.identifier
-        return result
-    }
-
+    func setTopic<T: Topic>(topic: T) -> Void
+    var topicName: String? {get set}
 }

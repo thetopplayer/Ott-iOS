@@ -77,7 +77,7 @@ class PostInputView: UIView, UITextViewDelegate {
         rating = nil
         displayTextViewPlaceholder()
         postButton.enabled = false
-        updateDisplay(withValue: rating)
+        updateDisplay(withRating: rating)
         
         textView.displayScrolling = false
         
@@ -88,23 +88,26 @@ class PostInputView: UIView, UITextViewDelegate {
     }
     
     
-    private func updateDisplay(withValue value: Float?) {
+    private func updateDisplay(withRating rating: Rating?) {
         
-        let text = Post.ratingToText(value)
-        let color = Post.ratingToColor(value)
-        
-        dispatch_async(dispatch_get_main_queue(), {
+        if let rating = rating {
             
-            self.ratingLabel.text = text
-            self.ratingLabel.textColor = color
-        })
+            let text = rating.text()
+            let color = rating.color()
+            
+            dispatch_async(dispatch_get_main_queue(), {
+                
+                self.ratingLabel.text = text
+                self.ratingLabel.textColor = color
+            })
+        }
     }
     
     
     
     //MARK: - Data
     
-    var rating: Float? {
+    var rating: Rating? {
         didSet {
             postButton.enabled = rating != nil
         }
@@ -135,8 +138,8 @@ class PostInputView: UIView, UITextViewDelegate {
     
     func handleSliderAction(sender: UISlider) {
         
-        rating = sender.value
-        updateDisplay(withValue: rating)
+        rating = Rating(withFloat: sender.value)
+        updateDisplay(withRating: rating)
     }
     
     

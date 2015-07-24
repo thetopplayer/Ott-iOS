@@ -116,9 +116,9 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
     
     
-    func distanceFromCurrentLocation(latitude latitude: CLLocationDegrees, longitude: CLLocationDegrees) -> CLLocationDistance? {
+    func distanceFromCurrentLocation(point: CLLocationCoordinate2D) -> CLLocationDistance? {
         
-        let loc1 = CLLocation(latitude: latitude, longitude: longitude)
+        let loc1 = CLLocation(latitude: point.latitude, longitude: point.longitude)
         return location?.distanceFromLocation(loc1)
     }
     

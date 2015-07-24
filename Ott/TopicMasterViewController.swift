@@ -7,7 +7,7 @@
 //
 
 import UIKit
-import CoreData
+
 
 class TopicMasterViewController: TableViewController {
 
@@ -111,31 +111,12 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    var managedObjectContext: NSManagedObjectContext {
-        return DataManager.sharedInstance.managedObjectContext
-    }
-    
-    
-    private var data: [Topic]?
+    private var data: [TopicObject]?
 
     
-    var fetchPredicate: NSPredicate? {
-        
-        didSet {
-            fetchRequest.predicate = fetchPredicate
-        }
-    }
+    var fetchPredicate: NSPredicate?
     
-    lazy var fetchRequest: NSFetchRequest = {
-        
-        let request = NSFetchRequest(entityName: "Topic")
-        let sd = NSSortDescriptor(key: "timestamp", ascending: false)
-        request.sortDescriptors = [sd]
-        return request
-        }()
-    
-    
-    var selection: Topic? {
+    var selection: TopicObject? {
         
         didSet {
             let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)
@@ -146,33 +127,33 @@ class TopicMasterViewController: TableViewController {
     
     func update() {
         
-        func processFetchResult(result: NSAsynchronousFetchResult) {
-            
-            if let theData = result.finalResult as? [Topic] {
-                self.data = theData
-            }
-        }
-        
-        managedObjectContext.performBlock { () -> Void in
-            
-            /*
-            TODO:  use async request- get error in XCode 7b2
-            
-            let asyncRequest = NSAsynchronousFetchRequest(fetchRequest: self.fetchRequest, completionBlock: processFetchResult)
-            */
-            
-            
-            do {
-                
-                NSLog("fetching topic data")
-                let fetchResults = try self.managedObjectContext.executeFetchRequest(self.fetchRequest)
-                self.data = fetchResults as? [Topic]
-                self.refreshTableView()
-                
-            } catch {
-                
-            }
-        }
+//        func processFetchResult(result: NSAsynchronousFetchResult) {
+//            
+//            if let theData = result.finalResult as? [Topic] {
+//                self.data = theData
+//            }
+//        }
+//        
+//        managedObjectContext.performBlock { () -> Void in
+//            
+//            /*
+//            TODO:  use async request- get error in XCode 7b2
+//            
+//            let asyncRequest = NSAsynchronousFetchRequest(fetchRequest: self.fetchRequest, completionBlock: processFetchResult)
+//            */
+//            
+//            
+//            do {
+//                
+//                NSLog("fetching topic data")
+//                let fetchResults = try self.managedObjectContext.executeFetchRequest(self.fetchRequest)
+//                self.data = fetchResults as? [Topic]
+//                self.refreshTableView()
+//                
+//            } catch {
+//                
+//            }
+//        }
     }
     
     

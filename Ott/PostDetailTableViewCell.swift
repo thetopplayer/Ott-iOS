@@ -19,7 +19,7 @@ class PostDetailTableViewCell: TableViewCell {
 
     
     
-    var displayedPost: Post? {
+    var displayedPost: PostObject? {
         
         didSet {
             updateContents()
@@ -54,8 +54,8 @@ class PostDetailTableViewCell: TableViewCell {
             
             topBarLabel.attributedText = timeAndLocationAttributedString(post)
             
-            ratingLabel.text = post.ratingToText()
-            ratingLabel.textColor = post.ratingToColor()
+            ratingLabel.text = post.rating?.text()
+            ratingLabel.textColor = post.rating?.color()
             let comment = post.comment != nil ? post.comment! : ""
             commentLabel.text = comment
             
@@ -70,7 +70,7 @@ class PostDetailTableViewCell: TableViewCell {
     }
     
     
-    private func attributedDescription(topic: Post) -> NSAttributedString {
+    private func attributedDescription(topic: PostObject) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)
@@ -82,7 +82,7 @@ class PostDetailTableViewCell: TableViewCell {
         dateFormatter.dateStyle = .MediumStyle
         
         let s1 = NSMutableAttributedString(string: "Posted by ", attributes: normalAttributes)
-        let authorName = topic.author.name != nil ? topic.author.name! : "Anonymous"
+        let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
         let s2 = NSAttributedString(string: authorName, attributes: boldAttributes)
         
         s1.appendAttributedString(s2)

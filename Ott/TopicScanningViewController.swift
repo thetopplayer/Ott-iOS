@@ -187,7 +187,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     //MARK: - Data
     
-    var recognizedTopic: Topic?
+    var recognizedTopic: TopicObject?
     
     
     private func handleRecognition(ofCode code: String) {
@@ -204,7 +204,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
 
         presentViewController(alertViewController, animated: true) { () -> Void in
             
-            func dataFetchCompletionHandler(theTopic: Topic?) {
+            func dataFetchCompletionHandler(theTopic: TopicObject?) {
                 
                 self.recognizedTopic = theTopic
                 

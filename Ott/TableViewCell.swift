@@ -40,7 +40,8 @@ class TableViewCell: UITableViewCell {
     /**
     Used in Topic and Post cells
     */
-    func timeAndLocationAttributedString(baseObject: Base) -> NSAttributedString {
+    
+    func timeAndLocationAttributedString(baseObject: BaseObject) -> NSAttributedString {
         
         func dateToString(theDate: NSDate?) -> String {
             
@@ -93,14 +94,14 @@ class TableViewCell: UITableViewCell {
         var darkAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
         darkAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(11)
         
-        let s1 = NSMutableAttributedString(string: dateToString(baseObject.timestamp), attributes: darkAttributes)
+        let s1 = NSMutableAttributedString(string: dateToString(baseObject.createdAt), attributes: darkAttributes)
         
         var locationText = String()
-        if baseObject.hasLocation {
+        if let _ = baseObject.location {
             
             locationText += "  |  "
             
-            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(latitude: baseObject.latitude!.doubleValue, longitude: baseObject.longitude!.doubleValue) {
+            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(baseObject.location!) {
                 
                 let distance = metersAway / 1000
                 
@@ -112,8 +113,8 @@ class TableViewCell: UITableViewCell {
                 }
                 else {
                     
-                    if baseObject.hasLocationName {
-                        locationText += baseObject.locationName!
+                    if let locationName = baseObject.locationName {
+                        locationText += locationName
                     }
                     else {
                         locationText += relativeDistanceString(distance)

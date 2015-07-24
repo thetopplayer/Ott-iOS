@@ -23,7 +23,7 @@ class TopicTitleTableViewCell: TableViewCell {
     }
 
     
-    var displayedTopic: Topic? {
+    var displayedTopic: TopicObject? {
         
         didSet {
             updateContents()
@@ -33,14 +33,12 @@ class TopicTitleTableViewCell: TableViewCell {
     
     private func updateContents() {
         
-        if let userDidPost = displayedTopic?.userDidPostRating {
-            
-            titleLabel.attributedText = attributedTitle(displayedTopic!, displayingRating: userDidPost)
-        }
+        let didPostToTopic = currentUser()!.didPostToTopic(displayedTopic!)
+        titleLabel.attributedText = attributedTitle(displayedTopic!, displayingRating: didPostToTopic)
     }
 
     
-    private func attributedTitle(topic: Topic, displayingRating: Bool) -> NSAttributedString {
+    private func attributedTitle(topic: TopicObject, displayingRating: Bool) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(32)
@@ -49,11 +47,11 @@ class TopicTitleTableViewCell: TableViewCell {
         
         if displayingRating {
             
-            let color = topic.ratingToColor()
+            let color = topic.rating!.color()
             var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : color]
             boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(32)
             
-            let text = "  \u{00b7}  " + topic.ratingToText()
+            let text = "  \u{00b7}  " + topic.rating!.text()
             let s2 = NSAttributedString(string: text, attributes: boldAttributes)
             
             s1.appendAttributedString(s2)

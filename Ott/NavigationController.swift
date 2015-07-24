@@ -10,9 +10,26 @@ import UIKit
 
 class NavigationController: UINavigationController {
     
-    var topic: Topic?
-    var post: Post?
-    var author: Author?
+    var topic: TopicObject?
+    var post: PostObject?
+    var author: AuthorObject?
+    
+    
+    static func loginViewController() -> UIViewController {
+        
+        let storyboard = UIStoryboard(name: "Login", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("loginViewController") as! NavigationController
+    }
+    
+    
+    static func mainViewController() -> UIViewController {
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("loginViewController") as! NavigationController
+    }
+    
+    
+    
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
         
@@ -24,7 +41,7 @@ class NavigationController: UINavigationController {
     }
     
     
-    func presentViewController(storyboard storyboard: String, identifier: String, topic: Topic?, completion: (() -> Void)?) -> UIViewController {
+    func presentViewController(storyboard storyboard: String, identifier: String, topic: TopicObject?, completion: (() -> Void)?) -> UIViewController {
         
         let storyboard = UIStoryboard(name: storyboard, bundle: nil)
         let vc = storyboard.instantiateViewControllerWithIdentifier(identifier) as! NavigationController
@@ -58,7 +75,7 @@ class NavigationController: UINavigationController {
     }
     
     
-    func presentTopicDetailViewController(withTopic topic: Topic?) {
+    func presentTopicDetailViewController(withTopic topic: TopicObject?) {
         
         if LocationManager.sharedInstance.permissionGranted {
             presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)

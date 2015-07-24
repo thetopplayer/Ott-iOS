@@ -8,7 +8,7 @@
 
 import UIKit
 import MapKit
-import CoreData
+
 
 class TopicDetailViewController: ViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, PostInputViewDelegate {
 
@@ -54,55 +54,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     //MARK: - Display
-    
-    func refreshDisplay(refreshingData refreshingData:Bool = true) {
-        
-        func postsArrangedByTimestamp(posts: Set<Post>?) -> [Post] {
-            
-            var result: [Post]?
-            if let posts = _myTopic!.posts {
-                
-                result = posts.sort({ (first, second) -> Bool in
-                    let d1 = first.timestamp
-                    let d2 = second.timestamp
-                    return d1.compare(d2) == .OrderedDescending
-                })
-            }
-            else {
-                result = []
-            }
-            return result!
-        }
-        
-        if myTopic == nil {
-            return
-        }
-        
-        // enter edit mode if the user has not yet posted to this topic
-        displayMode = myTopic!.userDidPostRating ? .PostDisplay : .PostCreation
-        setDisplayType(.List)
-        
-        // rearrange posts and reload table
-        var operation: NSBlockOperation
-        if refreshingData {
-            operation = NSBlockOperation(block: { () -> Void in
-                self.arrangedPosts = postsArrangedByTimestamp(self.myTopic!.posts)
-            })
-        }
-        else {
-            operation = NSBlockOperation(block: { })
-        }
-        
-        operation.completionBlock = {
-            dispatch_async(dispatch_get_main_queue()) {
-                self.tableView.reloadData()
-                self.setMapAnnotations(forPosts: self.arrangedPosts)
-            }
-        }
-        
-        operationQueue.addOperation(operation)
-    }
-    
     
     private enum DisplayMode {
         case PostCreation, PostDisplay
@@ -176,11 +127,65 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             showDoneButton()
             showToolbar()
-            if let userDidPost = myTopic?.userDidPostRating {
-                mapToggleButton?.enabled = userDidPost
-            }
-         }
+            mapToggleButton?.enabled = currentUser()!.didPostToTopic(myTopic!)
+        }
     }
+    
+    
+    func refreshDisplay(refreshingData refreshingData:Bool = true) {
+        
+        //        func postsArrangedByTimestamp(posts: Set<PostObject>?) -> [Post] {
+        //
+        //            var result: [Post]?
+        //            if let posts = _myTopic!.posts {
+        //
+        //                result = posts.sort({ (first, second) -> Bool in
+        //                    let d1 = first.createdAt
+        //                    let d2 = second.createdAt
+        //                    return d1.compare(d2) == .OrderedDescending
+        //                })
+        //            }
+        //            else {
+        //                result = []
+        //            }
+        //            return result!
+        //        }
+        
+        if myTopic == nil {
+            return
+        }
+        
+        // enter edit mode if the user has not yet posted to this topic
+        displayMode = currentUser()!.didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
+        setDisplayType(.List)
+        
+        
+        func fetchCompletion(success: Bool, posts: [PostObject]?) {
+            
+            if success == false {
+                return
+            }
+            
+            if posts == nil {
+                self.arrangedPosts = []
+                return
+            }
+            
+            self.arrangedPosts = posts!.sort({ (first, second) -> Bool in
+                let d1 = first.createdAt!
+                let d2 = second.createdAt!
+                return d1.compare(d2) == .OrderedDescending
+            })
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.tableView.reloadData()
+                self.setMapAnnotations(forPosts: self.arrangedPosts)
+            }
+        }
+        
+        myTopic!.getPosts(fetchCompletion)
+    }
+    
     
     
     private enum DisplayType {
@@ -241,25 +246,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }()
     
     
-    private lazy var managedObjectContext: NSManagedObjectContext = {
-        
-        let moc = NSManagedObjectContext(concurrencyType: .MainQueueConcurrencyType)
-        moc.parentContext = DataManager.sharedInstance.managedObjectContext
-        return moc
-        }()
-    
-    
-    private var _myTopic: Topic?
-    var myTopic: Topic? {
+    private var _myTopic: TopicObject?
+    var myTopic: TopicObject? {
         
         set {
-            if let t = newValue {
-                _myTopic = t.instance(inContext: managedObjectContext) as? Topic
-            }
-            else {
-                _myTopic = nil
-            }
-            
+            _myTopic = newValue
             refreshDisplay()
         }
         
@@ -269,33 +260,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var arrangedPosts = [Post]()
-    
-    
-    private func imageLoaded() -> Bool {
-        return myTopic?.image != nil
-    }
+    private var arrangedPosts = [PostObject]()
     
     
     private func saveChanges() {
         
-        let myPost = Post.create(inContext: self.managedObjectContext)
-        myPost.author = Author.user(inContext: managedObjectContext)
+        let author = currentUser()!
+        
+        let myPost = PostObject()
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
-        myPost.latitude = LocationManager.sharedInstance.location?.coordinate.latitude
-        myPost.longitude = LocationManager.sharedInstance.location?.coordinate.longitude
+        myPost.location = LocationManager.sharedInstance.location?.coordinate
         myPost.locationName = LocationManager.sharedInstance.locationName
 
-        myTopic?.update(withPost: myPost)
-        myTopic?.userDidPostRating = true
-        
-        let user = Author.user(inContext: managedObjectContext)
-        myPost.identifier = user.newContentIdentifier()
-        user.update(withPost: myPost)
-
-        managedObjectContext.saveContext()
-        DataManager.sharedInstance.upload(myPost)
+        myTopic!.addPost(myPost)
+        author.addPost(myPost)
+        author.save()
     }
     
     
@@ -343,13 +323,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         postInputView?.resignFirstResponder()
         discardChanges()
         
-        if let userDidPost = myTopic?.userDidPostRating {
-            if userDidPost {
-                displayMode = .PostDisplay
-            }
-            else {
-                dismissViewControllerAnimated(true) { () -> Void in }
-            }
+        if currentUser()!.didPostToTopic(myTopic!) {
+            displayMode = .PostDisplay
+        }
+        else {
+            dismissViewControllerAnimated(true) { () -> Void in }
         }
     }
     
@@ -428,7 +406,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         var number: Int = 0
         if let myTopic = myTopic {
-            number = myTopic.userDidPostRating ? 2 : 1
+            number = currentUser()!.didPostToTopic(myTopic) ? 2 : 1
         }
         return number
     }
@@ -471,7 +449,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             number = 2  // one for name cell, one for author cell
             
-            if topic.hasComment {
+            if topic.comment != nil {
                 number++
                 if topic.hasImage {
                     number++
@@ -506,7 +484,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 cellType = .TopicTitle
                 
             case 1:
-                if myTopic!.hasComment {
+                if myTopic!.comment != nil {
                     cellType = .TopicComment
                 }
                 else if myTopic!.hasImage {
@@ -517,7 +495,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 }
                 
             case 2:
-                if myTopic!.hasComment && myTopic!.hasImage {
+                if myTopic!.comment != nil && myTopic!.hasImage {
                     cellType = .TopicImage
                 }
                 else {
@@ -586,7 +564,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializeImageCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
-            cell.topicImageView?.image = myTopic?.image
+//            cell.topicImageView?.image = myTopic?.image
             return cell
         }
         
@@ -639,7 +617,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private func setMapAnnotations(forPosts posts: [Post]) {
+    private func setMapAnnotations(forPosts posts: [MKAnnotation]) {
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(posts)
