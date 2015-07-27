@@ -112,8 +112,8 @@ class HomeViewController: ViewController {
             
             dispatch_async(dispatch_get_main_queue(), {
                 
-                self.nameTextLabel.text = theUser.username
-                self.handleTextLabel.text = theUser.handle
+                self.nameTextLabel.text = theUser.name
+                self.handleTextLabel.text = theUser.username
                 self.summaryTextLabel.attributedText = self.attributedUserDetails(theUser)
             })
         }

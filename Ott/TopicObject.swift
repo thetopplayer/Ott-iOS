@@ -8,7 +8,7 @@
 
 import UIKit
 
-class TopicObject: CreationObject {
+class TopicObject: CreationObject, PFSubclassing {
     
     override class func initialize() {
         struct Static {
@@ -20,7 +20,7 @@ class TopicObject: CreationObject {
         }
     }
     
-    override class func parseClassName() -> String {
+    class func parseClassName() -> String {
         return "Topic"
     }
     

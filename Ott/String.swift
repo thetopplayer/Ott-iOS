@@ -19,4 +19,17 @@ extension String {
         
         return true
     }
+    
+    
+    var length : Int {
+        
+        return self.characters.count
+    }
+    
+    
+    func stringWithDigits() -> String {
+        
+        return "".join(self.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet))
+    }
+
 }

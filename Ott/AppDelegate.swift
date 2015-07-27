@@ -11,12 +11,49 @@ import Parse
 import Bolts
 
 
+
+func introViewController() -> IntroductionViewController {
+    
+    let storyboard = UIStoryboard(name: "Startup", bundle: nil)
+    return storyboard.instantiateViewControllerWithIdentifier("introViewController") as! IntroductionViewController
+}
+
+
+func mainViewController() -> UITabBarController {
+    
+    let storyboard = UIStoryboard(name: "Main", bundle: nil)
+    return storyboard.instantiateViewControllerWithIdentifier("mainViewController") as! UITabBarController
+}
+
+
+
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
-
-
+    
+    func presentFirstViewController() {
+        
+        var viewController: UIViewController?
+        
+        if let user = currentUser() {
+            
+            if user.isAuthenticated() {
+                viewController = mainViewController()
+            }
+            else {
+                viewController = introViewController()
+            }
+        }
+        else {
+            viewController = introViewController()
+        }
+        
+        window?.rootViewController!.presentViewController(viewController!, animated: true, completion: nil)
+    }
+    
+    
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         
         func setupParseBackend() {
@@ -35,13 +72,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupParseBackend()
         
-        if currentUser() == nil {
-            window?.rootViewController?.presentViewController(NavigationController.loginViewController(), animated: true, completion: nil)
-        }
-        else {
-            window?.rootViewController?.presentViewController(NavigationController.mainViewController(), animated: true, completion: nil)
-        }
-        
         return true
     }
 
@@ -59,10 +89,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
+        
+        presentFirstViewController()
     }
 
     func applicationWillTerminate(application: UIApplication) {

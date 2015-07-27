@@ -15,22 +15,6 @@ class NavigationController: UINavigationController {
     var author: AuthorObject?
     
     
-    static func loginViewController() -> UIViewController {
-        
-        let storyboard = UIStoryboard(name: "Login", bundle: nil)
-        return storyboard.instantiateViewControllerWithIdentifier("loginViewController") as! NavigationController
-    }
-    
-    
-    static func mainViewController() -> UIViewController {
-        
-        let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        return storyboard.instantiateViewControllerWithIdentifier("loginViewController") as! NavigationController
-    }
-    
-    
-    
-    
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
         
         let storyboard = UIStoryboard(name: storyboard, bundle: nil)

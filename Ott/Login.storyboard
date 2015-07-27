@@ -5,11 +5,16 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
+    <customFonts key="customFonts">
+        <mutableArray key="HelveticaNeue.ttc">
+            <string>HelveticaNeue</string>
+        </mutableArray>
+    </customFonts>
     <scenes>
         <!--Navigation Controller-->
         <scene sceneID="tfV-Uf-fQf">
             <objects>
-                <navigationController storyboardIdentifier="loginViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Qr0-eA-mch" sceneMemberID="viewController">
+                <navigationController storyboardIdentifier="loginViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Qr0-eA-mch" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="mGq-IB-q3X">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -22,7 +27,7 @@
             </objects>
             <point key="canvasLocation" x="1445" y="420"/>
         </scene>
-        <!--View Controller-->
+        <!--Welcome-->
         <scene sceneID="7OQ-79-pny">
             <objects>
                 <viewController id="gvV-U3-cjT" sceneMemberID="viewController">
@@ -43,37 +48,29 @@
                                     <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                     <subviews>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="One to Ten" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="UwP-T6-RW3">
-                                            <rect key="frame" x="244" y="60" width="112" height="28"/>
-                                            <fontDescription key="fontDescription" type="system" pointSize="23"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                            <nil key="highlightedColor"/>
-                                        </label>
-                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Please enter your phone number to create an account" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YPW-Tm-yBm">
+                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="To get started, please enter your phone number" textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="YPW-Tm-yBm">
                                             <rect key="frame" x="174" y="160" width="253" height="41"/>
                                             <constraints>
                                                 <constraint firstAttribute="width" constant="253" id="uN4-ev-Fca"/>
                                             </constraints>
                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                            <color key="textColor" red="0.20000000298023224" green="0.20000000298023224" blue="0.20000000298023224" alpha="1" colorSpace="calibratedRGB"/>
                                             <nil key="highlightedColor"/>
                                         </label>
-                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="phonenumber" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DNY-tg-XdI">
-                                            <rect key="frame" x="174" y="209" width="253" height="30"/>
+                                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="+1" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="DNY-tg-XdI">
+                                            <rect key="frame" x="200" y="216" width="200" height="30"/>
                                             <constraints>
-                                                <constraint firstAttribute="width" constant="253" id="bMT-CV-Eyu"/>
+                                                <constraint firstAttribute="width" constant="200" id="bMT-CV-Eyu"/>
                                             </constraints>
-                                            <fontDescription key="fontDescription" type="system" pointSize="14"/>
+                                            <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="18"/>
                                             <textInputTraits key="textInputTraits"/>
                                         </textField>
                                     </subviews>
                                     <constraints>
-                                        <constraint firstItem="UwP-T6-RW3" firstAttribute="centerX" secondItem="VpJ-ql-3YV" secondAttribute="centerX" id="6oH-xN-ci9"/>
                                         <constraint firstItem="DNY-tg-XdI" firstAttribute="centerX" secondItem="VpJ-ql-3YV" secondAttribute="centerX" id="EwY-Ek-yDf"/>
-                                        <constraint firstItem="UwP-T6-RW3" firstAttribute="top" secondItem="VpJ-ql-3YV" secondAttribute="top" constant="60" id="Vfc-Z5-VmM"/>
-                                        <constraint firstItem="YPW-Tm-yBm" firstAttribute="top" secondItem="UwP-T6-RW3" secondAttribute="bottom" constant="72" id="ZWD-cN-7Yx"/>
                                         <constraint firstItem="YPW-Tm-yBm" firstAttribute="centerX" secondItem="VpJ-ql-3YV" secondAttribute="centerX" id="jxj-G2-HRq"/>
-                                        <constraint firstItem="DNY-tg-XdI" firstAttribute="top" secondItem="YPW-Tm-yBm" secondAttribute="bottom" constant="8" id="mck-37-z91"/>
+                                        <constraint firstItem="DNY-tg-XdI" firstAttribute="top" secondItem="YPW-Tm-yBm" secondAttribute="bottom" constant="16" id="mck-37-z91"/>
+                                        <constraint firstItem="YPW-Tm-yBm" firstAttribute="top" secondItem="VpJ-ql-3YV" secondAttribute="top" constant="160" id="uAR-GO-i0C"/>
                                     </constraints>
                                 </view>
                                 <blurEffect style="light"/>
@@ -91,7 +88,7 @@
                             <constraint firstAttribute="trailingMargin" secondItem="m86-1A-swy" secondAttribute="trailing" constant="-20" id="xzC-MH-p60"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" id="Qyx-77-Drb"/>
+                    <navigationItem key="navigationItem" title="Welcome" id="Qyx-77-Drb"/>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="US1-id-yuZ" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

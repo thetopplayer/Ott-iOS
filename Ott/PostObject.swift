@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PostObject: CreationObject {
+class PostObject: CreationObject, PFSubclassing {
     
     override class func initialize() {
         struct Static {
@@ -20,7 +20,7 @@ class PostObject: CreationObject {
         }
     }
     
-    override class func parseClassName() -> String {
+    class func parseClassName() -> String {
         return "Post"
     }
     

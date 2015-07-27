@@ -26,17 +26,21 @@ class AuthorObject: PFUser {
         }
     }
     
-    override class func parseClassName() -> String {
-        return "Author"
-    }
+//    override class func parseClassName() -> String {
+//        return "Author"
+//    }
     
     
     //MARK: - Attributes
     
-    @NSManaged var handle: String?
     @NSManaged var phoneNumber: String?
+    @NSManaged var name: String?
     
+    var handle: String? {
+        return username
+    }
 
+    
     //MARK: - Posts and Topics
     
     private let postsKey = "posts"
