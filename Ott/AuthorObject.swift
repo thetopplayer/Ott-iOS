@@ -9,9 +9,10 @@
 import UIKit
 
 
-func currentUser() -> AuthorObject? {
+func currentUser() -> AuthorObject {
     return AuthorObject.currentUser()
 }
+
 
 
 class AuthorObject: PFUser {
@@ -26,9 +27,23 @@ class AuthorObject: PFUser {
         }
     }
     
-//    override class func parseClassName() -> String {
-//        return "Author"
-//    }
+    static var _currentUser: AuthorObject?
+    static override func currentUser() -> AuthorObject {
+        
+        if _currentUser != nil {
+            return _currentUser!
+        }
+        
+        _currentUser = super.currentUser() as? AuthorObject
+        if _currentUser != nil {
+            return _currentUser!
+        }
+
+        _currentUser = AuthorObject()
+        return _currentUser!
+    }
+    
+    
     
     
     //MARK: - Attributes

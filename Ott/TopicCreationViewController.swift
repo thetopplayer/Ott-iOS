@@ -63,9 +63,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.comment = titleCellView!.comment
         topic.location = LocationManager.sharedInstance.location?.coordinate
         topic.locationName = LocationManager.sharedInstance.locationName
-        currentUser()?.addTopic(topic)
+        currentUser().addTopic(topic)
         
-        currentUser()!.save()
+        currentUser().save()
     }
     
     

@@ -58,7 +58,7 @@ class IntroductionViewController: PageCollectionViewController {
             return false
         }
         
-        if associatedWithExistingAccount(currentUser()!.phoneNumber!) {
+        if associatedWithExistingAccount(currentUser().phoneNumber!) {
             
             // present existing account data and login
             

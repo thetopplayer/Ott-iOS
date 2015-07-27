@@ -37,14 +37,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         var viewController: UIViewController?
         
-        if let user = currentUser() {
-            
-            if user.isAuthenticated() {
-                viewController = mainViewController()
-            }
-            else {
-                viewController = introViewController()
-            }
+        if currentUser().isAuthenticated() {
+            viewController = mainViewController()
         }
         else {
             viewController = introViewController()

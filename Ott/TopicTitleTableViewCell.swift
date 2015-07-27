@@ -33,7 +33,7 @@ class TopicTitleTableViewCell: TableViewCell {
     
     private func updateContents() {
         
-        let didPostToTopic = currentUser()!.didPostToTopic(displayedTopic!)
+        let didPostToTopic = currentUser().didPostToTopic(displayedTopic!)
         titleLabel.attributedText = attributedTitle(displayedTopic!, displayingRating: didPostToTopic)
     }
 

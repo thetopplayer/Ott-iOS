@@ -20,8 +20,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     private var handleIsUnique = false
     let minimumHandleLength = 3
     let minimumUserNameLength = 3
-    let handleTextFieldTag = 12333
-    let nameTextFieldTag = 8823
+    
     
     override func viewDidLoad() {
         
@@ -29,6 +28,8 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         
         handleTextField.delegate = self
         nameTextField.delegate = self
+        
+        topLabel.text = "Setup your account with a unique handle and a user name."
         
         startObservations()
         handleTextField.becomeFirstResponder()
@@ -45,24 +46,19 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     
     @IBAction func doneAction(sender: AnyObject) {
         
-        if let user = currentUser() {
+        currentUser().username = handleTextField.text
+        currentUser().password = currentUser().phoneNumber
+        
+        currentUser().signUpInBackgroundWithBlock { (succeeded: Bool, error: NSError?) -> Void in
             
-            user.username = handleTextField.text
-            user.password = currentUser()!.phoneNumber
-            
-            user.signUpInBackgroundWithBlock { (succeeded: Bool, error: NSError?) -> Void in
+            if error != nil {
                 
-                if error != nil {
-                    
-                    self.presentViewController(mainViewController(), animated: true, completion: nil)
-                }
+                self.presentViewController(mainViewController(), animated: true, completion: nil)
             }
-            
         }
         
-        
     }
-
+    
     
     
     //MARK: - Observations and TextField Delegate
@@ -93,6 +89,26 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        
+        if textField == handleTextField {
+            
+            if string.containsCharacter(inCharacterSet: NSCharacterSet.newlineCharacterSet()) {
+                nameTextField.becomeFirstResponder()
+                return false
+            }
+            
+            if string.containsCharacter(inCharacterSet: NSCharacterSet.whitespaceCharacterSet()) {
+                return false
+            }
+            
+            return true
+        }
+        
+        return true
+    }
+    
+
     func handleTextFieldDidChange(notification: NSNotification) {
         
         func textFieldsFilled() -> Bool {
@@ -112,12 +128,10 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             handleExistsLabel.hidden = handleIsUnique
         }
         
-        if let tf = notification.object as? UITextField {
+        if (notification.object as! UITextField) == handleTextField {
             
-            if tf.tag == handleTextFieldTag {
-                if handleTextField.text!.length >= minimumHandleLength {
-                    confirmUniqueHandle()
-                }
+            if handleTextField.text!.length >= minimumHandleLength {
+                confirmUniqueHandle()
             }
         }
         

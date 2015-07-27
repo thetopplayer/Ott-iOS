@@ -53,7 +53,7 @@ class HomeViewController: ViewController {
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         
-        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser()!)
+        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser())
         topicTableViewController.tableView = tableView
         topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
         topicTableViewController.viewDidLoad()
@@ -108,15 +108,14 @@ class HomeViewController: ViewController {
     
     private func updateDisplayedInformation() {
         
-        if let theUser = currentUser() {
-            
             dispatch_async(dispatch_get_main_queue(), {
                 
-                self.nameTextLabel.text = theUser.name
-                self.handleTextLabel.text = theUser.username
-                self.summaryTextLabel.attributedText = self.attributedUserDetails(theUser)
+                let user = currentUser()
+                
+                self.nameTextLabel.text = user.name
+                self.handleTextLabel.text = user.username
+                self.summaryTextLabel.attributedText = self.attributedUserDetails(user)
             })
-        }
     }
     
     

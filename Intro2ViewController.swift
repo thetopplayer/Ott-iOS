@@ -49,18 +49,12 @@ class Intro2ViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    override func willHide() {
-        
-        super.willHide()
-        textField.resignFirstResponder()
-        currentUser()?.phoneNumber = textField.text
-    }
-    
-    
     @IBAction func handleButtonClick(sender: AnyObject) {
         
-        tasksCompleted = true
+        textField.resignFirstResponder()
+        currentUser().phoneNumber = textField.text
         
+        tasksCompleted = true
         let parent = parentViewController as! PageCollectionViewController
         parent.next(self)
     }

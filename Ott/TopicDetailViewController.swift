@@ -127,7 +127,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             showDoneButton()
             showToolbar()
-            mapToggleButton?.enabled = currentUser()!.didPostToTopic(myTopic!)
+            mapToggleButton?.enabled = currentUser().didPostToTopic(myTopic!)
         }
     }
     
@@ -156,7 +156,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         // enter edit mode if the user has not yet posted to this topic
-        displayMode = currentUser()!.didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
+        displayMode = currentUser().didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
         setDisplayType(.List)
         
         
@@ -265,8 +265,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func saveChanges() {
         
-        let author = currentUser()!
-        
         let myPost = PostObject()
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
@@ -274,8 +272,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.locationName = LocationManager.sharedInstance.locationName
 
         myTopic!.addPost(myPost)
-        author.addPost(myPost)
-        author.save()
+        currentUser().addPost(myPost)
+        currentUser().save()
     }
     
     
@@ -323,7 +321,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         postInputView?.resignFirstResponder()
         discardChanges()
         
-        if currentUser()!.didPostToTopic(myTopic!) {
+        if currentUser().didPostToTopic(myTopic!) {
             displayMode = .PostDisplay
         }
         else {
@@ -406,7 +404,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         var number: Int = 0
         if let myTopic = myTopic {
-            number = currentUser()!.didPostToTopic(myTopic) ? 2 : 1
+            number = currentUser().didPostToTopic(myTopic) ? 2 : 1
         }
         return number
     }
