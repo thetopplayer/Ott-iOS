@@ -6,6 +6,7 @@
 //  Copyright (c) 2015 Senisa. All rights reserved.
 //
 
+
 import UIKit
 
 class Intro3ViewController: PageViewController, UITextFieldDelegate {
@@ -59,29 +60,42 @@ class Intro3ViewController: PageViewController, UITextFieldDelegate {
     
     @IBAction func handleButtonClick(sender: AnyObject) {
         
+        func presentErrorAlert() {
+            
+            let alertViewController = UIAlertController(title: "Validation Error", message: "The code you entered does not match the one we sent.", preferredStyle: .Alert)
+            
+            let tryAgainAction = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { action in print("try again") })
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in print("cancel") })
+            
+            alertViewController.addAction(tryAgainAction)
+            alertViewController.addAction(cancelAction)
+            
+            presentViewController(alertViewController, animated: true, completion: nil)
+        }
+        
+        
         enableButton(button, value: false)
         button.setTitle("Validating....", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         
-        validateCode { (success, error) -> Void in
+        // need to validate number by confirming that the code entered is the same as 
+        // that returned by the sms request
+        
+        if true {
             
-            if success {
-                
-                self.tasksCompleted = true
-                
-                let parent = self.parentViewController as! PageCollectionViewController
-                parent.next(self)
-            }
+            self.tasksCompleted = true
+            let parent = self.parentViewController as! PageCollectionViewController
+            parent.next(self)
+            
         }
+        else {
+            
+            presentErrorAlert()
+        }
+        
     }
 
-    
-    func validateCode(completion completion:  (success:  Bool, error: NSError?) -> Void) {
-        
-        //todo - validate the code
-        
-        completion(success: true, error: nil)
-    }
     
     
     //MARK: - Observations

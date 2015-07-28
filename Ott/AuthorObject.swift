@@ -14,6 +14,46 @@ func currentUser() -> AuthorObject {
 }
 
 
+func fetchUserInBackground(phoneNumber phoneNumber: String, completion: (object: PFObject?, error: NSError?) -> Void) {
+    
+    let query = AuthorObject.query()!
+    query.whereKey(AuthorObject.phoneNumberKey, equalTo:phoneNumber)
+    query.getFirstObjectInBackgroundWithBlock(completion)
+}
+
+
+func fetchUserInBackground(handle handle: String, completion: (object: PFObject?, error: NSError?) -> Void) {
+    
+    let query = AuthorObject.query()!
+    query.whereKey(AuthorObject.handleKey, equalTo:handle)
+    query.getFirstObjectInBackgroundWithBlock(completion)
+}
+
+
+func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
+    
+    let query = AuthorObject.query()!
+    query.whereKey(AuthorObject.phoneNumberKey, equalTo:phoneNumber)
+    query.countObjectsInBackgroundWithBlock {
+        
+        (count: Int32, error: NSError?) -> Void in
+        completion(isUnique: count == 0, error: error)
+    }
+}
+
+
+func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
+    
+    let query = AuthorObject.query()!
+    query.whereKey(AuthorObject.handleKey, equalTo:handle)
+    query.countObjectsInBackgroundWithBlock {
+        
+        (count: Int32, error: NSError?) -> Void in
+        completion(isUnique: count == 0, error: error)
+    }
+}
+
+
 
 class AuthorObject: PFUser {
 
@@ -45,15 +85,36 @@ class AuthorObject: PFUser {
     
     
     
-    
     //MARK: - Attributes
+    
+    static let phoneNumberKey = "phoneNumber"
+    static let handleKey = "username"
     
     @NSManaged var phoneNumber: String?
     @NSManaged var name: String?
     
+    // the user's handle is stored as his username
     var handle: String? {
-        return username
+        set {
+            username = newValue
+        }
+        
+        get {
+            return username
+        }
     }
+    
+    
+    func autoPassword() -> String {
+        return phoneNumber! + handle!
+    }
+    
+    
+    func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
+        
+        AuthorObject.logInWithUsernameInBackground(handle!, password: autoPassword(), block: completion)
+    }
+    
 
     
     //MARK: - Posts and Topics

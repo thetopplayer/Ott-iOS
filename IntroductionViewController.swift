@@ -51,21 +51,71 @@ class IntroductionViewController: PageCollectionViewController {
     
     override func handleCompletion() {
         
-        func associatedWithExistingAccount(phoneNumber: String) -> Bool {
+        func login(user: AuthorObject) {
             
-            // query Parse for users with phoneNumber
+            let alertViewController = UIAlertController(title: "Welcome Back", message: "Logging in...", preferredStyle: .Alert)
             
-            return false
+            presentViewController(alertViewController, animated: true, completion: nil)
+            
+            user.loginInBackground() {
+                
+                (user: PFUser?, error: NSError?) -> Void in
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.dismissViewControllerAnimated(false, completion: {
+                        action in
+                        self.presentViewController(mainViewController(), animated: true, completion: nil)
+                    })
+                }
+            }
         }
         
-        if associatedWithExistingAccount(currentUser().phoneNumber!) {
+        
+        confirmUniquePhoneNumber(phoneNumber: currentUser().phoneNumber!) {
             
-            // present existing account data and login
+            (isUnique: Bool, error: NSError?) -> Void in
             
+            if error == nil {
+                
+                if isUnique {
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.performSegueWithIdentifier("segueToSetupView", sender: self)
+                    }
+                }
+                else {
+                    
+                    fetchUserInBackground(phoneNumber: currentUser().phoneNumber!) {
+                        
+                        (object: PFObject?, error: NSError?) -> Void in
+                        
+                        var existingUser: AuthorObject?
+                        if error == nil {
+                            existingUser = (object as? AuthorObject)!
+                        }
+                        else {
+                            print("error fetching existing account information")
+                        }
+                        
+                        if let existingUser = existingUser {
+                            login(existingUser)
+                        }
+                        else {
+                            
+                            // todo - error alert
+                            print("error processing existing account information")
+                        }
+                    }
+
+                }
+            }
+            else {
+                
+                // todo - error alert
+                print("error confirming unique phone number")
+            }
         }
-        else {
-            
-            performSegueWithIdentifier("segueToSetupView", sender: self)
-        }
+        
+        
     }
 }
