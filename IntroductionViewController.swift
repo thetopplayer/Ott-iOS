@@ -24,8 +24,8 @@ class IntroductionViewController: PageCollectionViewController {
         
         let vc0 = Intro0ViewController(nibName: "Intro0ViewController", bundle: nil)
         let vc1 = Intro1ViewController(nibName: "Intro1ViewController", bundle: nil)
-        let vc2 = Intro2ViewController(nibName: "Intro2ViewController", bundle: nil)
-        let vc3 = Intro3ViewController(nibName: "Intro3ViewController", bundle: nil)
+        let vc2 = PhoneNumberEntryViewController(nibName: "PhoneNumberEntryViewController", bundle: nil)
+        let vc3 = ConfirmCodeEntryViewController(nibName: "ConfirmCodeEntryViewController", bundle: nil)
         pageViewControllers = [vc0, vc1, vc2, vc3]
     }
     
@@ -35,17 +35,6 @@ class IntroductionViewController: PageCollectionViewController {
         super.viewDidLoad()
         setNeedsStatusBarAppearanceUpdate()
         setupDialogView()
-    }
-    
-    
-    override func viewDidAppear(animated: Bool) {
-        
-        super.viewDidAppear(animated)
-    }
-    
-    
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
     }
     
     
@@ -81,7 +70,7 @@ class IntroductionViewController: PageCollectionViewController {
                     
                     dispatch_async(dispatch_get_main_queue()) {
                         self.performSegueWithIdentifier("segueToSetupView", sender: self)
-                    }
+                    }                    
                 }
                 else {
                     

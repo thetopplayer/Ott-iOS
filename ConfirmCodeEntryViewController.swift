@@ -1,5 +1,5 @@
 //
-//  Intro3ViewController.swift
+//  ConfirmCodeEntryViewController.swift
 //  mailr
 //
 //  Created by Max on 4/26/15.
@@ -9,7 +9,7 @@
 
 import UIKit
 
-class Intro3ViewController: PageViewController, UITextFieldDelegate {
+class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
 
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
 

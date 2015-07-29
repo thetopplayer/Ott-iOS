@@ -70,6 +70,7 @@ class HomeViewController: ViewController {
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        updateDisplayedInformation()
         topicTableViewController.update()
     }
     
@@ -92,30 +93,18 @@ class HomeViewController: ViewController {
 
     
     
-    //MARK: - Data
-    
-    private var myUser: AuthorObject? {
-        
-        didSet {
-            updateDisplayedInformation()
-        }
-    }
-    
-    
-    
-    
     //MARK: - Display
     
     private func updateDisplayedInformation() {
         
-            dispatch_async(dispatch_get_main_queue(), {
-                
-                let user = currentUser()
-                
-                self.nameTextLabel.text = user.name
-                self.handleTextLabel.text = user.username
-                self.summaryTextLabel.attributedText = self.attributedUserDetails(user)
-            })
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            let user = currentUser()
+            
+            self.nameTextLabel.text = currentUser().name
+            self.handleTextLabel.text = currentUser().username
+            self.summaryTextLabel.attributedText = self.attributedUserDetails(user)
+        })
     }
     
     

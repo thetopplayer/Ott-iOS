@@ -6,7 +6,7 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
-        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="Intro3ViewController" customModule="Ott" customModuleProvider="target">
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="ConfirmCodeEntryViewController" customModule="Ott" customModuleProvider="target">
             <connections>
                 <outlet property="activityIndicator" destination="xs8-wS-eC2" id="CeU-Jm-nfe"/>
                 <outlet property="button" destination="WKN-cU-J3g" id="sAp-kk-qhL"/>

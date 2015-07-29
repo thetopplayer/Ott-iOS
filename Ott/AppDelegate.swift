@@ -35,17 +35,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func presentFirstViewController() {
         
-        var viewController: UIViewController?
-        
-        if currentUser().isAuthenticated() {
-            viewController = mainViewController()
+        if userWasArchived() {
+            window?.rootViewController!.presentViewController(mainViewController(), animated: true, completion: nil)
         }
         else {
-            viewController = introViewController()
+            
+            window?.rootViewController!.presentViewController(introViewController(), animated: true, completion: nil)
         }
-        
-        window?.rootViewController!.presentViewController(viewController!, animated: true, completion: nil)
-    }
+     }
     
     
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {

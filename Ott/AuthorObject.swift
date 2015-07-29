@@ -9,8 +9,23 @@
 import UIKit
 
 
+func userWasArchived() -> Bool {
+    return AuthorObject.currentUser() != nil
+}
+
+
+var _tmpUser: AuthorObject = {
+    return AuthorObject()
+}()
+
+
 func currentUser() -> AuthorObject {
-    return AuthorObject.currentUser()
+    
+    if let user = AuthorObject.currentUser() {
+        return user
+    }
+    
+    return _tmpUser
 }
 
 
@@ -67,20 +82,23 @@ class AuthorObject: PFUser {
         }
     }
     
-    static var _currentUser: AuthorObject?
-    static override func currentUser() -> AuthorObject {
+//    static var _currentUser: AuthorObject?
+    static override func currentUser() -> AuthorObject? {
+   
+        return super.currentUser() as? AuthorObject
         
-        if _currentUser != nil {
-            return _currentUser!
-        }
-        
-        _currentUser = super.currentUser() as? AuthorObject
-        if _currentUser != nil {
-            return _currentUser!
-        }
-
-        _currentUser = AuthorObject()
-        return _currentUser!
+//        if _currentUser != nil {
+//            return _currentUser!
+//        }
+//        
+//        _currentUser = super.currentUser() as? AuthorObject
+//        if _currentUser != nil {
+//            print("current user was archived")
+//            return _currentUser!
+//        }
+//
+//        _currentUser = AuthorObject()
+//        return _currentUser!
     }
     
     
@@ -97,6 +115,7 @@ class AuthorObject: PFUser {
     var handle: String? {
         set {
             username = newValue
+            password = phoneNumber! + username!
         }
         
         get {
@@ -105,14 +124,22 @@ class AuthorObject: PFUser {
     }
     
     
-    func autoPassword() -> String {
-        return phoneNumber! + handle!
+    func signupInBackground(completion: (succeeded: Bool, error: NSError?) -> Void) {
+        
+        if (username == nil) || (password == nil) {
+            let userInfo = [NSLocalizedDescriptionKey : "Username or password not set."]
+            let error = NSError(domain: "User", code: 1, userInfo: userInfo)
+            completion(succeeded: false, error: error)
+        }
+        else {
+            signUpInBackgroundWithBlock(completion)
+        }
     }
     
     
     func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
         
-        AuthorObject.logInWithUsernameInBackground(handle!, password: autoPassword(), block: completion)
+        AuthorObject.logInWithUsernameInBackground(handle!, password: password!, block: completion)
     }
     
 

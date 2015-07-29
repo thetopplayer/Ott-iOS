@@ -24,8 +24,34 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     let minimumHandleLength = 4
     let minimumUserNameLength = 4
     
-    let okImage = UIImage(named: "tick")
-    let errImage = UIImage(named: "multiply")
+    private let okImage = UIImage(named: "tick")
+    private let errImage = UIImage(named: "multiply")
+    
+    private func indicateHandleOK(ok: Bool) {
+        
+        if ok {
+            self.handleEntryStatusImageView.tintColor = UIColor.fern()
+            self.handleEntryStatusImageView.image = self.okImage
+        }
+        else {
+            handleEntryStatusImageView.tintColor = UIColor.redColor()
+            handleEntryStatusImageView.image = errImage
+        }
+    }
+    
+    
+    private func indicateNameOK(ok: Bool) {
+        
+        if ok {
+            self.nameEntryStatusImageView.tintColor = UIColor.fern()
+            self.nameEntryStatusImageView.image = self.okImage
+        }
+        else {
+            nameEntryStatusImageView.tintColor = UIColor.redColor()
+            nameEntryStatusImageView.image = errImage
+        }
+    }
+    
     
     override func viewDidLoad() {
         
@@ -39,10 +65,8 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         doneButton.setTitle("Sign Up", forState: .Normal)
         doneButton.setTitle("Sign Up", forState: .Disabled)
 
-        handleEntryStatusImageView.tintColor = UIColor.redColor()
-        handleEntryStatusImageView.image = errImage
-        nameEntryStatusImageView.tintColor = UIColor.redColor()
-        nameEntryStatusImageView.image = errImage
+        indicateHandleOK(false)
+        indicateNameOK(false)
         
         handleExistsLabel.hidden = true
         
@@ -61,8 +85,8 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     
     @IBAction func doneAction(sender: AnyObject) {
         
+        currentUser().name = nameTextField.text
         currentUser().username = handleTextField.text
-        currentUser().password = currentUser().phoneNumber
         
         doneButton.setTitle("Creating Account...", forState: .Disabled)
         doneButton.enabled = false
@@ -70,17 +94,16 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         
         currentUser().signUpInBackgroundWithBlock { (succeeded: Bool, error: NSError?) -> Void in
             
-            if error != nil {
-                
+            self.createAccountActivityIndicator.stopAnimating()
+            
+            if error == nil {
                 dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.createAccountActivityIndicator.stopAnimating()
                     self.presentViewController(mainViewController(), animated: true, completion: nil)
                 }
             }
             else {
                 // todo handle error
-                print("error siggnin up")
+                print("error signin up: \(error)")
             }
         }
         
@@ -171,14 +194,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                         self.handleExistsLabel.hidden = self.handleIsUnique
                         self.validatingHandleActivityIndicator.stopAnimating()
                        
-                        if self.handleIsUnique {
-                            self.handleEntryStatusImageView.tintColor = UIColor.fern()
-                            self.handleEntryStatusImageView.image = self.okImage
-                        }
-                        else {
-                            self.handleEntryStatusImageView.tintColor = UIColor.redColor()
-                            self.handleEntryStatusImageView.image = self.errImage
-                        }
+                        self.indicateHandleOK(self.handleIsUnique)
                         self.handleEntryStatusImageView.hidden = false
                     }
                 }
@@ -195,20 +211,12 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                 confirmUniqueHandle()
             }
             else {
-                handleEntryStatusImageView.image = errImage
+                indicateHandleOK(false)
                 handleExistsLabel.hidden = true
             }
         }
         
-        if nameIsLongEnough() {
-            nameEntryStatusImageView.tintColor = UIColor.fern()
-            nameEntryStatusImageView.image = okImage
-        }
-        else {
-            nameEntryStatusImageView.tintColor = UIColor.redColor()
-            nameEntryStatusImageView.image = errImage
-        }
-        
+        indicateNameOK(nameIsLongEnough())
         doneButton.enabled = handleIsLongEnough() && nameIsLongEnough() && handleIsUnique
     }
     

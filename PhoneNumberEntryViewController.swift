@@ -1,5 +1,5 @@
 //
-//  Intro2ViewController.swift
+//  PhoneNumberEntryViewController.swift
 //  mailr
 //
 //  Created by Max on 4/26/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class Intro2ViewController: PageViewController, UITextFieldDelegate {
+class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
 
     //MARK: - Lifecycle
@@ -78,6 +78,4 @@ class Intro2ViewController: PageViewController, UITextFieldDelegate {
         
         enableButton(button, value: textField.text!.stringWithDigits().length > 6)
     }
-    
-
 }
