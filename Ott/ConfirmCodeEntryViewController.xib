@@ -25,7 +25,7 @@
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="fKL-E9-8uA"/>
                     </constraints>
-                    <state key="normal" title="Submit"/>
+                    <state key="normal" title="Next"/>
                     <connections>
                         <action selector="handleButtonClick:" destination="-1" eventType="touchUpInside" id="5Qr-FW-osg"/>
                     </connections>
@@ -34,7 +34,10 @@
                     <rect key="frame" x="8" y="176" width="284" height="44"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Ctx-9v-FiT">
-                            <rect key="frame" x="20" y="6" width="244" height="30"/>
+                            <rect key="frame" x="20" y="5" width="244" height="34"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="34" id="rdt-H7-uFB"/>
+                            </constraints>
                             <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                             <fontDescription key="fontDescription" type="boldSystem" pointSize="21"/>
                             <textInputTraits key="textInputTraits" keyboardType="numberPad"/>
@@ -47,7 +50,14 @@
                         <constraint firstItem="Ctx-9v-FiT" firstAttribute="top" secondItem="gbj-EG-M8T" secondAttribute="top" constant="6" id="bSW-CX-RXo"/>
                         <constraint firstItem="Ctx-9v-FiT" firstAttribute="leading" secondItem="gbj-EG-M8T" secondAttribute="leading" constant="20" id="hY6-Z5-G8E"/>
                         <constraint firstAttribute="bottom" secondItem="Ctx-9v-FiT" secondAttribute="bottom" constant="8" id="pL8-fa-5dl"/>
+                        <constraint firstItem="Ctx-9v-FiT" firstAttribute="centerY" secondItem="gbj-EG-M8T" secondAttribute="centerY" id="rvn-Tf-fA2"/>
                     </constraints>
+                    <variation key="default">
+                        <mask key="constraints">
+                            <exclude reference="bSW-CX-RXo"/>
+                            <exclude reference="pL8-fa-5dl"/>
+                        </mask>
+                    </variation>
                 </view>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter your validation code below.  You can go back and try again if you do not receive a text message within a couple minutes." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ETy-rs-DXs">
                     <rect key="frame" x="16" y="16" width="268" height="144"/>

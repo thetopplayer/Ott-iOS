@@ -18,8 +18,8 @@ class IntroductionViewController: PageCollectionViewController {
     
     func setupDialogView() {
         
-        scrollView.layer.borderColor = UIColor.lightGrayColor().CGColor
-        scrollView.layer.borderWidth = 1.0
+        scrollView.layer.borderColor = UIColor.darkGrayColor().CGColor
+        scrollView.layer.borderWidth = 0.5
         scrollView.layer.cornerRadius = 4.0
         
         let vc0 = Intro0ViewController(nibName: "Intro0ViewController", bundle: nil)

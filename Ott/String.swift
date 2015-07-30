@@ -27,7 +27,7 @@ extension String {
     }
     
     
-    func stringWithDigits() -> String {
+    func stringByRemovingNonDecimalDigits() -> String {
         
         return "".join(self.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet))
     }

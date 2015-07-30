@@ -11,8 +11,8 @@ import UIKit
 
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
-    static let validationCodeLength = 5
-    var phoneNumberEntered: String?
+    static let validationCodeLength = 4
+
     let phoneUtil: NBPhoneNumberUtil = {
         
         return NBPhoneNumberUtil()
@@ -36,7 +36,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         textField.text = "+1"
         button.enabled = false
         
-        phoneNumberEntered = ""
         startObservations()
     }
 
@@ -62,7 +61,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         textField.resignFirstResponder()
         currentUser().phoneNumber = textField.text
         currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
-        let message = "Your Ott validation code is: \"\(currentUser().phoneNumberValidationCode!)\""
+        let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
         SMS.sharedInstance.sendMessage(message: message, phoneNumber: "+19366976430")
         
         tasksCompleted = true
@@ -87,18 +86,14 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         
-        phoneNumberEntered = string
-        print(phoneNumberEntered)
         return range.location > 1
     }
     
     
     func handleTextFieldDidChange (notification: NSNotification) {
         
-        let inputText = textField.text!
-        
-        let formattedNumber = phoneNumberFormatter.inputString(inputText)
-        textField.text = formattedNumber
+        let inputText = textField.text!.stringByRemovingNonDecimalDigits()
+        print(inputText)
         
         do {
             
@@ -122,5 +117,9 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
             
             print("error parsing number")
         }
+
+        let formattedNumber = phoneNumberFormatter.inputString(inputText)
+        textField.text = "+" + formattedNumber
     }
+
 }

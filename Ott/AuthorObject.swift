@@ -10,6 +10,7 @@ import UIKit
 
 
 
+
 //MARK: - Static Functions
 
 func userWasArchived() -> Bool {

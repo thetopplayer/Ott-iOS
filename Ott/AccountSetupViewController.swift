@@ -10,6 +10,7 @@ import UIKit
 
 class AccountSetupViewController: ViewController, UITextFieldDelegate {
 
+    @IBOutlet weak var contentContainer: UIView!
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var handleTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
@@ -53,10 +54,19 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
+    override func prefersStatusBarHidden() -> Bool {
+        return true
+    }
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
+        contentContainer.layer.borderColor = UIColor.darkGrayColor().CGColor
+        contentContainer.layer.borderWidth = 0.5
+        contentContainer.layer.cornerRadius = 4.0
+
         handleTextField.delegate = self
         nameTextField.delegate = self
         
