@@ -8,9 +8,12 @@
 
 import UIKit
 
+
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
+    static let validationCodeLength = 5
 
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -19,9 +22,10 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         textField.delegate = self
         
-        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
-        enableButton(button, value: false)
+//        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+//        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
+        button.enabled = false
+//        enableButton(button, value: false)
         
         startObservations()
     }
@@ -53,6 +57,9 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         textField.resignFirstResponder()
         currentUser().phoneNumber = textField.text
+        currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
+        let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
+        SMS.sharedInstance.sendMessage(message: message, phoneNumber: "+19366976430")
         
         tasksCompleted = true
         let parent = parentViewController as! PageCollectionViewController
@@ -76,6 +83,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     func handleTextFieldDidChange (notification: NSNotification) {
         
-        enableButton(button, value: textField.text!.stringWithDigits().length > 6)
+        button.enabled = textField.text!.stringWithDigits().length > 6
     }
 }

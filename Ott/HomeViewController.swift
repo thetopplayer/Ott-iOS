@@ -97,14 +97,30 @@ class HomeViewController: ViewController {
     
     private func updateDisplayedInformation() {
         
-        dispatch_async(dispatch_get_main_queue(), {
+        let user = currentUser()
+        
+        self.nameTextLabel.text = currentUser().name
+        self.handleTextLabel.text = currentUser().username
+        if currentUser().hasAvatar {
             
-            let user = currentUser()
-            
-            self.nameTextLabel.text = currentUser().name
-            self.handleTextLabel.text = currentUser().username
-            self.summaryTextLabel.attributedText = self.attributedUserDetails(user)
-        })
+            currentUser().getAvatar {
+                
+                (success: Bool, image: UIImage?) -> Void in
+                
+                if success {
+                    self.avatarImageView.image = image
+                }
+                else {
+                    print("error getting avatar")
+                    self.avatarImageView.image = AuthorObject.defaultAvatar
+                }
+            }
+        }
+        else {
+            avatarImageView.image = AuthorObject.defaultAvatar
+        }
+        
+        summaryTextLabel.attributedText = self.attributedUserDetails(user)
     }
     
     

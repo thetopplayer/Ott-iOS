@@ -24,9 +24,10 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         
         button.setTitle("Enter Code", forState: UIControlState.Disabled)
         button.setTitle("Submit", forState: UIControlState.Normal)
-        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
-        enableButton(button, value: false)
+//        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
+//        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
+        button.enabled = false
+//        enableButton(button, value: false)
         
         startObservations()
     }
@@ -74,16 +75,17 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
             presentViewController(alertViewController, animated: true, completion: nil)
         }
         
-        
-        enableButton(button, value: false)
+        button.enabled = false
+//        enableButton(button, value: false)
         button.setTitle("Validating....", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         
         // need to validate number by confirming that the code entered is the same as 
         // that returned by the sms request
         
-        if true {
+        if textField.text! == currentUser().phoneNumberValidationCode {
             
+            activityIndicator.stopAnimating()
             self.tasksCompleted = true
             let parent = self.parentViewController as! PageCollectionViewController
             parent.next(self)
@@ -91,6 +93,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         }
         else {
             
+            activityIndicator.stopAnimating()
             presentErrorAlert()
         }
         
@@ -114,7 +117,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     func handleTextFieldDidChange (notification: NSNotification) {
         
-        enableButton(button, value: textField.text!.stringWithDigits().length == 4)
+        button.enabled = textField.text!.length == PhoneNumberEntryViewController.validationCodeLength
     }
     
 

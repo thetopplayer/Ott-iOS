@@ -40,12 +40,12 @@ class BaseObject: PFObject {
         return objectId
     }
     
+    
     //MARK: - Image
     
     @NSManaged var hasImage: Bool
-    private var _image: UIImage?
-    @NSManaged var imageFile: PFFile?
-    
+    private var _cachedImage: UIImage?
+    private let imageKey = "image"
     
     func setImage(image: UIImage?, size: CGSize?, var quality: CGFloat) {
         
@@ -54,14 +54,19 @@ class BaseObject: PFObject {
             if let imageRep = UIImageJPEGRepresentation(image, quality) {
                 
                 let filename = "image.jpeg"
-                imageFile = PFFile(name: filename, data:imageRep)
+                let imageFile = PFFile(name: filename, data:imageRep)
+                self[imageKey] = imageFile
                 hasImage = true
-//                print("archived image data: \(image_!.length / 1024) kb")
+            }
+            else {
+                self[imageKey] = nil
+                hasImage = false
             }
         }
         
         if image == nil {
             hasImage = false
+            self[imageKey] = nil
             return
         }
         
@@ -83,10 +88,15 @@ class BaseObject: PFObject {
     
     func getImage(completion: (success: Bool, image: UIImage?) -> Void) {
         
-        if (_image != nil) {
+        if hasImage == false {
+            dispatch_async(dispatch_get_main_queue()) {
+                completion(success: true, image: nil)
+            }
+        }
+        else if (_cachedImage != nil) {
             
             dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: self._image!)
+                completion(success: true, image: self._cachedImage!)
             }
         }
         else {
@@ -97,8 +107,10 @@ class BaseObject: PFObject {
                 (imageData: NSData?, error: NSError?) -> Void in
                 if error == nil {
                     
-                    let image = UIImage(data: imageData!)
-                    completion(success: true, image: image)
+                    self._cachedImage = UIImage(data: imageData!)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        completion(success: true, image: self._cachedImage!)
+                    }
                 }
                 else {
                     
@@ -109,6 +121,7 @@ class BaseObject: PFObject {
             }
         }
     }
+    
     
     
     //MARK: - Location

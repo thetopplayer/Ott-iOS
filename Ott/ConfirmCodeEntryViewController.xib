@@ -21,14 +21,10 @@
             <subviews>
                 <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="WKN-cU-J3g">
                     <rect key="frame" x="8" y="240" width="284" height="44"/>
-                    <color key="backgroundColor" red="0.90196079019999997" green="0.90196079019999997" blue="0.90196079019999997" alpha="0.5" colorSpace="calibratedRGB"/>
                     <constraints>
                         <constraint firstAttribute="height" constant="44" id="fKL-E9-8uA"/>
                     </constraints>
-                    <state key="normal" title="Submit">
-                        <color key="titleColor" red="0.40000000600000002" green="0.40000000600000002" blue="0.40000000600000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="titleShadowColor" white="0.5" alpha="1" colorSpace="calibratedWhite"/>
-                    </state>
+                    <state key="normal" title="Submit"/>
                     <connections>
                         <action selector="handleButtonClick:" destination="-1" eventType="touchUpInside" id="5Qr-FW-osg"/>
                     </connections>

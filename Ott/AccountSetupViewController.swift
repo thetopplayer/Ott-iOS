@@ -86,7 +86,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     @IBAction func doneAction(sender: AnyObject) {
         
         currentUser().name = nameTextField.text
-        currentUser().username = handleTextField.text
+        currentUser().handle = handleTextField.text
         
         doneButton.setTitle("Creating Account...", forState: .Disabled)
         doneButton.enabled = false

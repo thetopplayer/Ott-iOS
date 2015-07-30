@@ -12,5 +12,6 @@
 #import <Parse/Parse.h>
 #import <Parse/PFObject+Subclass.h>
 #import <Bolts/BFTask.h>
+#import "NBAsYouTypeFormatter.h"
 
 #endif /* Ott_Bridging_Header_h */

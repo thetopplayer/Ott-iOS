@@ -9,6 +9,9 @@
 import UIKit
 
 
+
+//MARK: - Static Functions
+
 func userWasArchived() -> Bool {
     return AuthorObject.currentUser() != nil
 }
@@ -70,6 +73,9 @@ func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool,
 
 
 
+
+//MARK: - AuthorObject
+
 class AuthorObject: PFUser {
 
     override class func initialize() {
@@ -82,36 +88,31 @@ class AuthorObject: PFUser {
         }
     }
     
-//    static var _currentUser: AuthorObject?
     static override func currentUser() -> AuthorObject? {
    
         return super.currentUser() as? AuthorObject
-        
-//        if _currentUser != nil {
-//            return _currentUser!
-//        }
-//        
-//        _currentUser = super.currentUser() as? AuthorObject
-//        if _currentUser != nil {
-//            print("current user was archived")
-//            return _currentUser!
-//        }
-//
-//        _currentUser = AuthorObject()
-//        return _currentUser!
     }
     
     
+    override init() {
+        
+        super.init()
+        hasAvatar = false
+    }
+
     
-    //MARK: - Attributes
+    
+    //MARK: - Core Attributes
     
     static let phoneNumberKey = "phoneNumber"
     static let handleKey = "username"
+    static let avatarKey = "avatar"
     
     @NSManaged var phoneNumber: String?
-    @NSManaged var name: String?
+    @NSManaged var name: String? // user's non-unique name
     
     // the user's handle is stored as his username
+    // password is created by setting the handle
     var handle: String? {
         set {
             username = newValue
@@ -123,6 +124,100 @@ class AuthorObject: PFUser {
         }
     }
     
+    // used during signUp
+    var phoneNumberValidationCode: String?
+    
+    
+    //MARK: - Avatar
+    
+    @NSManaged var hasAvatar: Bool
+    private var _cachedImage: UIImage?
+    private let avatarKey = "avatar"
+    
+    func setAvatar(image: UIImage?, size: CGSize?, var quality: CGFloat) {
+        
+        func archive(image: UIImage, quality: CGFloat) {
+            
+            if let imageRep = UIImageJPEGRepresentation(image, quality) {
+                
+                let filename = "avatar.jpg"
+                let imageFile = PFFile(name: filename, data:imageRep)
+                self[avatarKey] = imageFile
+                hasAvatar = true
+            }
+            else {
+                self[avatarKey] = nil
+                hasAvatar = false
+            }
+        }
+        
+        if image == nil {
+            hasAvatar = false
+            self[avatarKey] = nil
+            return
+        }
+        
+        if (quality < 0) || (quality > 1.0) {
+            NSLog("Warning:  Image Quality must be between 0 and 1.0!  setting to 1.0")
+            quality = 1.0
+        }
+        
+        if size == nil {
+            archive(image!, quality: quality)
+        }
+        else {
+            if let resizedImage = image!.resized(toSize: size!) {
+                archive(resizedImage, quality: quality)
+            }
+        }
+    }
+    
+    
+    func getAvatar(completion: (success: Bool, image: UIImage?) -> Void) {
+        
+        if hasAvatar == false {
+            dispatch_async(dispatch_get_main_queue()) {
+                completion(success: true, image: nil)
+            }
+        }
+        else if (_cachedImage != nil) {
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                completion(success: true, image: self._cachedImage!)
+            }
+        }
+        else {
+            
+            let imageFile = PFFile()
+            imageFile.getDataInBackgroundWithBlock {
+                
+                (imageData: NSData?, error: NSError?) -> Void in
+                if error == nil {
+                    
+                    self._cachedImage = UIImage(data: imageData!)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        completion(success: true, image: self._cachedImage!)
+                    }
+                }
+                else {
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        completion(success: false, image: nil)
+                    }
+                }
+            }
+        }
+    }
+
+    
+    static var defaultAvatar: UIImage = {
+        
+        return UIImage(named:"avatar")!
+    }()
+    
+    
+    
+    //MARK: - SignUp and Login
     
     func signupInBackground(completion: (succeeded: Bool, error: NSError?) -> Void) {
         
@@ -214,16 +309,5 @@ class AuthorObject: PFUser {
         return false
     }
     
-
-    
-    func setAvatar(image: UIImage?) -> Void {
-        
-    }
-    
-    
-    func getAvatar(completion: (success: Bool, image: UIImage?) -> Void) {
-        
-        
-    }
 }
 

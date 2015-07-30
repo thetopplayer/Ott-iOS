@@ -44,11 +44,12 @@ class CreationObject: BaseObject, MKAnnotation {
     var author: AuthorObject? {
         
         get {
-            
             return self[authorKey] as? AuthorObject
         }
         set {
             self[authorKey] = newValue
+            authorName = newValue?.name
+            authorHandle = newValue?.handle
         }
 
     }
