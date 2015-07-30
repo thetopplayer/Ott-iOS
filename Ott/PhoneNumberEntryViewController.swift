@@ -12,7 +12,19 @@ import UIKit
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     static let validationCodeLength = 5
-
+    var phoneNumberEntered: String?
+    let phoneUtil: NBPhoneNumberUtil = {
+        
+        return NBPhoneNumberUtil()
+        }()
+    
+    
+    let phoneNumberFormatter: NBAsYouTypeFormatter = {
+        
+        return NBAsYouTypeFormatter(regionCode: "US")
+        }()
+    
+    
     
     //MARK: - Lifecycle
     
@@ -21,12 +33,10 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         textField.delegate = self
-        
-//        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-//        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
+        textField.text = "+1"
         button.enabled = false
-//        enableButton(button, value: false)
         
+        phoneNumberEntered = ""
         startObservations()
     }
 
@@ -38,12 +48,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     
     //MARK: - Main
-    
-    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
-        
-        return range.location > 1;
-    }
-    
     
     override func didShow() {
         
@@ -58,7 +62,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         textField.resignFirstResponder()
         currentUser().phoneNumber = textField.text
         currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
-        let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
+        let message = "Your Ott validation code is: \"\(currentUser().phoneNumberValidationCode!)\""
         SMS.sharedInstance.sendMessage(message: message, phoneNumber: "+19366976430")
         
         tasksCompleted = true
@@ -67,7 +71,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    //MARK: - Observations
+    //MARK: - Observations and TextField Delegate
     
     func startObservations() {
         
@@ -81,8 +85,42 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
+    func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        
+        phoneNumberEntered = string
+        print(phoneNumberEntered)
+        return range.location > 1
+    }
+    
+    
     func handleTextFieldDidChange (notification: NSNotification) {
         
-        button.enabled = textField.text!.stringWithDigits().length > 6
+        let inputText = textField.text!
+        
+        let formattedNumber = phoneNumberFormatter.inputString(inputText)
+        textField.text = formattedNumber
+        
+        do {
+            
+            let nbNumber = try phoneUtil.parse(inputText, defaultRegion: "US")
+            if phoneUtil.isValidNumber(nbNumber) {
+                
+                do {
+                    let formattedNumber = try phoneUtil.format(nbNumber, numberFormat: NBEPhoneNumberFormatE164)
+                    currentUser().phoneNumber = formattedNumber
+                    button.enabled = true
+                }
+                catch {
+                    print("error formatting number")
+                }
+            }
+            else {
+                button.enabled = false
+            }
+        }
+        catch {
+            
+            print("error parsing number")
+        }
     }
 }

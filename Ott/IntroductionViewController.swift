@@ -104,7 +104,5 @@ class IntroductionViewController: PageCollectionViewController {
                 print("error confirming unique phone number")
             }
         }
-        
-        
     }
 }

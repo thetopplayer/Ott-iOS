@@ -16,6 +16,7 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl?
+    @IBOutlet weak var backButton: UIButton?
     
     
     
@@ -63,6 +64,8 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
         rightGR.direction = UISwipeGestureRecognizerDirection.Right
         rightGR.addTarget(self, action: "previous:")
         self.view.addGestureRecognizer(rightGR)
+        
+        backButton?.hidden = true
     }
     
     
@@ -202,6 +205,7 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
         
         if let pc = pageControl {
             pc.currentPage = currentPage
+            backButton?.hidden = currentPage == 0
         }
         
         pageViewControllers[currentPage].didShow()

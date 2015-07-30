@@ -94,11 +94,11 @@ class AuthorObject: PFUser {
     }
     
     
-    override init() {
-        
-        super.init()
-        hasAvatar = false
-    }
+//    override init() {
+//        
+//        super.init()
+//        hasAvatar = false
+//    }
 
     
     

@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8164.2" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8135.1"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -34,11 +34,28 @@
                                 <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <color key="currentPageIndicatorTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
                             </pageControl>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LA6-nI-Bg1">
+                                <rect key="frame" x="20" y="36" width="75" height="32"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="6Fm-Yu-dzc"/>
+                                    <constraint firstAttribute="width" constant="75" id="Paj-nm-qQ2"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="4"/>
+                                <state key="normal" title="Back" image="halfArrowLeft">
+                                    <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="previous:" destination="mFU-se-BdL" eventType="touchUpInside" id="dkn-r7-qL7"/>
+                                </connections>
+                            </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="B2C-5e-Zzm" secondAttribute="centerX" id="BHg-wT-Rpc"/>
+                            <constraint firstItem="LA6-nI-Bg1" firstAttribute="top" secondItem="TFW-yb-sN5" secondAttribute="bottom" constant="16" id="CZy-2F-tCE"/>
                             <constraint firstAttribute="trailing" secondItem="eur-fw-6Zg" secondAttribute="trailing" id="Zjg-4X-4xz"/>
+                            <constraint firstItem="LA6-nI-Bg1" firstAttribute="leading" secondItem="1IG-Xx-ttA" secondAttribute="leadingMargin" id="cMc-pe-jfo"/>
                             <constraint firstItem="B2C-5e-Zzm" firstAttribute="top" secondItem="1IG-Xx-ttA" secondAttribute="top" constant="80" id="dCe-bv-h3v"/>
                             <constraint firstItem="eur-fw-6Zg" firstAttribute="leading" secondItem="1IG-Xx-ttA" secondAttribute="leadingMargin" constant="-20" id="ekZ-9F-tyv"/>
                             <constraint firstItem="eur-fw-6Zg" firstAttribute="top" secondItem="TFW-yb-sN5" secondAttribute="bottom" constant="-20" id="ivV-bL-65t"/>
@@ -48,6 +65,7 @@
                         </constraints>
                     </view>
                     <connections>
+                        <outlet property="backButton" destination="LA6-nI-Bg1" id="9l4-rP-iA9"/>
                         <outlet property="pageControl" destination="qUd-6m-4OT" id="GDP-cp-kPK"/>
                         <outlet property="scrollView" destination="B2C-5e-Zzm" id="Ovn-SX-pra"/>
                         <segue destination="xTf-xC-j2l" kind="show" identifier="segueToSetupView" id="7Zs-CR-spH"/>
@@ -84,7 +102,7 @@
                                 <constraints>
                                     <constraint firstAttribute="width" constant="260" id="gQj-Vl-xns"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
                             </textField>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" borderStyle="roundedRect" placeholder="my name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="Sua-Ut-JfO">
@@ -93,7 +111,7 @@
                                     <constraint firstAttribute="width" constant="260" id="9o0-yw-1JJ"/>
                                     <constraint firstAttribute="width" relation="greaterThanOrEqual" constant="260" id="qf6-wz-t5F"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="21"/>
                                 <textInputTraits key="textInputTraits" spellCheckingType="no"/>
                                 <variation key="default">
                                     <mask key="constraints">
@@ -193,6 +211,7 @@
         </scene>
     </scenes>
     <resources>
+        <image name="halfArrowLeft" width="30" height="30"/>
         <image name="multiply" width="29" height="30"/>
     </resources>
 </document>
