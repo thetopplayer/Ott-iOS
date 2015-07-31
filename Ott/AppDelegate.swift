@@ -12,10 +12,10 @@ import UIKit
 
 
 
-func introViewController() -> IntroductionViewController {
+func introViewController() -> UIViewController {
     
     let storyboard = UIStoryboard(name: "Startup", bundle: nil)
-    return storyboard.instantiateViewControllerWithIdentifier("introViewController") as! IntroductionViewController
+    return storyboard.instantiateViewControllerWithIdentifier("introViewController")
 }
 
 

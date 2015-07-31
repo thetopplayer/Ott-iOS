@@ -30,9 +30,11 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     
     private func indicateHandleOK(ok: Bool) {
         
+        handleEntryStatusImageView.hidden = false
+        
         if ok {
-            self.handleEntryStatusImageView.tintColor = UIColor.fern()
-            self.handleEntryStatusImageView.image = self.okImage
+            handleEntryStatusImageView.tintColor = UIColor.fern()
+            handleEntryStatusImageView.image = self.okImage
         }
         else {
             handleEntryStatusImageView.tintColor = UIColor.redColor()
@@ -43,9 +45,11 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     
     private func indicateNameOK(ok: Bool) {
         
+        nameEntryStatusImageView.hidden = false
+        
         if ok {
-            self.nameEntryStatusImageView.tintColor = UIColor.fern()
-            self.nameEntryStatusImageView.image = self.okImage
+            nameEntryStatusImageView.tintColor = UIColor.fern()
+            nameEntryStatusImageView.image = self.okImage
         }
         else {
             nameEntryStatusImageView.tintColor = UIColor.redColor()
@@ -54,14 +58,12 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
-//    override func prefersStatusBarHidden() -> Bool {
-//        return true
-//    }
-    
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        
+        navigationItem.title = "One To Ten"
+        navigationItem.hidesBackButton = true
         
         contentContainer.layer.borderColor = UIColor.darkGrayColor().CGColor
         contentContainer.layer.borderWidth = 0.5
@@ -75,8 +77,9 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         doneButton.setTitle("Sign Up", forState: .Normal)
         doneButton.setTitle("Sign Up", forState: .Disabled)
 
-        indicateHandleOK(false)
-        indicateNameOK(false)
+        // need to start off with nil to get the tint to behave correctly when the images are set
+        handleEntryStatusImageView.image = nil
+        nameEntryStatusImageView.image = nil
         
         handleExistsLabel.hidden = true
         

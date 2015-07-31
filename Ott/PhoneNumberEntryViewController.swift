@@ -13,6 +13,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     static let validationCodeLength = 4
 
+    /*
     let phoneUtil: NBPhoneNumberUtil = {
         
         return NBPhoneNumberUtil()
@@ -23,7 +24,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         return NBAsYouTypeFormatter(regionCode: "US")
         }()
-    
+    */
     
     
     //MARK: - Lifecycle
@@ -65,11 +66,37 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     @IBAction func handleButtonClick(sender: AnyObject) {
         
+        func presentErrorAlert(message: String?) {
+            
+            var fullMessage: String
+            if let message = message {
+                
+                fullMessage = "Error:  \(message)  Please try again."
+            }
+            else {
+                
+                fullMessage = "We were unable to send a text message to \(currentUser().phoneNumber!).  Please check the number and try again."
+            }
+            
+            let alertViewController = UIAlertController(title: "Unable to Send Text", message: fullMessage, preferredStyle: .Alert)
+            
+            let tryAgainAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { action in })
+            
+            alertViewController.addAction(tryAgainAction)
+            presentViewController(alertViewController, animated: true, completion: nil)
+        }
+        
+        
         textField.resignFirstResponder()
         currentUser().phoneNumber = textField.text
         currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
         let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
-        SMS.sharedInstance.sendMessage(message: message, phoneNumber: "+19366976430")
+        SMS.sharedInstance.sendMessage(message: message, phoneNumber: currentUser().phoneNumber!) {(success: Bool, message: String?) -> Void in
+            
+            if success == false {
+                presentErrorAlert(message)
+            }
+        }
         
         tasksCompleted = true
         let parent = parentViewController as! PageCollectionViewController
@@ -97,36 +124,70 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
+    func isValidPhoneNumber(phoneNumber: String?) -> Bool {
+        
+        if let phoneNumber = phoneNumber {
+            return phoneNumber.stringByRemovingNonDecimalDigits().length == 11
+        }
+        else {
+            return false
+        }
+    }
+    
+    
+    func E164FormattedPhoneNumber(phoneNumber: String) -> String {
+        
+        return "+1" + phoneNumber.stringByRemovingNonDecimalDigits()
+    }
+    
+    
+    func prettyPhoneNumber(input: String?) -> String? {
+        
+        if let input = input {
+            
+            let digits = input.stringByRemovingNonDecimalDigits() as NSString
+            var formattedNumber = ""
+            switch digits.length {
+                
+            case 0...1:
+                formattedNumber = "+1 "
+                
+            case 2...4:
+                let areaCode = digits.substringWithRange(NSMakeRange(1, digits.length - 1))
+                formattedNumber = "+1 \(areaCode)"
+                
+            case 5...7:
+                let areaCode = digits.substringWithRange(NSMakeRange(1, 3))
+                let remainder = digits.substringWithRange(NSMakeRange(4, digits.length - 4))
+                formattedNumber = "+1 (\(areaCode)) \(remainder)"
+                
+            default:
+                let areaCode = digits.substringWithRange(NSMakeRange(1, 3))
+                let prefix = digits.substringWithRange(NSMakeRange(4, 3))
+                let remainder = digits.substringWithRange(NSMakeRange(7, digits.length - 7))
+                formattedNumber = "+1 (\(areaCode)) \(prefix)-\(remainder)"
+            }
+            
+            return formattedNumber
+        }
+        else {
+            return nil
+        }
+    }
+    
+    
     func handleTextFieldDidChange (notification: NSNotification) {
         
-        let inputText = textField.text!.stringByRemovingNonDecimalDigits()
-        print(inputText)
+        let inputText = textField.text!
+        textField.text = prettyPhoneNumber(inputText)
         
-        do {
+        if isValidPhoneNumber(inputText) {
             
-            let nbNumber = try phoneUtil.parse(inputText, defaultRegion: "US")
-            if phoneUtil.isValidNumber(nbNumber) {
-                
-                do {
-                    let formattedNumber = try phoneUtil.format(nbNumber, numberFormat: NBEPhoneNumberFormatE164)
-                    currentUser().phoneNumber = formattedNumber
-                    button.enabled = true
-                }
-                catch {
-                    print("error formatting number")
-                }
-            }
-            else {
-                button.enabled = false
-            }
+            currentUser().phoneNumber = E164FormattedPhoneNumber(inputText)
+            button.enabled = true
         }
-        catch {
-            
-            print("error parsing number")
+        else {
+            button.enabled = false
         }
-
-        let formattedNumber = phoneNumberFormatter.inputString(inputText)
-        textField.text = "+" + formattedNumber
     }
-
 }

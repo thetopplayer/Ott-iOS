@@ -24,11 +24,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         
         button.setTitle("Enter Code", forState: UIControlState.Disabled)
         button.setTitle("Submit", forState: UIControlState.Normal)
-//        button.setTitleColor(UIColor.whiteColor(), forState: UIControlState.Normal)
-//        button.setTitleColor(UIColor.darkGrayColor(), forState: UIControlState.Disabled)
         button.enabled = false
-//        enableButton(button, value: false)
-        
         startObservations()
     }
 
@@ -77,7 +73,6 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         }
         
         button.enabled = false
-//        enableButton(button, value: false)
         button.setTitle("Validating....", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         

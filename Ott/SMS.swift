@@ -36,9 +36,7 @@ class SMS {
     }
 
     
-    func sendMessage(message message: String, phoneNumber: String) {
-        
-        print("getting started...")
+    func sendMessage(message message: String, phoneNumber: String, completion: ((success: Bool, message: String?) -> Void)?) {
         
         let loginString = "\(twilioAccountSID):\(twilioAuthToken)"
         let urlString = "https://\(loginString)@api.twilio.com/2010-04-01/Accounts/\(twilioAccountSID)/Messages.json/"
@@ -57,13 +55,37 @@ class SMS {
                 do {
                     let jsonResult: NSDictionary = try NSJSONSerialization.JSONObjectWithData(data!, options: NSJSONReadingOptions.MutableContainers) as! NSDictionary
                     print("\(jsonResult)")
+                    
+                    if let completion = completion {
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            
+                            let success = jsonResult["code"] == nil
+                            let errMessage = jsonResult["message"] as? String
+                            completion(success: success, message: errMessage)
+                        }
+                    }
                 }
                 catch {
-                    print("error sending message")
+                    
+                    if let completion = completion {
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            completion(success: true, message: nil)
+                        }
+                    }
                 }
+
             }
             else {
-                print("error = \(error)")
+                
+                if let completion = completion {
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        let message = error!.localizedDescription
+                        completion(success: true, message: message)
+                    }
+                }
             }
         }
     }
