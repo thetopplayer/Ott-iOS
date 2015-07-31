@@ -117,13 +117,19 @@ class AuthorObject: PFUser {
     var handle: String? {
         set {
             username = newValue
-            password = phoneNumber! + username!
+            password = generatedPassword()
         }
         
         get {
             return username
         }
     }
+    
+    
+    private func generatedPassword() -> String {
+        return phoneNumber! + username!
+    }
+    
     
     // used during signUp
     var phoneNumberValidationCode: String?
@@ -134,6 +140,13 @@ class AuthorObject: PFUser {
     @NSManaged var hasAvatar: Bool
     private var _cachedImage: UIImage?
     private let avatarKey = "avatar"
+    
+    func clearAvatar() {
+        
+        hasAvatar = false
+        _cachedImage = nil
+    }
+    
     
     func setAvatar(image: UIImage?, size: CGSize?, var quality: CGFloat) {
         
@@ -164,10 +177,12 @@ class AuthorObject: PFUser {
         }
         
         if size == nil {
+            _cachedImage = image
             archive(image!, quality: quality)
         }
         else {
             if let resizedImage = image!.resized(toSize: size!) {
+                _cachedImage = resizedImage
                 archive(resizedImage, quality: quality)
             }
         }
@@ -184,20 +199,23 @@ class AuthorObject: PFUser {
         else if (_cachedImage != nil) {
             
             dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: self._cachedImage!)
+                completion(success: true, image: self._cachedImage)
             }
         }
         else {
             
-            let imageFile = PFFile()
+            let imageFile = self[avatarKey] as! PFFile
             imageFile.getDataInBackgroundWithBlock {
                 
                 (imageData: NSData?, error: NSError?) -> Void in
                 if error == nil {
                     
-                    self._cachedImage = UIImage(data: imageData!)
+                    if let imageData = imageData {
+                        self._cachedImage = UIImage(data: imageData)
+                    }
+                    
                     dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: true, image: self._cachedImage!)
+                        completion(success: true, image: self._cachedImage)
                     }
                 }
                 else {
@@ -234,6 +252,10 @@ class AuthorObject: PFUser {
     
     
     func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
+        
+        if password == nil {
+            password = generatedPassword()
+        }
         
         AuthorObject.logInWithUsernameInBackground(handle!, password: password!, block: completion)
     }

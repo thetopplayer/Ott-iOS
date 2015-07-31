@@ -11,16 +11,9 @@ import UIKit
 
 class IntroductionViewController: PageCollectionViewController {
     
-//    override func prefersStatusBarHidden() -> Bool {
-//        return true
-//    }
-    
-    
     func setupDialogView() {
         
-        scrollView.layer.borderColor = UIColor.darkGrayColor().CGColor
-        scrollView.layer.borderWidth = 0.5
-        scrollView.layer.cornerRadius = 4.0
+        scrollView.addRoundedBorder()
         
         let vc0 = Intro0ViewController(nibName: "Intro0ViewController", bundle: nil)
         let vc1 = Intro1ViewController(nibName: "Intro1ViewController", bundle: nil)
@@ -70,7 +63,7 @@ class IntroductionViewController: PageCollectionViewController {
                     
                     dispatch_async(dispatch_get_main_queue()) {
                         self.performSegueWithIdentifier("segueToSetupView", sender: self)
-                    }                    
+                    }
                 }
                 else {
                     
@@ -78,22 +71,22 @@ class IntroductionViewController: PageCollectionViewController {
                         
                         (object: PFObject?, error: NSError?) -> Void in
                         
-                        var existingUser: AuthorObject?
                         if error == nil {
-                            existingUser = (object as? AuthorObject)!
+                            
+                            if let existingUser = object as? AuthorObject {
+                                  dispatch_async(dispatch_get_main_queue()) {
+                                    login(existingUser)
+                                }
+                            }
+                            else {
+                                
+                                print("-> error fetching existing account information")
+                            }
                         }
                         else {
                             print("error fetching existing account information")
                         }
                         
-                        if let existingUser = existingUser {
-                            login(existingUser)
-                        }
-                        else {
-                            
-                            // todo - error alert
-                            print("error processing existing account information")
-                        }
                     }
 
                 }

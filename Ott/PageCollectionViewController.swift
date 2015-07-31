@@ -58,12 +58,12 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
         let leftGR = UISwipeGestureRecognizer()
         leftGR.direction = UISwipeGestureRecognizerDirection.Left
         leftGR.addTarget(self, action: "next:")
-        self.view.addGestureRecognizer(leftGR)
+        view.addGestureRecognizer(leftGR)
         
         let rightGR = UISwipeGestureRecognizer()
         rightGR.direction = UISwipeGestureRecognizerDirection.Right
         rightGR.addTarget(self, action: "previous:")
-        self.view.addGestureRecognizer(rightGR)
+        view.addGestureRecognizer(rightGR)
         
         backButton?.hidden = true
     }

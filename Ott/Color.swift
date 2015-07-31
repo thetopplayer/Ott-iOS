@@ -28,6 +28,10 @@ extension UIColor {
         return UIColor(red: 244/255, green: 244/255, blue: 1.0, alpha: 1.0)
     }
     
+    static func tint() -> UIColor {
+        return UIColor(hex: 0xFF9311)
+    }
+    
     
     //MARK: - Methods
     

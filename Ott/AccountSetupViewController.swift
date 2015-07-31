@@ -23,7 +23,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
   
     private var handleIsUnique = false
     let minimumHandleLength = 4
-    let minimumUserNameLength = 4
+    let minimumUserNameLength = 3
     
     private let okImage = UIImage(named: "tick")
     private let errImage = UIImage(named: "multiply")
@@ -65,9 +65,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         navigationItem.title = "One To Ten"
         navigationItem.hidesBackButton = true
         
-        contentContainer.layer.borderColor = UIColor.darkGrayColor().CGColor
-        contentContainer.layer.borderWidth = 0.5
-        contentContainer.layer.cornerRadius = 4.0
+        contentContainer.addRoundedBorder()
 
         handleTextField.delegate = self
         nameTextField.delegate = self
@@ -111,12 +109,13 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             
             if error == nil {
                 dispatch_async(dispatch_get_main_queue()) {
-                    self.presentViewController(mainViewController(), animated: true, completion: nil)
+                    
+                    self.performSegueWithIdentifier("segueToAvatarCreation", sender: self)
                 }
             }
             else {
                 // todo handle error
-                print("error signin up: \(error)")
+                print("error signing up: \(error)")
             }
         }
         

@@ -13,30 +13,26 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     static let validationCodeLength = 4
 
-    /*
-    let phoneUtil: NBPhoneNumberUtil = {
-        
-        return NBPhoneNumberUtil()
-        }()
-    
-    
-    let phoneNumberFormatter: NBAsYouTypeFormatter = {
-        
-        return NBAsYouTypeFormatter(regionCode: "US")
-        }()
-    */
-    
     
     //MARK: - Lifecycle
+    
+    
+    private func setupView() {
+        
+        button.setTitle("Authorize", forState: .Normal)
+        button.setTitle("Authorize", forState: .Disabled)
+        
+        textField.text = "+1"
+        button.enabled = false
+    }
+    
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         textField.delegate = self
-        textField.text = "+1"
-        button.enabled = false
-        
+        setupView()
         startObservations()
     }
 
@@ -46,6 +42,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         endObservations()
     }
 
+    
     
     //MARK: - Main
     
@@ -80,12 +77,17 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
             
             let alertViewController = UIAlertController(title: "Unable to Send Text", message: fullMessage, preferredStyle: .Alert)
             
-            let tryAgainAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { action in })
+            let tryAgainAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { action in
+                self.setupView()
+                self.textField.becomeFirstResponder()
+            })
             
             alertViewController.addAction(tryAgainAction)
             presentViewController(alertViewController, animated: true, completion: nil)
         }
         
+        button.setTitle("Sending Text...", forState: .Disabled)
+        button.enabled = false
         
         textField.resignFirstResponder()
         currentUser().phoneNumber = textField.text
@@ -93,14 +95,16 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
         SMS.sharedInstance.sendMessage(message: message, phoneNumber: currentUser().phoneNumber!) {(success: Bool, message: String?) -> Void in
             
-            if success == false {
+            if success {
+                
+                self.tasksCompleted = true
+                (self.parentViewController as! PageCollectionViewController).next(self)
+            }
+            else {
+                
                 presentErrorAlert(message)
             }
         }
-        
-        tasksCompleted = true
-        let parent = parentViewController as! PageCollectionViewController
-        parent.next(self)
     }
     
     

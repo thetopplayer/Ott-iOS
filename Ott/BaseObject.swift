@@ -76,10 +76,12 @@ class BaseObject: PFObject {
         }
         
         if size == nil {
+            _cachedImage = image
             archive(image!, quality: quality)
         }
         else {
             if let resizedImage = image!.resized(toSize: size!) {
+                _cachedImage = resizedImage
                 archive(resizedImage, quality: quality)
             }
         }
@@ -101,15 +103,18 @@ class BaseObject: PFObject {
         }
         else {
             
-            let imageFile = PFFile()
+            let imageFile = self[imageKey] as! PFFile
             imageFile.getDataInBackgroundWithBlock {
                 
                 (imageData: NSData?, error: NSError?) -> Void in
                 if error == nil {
                     
-                    self._cachedImage = UIImage(data: imageData!)
+                    if let imageData = imageData {
+                        self._cachedImage = UIImage(data: imageData)
+                    }
+                    
                     dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: true, image: self._cachedImage!)
+                        completion(success: true, image: self._cachedImage)
                     }
                 }
                 else {

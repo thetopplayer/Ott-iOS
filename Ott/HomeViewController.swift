@@ -50,6 +50,9 @@ class HomeViewController: ViewController {
         userContainerView.addDownShadow()
         
         avatarImageView.addRoundedBorder()
+        avatarImageView.contentMode = .ScaleAspectFill
+        avatarImageView.layer.masksToBounds = true
+
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         

@@ -62,7 +62,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         setupParseBackend()
-        
+//        UIView.appearance().tintColor = UIColor.tint()
+        UIButton.appearance().tintColor = UIColor.tint()
+        UITabBar.appearance().tintColor = UIColor.tint()
+
         return true
     }
 
