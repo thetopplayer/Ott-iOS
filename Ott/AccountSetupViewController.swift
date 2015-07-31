@@ -160,20 +160,18 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                 return false
             }
             
-            // exclude non-characters
-
-
             if string.containsCharacter(inCharacterSet: NSCharacterSet.newlineCharacterSet()) {
                 nameTextField.becomeFirstResponder()
                 return false
             }
             
-            if string.containsCharacter(inCharacterSet: NSCharacterSet.whitespaceCharacterSet()) {
-                return false
-            }
-            
-            return true
+            return string.isSuitableForHandle()
         }
+        else if textField == nameTextField {
+            
+            return string.isSuitableForUserName()
+        }
+        
         
         return true
     }

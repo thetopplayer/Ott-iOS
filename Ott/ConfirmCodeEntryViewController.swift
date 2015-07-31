@@ -73,7 +73,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         }
         
         button.enabled = false
-        button.setTitle("Validating....", forState: UIControlState.Disabled)
+        button.setTitle("Validating...", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         
         // need to validate number by confirming that the code entered is the same as 

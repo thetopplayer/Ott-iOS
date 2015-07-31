@@ -25,7 +25,7 @@ extension UIColor {
     }
         
     static func background() -> UIColor {
-        return UIColor(red: 244/255, green: 244/255, blue: 1.0, alpha: 1.0)
+        return UIColor(hex: 0xE5F5FA)
     }
     
     static func tint() -> UIColor {

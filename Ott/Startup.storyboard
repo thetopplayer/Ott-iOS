@@ -59,7 +59,7 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="4"/>
                                 <state key="normal" title="Back" image="halfArrowLeft">
-                                    <color key="titleColor" red="0.0" green="0.47843137250000001" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                    <color key="titleColor" red="1" green="0.57647058823529407" blue="0.066666666666666666" alpha="1" colorSpace="calibratedRGB"/>
                                 </state>
                                 <connections>
                                     <action selector="previous:" destination="mFU-se-BdL" eventType="touchUpInside" id="dkn-r7-qL7"/>
