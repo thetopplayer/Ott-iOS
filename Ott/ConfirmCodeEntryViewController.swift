@@ -53,6 +53,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         
         super.willHide()
         textField.resignFirstResponder()
+        textField.text = ""
         activityIndicator.stopAnimating()
         
         button.setTitle("Enter Code", forState: UIControlState.Disabled)

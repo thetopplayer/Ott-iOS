@@ -21,14 +21,6 @@
                             <imageView multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="introBackground" translatesAutoresizingMaskIntoConstraints="NO" id="eur-fw-6Zg">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
-                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="K5n-kP-SOk">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="HkV-wt-m9W">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                                <blurEffect style="light"/>
-                            </visualEffectView>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" scrollEnabled="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2C-5e-Zzm">
                                 <rect key="frame" x="150" y="80" width="300" height="300"/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
@@ -65,15 +57,11 @@
                             <constraint firstAttribute="centerX" secondItem="B2C-5e-Zzm" secondAttribute="centerX" id="BHg-wT-Rpc"/>
                             <constraint firstItem="LA6-nI-Bg1" firstAttribute="top" secondItem="TFW-yb-sN5" secondAttribute="bottom" constant="16" id="CZy-2F-tCE"/>
                             <constraint firstItem="Pfz-5j-CO9" firstAttribute="top" secondItem="eur-fw-6Zg" secondAttribute="bottom" id="GBZ-2v-bh2"/>
-                            <constraint firstItem="K5n-kP-SOk" firstAttribute="top" secondItem="1IG-Xx-ttA" secondAttribute="topMargin" id="Jb2-Ri-Uqd"/>
                             <constraint firstItem="eur-fw-6Zg" firstAttribute="top" secondItem="1IG-Xx-ttA" secondAttribute="topMargin" id="Nlw-yf-taW"/>
-                            <constraint firstItem="K5n-kP-SOk" firstAttribute="leading" secondItem="1IG-Xx-ttA" secondAttribute="leadingMargin" constant="-20" id="cIg-gK-nHM"/>
                             <constraint firstItem="LA6-nI-Bg1" firstAttribute="leading" secondItem="1IG-Xx-ttA" secondAttribute="leadingMargin" id="cMc-pe-jfo"/>
                             <constraint firstItem="B2C-5e-Zzm" firstAttribute="top" secondItem="1IG-Xx-ttA" secondAttribute="top" constant="80" id="dCe-bv-h3v"/>
                             <constraint firstItem="qUd-6m-4OT" firstAttribute="top" secondItem="B2C-5e-Zzm" secondAttribute="bottom" constant="-5" id="jXW-Fz-iaZ"/>
                             <constraint firstItem="qUd-6m-4OT" firstAttribute="centerX" secondItem="B2C-5e-Zzm" secondAttribute="centerX" id="pLt-Vr-BND"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="K5n-kP-SOk" secondAttribute="trailing" constant="-20" id="r8O-vX-rem"/>
-                            <constraint firstItem="Pfz-5j-CO9" firstAttribute="top" secondItem="K5n-kP-SOk" secondAttribute="bottom" id="uv9-DB-M9R"/>
                         </constraints>
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
@@ -103,14 +91,6 @@
                             <imageView multipleTouchEnabled="YES" userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="introBackground" translatesAutoresizingMaskIntoConstraints="NO" id="H8O-c1-n9O">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                             </imageView>
-                            <visualEffectView opaque="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="oC9-Pp-TgI">
-                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                <view key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" id="hNZ-Gw-RwT">
-                                    <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                                    <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                </view>
-                                <blurEffect style="light"/>
-                            </visualEffectView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="CI2-04-Rk6">
                                 <rect key="frame" x="150" y="80" width="300" height="300"/>
                                 <subviews>
@@ -229,12 +209,8 @@
                             <constraint firstItem="CI2-04-Rk6" firstAttribute="centerX" secondItem="bda-3i-wpL" secondAttribute="centerX" id="CSk-cL-1NY"/>
                             <constraint firstItem="H8O-c1-n9O" firstAttribute="leading" secondItem="bda-3i-wpL" secondAttribute="leadingMargin" constant="-20" id="KtD-FC-kSa"/>
                             <constraint firstItem="PVS-hC-t0a" firstAttribute="top" secondItem="H8O-c1-n9O" secondAttribute="bottom" id="Lni-8h-ub5"/>
-                            <constraint firstItem="oC9-Pp-TgI" firstAttribute="leading" secondItem="bda-3i-wpL" secondAttribute="leadingMargin" constant="-20" id="U9Y-vq-XnI"/>
                             <constraint firstItem="CI2-04-Rk6" firstAttribute="top" secondItem="gmn-qp-Xto" secondAttribute="bottom" constant="80" id="YZr-Xk-hWK"/>
-                            <constraint firstItem="oC9-Pp-TgI" firstAttribute="top" secondItem="bda-3i-wpL" secondAttribute="topMargin" id="aQO-wO-0uK"/>
                             <constraint firstAttribute="trailingMargin" secondItem="H8O-c1-n9O" secondAttribute="trailing" constant="-20" id="gYj-id-zX8"/>
-                            <constraint firstItem="PVS-hC-t0a" firstAttribute="top" secondItem="oC9-Pp-TgI" secondAttribute="bottom" id="gkh-Pe-mdt"/>
-                            <constraint firstAttribute="trailingMargin" secondItem="oC9-Pp-TgI" secondAttribute="trailing" constant="-20" id="hr0-qy-cNQ"/>
                             <constraint firstItem="H8O-c1-n9O" firstAttribute="top" secondItem="bda-3i-wpL" secondAttribute="topMargin" id="rKl-A8-uLl"/>
                         </constraints>
                     </view>
@@ -258,7 +234,7 @@
     </scenes>
     <resources>
         <image name="halfArrowLeft" width="30" height="30"/>
-        <image name="introBackground" width="1224" height="1632"/>
+        <image name="introBackground" width="1920" height="1200"/>
         <image name="multiply" width="29" height="30"/>
     </resources>
 </document>

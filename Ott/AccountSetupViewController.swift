@@ -54,9 +54,9 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true
-    }
+//    override func prefersStatusBarHidden() -> Bool {
+//        return true
+//    }
     
     
     override func viewDidLoad() {
@@ -158,6 +158,9 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                 return false
             }
             
+            // exclude non-characters
+
+
             if string.containsCharacter(inCharacterSet: NSCharacterSet.newlineCharacterSet()) {
                 nameTextField.becomeFirstResponder()
                 return false

@@ -11,9 +11,9 @@ import UIKit
 
 class IntroductionViewController: PageCollectionViewController {
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true
-    }
+//    override func prefersStatusBarHidden() -> Bool {
+//        return true
+//    }
     
     
     func setupDialogView() {
@@ -36,7 +36,7 @@ class IntroductionViewController: PageCollectionViewController {
         setNeedsStatusBarAppearanceUpdate()
         setupDialogView()
     }
-    
+
     
     override func handleCompletion() {
         

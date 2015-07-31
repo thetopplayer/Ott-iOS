@@ -55,6 +55,13 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         textField.becomeFirstResponder()
     }
     
+
+    override func willHide() {
+
+        super.willHide()
+        textField.resignFirstResponder()
+    }
+
     
     @IBAction func handleButtonClick(sender: AnyObject) {
         

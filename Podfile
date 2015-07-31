@@ -1,3 +1,4 @@
 
-pod 'libPhoneNumber-iOS', '~> 0.8'
+source 'https://github.com/CocoaPods/Specs.git'
+pod 'libPhoneNumber-iOS'
 
