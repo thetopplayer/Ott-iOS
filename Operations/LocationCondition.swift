@@ -138,7 +138,7 @@ private class LocationPermissionOperation: Operation {
     
     private func notifyUserOfAccessRequirement() {
         
-        guard let controller = UIApplication.sharedApplication().keyWindow?.rootViewController else {
+        guard let controller = topmostViewController() else {
             return
         }
         
@@ -154,7 +154,7 @@ private class LocationPermissionOperation: Operation {
     
     private func notifyUserToChangeSettings() {
         
-        guard let controller = UIApplication.sharedApplication().keyWindow?.rootViewController else {
+        guard let controller = topmostViewController() else {
             return
         }
         

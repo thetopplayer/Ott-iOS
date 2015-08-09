@@ -165,11 +165,11 @@ class DataManager {
     
     
     private var _cancelFetchTopic = false
-    func fetchTopic(withIdentifier identifier: String, completion: (TopicObject?) -> Void) {
+    func fetchTopic(withIdentifier identifier: String, completion: (Topic?) -> Void) {
         
         sleep(2)
         
-        let fetchedTopic: TopicObject? = nil
+        let fetchedTopic: Topic? = nil
         
         _cancelFetchTopic = false
         if _cancelFetchTopic == false {

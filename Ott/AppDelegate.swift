@@ -36,11 +36,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func presentFirstViewController() {
         
         if userWasArchived() {
-            window?.rootViewController!.presentViewController(mainViewController(), animated: true, completion: nil)
+            topmostViewController()?.presentViewController(mainViewController(), animated: true, completion: nil)
+        }
+        else if userSignedUp() {
+            
+            print("login screen")
         }
         else {
-            
-            window?.rootViewController!.presentViewController(introViewController(), animated: true, completion: nil)
+            topmostViewController()?.presentViewController(introViewController(), animated: true, completion: nil)
         }
      }
     
@@ -50,9 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         func setupParseBackend() {
             
             // initialize subclasses of PFObject before initializing parse
-            AuthorObject.initialize()
-            TopicObject.initialize()
-            PostObject.initialize()
+            Author.initialize()
+            Topic.initialize()
+            Post.initialize()
             
             Parse.enableLocalDatastore()
             
@@ -62,9 +65,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         setupParseBackend()
-//        UIView.appearance().tintColor = UIColor.tint()
+
         UIButton.appearance().tintColor = UIColor.tint()
         UITabBar.appearance().tintColor = UIColor.tint()
+        UINavigationBar.appearance().tintColor = UIColor.tint()
 
         return true
     }

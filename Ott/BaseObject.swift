@@ -30,7 +30,7 @@ class BaseObject: PFObject {
 //    }
 //    
 //    class func parseClassName() -> String {
-//        return "Base"
+//        return "BaseObject"
 //    }
     
     
@@ -47,7 +47,7 @@ class BaseObject: PFObject {
     private var _cachedImage: UIImage?
     private let imageKey = "image"
     
-    func setImage(image: UIImage?, size: CGSize?, var quality: CGFloat) {
+    func setImage(image: UIImage?, var quality: CGFloat = 0.8) {
         
         func archive(image: UIImage, quality: CGFloat) {
             
@@ -70,35 +70,22 @@ class BaseObject: PFObject {
             return
         }
         
-        if (quality < 0) || (quality > 1.0) {
-            NSLog("Warning:  Image Quality must be between 0 and 1.0!  setting to 1.0")
-            quality = 1.0
-        }
-        
-        if size == nil {
-            _cachedImage = image
-            archive(image!, quality: quality)
-        }
-        else {
-            if let resizedImage = image!.resized(toSize: size!) {
-                _cachedImage = resizedImage
-                archive(resizedImage, quality: quality)
-            }
-        }
+        _cachedImage = image
+        archive(image!, quality: quality)
     }
     
     
-    func getImage(completion: (success: Bool, image: UIImage?) -> Void) {
+    func getImage(completion: ((success: Bool, image: UIImage?) -> Void)?) {
         
         if hasImage == false {
             dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: nil)
+                completion?(success: true, image: nil)
             }
         }
         else if (_cachedImage != nil) {
             
             dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: self._cachedImage!)
+                completion?(success: true, image: self._cachedImage!)
             }
         }
         else {
@@ -114,13 +101,13 @@ class BaseObject: PFObject {
                     }
                     
                     dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: true, image: self._cachedImage)
+                        completion?(success: true, image: self._cachedImage)
                     }
                 }
                 else {
                     
                     dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: false, image: nil)
+                        completion?(success: false, image: nil)
                     }
                 }
             }

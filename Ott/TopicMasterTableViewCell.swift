@@ -20,7 +20,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topicImageView: UIImageView?
     
     
-    var displayedTopic: TopicObject? {
+    var displayedTopic: Topic? {
         
         didSet {
             updateContents()

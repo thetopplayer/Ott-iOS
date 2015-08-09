@@ -6,18 +6,85 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
+/**
+
+Abstract
+
+*/
+
+
 import UIKit
 import MapKit
 
-protocol Creation: Base, MKAnnotation {
+class Creation: BaseObject, MKAnnotation {
 
-    var authorName: String? {get set}
-    var authorHandle: String? {get set}
-    var authorAvatarURL: String? {get set}
-    var rating: Rating? {get set}
+//    override class func initialize() {
+//        struct Static {
+//            static var onceToken : dispatch_once_t = 0;
+//        }
+//        
+//        dispatch_once(&Static.onceToken) {
+//            self.registerSubclass()
+//        }
+//    }
+//    
+//    override class func parseClassName() -> String {
+//        return "Creation"
+//    }
     
-    func getAuthorAvatar(completion: (success: Bool, image: UIImage?) -> Void) -> Void
+    
+    @NSManaged var authorName: String?
+    @NSManaged var authorHandle: String?
+    @NSManaged var authorAvatarURL: String?
+    
+    private let authorKey = "author"
+    private let ratingKey = "rating"
+    
+    func setAuthor(author: Author) {
+        
+        self[authorKey] = author
+        authorName = author.name
+        authorHandle = author.handle
+    }
+    
+    
+    var rating: Rating? {
+        
+        get {
+            let value = self[ratingKey] as? Int
+            return Rating(withValue: value)
+        }
+        set {
+            self[ratingKey] = newValue?.value
+        }
+    }
+    
+    
+    func getAuthorAvatar(completion: (success: Bool, image: UIImage?) -> Void) {
+        
+    }
+    
+    
+    
+    //MARK: - MKAnnotation
+    
+    var coordinate: CLLocationCoordinate2D {
+        
+        return location!
+    }
+    
+    
+    var title: String? {
+        return comment
+    }
+    
+    
+    var subTitle: String? {
+        
+        let dateFormatter = NSDateFormatter()
+        dateFormatter.dateStyle = .MediumStyle
+        return dateFormatter.stringFromDate(createdAt!)
+    }
+    
+
 }
-
-
-

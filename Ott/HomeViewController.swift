@@ -115,19 +115,19 @@ class HomeViewController: ViewController {
                 }
                 else {
                     print("error getting avatar")
-                    self.avatarImageView.image = AuthorObject.defaultAvatar
+                    self.avatarImageView.image = Author.defaultAvatar
                 }
             }
         }
         else {
-            avatarImageView.image = AuthorObject.defaultAvatar
+            avatarImageView.image = Author.defaultAvatar
         }
         
         summaryTextLabel.attributedText = self.attributedUserDetails(user)
     }
     
     
-    private func attributedUserDetails(user: AuthorObject) -> NSAttributedString {
+    private func attributedUserDetails(user: Author) -> NSAttributedString {
         
         var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
         numberAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Bold", size: 15)

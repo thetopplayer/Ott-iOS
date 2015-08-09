@@ -23,7 +23,7 @@ class TopicTitleTableViewCell: TableViewCell {
     }
 
     
-    var displayedTopic: TopicObject? {
+    var displayedTopic: Topic? {
         
         didSet {
             updateContents()
@@ -38,7 +38,7 @@ class TopicTitleTableViewCell: TableViewCell {
     }
 
     
-    private func attributedTitle(topic: TopicObject, displayingRating: Bool) -> NSAttributedString {
+    private func attributedTitle(topic: Topic, displayingRating: Bool) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(32)

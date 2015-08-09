@@ -111,12 +111,12 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    private var data: [TopicObject]?
+    private var data: [Topic]?
 
     
     var fetchPredicate: NSPredicate?
     
-    var selection: TopicObject? {
+    var selection: Topic? {
         
         didSet {
             let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)

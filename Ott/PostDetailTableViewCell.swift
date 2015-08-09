@@ -19,7 +19,7 @@ class PostDetailTableViewCell: TableViewCell {
 
     
     
-    var displayedPost: PostObject? {
+    var displayedPost: Post? {
         
         didSet {
             updateContents()
@@ -70,7 +70,7 @@ class PostDetailTableViewCell: TableViewCell {
     }
     
     
-    private func attributedDescription(topic: PostObject) -> NSAttributedString {
+    private func attributedDescription(topic: Post) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)

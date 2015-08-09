@@ -1,5 +1,5 @@
 //
-//  Color.swift
+//  UIColor.swift
 //  Ott
 //
 //  Created by Max on 6/24/15.

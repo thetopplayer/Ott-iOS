@@ -134,7 +134,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func refreshDisplay(refreshingData refreshingData:Bool = true) {
         
-        //        func postsArrangedByTimestamp(posts: Set<PostObject>?) -> [Post] {
+        //        func postsArrangedByTimestamp(posts: Set<Post>?) -> [Post] {
         //
         //            var result: [Post]?
         //            if let posts = _myTopic!.posts {
@@ -160,7 +160,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         setDisplayType(.List)
         
         
-        func fetchCompletion(success: Bool, posts: [PostObject]?) {
+        func fetchCompletion(success: Bool, posts: [Post]?) {
             
             if success == false {
                 return
@@ -246,8 +246,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }()
     
     
-    private var _myTopic: TopicObject?
-    var myTopic: TopicObject? {
+    private var _myTopic: Topic?
+    var myTopic: Topic? {
         
         set {
             _myTopic = newValue
@@ -260,12 +260,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var arrangedPosts = [PostObject]()
+    private var arrangedPosts = [Post]()
     
     
     private func saveChanges() {
         
-        let myPost = PostObject()
+        let myPost = Post()
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
         myPost.location = LocationManager.sharedInstance.location?.coordinate

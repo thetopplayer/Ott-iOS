@@ -1,5 +1,5 @@
 //
-//  Image.swift
+//  UIImage.swift
 //  Ott
 //
 //  Created by Max on 7/10/15.

@@ -27,7 +27,7 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     }
     
     
-    var displayedTopic: TopicObject? {
+    var displayedTopic: Topic? {
         
         didSet {
             updateContents()
@@ -43,7 +43,7 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     }
     
     
-    private func attributedDescription(topic: TopicObject) -> NSAttributedString {
+    private func attributedDescription(topic: Topic) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
         normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)

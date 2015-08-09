@@ -33,7 +33,7 @@ class IntroductionViewController: PageCollectionViewController {
     
     override func handleCompletion() {
         
-        func login(user: AuthorObject) {
+        func login(user: Author) {
             
             let alertViewController = UIAlertController(title: "Welcome Back", message: "Logging in...", preferredStyle: .Alert)
             
@@ -73,7 +73,7 @@ class IntroductionViewController: PageCollectionViewController {
                         
                         if error == nil {
                             
-                            if let existingUser = object as? AuthorObject {
+                            if let existingUser = object as? Author {
                                   dispatch_async(dispatch_get_main_queue()) {
                                     login(existingUser)
                                 }

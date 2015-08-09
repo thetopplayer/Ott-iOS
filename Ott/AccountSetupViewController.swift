@@ -108,13 +108,18 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             self.createAccountActivityIndicator.stopAnimating()
             
             if error == nil {
+                
+                setUserSignedUp(true)
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     self.performSegueWithIdentifier("segueToAvatarCreation", sender: self)
                 }
             }
             else {
-                // todo handle error
+                
+                setUserSignedUp(false)
+                
+               // todo handle error
                 print("error signing up: \(error)")
             }
         }

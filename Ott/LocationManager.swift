@@ -161,7 +161,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         
         func notifyUserOfAccessRequirement() {
             
-            guard let controller = UIApplication.sharedApplication().keyWindow?.rootViewController else {
+            guard let controller = topmostViewController() else {
                 return
             }
             
@@ -176,7 +176,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         
         func notifyUserToChangeSettings() {
             
-            guard let controller = UIApplication.sharedApplication().keyWindow?.rootViewController else {
+            guard let controller = topmostViewController() else {
                 return
             }
             

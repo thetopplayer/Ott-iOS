@@ -16,3 +16,19 @@ func openSettings() {
 }
 
 
+
+
+//MARK: - User Defaults
+
+private let signedUpUserDefaultsKey = "signedUp"
+func userSignedUp() -> Bool {
+    
+    return NSUserDefaults.standardUserDefaults().boolForKey(signedUpUserDefaultsKey)
+}
+
+
+func setUserSignedUp(value: Bool) {
+    
+    NSUserDefaults.standardUserDefaults().setBool(value, forKey: signedUpUserDefaultsKey)
+}
+

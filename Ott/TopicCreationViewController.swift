@@ -14,6 +14,12 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     private var titleCellView: TopicCreationTitleTableViewCell?
     private var imageCellView: ImageTableViewCell?
     
+    private var didPresentImagePicker = false
+    
+    private var image: UIImage?
+    private let imageSize = CGSizeMake(800, 800)
+    private let imageQuality = CGFloat(0.8)
+    
     
     //MARK: - Lifecycle
     
@@ -28,18 +34,26 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         super.viewWillAppear(animated)
         
-        if myTopic == nil {
-            myTopic = TopicObject()
-            navigationItem.rightBarButtonItem?.enabled = false
-        }
+//        if let titleCellView = titleCellView {
+//            
+//            titleCellView.title = myTopic?.name
+//            titleCellView.comment = myTopic?.comment
+//        }
         
-        if let titleCellView = titleCellView {
+        if didPresentImagePicker {
+            didPresentImagePicker = false
             
-            titleCellView.title = myTopic?.name
-            titleCellView.comment = myTopic?.comment
+            let imagePath = NSIndexPath(forRow: 1, inSection: 0)
+            tableView.reloadRowsAtIndexPaths([imagePath], withRowAnimation: .Fade)
         }
-        
-        self.tableView.reloadData()
+        else {
+            
+            myTopic = Topic()
+            image = nil
+            navigationItem.rightBarButtonItem?.enabled = false
+            
+            tableView.reloadData()
+        }
     }
     
     
@@ -53,7 +67,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     //MARK: - Data
     
-    var myTopic: TopicObject?
+    var myTopic: Topic?
     
     private func saveChanges() {
         
@@ -61,11 +75,16 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         topic.name = titleCellView!.title
         topic.comment = titleCellView!.comment
+        if let image = image {
+            topic.setImage(image, quality: imageQuality)
+        }
         topic.location = LocationManager.sharedInstance.location?.coordinate
         topic.locationName = LocationManager.sharedInstance.locationName
-        currentUser().addTopic(topic)
+        topic.setAuthor(currentUser())
+        topic.saveInBackground()
         
-        currentUser().save()
+        currentUser().addTopic(topic)
+        currentUser().saveEventually()
     }
     
     
@@ -106,6 +125,11 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        
+        if myTopic == nil {
+            return 0
+        }
+        
         return 1
     }
     
@@ -116,6 +140,11 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        if myTopic == nil {
+            return 0
+        }
+        
         return 2
     }
     
@@ -125,7 +154,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             return titleCellHeight
         }
         
-        if myTopic!.hasImage {
+        if image != nil {
             return imageCellHeight
         }
         else {
@@ -150,10 +179,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         }
         else {
             
-            if myTopic!.hasImage {
+            if let image = image {
                 
                 imageCellView = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as? ImageTableViewCell
-//                imageCellView!.topicImageView?.image = myTopic?.image
+                imageCellView!.topicImageView?.image = image
                 cell = imageCellView!
             }
             else {
@@ -216,15 +245,16 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         myTopic!.name = titleCellView?.title
         myTopic!.comment = titleCellView?.comment
         
-        
         if action == .Camera {
             
             titleCellView?.resignFirstResponder()
+            didPresentImagePicker = true
             operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
         }
         else {
             
             titleCellView?.resignFirstResponder()
+            didPresentImagePicker = true
             operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
         }
     }
@@ -235,7 +265,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
-        myTopic?.setImage(image, size: CGSizeMake(800, 800), quality: 0.8)
+        self.image = image.resized(toSize: imageSize)
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
     
