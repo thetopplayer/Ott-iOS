@@ -34,12 +34,6 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         super.viewWillAppear(animated)
         
-//        if let titleCellView = titleCellView {
-//            
-//            titleCellView.title = myTopic?.name
-//            titleCellView.comment = myTopic?.comment
-//        }
-        
         if didPresentImagePicker {
             didPresentImagePicker = false
             

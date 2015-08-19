@@ -103,7 +103,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         doneButton.enabled = false
         createAccountActivityIndicator.startAnimating()
         
-        currentUser().signUpInBackgroundWithBlock { (succeeded: Bool, error: NSError?) -> Void in
+        currentUser().signUpInBackgroundWithBlock { (succeeded, error) in
             
             self.createAccountActivityIndicator.stopAnimating()
             

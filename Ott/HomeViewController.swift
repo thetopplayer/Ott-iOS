@@ -104,9 +104,9 @@ class HomeViewController: ViewController {
         
         self.nameTextLabel.text = currentUser().name
         self.handleTextLabel.text = currentUser().username
-        if currentUser().hasAvatar {
+        if currentUser().hasImage {
             
-            currentUser().getAvatar {
+            currentUser().getImage {
                 
                 (success: Bool, image: UIImage?) -> Void in
                 

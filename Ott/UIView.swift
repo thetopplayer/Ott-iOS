@@ -66,7 +66,7 @@ extension UIView {
         
         UIGraphicsBeginImageContextWithOptions(self.frame.size, false, 0.0)
         let context = UIGraphicsGetCurrentContext()
-        layer.renderInContext(context)
+        layer.renderInContext(context!)
         let snapshotImage = UIGraphicsGetImageFromCurrentImageContext()
         UIGraphicsEndImageContext();
         

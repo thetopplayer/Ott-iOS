@@ -92,12 +92,6 @@ class Author: PFUser {
         return super.currentUser() as? Author
     }
     
-    
-//    override init() {
-//        
-//        super.init()
-//        hasAvatar = false
-//    }
 
     
     
@@ -134,7 +128,7 @@ class Author: PFUser {
     
     
     //MARK: - Avatar
-    
+    /*
     @NSManaged var hasAvatar: Bool
     private var _cachedImage: UIImage?
     private let avatarKey = "avatar"
@@ -226,29 +220,28 @@ class Author: PFUser {
         }
     }
 
-    
+    */
     static var defaultAvatar: UIImage = {
         
         return UIImage(named:"avatar")!
     }()
     
     
-    
     //MARK: - SignUp and Login
     
-    func signupInBackground(completion: (succeeded: Bool, error: NSError?) -> Void) {
+    override func signUpInBackgroundWithBlock(block: PFBooleanResultBlock?) {
         
         if (username == nil) || (password == nil) {
             let userInfo = [NSLocalizedDescriptionKey : "Username or password not set."]
             let error = NSError(domain: "User", code: 1, userInfo: userInfo)
-            completion(succeeded: false, error: error)
+            block?(false, error)
         }
         else {
-            signUpInBackgroundWithBlock(completion)
+            super.signUpInBackgroundWithBlock(block)
         }
     }
     
-    
+
     func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
         
         if password == nil {

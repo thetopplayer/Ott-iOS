@@ -39,7 +39,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
    
     private func clearAvatar() {
         
-        currentUser().clearAvatar()
+        currentUser().setImage(nil)
         self.imageView.image = UIImage(named: "addAvatar")
     }
     
@@ -78,7 +78,6 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
             presentViewController(alertViewController, animated: true, completion: nil)
         }
         
-        
         presentOptionsSheet()
     }
     
@@ -97,11 +96,12 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
-        currentUser().setAvatar(image, size: CGSizeMake(200, 200), quality: 0.8)
+        let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
+        currentUser().setImage(resizedImage)
         
         // setting avatar will shrink and compress the image, so use for what is displayed
         // rather than the raw image itself
-        currentUser().getAvatar() { (success: Bool, image: UIImage?) -> Void in
+        currentUser().getImage() { (success: Bool, image: UIImage?) -> Void in
             
             self.imageView.image = image
             self.doneButton.setTitle("Next", forState: .Normal)
@@ -113,7 +113,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         
-        if currentUser().hasAvatar {
+        if currentUser().hasImage {
             doneButton.setTitle("Next", forState: .Normal)
         }
         else {
