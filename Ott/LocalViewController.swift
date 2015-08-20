@@ -39,13 +39,26 @@ class LocalViewController: TopicMasterViewController {
         
         if let location = LocationManager.sharedInstance.location {
             
-            Topic.fetchTopicsNearLocation(location, withinMiles: 20) {(objects, error) in
+            let fetchOperation = NSBlockOperation(block: { () -> Void in
                 
-                print("did fetch objects")
+                let query = Topic.query()!
+                let geoPoint = PFGeoPoint(location: location)
+                query.whereKey(DataKeys.Location, nearGeoPoint: geoPoint, withinMiles: 20)
+                let updatedKey = "updatedAt"
+                query.whereKey(updatedKey, greaterThanOrEqualTo: self.lastUpdated)
+                query.orderByDescending(updatedKey)
+                
+                var error: NSError?
+                let objects = query.findObjects(&error)
                 if let objects = objects as? [Topic] {
-                    self.data = objects
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.updateTable(withData: objects)
+                    }
                 }
-            }
+            })
+            
+            operationQueue().addOperation(fetchOperation)
         }
     }
     

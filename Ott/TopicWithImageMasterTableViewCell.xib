@@ -67,7 +67,7 @@
                                     <constraint firstAttribute="height" constant="85" id="tGj-Y1-GDU"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Bas-Rv-587">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Bas-Rv-587">
                                 <rect key="frame" x="8" y="28" width="483" height="48"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="27" id="klp-m0-k0W"/>
@@ -92,7 +92,7 @@
                             <constraint firstAttribute="trailing" secondItem="fws-ag-D0t" secondAttribute="trailing" id="VeX-61-L0f"/>
                             <constraint firstAttribute="trailing" secondItem="rFb-rF-kgh" secondAttribute="trailing" id="ZvV-wS-1yL"/>
                             <constraint firstItem="Bas-Rv-587" firstAttribute="top" secondItem="rFb-rF-kgh" secondAttribute="bottom" constant="4" id="bdf-5f-pbb"/>
-                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="fws-ag-D0t" secondAttribute="bottom" constant="-1" id="msj-Ax-3kz"/>
+                            <constraint firstAttribute="bottom" secondItem="fws-ag-D0t" secondAttribute="bottom" constant="-1" id="msj-Ax-3kz"/>
                             <constraint firstItem="fws-ag-D0t" firstAttribute="top" secondItem="Nd3-3H-N8X" secondAttribute="top" id="vln-jA-Q40"/>
                         </constraints>
                     </view>

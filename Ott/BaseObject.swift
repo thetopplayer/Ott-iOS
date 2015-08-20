@@ -33,7 +33,7 @@ class DataKeys {
 }
 
 
-class BaseObject: PFObject {
+class BaseObject: PFObject, CachableImage {
     
     
     //MARK: - Attributes
@@ -63,18 +63,16 @@ class BaseObject: PFObject {
     }
     
     
+    //MARK: - CachableImage
     
-    //MARK: - Archival
+    // need to do all this (rather than simply declaring a var in the protocol) because of apparent swift 2.0 bugs when trying to set the var in the image code
     
-    func saveNow() {
-        
-        super.save()
+    private var _cachedImage: UIImage?
+    var cachedImage: UIImage? {
+        return _cachedImage
     }
     
-    
-    func saveWithCompletionBlock(completion: (success: Bool, error: NSError) -> Void) {
-        
-//        super.saveInBackgroundWithBlock(completion)
+    func setCachedImage(image: UIImage?) {
+        _cachedImage = image
     }
-    
 }

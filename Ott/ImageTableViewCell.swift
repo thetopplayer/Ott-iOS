@@ -14,21 +14,6 @@ class ImageTableViewCell: TableViewCell {
     
     var roundedBorder = false
     
-    var topicImage: UIImage? {
-        
-        get {
-            if let image = topicImageView.image {
-                return image
-            }
-            return nil
-        }
-        
-        set {
-            self.topicImageView?.image = newValue
-        }
-    }
-    
-    
     override func awakeFromNib() {
         
         super.awakeFromNib()
@@ -37,6 +22,31 @@ class ImageTableViewCell: TableViewCell {
         topicImageView.clipsToBounds = true
         if roundedBorder {
             topicImageView.addRoundedBorder()
+        }
+    }
+    
+
+    var displayedTopic: Topic? {
+        
+        didSet {
+            updateContents()
+        }
+    }
+    
+    
+    private func updateContents() {
+        
+        if let topic = displayedTopic {
+            
+            if topic.hasImage {
+                
+                topic.getImage() {(success, image) in
+                    
+                    if success {
+                        self.topicImageView!.image = image
+                    }
+                }
+            }
         }
     }
     

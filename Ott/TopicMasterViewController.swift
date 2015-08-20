@@ -112,14 +112,26 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    var data: [Topic]? {
+    private var data: [Topic]?
+
+    func updateTable(withData withData: [Topic]?) {
         
-        didSet {
+        if data == nil {
+            
+            data = withData
             refreshTableView()
+            return
         }
+        
+        
+        // insert rows for new data
+        // update existing rows with updated data
+        
+        
+        
     }
     
-
+    
     var selection: Topic? {
         
         didSet {
@@ -128,24 +140,34 @@ class TopicMasterViewController: TableViewController {
         }
     }
     
-    private var lastUpdated: NSDate?
+    
+    private var _lastUpdated: NSDate?
+    var lastUpdated: NSDate {
+        
+        if let date = _lastUpdated {
+            return date
+        }
+        return NSDate.distantPast()
+    }
+    
+
     func update() {
 
-        lastUpdated = NSDate()
+        _lastUpdated = NSDate()
         
         //stub
         NSLog("NEED TO IMPLEMENT UPDATE FUNCTION")
     }
     
 
-    func _update(timer: NSTimer) {
+    func _handleUpdateTimerFire(timer: NSTimer) {
         update()
     }
     
     
     private func startRefreshDataTimer() {
         
-        NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_update:", userInfo: nil, repeats: true)
+        NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
     }
     
     

@@ -75,7 +75,7 @@ func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool,
 
 //MARK: - User
 
-class User: PFUser {
+class User: PFUser, CachableImage {
 
     override class func initialize() {
         struct Static {
@@ -226,5 +226,18 @@ class User: PFUser {
         return false
     }
     
-}
+    
+    
+    //MARK: - CachableImage
+    
+    // need to do all this (rather than simply declaring a var in the protocol) because of apparent swift 2.0 bugs when trying to set the var in the image code
+    
+    private var _cachedImage: UIImage?
+    var cachedImage: UIImage? {
+        return _cachedImage
+    }
+    
+    func setCachedImage(image: UIImage?) {
+        _cachedImage = image
+    }}
 

@@ -562,7 +562,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializeImageCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
-//            cell.topicImageView?.image = myTopic?.image
+            cell.displayedTopic = myTopic
             return cell
         }
         

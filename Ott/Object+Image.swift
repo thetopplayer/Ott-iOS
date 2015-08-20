@@ -21,7 +21,17 @@ extension DataKeys {
 }
 
 
-extension PFObject {
+protocol CachableImage {
+    
+    var cachedImage: UIImage? {get}
+    func setCachedImage(image: UIImage?)
+    
+    func setObject(object: AnyObject?, forKeyedSubscript: String)
+    func objectForKeyedSubscript(key: String) -> AnyObject?
+}
+
+
+extension CachableImage {
     
     func setImage(image: UIImage?, var quality: CGFloat = 0.8) {
         
@@ -31,18 +41,19 @@ extension PFObject {
                 
                 let filename = "image.jpeg"
                 let imageFile = PFFile(name: filename, data:imageRep)
-                self[DataKeys.Image] = imageFile
-                self[DataKeys.HasImage] = true
+                self.setObject(imageFile, forKeyedSubscript: DataKeys.Image)
+                self.setObject(true, forKeyedSubscript: DataKeys.HasImage)
             }
             else {
-                self[DataKeys.Image] = NSNull()
-                self[DataKeys.HasImage] = false
+                self.setObject(NSNull(), forKeyedSubscript: DataKeys.Image)
+                self.setObject(false, forKeyedSubscript: DataKeys.HasImage)
             }
         }
         
         if image == nil {
-            self[DataKeys.Image] = NSNull()
-            self[DataKeys.HasImage] = false
+            
+            self.setObject(NSNull(), forKeyedSubscript: DataKeys.Image)
+            self.setObject(false, forKeyedSubscript: DataKeys.HasImage)
             return
         }
         
@@ -57,7 +68,13 @@ extension PFObject {
             return
         }
         
-        if let imageFile = self[DataKeys.Image] as? PFFile {
+        
+        if let cachedImage = cachedImage {
+            completion?(success: true, image: cachedImage)
+        }
+        
+        
+        if let imageFile = self.objectForKeyedSubscript(DataKeys.Image) as? PFFile {
             
             imageFile.getDataInBackgroundWithBlock {
                 
@@ -66,7 +83,7 @@ extension PFObject {
                     
                     if let imageData = imageData {
                         let image = UIImage(data: imageData)
-                        
+                        self.setCachedImage(image)
                         dispatch_async(dispatch_get_main_queue()) {
                             completion?(success: true, image: image)
                         }
@@ -85,7 +102,7 @@ extension PFObject {
     
     var hasImage: Bool {
         
-        if let value = self[DataKeys.HasImage] as? Bool {
+        if let value = self.objectForKeyedSubscript(DataKeys.HasImage) as? Bool {
             return value
         }
         
