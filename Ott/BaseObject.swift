@@ -17,8 +17,26 @@ import UIKit
 import MapKit
 
 
+class DataKeys {
+    
+    static var Comment: String {
+        return "comment"
+    }
+    
+    static var Location: String {
+        return "location"
+    }
+    
+    static var LocationName: String {
+        return "locationName"
+    }
+}
+
+
 class BaseObject: PFObject {
     
+    
+    //MARK: - Attributes
     
     @NSManaged var comment: String?
         
@@ -27,25 +45,20 @@ class BaseObject: PFObject {
     }
     
     
-    //MARK: - Location
-    
     @NSManaged var locationName: String?
-    @NSManaged var geoPoint: PFGeoPoint?
     
-    var location: CLLocationCoordinate2D? {
+    var location: CLLocation? {
         
         get {
-            var coordinate: CLLocationCoordinate2D?
-            if let geoPoint = geoPoint {
-                coordinate = CLLocationCoordinate2D(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
+            var clvalue: CLLocation?
+            if let geoPoint = self[DataKeys.Location] {
+                clvalue = CLLocation(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
             }
-            return coordinate
+            return clvalue
         }
         
         set {
-            if let coordinate = newValue {
-                geoPoint = PFGeoPoint(latitude: coordinate.latitude, longitude: coordinate.longitude)
-            }
+            self[DataKeys.Location] = PFGeoPoint(location: newValue)
         }
     }
     

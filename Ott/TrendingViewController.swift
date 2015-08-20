@@ -31,7 +31,6 @@ class TrendingViewController: TopicMasterViewController {
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
-        update()
     }
     
     

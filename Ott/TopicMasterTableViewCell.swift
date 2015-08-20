@@ -57,9 +57,13 @@ class TopicMasterTableViewCell: TableViewCell {
             
             if topic.hasImage {
 
+                topic.getImage() {(success, image) in
+                 
+                    if success {
+                        self.topicImageView!.image = image
+                    }
+                }
             }
-            
-//            topicImageView?.image = topic.image
         }
     }
     

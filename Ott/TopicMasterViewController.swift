@@ -50,6 +50,7 @@ class TopicMasterViewController: TableViewController {
         self.view.addSubview(noDataLabel!)
         
         startObservations()
+        startRefreshDataTimer()
     }
 
     
@@ -111,11 +112,14 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    private var data: [Topic]?
+    var data: [Topic]? {
+        
+        didSet {
+            refreshTableView()
+        }
+    }
+    
 
-    
-    var fetchPredicate: NSPredicate?
-    
     var selection: Topic? {
         
         didSet {
@@ -124,50 +128,24 @@ class TopicMasterViewController: TableViewController {
         }
     }
     
-    
+    private var lastUpdated: NSDate?
     func update() {
+
+        lastUpdated = NSDate()
         
-//        func processFetchResult(result: NSAsynchronousFetchResult) {
-//            
-//            if let theData = result.finalResult as? [Topic] {
-//                self.data = theData
-//            }
-//        }
-//        
-//        managedObjectContext.performBlock { () -> Void in
-//            
-//            /*
-//            TODO:  use async request- get error in XCode 7b2
-//            
-//            let asyncRequest = NSAsynchronousFetchRequest(fetchRequest: self.fetchRequest, completionBlock: processFetchResult)
-//            */
-//            
-//            
-//            do {
-//                
-//                NSLog("fetching topic data")
-//                let fetchResults = try self.managedObjectContext.executeFetchRequest(self.fetchRequest)
-//                self.data = fetchResults as? [Topic]
-//                self.refreshTableView()
-//                
-//            } catch {
-//                
-//            }
-//        }
+        //stub
+        NSLog("NEED TO IMPLEMENT UPDATE FUNCTION")
+    }
+    
+
+    func _update(timer: NSTimer) {
+        update()
     }
     
     
-    private func refreshTableView() {
+    private func startRefreshDataTimer() {
         
-        // TODO - compare previous and new data sets and insert/delete rows, instead of reloading all
-        
-        NSLog("refreshing table view")
-        dispatch_async(dispatch_get_main_queue(), {
-            
-            self.updateNoDataLabel()
-            self.tableView.reloadData()
-            self.lastRefreshedTableView = NSDate()
-        })
+        NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_update:", userInfo: nil, repeats: true)
     }
     
     
@@ -189,6 +167,21 @@ class TopicMasterViewController: TableViewController {
         tableView.registerNib(nib1, forCellReuseIdentifier: imageCellIdentifier)
     }
 
+    
+    private func refreshTableView() {
+        
+        // TODO - compare previous and new data sets and insert/delete rows, instead of reloading all
+        
+        NSLog("refreshing table view")
+        dispatch_async(dispatch_get_main_queue(), {
+            
+            self.updateNoDataLabel()
+            self.tableView.reloadData()
+            self.lastRefreshedTableView = NSDate()
+        })
+    }
+    
+    
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
@@ -266,6 +259,8 @@ class TopicMasterViewController: TableViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
+        
         didStartObservations = true
     }
     
@@ -289,6 +284,12 @@ class TopicMasterViewController: TableViewController {
                 refreshTableView()
             }
         }
+    }
+    
+    
+    func handleLocationChangeNotification(notification: NSNotification) {
+
+        update()
     }
     
     

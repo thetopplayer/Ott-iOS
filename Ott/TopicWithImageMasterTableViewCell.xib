@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -92,8 +92,8 @@
                             <constraint firstAttribute="trailing" secondItem="fws-ag-D0t" secondAttribute="trailing" id="VeX-61-L0f"/>
                             <constraint firstAttribute="trailing" secondItem="rFb-rF-kgh" secondAttribute="trailing" id="ZvV-wS-1yL"/>
                             <constraint firstItem="Bas-Rv-587" firstAttribute="top" secondItem="rFb-rF-kgh" secondAttribute="bottom" constant="4" id="bdf-5f-pbb"/>
-                            <constraint firstAttribute="bottom" secondItem="fws-ag-D0t" secondAttribute="bottom" constant="-1" id="msj-Ax-3kz"/>
-                            <constraint firstItem="fws-ag-D0t" firstAttribute="top" relation="greaterThanOrEqual" secondItem="Nd3-3H-N8X" secondAttribute="top" id="vln-jA-Q40"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="fws-ag-D0t" secondAttribute="bottom" constant="-1" id="msj-Ax-3kz"/>
+                            <constraint firstItem="fws-ag-D0t" firstAttribute="top" secondItem="Nd3-3H-N8X" secondAttribute="top" id="vln-jA-Q40"/>
                         </constraints>
                     </view>
                 </subviews>

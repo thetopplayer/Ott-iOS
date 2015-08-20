@@ -1,5 +1,5 @@
 //
-//  Author.swift
+//  User.swift
 //  Ott
 //
 //  Created by Max on 6/26/15.
@@ -12,18 +12,18 @@ import UIKit
 //MARK: - Static Functions
 
 func userWasArchived() -> Bool {
-    return Author.currentUser() != nil
+    return User.currentUser() != nil
 }
 
 
-var _tmpUser: Author = {
-    return Author()
+var _tmpUser: User = {
+    return User()
 }()
 
 
-func currentUser() -> Author {
+func currentUser() -> User {
     
-    if let user = Author.currentUser() {
+    if let user = User.currentUser() {
         return user
     }
     
@@ -33,24 +33,24 @@ func currentUser() -> Author {
 
 func fetchUserInBackground(phoneNumber phoneNumber: String, completion: (object: PFObject?, error: NSError?) -> Void) {
     
-    let query = Author.query()!
-    query.whereKey(Author.phoneNumberKey, equalTo:phoneNumber)
+    let query = User.query()!
+    query.whereKey(User.phoneNumberKey, equalTo:phoneNumber)
     query.getFirstObjectInBackgroundWithBlock(completion)
 }
 
 
 func fetchUserInBackground(handle handle: String, completion: (object: PFObject?, error: NSError?) -> Void) {
     
-    let query = Author.query()!
-    query.whereKey(Author.handleKey, equalTo:handle)
+    let query = User.query()!
+    query.whereKey(User.handleKey, equalTo:handle)
     query.getFirstObjectInBackgroundWithBlock(completion)
 }
 
 
 func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
     
-    let query = Author.query()!
-    query.whereKey(Author.phoneNumberKey, equalTo:phoneNumber)
+    let query = User.query()!
+    query.whereKey(User.phoneNumberKey, equalTo:phoneNumber)
     query.countObjectsInBackgroundWithBlock {
         
         (count: Int32, error: NSError?) -> Void in
@@ -61,8 +61,8 @@ func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUn
 
 func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
     
-    let query = Author.query()!
-    query.whereKey(Author.handleKey, equalTo:handle)
+    let query = User.query()!
+    query.whereKey(User.handleKey, equalTo:handle)
     query.countObjectsInBackgroundWithBlock {
         
         (count: Int32, error: NSError?) -> Void in
@@ -73,9 +73,9 @@ func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool,
 
 
 
-//MARK: - Author
+//MARK: - User
 
-class Author: PFUser {
+class User: PFUser {
 
     override class func initialize() {
         struct Static {
@@ -87,9 +87,9 @@ class Author: PFUser {
         }
     }
     
-    static override func currentUser() -> Author? {
+    static override func currentUser() -> User? {
    
-        return super.currentUser() as? Author
+        return super.currentUser() as? User
     }
     
 
@@ -99,7 +99,6 @@ class Author: PFUser {
     
     static let phoneNumberKey = "phoneNumber"
     static let handleKey = "username"
-    static let avatarKey = "avatar"
     
     @NSManaged var phoneNumber: String?
     @NSManaged var name: String? // user's non-unique name
@@ -125,106 +124,11 @@ class Author: PFUser {
     
     // used during signUp
     var phoneNumberValidationCode: String?
-    
-    
-    //MARK: - Avatar
-    /*
-    @NSManaged var hasAvatar: Bool
-    private var _cachedImage: UIImage?
-    private let avatarKey = "avatar"
-    
-    func clearAvatar() {
-        
-        hasAvatar = false
-        _cachedImage = nil
-    }
-    
-    
-    func setAvatar(image: UIImage?, size: CGSize?, var quality: CGFloat) {
-        
-        func archive(image: UIImage, quality: CGFloat) {
-            
-            if let imageRep = UIImageJPEGRepresentation(image, quality) {
-                
-                let filename = "avatar.jpg"
-                let imageFile = PFFile(name: filename, data:imageRep)
-                self[avatarKey] = imageFile
-                hasAvatar = true
-            }
-            else {
-                self[avatarKey] = nil
-                hasAvatar = false
-            }
-        }
-        
-        if image == nil {
-            hasAvatar = false
-            self[avatarKey] = nil
-            return
-        }
-        
-        if (quality < 0) || (quality > 1.0) {
-            NSLog("Warning:  Image Quality must be between 0 and 1.0!  setting to 1.0")
-            quality = 1.0
-        }
-        
-        if size == nil {
-            _cachedImage = image
-            archive(image!, quality: quality)
-        }
-        else {
-            if let resizedImage = image!.resized(toSize: size!) {
-                _cachedImage = resizedImage
-                archive(resizedImage, quality: quality)
-            }
-        }
-    }
-    
-    
-    func getAvatar(completion: (success: Bool, image: UIImage?) -> Void) {
-        
-        if hasAvatar == false {
-            dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: nil)
-            }
-        }
-        else if (_cachedImage != nil) {
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                completion(success: true, image: self._cachedImage)
-            }
-        }
-        else {
-            
-            let imageFile = self[avatarKey] as! PFFile
-            imageFile.getDataInBackgroundWithBlock {
-                
-                (imageData: NSData?, error: NSError?) -> Void in
-                if error == nil {
-                    
-                    if let imageData = imageData {
-                        self._cachedImage = UIImage(data: imageData)
-                    }
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: true, image: self._cachedImage)
-                    }
-                }
-                else {
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        completion(success: false, image: nil)
-                    }
-                }
-            }
-        }
-    }
-
-    */
     static var defaultAvatar: UIImage = {
         
         return UIImage(named:"avatar")!
     }()
+    
     
     
     //MARK: - SignUp and Login
@@ -248,7 +152,7 @@ class Author: PFUser {
             password = generatedPassword()
         }
         
-        Author.logInWithUsernameInBackground(handle!, password: password!, block: completion)
+        User.logInWithUsernameInBackground(handle!, password: password!, block: completion)
     }
     
 
@@ -293,20 +197,20 @@ class Author: PFUser {
     }
     
     
-    func addTopic(topic: Topic) {
-        
-        incrementKey(numberOfTopicsKey)
-        
-        // todo - add ID to recently postedtopicids
-    }
-
-    
-    func removeTopic(topic: Topic) {
-        
-        let relation = relationForKey(topicsKey)
-        relation.removeObject(topic)
-        incrementKey(numberOfPostsKey, byAmount: -1)
-    }
+//    func addTopic(topic: Topic) {
+//        
+//        incrementKey(numberOfTopicsKey)
+//        
+//        // todo - add ID to recently postedtopicids
+//    }
+//
+//    
+//    func removeTopic(topic: Topic) {
+//        
+//        let relation = relationForKey(topicsKey)
+//        relation.removeObject(topic)
+//        incrementKey(numberOfPostsKey, byAmount: -1)
+//    }
     
 
     func getTopics(completion: (success: Bool, posts: [Topic]?) -> Void) {

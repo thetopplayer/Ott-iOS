@@ -56,7 +56,7 @@ class HomeViewController: ViewController {
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         
-        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser())
+//        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser())
         topicTableViewController.tableView = tableView
         topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
         topicTableViewController.viewDidLoad()
@@ -74,7 +74,7 @@ class HomeViewController: ViewController {
         
         super.viewWillAppear(animated)
         updateDisplayedInformation()
-        topicTableViewController.update()
+//        topicTableViewController.update()
     }
     
     
@@ -115,19 +115,19 @@ class HomeViewController: ViewController {
                 }
                 else {
                     print("error getting avatar")
-                    self.avatarImageView.image = Author.defaultAvatar
+                    self.avatarImageView.image = User.defaultAvatar
                 }
             }
         }
         else {
-            avatarImageView.image = Author.defaultAvatar
+            avatarImageView.image = User.defaultAvatar
         }
         
         summaryTextLabel.attributedText = self.attributedUserDetails(user)
     }
     
     
-    private func attributedUserDetails(user: Author) -> NSAttributedString {
+    private func attributedUserDetails(user: User) -> NSAttributedString {
         
         var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
         numberAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Bold", size: 15)
@@ -167,7 +167,6 @@ class HomeViewController: ViewController {
             return
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUpdateUserNotification:", name: DataManager.Notification.DidUpdateUser, object: nil)
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSelectionDidChangeNotification:", name: TopicMasterViewController.Notification.selectionDidChange, object: topicTableViewController)
         
         didStartObservations = true
@@ -182,14 +181,6 @@ class HomeViewController: ViewController {
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
         didStartObservations = false
-    }
-    
-    
-    func handleDidUpdateUserNotification(notification: NSNotification) {
-        
-        // refetch to update info
-//        myUser = nil
-//        myUser = Author.user(inContext: managedObjectContext)
     }
     
     

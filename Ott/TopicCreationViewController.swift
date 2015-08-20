@@ -42,7 +42,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         }
         else {
             
-            myTopic = Topic()
+            myTopic = Topic.createWithAuthor(currentUser())
             image = nil
             navigationItem.rightBarButtonItem?.enabled = false
             
@@ -69,16 +69,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         topic.name = titleCellView!.title
         topic.comment = titleCellView!.comment
-        if let image = image {
-            topic.setImage(image, quality: imageQuality)
-        }
-        topic.location = LocationManager.sharedInstance.location?.coordinate
+        topic.setImage(image, quality: imageQuality)
+        topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
-        topic.setAuthor(currentUser())
         topic.saveInBackground()
-        
-        currentUser().addTopic(topic)
-        currentUser().saveEventually()
     }
     
     

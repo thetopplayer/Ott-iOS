@@ -7,9 +7,6 @@
 //
 
 import UIKit
-//import Parse
-//import Bolts
-
 
 
 func introViewController() -> UIViewController {
@@ -53,7 +50,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         func setupParseBackend() {
             
             // initialize subclasses of PFObject before initializing parse
-            Author.initialize()
+            User.initialize()
             Topic.initialize()
             Post.initialize()
             

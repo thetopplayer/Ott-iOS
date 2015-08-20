@@ -9,8 +9,17 @@
 import UIKit
 
 
-let imageKey = "image"
-let hasImageKey = "hasImage"
+extension DataKeys {
+    
+    static var Image: String {
+        return "image"
+    }
+    
+    static var HasImage: String {
+        return "hasImage"
+    }
+}
+
 
 extension PFObject {
     
@@ -22,18 +31,18 @@ extension PFObject {
                 
                 let filename = "image.jpeg"
                 let imageFile = PFFile(name: filename, data:imageRep)
-                self[imageKey] = imageFile
-                self[hasImageKey] = true
+                self[DataKeys.Image] = imageFile
+                self[DataKeys.HasImage] = true
             }
             else {
-                self[imageKey] = nil
-                self[hasImageKey] = false
+                self[DataKeys.Image] = NSNull()
+                self[DataKeys.HasImage] = false
             }
         }
         
         if image == nil {
-            self[imageKey] = nil
-            self[hasImageKey] = false
+            self[DataKeys.Image] = NSNull()
+            self[DataKeys.HasImage] = false
             return
         }
         
@@ -48,7 +57,7 @@ extension PFObject {
             return
         }
         
-        if let imageFile = self[imageKey] as? PFFile {
+        if let imageFile = self[DataKeys.Image] as? PFFile {
             
             imageFile.getDataInBackgroundWithBlock {
                 
@@ -76,7 +85,7 @@ extension PFObject {
     
     var hasImage: Bool {
         
-        if let value = self[hasImageKey] as? Bool {
+        if let value = self[DataKeys.HasImage] as? Bool {
             return value
         }
         

@@ -22,16 +22,31 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        
-        
-        //        fetchPredicate = NSPredicate(format: "isLocal = true") and user did not post to it
+        update()
     }
 
     
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
-        update()
+    }
+    
+    
+    
+    //MARK: - Data
+    
+    override func update() {
+        
+        if let location = LocationManager.sharedInstance.location {
+            
+            Topic.fetchTopicsNearLocation(location, withinMiles: 20) {(objects, error) in
+                
+                print("did fetch objects")
+                if let objects = objects as? [Topic] {
+                    self.data = objects
+                }
+            }
+        }
     }
     
     

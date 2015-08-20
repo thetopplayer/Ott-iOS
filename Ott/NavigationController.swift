@@ -12,7 +12,7 @@ class NavigationController: UINavigationController {
     
     var topic: Topic?
     var post: Post?
-    var author: Author?
+    var author: User?
     
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {

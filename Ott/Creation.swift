@@ -16,33 +16,38 @@ Abstract
 import UIKit
 import MapKit
 
+
+extension DataKeys {
+   
+    static var Author: String {
+        return "author"
+    }
+    
+    static var AuthorName: String {
+        return "authorName"
+    }
+    
+    static var AuthorHandle: String {
+        return "authorHandle"
+    }
+    
+    static var Rating: String {
+        return "rating"
+    }
+}
+
+
 class Creation: BaseObject, MKAnnotation {
 
-//    override class func initialize() {
-//        struct Static {
-//            static var onceToken : dispatch_once_t = 0;
-//        }
-//        
-//        dispatch_once(&Static.onceToken) {
-//            self.registerSubclass()
-//        }
-//    }
-//    
-//    override class func parseClassName() -> String {
-//        return "Creation"
-//    }
     
-    
+    //MARK: - Attributes
+
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
-    @NSManaged var authorAvatarURL: String?
     
-    private let authorKey = "author"
-    private let ratingKey = "rating"
-    
-    func setAuthor(author: Author) {
+    func setAuthor(author: User) {
         
-        self[authorKey] = author
+        self[DataKeys.Author] = author
         authorName = author.name
         authorHandle = author.handle
     }
@@ -51,17 +56,12 @@ class Creation: BaseObject, MKAnnotation {
     var rating: Rating? {
         
         get {
-            let value = self[ratingKey] as? Int
+            let value = self[DataKeys.Rating] as? Int
             return Rating(withValue: value)
         }
         set {
-            self[ratingKey] = newValue?.value
+            self[DataKeys.Rating] = newValue?.value
         }
-    }
-    
-    
-    func getAuthorAvatar(completion: (success: Bool, image: UIImage?) -> Void) {
-        
     }
     
     
@@ -70,7 +70,7 @@ class Creation: BaseObject, MKAnnotation {
     
     var coordinate: CLLocationCoordinate2D {
         
-        return location!
+        return location!.coordinate
     }
     
     

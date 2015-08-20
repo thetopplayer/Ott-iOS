@@ -268,7 +268,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let myPost = Post()
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
-        myPost.location = LocationManager.sharedInstance.location?.coordinate
+        myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
 
         myTopic!.addPost(myPost)

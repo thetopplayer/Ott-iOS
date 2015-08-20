@@ -7,6 +7,24 @@
 //
 
 import UIKit
+import MapKit
+
+
+extension DataKeys {
+    
+    static var AverageRating: String {
+        return "aveRating"
+    }
+    
+    static var Posts: String {
+        return "posts"
+    }
+    
+    static var NumberOfPosts: String {
+        return "numPosts"
+    }
+}
+
 
 class Topic: Creation, PFSubclassing {
     
@@ -20,42 +38,89 @@ class Topic: Creation, PFSubclassing {
         }
     }
     
+    
     class func parseClassName() -> String {
         return "Topic"
     }
     
+    /** Use this to create */
+    class func createWithAuthor(author: User) -> Topic {
+        
+        let topic = Topic()
+        topic.setAuthor(author)
+        topic.numberOfPosts = 0
+        
+        return topic
+    }
+    
+    
+    
+    //MARK: - Queries
+    
+    class func fetchTopicWithIdentifier(identifier: String, completion: PFObjectResultBlock) {
+        
+        Topic.query()!.getObjectInBackgroundWithId(identifier, block: completion)
+    }
+    
+    
+    class func fetchTopicsNearLocation(location: CLLocation, withinMiles: Double, completion: PFArrayResultBlock) {
+        
+        let geoPoint = PFGeoPoint(location: location)
+        
+        let query = Topic.query()!
+        query.whereKey(DataKeys.Location, nearGeoPoint: geoPoint, withinMiles: withinMiles)
+        query.findObjectsInBackgroundWithBlock(completion)
+    }
+    
+    
+    class func fetchTrendingTopics(completion: PFBooleanResultBlock) {
+        
+    }
+    
+    
+    class func fetchTopicsWithUser(user: User, completion: PFBooleanResultBlock) {
+        
+    }
+    
+    
+
+    //MARK: - Attributes
     
     @NSManaged var name: String?
     
-    private let averageRatingKey = "aveRating"
     var averageRating: Int? {
-        return self[averageRatingKey] as? Int
+        
+        set {
+            if let val = newValue {
+                self[DataKeys.AverageRating] = val
+            }
+        }
+        
+        get {
+            return self[DataKeys.AverageRating] as? Int
+        }
     }
     
     
-    //MARK: - Posts
-    
-    private let postsKey = "posts"
-    private let numberOfPostsKey = "numberPosts"
-    
-    var numberOfPosts: Int? {
-        return self[numberOfPostsKey] as? Int
-    }
+    @NSManaged var numberOfPosts: Int
+//    var numberOfPosts: Int? {
+//        return self[DataKeys.NumberOfPosts] as? Int
+//    }
     
     
     func addPost(post: Post) {
         
-        let relation = relationForKey(postsKey)
+        let relation = relationForKey(DataKeys.Posts)
         relation.addObject(post)
-        incrementKey(numberOfPostsKey)
+        incrementKey(DataKeys.NumberOfPosts)
     }
     
     
     func removePost(post: Post) {
         
-        let relation = relationForKey(postsKey)
+        let relation = relationForKey(DataKeys.Posts)
         relation.removeObject(post)
-        incrementKey(numberOfPostsKey,byAmount: -1)
+        incrementKey(DataKeys.NumberOfPosts,byAmount: -1)
     }
     
     

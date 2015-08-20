@@ -196,7 +196,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
         
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
         
-            DataManager.sharedInstance.cancelFetchTopic()
+//            DataManager.sharedInstance.cancelFetchTopic()
             self.handleCancelAction(self)
         })
         
@@ -227,7 +227,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
                 }
             }
             
-            DataManager.sharedInstance.fetchTopic(withIdentifier: code, completion: dataFetchCompletionHandler)
+//            DataManager.sharedInstance.fetchTopic(withIdentifier: code, completion: dataFetchCompletionHandler)
         }
     }
     

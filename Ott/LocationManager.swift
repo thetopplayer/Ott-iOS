@@ -11,6 +11,12 @@ import CoreLocation
 
 class LocationManager: CLLocationManager, CLLocationManagerDelegate {
 
+    struct Notifications {
+        
+        static let SignificantLocationChangeDidOccur = "SignificantLocationChangeDidOccur"
+    }
+    
+    
     static var sharedInstance: LocationManager = {
         return LocationManager()
         }()
@@ -18,7 +24,8 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     private let geoCoder: CLGeocoder
     private let accuracy = CLLocationAccuracy(100)
-    
+    private let significantLocationDifference = Double(1000)
+
     
     //MARK: - Lifecycle
     
@@ -116,11 +123,11 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
     
     
-    func distanceFromCurrentLocation(point: CLLocationCoordinate2D) -> CLLocationDistance? {
+    func distanceFromCurrentLocation(location: CLLocation) -> CLLocationDistance? {
         
-        let loc1 = CLLocation(latitude: point.latitude, longitude: point.longitude)
-        return location?.distanceFromLocation(loc1)
+        return location.distanceFromLocation(location)
     }
+    
     
     
     //MARK: - Delegate
@@ -140,9 +147,29 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
     
     
-    func locationManager(manager: CLLocationManager, didUpdateToLocation newLocation: CLLocation, fromLocation oldLocation: CLLocation) {
+    var previouslyPostedLocation: CLLocation?
+    func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        reverseGeocode(newLocation)
+        guard let currentLocation = locations.first else {
+            return
+        }
+        
+        reverseGeocode(currentLocation)
+        
+        if let priorLocation = previouslyPostedLocation {
+            
+            if currentLocation.distanceFromLocation(priorLocation) > significantLocationDifference {
+                NSNotificationCenter.defaultCenter().postNotificationName(Notifications.SignificantLocationChangeDidOccur, object: self)
+                
+                previouslyPostedLocation = currentLocation
+            }
+        }
+        else {
+            
+            NSNotificationCenter.defaultCenter().postNotificationName(Notifications.SignificantLocationChangeDidOccur, object: self)
+            
+            previouslyPostedLocation = currentLocation
+        }
     }
     
     
