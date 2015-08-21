@@ -11,19 +11,13 @@ import UIKit
 class TopicDetailSummaryTableViewCell: TableViewCell {
 
     @IBOutlet var summaryLabel: UILabel!
-    @IBOutlet var authorNameLabel: UILabel!
-    @IBOutlet var authorHandleLabel: UILabel!
-    @IBOutlet var authorImageView: UIImageView!
-    
     
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
-        innerContentContainer?.backgroundColor = UIColor(white: 0.97, alpha: 1.0)
-        innerContentContainer?.addBorder()
-
-        authorImageView.clipsToBounds = true
+        contentView.backgroundColor = UIColor(white: 1.0, alpha: 1.0)
+//        innerContentContainer?.backgroundColor = UIColor(white: 0.97, alpha: 1.0)
+//        innerContentContainer?.addBorder()
     }
     
     
@@ -38,11 +32,11 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
     private func updateContents() {
         
         if let topic = displayedTopic {
-            summaryLabel.attributedText = attributedDescription(topic)
+            summaryLabel.attributedText = timeAndLocationAttributedString(topic)
         }
     }
     
-    
+/*
     private func attributedDescription(topic: Topic) -> NSAttributedString {
         
         var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
@@ -65,5 +59,5 @@ class TopicDetailSummaryTableViewCell: TableViewCell {
         s1.appendAttributedString(s3)
         return s1
     }
-
+*/
 }

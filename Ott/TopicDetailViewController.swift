@@ -43,7 +43,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             myTopic = navController.topic
         }
         
-        self.navigationItem.title = myTopic?.name
+        self.navigationItem.title = "Topic"
      }
     
     
@@ -342,18 +342,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     //MARK: - TableView
     
     private let topicSection = 0
-    private let titleCellViewNibName = "TopicTitleTableViewCell"
-    private let titleCellViewIdentifier = "titleCell"
-    private let commentCellViewNibName = "TopicCommentTableViewCell"
-    private let commentCellViewIdentifier = "commentCell"
+    private let textCellViewNibName = "TopicTextTableViewCell"
+    private let textCellViewIdentifier = "textCell"
     private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
-    private let summaryCellViewNibName = "TopicDetailSummaryTableViewCell"
-    private let summaryCellViewIdentifer = "summaryCell"
-    private let titleCellViewHeight = CGFloat(56)
-    private let commentCellViewHeight = CGFloat(100)
+    private let authorCellViewNibName = "TopicAuthorTableViewCell"
+    private let authorCellViewIdentifer = "authorCell"
+    private let textCellViewHeight = CGFloat(78)
     private let imageCellViewHeight = CGFloat(275)
-    private let summaryCellViewHeight = CGFloat(90)
+    private let authorCellViewHeight = CGFloat(56)
     
     private let postsSection = 1
     private let postCellNibName = "PostDetailTableViewCell"
@@ -366,26 +363,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         tableView.delegate = self
         tableView.dataSource = self
-        tableView.rowHeight = UITableViewAutomaticDimension
+//        tableView.rowHeight = UITableViewAutomaticDimension
         
         tableView.backgroundColor = UIColor.background()
         tableView.separatorStyle = .None
         adjustTableViewInsets(withBottom: postInputView.frame.size.height)
         
-        let nib = UINib(nibName: titleCellViewNibName, bundle: nil)
-        tableView.registerNib(nib, forCellReuseIdentifier: titleCellViewIdentifier)
-        
-        let nib1 = UINib(nibName: commentCellViewNibName, bundle: nil)
-        tableView.registerNib(nib1, forCellReuseIdentifier: commentCellViewIdentifier)
+        let nib = UINib(nibName: textCellViewNibName, bundle: nil)
+        tableView.registerNib(nib, forCellReuseIdentifier: textCellViewIdentifier)
         
         let nib2 = UINib(nibName: imageCellViewNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: imageCellViewIdentifer)
         
-        let nib3 = UINib(nibName: summaryCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: summaryCellViewIdentifer)
+        let nib4 = UINib(nibName: authorCellViewNibName, bundle: nil)
+        tableView.registerNib(nib4, forCellReuseIdentifier: authorCellViewIdentifer)
         
-        let nib4 = UINib(nibName: postCellNibName, bundle: nil)
-        tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
+        let nib5 = UINib(nibName: postCellNibName, bundle: nil)
+        tableView.registerNib(nib5, forCellReuseIdentifier: postCellIdentifier)
     }
     
     
@@ -445,15 +439,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if section == topicSection {
             
-            number = 2  // one for name cell, one for author cell
+            number = 2  // text and author
             
-            if topic.comment != nil {
-                number++
-                if topic.hasImage {
-                    number++
-                }
-            }
-            else if topic.hasImage {
+            if topic.hasImage {
                 number++
             }
         }
@@ -466,7 +454,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     enum TableCellType {
-        case TopicTitle, TopicComment, TopicImage, TopicSummary, Post
+        case TopicText, TopicImage, TopicAuthor, Post
     }
     
     
@@ -479,30 +467,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             switch indexPath.row {
                 
             case 0:
-                cellType = .TopicTitle
-                
-            case 1:
-                if myTopic!.comment != nil {
-                    cellType = .TopicComment
-                }
-                else if myTopic!.hasImage {
+                if myTopic!.hasImage {
                     cellType = .TopicImage
                 }
                 else {
-                    cellType = .TopicSummary
+                    cellType = .TopicText
+                }
+                
+            case 1:
+                if myTopic!.hasImage {
+                    cellType = .TopicText
+                }
+                else {
+                    cellType = .TopicAuthor
                 }
                 
             case 2:
-                if myTopic!.comment != nil && myTopic!.hasImage {
-                    cellType = .TopicImage
-                }
-                else {
-                    cellType = .TopicSummary
-                }
-                
-            case 3:
-                cellType = .TopicSummary
-                
+                cellType = .TopicAuthor
+               
             default:
                 NSLog("too many rows for section %d", indexPath.section)
                 assert(false)
@@ -522,17 +504,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         switch cellTypeForIndexPath(indexPath) {
             
-        case .TopicTitle:
-            height = titleCellViewHeight
-            
-        case .TopicComment:
-            height = commentCellViewHeight
+        case .TopicText:
+            height = textCellViewHeight
             
         case .TopicImage:
             height = imageCellViewHeight
             
-        case .TopicSummary:
-            height = summaryCellViewHeight
+        case .TopicAuthor:
+            height = authorCellViewHeight
             
         case .Post:
             height = postCellHeight
@@ -545,17 +524,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        func initializeTitleCell() -> UITableViewCell {
+        func initializeTextCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(titleCellViewIdentifier) as! TopicTitleTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(textCellViewIdentifier) as! TopicTextTableViewCell
             cell.displayedTopic = myTopic
-            return cell
-        }
-        
-        func initializeCommentCell() -> UITableViewCell {
-            
-            let cell = tableView.dequeueReusableCellWithIdentifier(commentCellViewIdentifier) as! TopicCommentTableViewCell
-            cell.comment = myTopic?.comment
             return cell
         }
         
@@ -566,9 +538,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return cell
         }
         
-        func initializeSummaryCell() -> UITableViewCell {
+        func initializeAuthorCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(summaryCellViewIdentifer) as! TopicDetailSummaryTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(authorCellViewIdentifer) as! TopicAuthorTableViewCell
             cell.displayedTopic = myTopic
             return cell
         }
@@ -585,17 +557,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         switch cellTypeForIndexPath(indexPath) {
             
-        case .TopicTitle:
-            cell = initializeTitleCell()
-            
-        case .TopicComment:
-            cell = initializeCommentCell()
+        case .TopicText:
+            cell = initializeTextCell()
             
         case .TopicImage:
             cell = initializeImageCell()
             
-        case .TopicSummary:
-            cell = initializeSummaryCell()
+        case .TopicAuthor:
+            cell = initializeAuthorCell()
             
         case .Post:
             cell = initializePostCell()

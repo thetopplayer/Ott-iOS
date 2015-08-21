@@ -125,7 +125,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     func distanceFromCurrentLocation(location: CLLocation) -> CLLocationDistance? {
         
-        return location.distanceFromLocation(location)
+        return self.location?.distanceFromLocation(location)
     }
     
     
