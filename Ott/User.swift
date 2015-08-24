@@ -175,7 +175,7 @@ class User: PFUser {
     
 
 
-    //MARK: - Posts and Topics
+    //MARK: - Authored Topics
     
     private var documentsDirectory: String = {
         
@@ -233,6 +233,9 @@ class User: PFUser {
     }
     
     
+    
+    //MARK: - Posted Topics
+    
     private var postedTopicArchivePath: String {
         
         return documentsDirectory + "/postedTopics.ott"
@@ -273,5 +276,64 @@ class User: PFUser {
         
         return false
     }
+    
+    
+    
+    //MARK: - Followed Users
+    
+    private var followedUsersArchivePath: String {
+        
+        return documentsDirectory + "/followedUsers.ott"
+    }
+    
+    
+    private func followedUserHandles() -> [String] {
+        
+        if let archive = NSArray(contentsOfFile: followedUsersArchivePath) {
+            return archive as! [String]
+        }
+        
+        return Array<String>()
+    }
+    
+    
+    private func archiveFollowedUserHandles(userHandles: NSArray) {
+        
+        userHandles.writeToFile(followedUsersArchivePath, atomically: true)
+    }
+    
+    
+    func followUserWithHandle(handle: String) {
+        
+        // TODO send background request to follow
+
+        
+        // if successfull..
+        
+        let userHandles = NSMutableSet()
+        userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+        userHandles.addObject(handle)
+        archivePostedTopicIDs(userHandles.allObjects)
+    }
+    
+    
+    func isFollowingUserWithHandle(handle: String) -> Bool {
+        
+        return followedUserHandles().contains(handle)
+    }
+    
+    
+    func stopFollowingUserWithHandle(handle: String) {
+        
+        // TODO send background request to unfollow
+        
+        // if successful...
+        
+        let userHandles = NSMutableSet()
+        userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+        userHandles.removeObject(handle)
+        archivePostedTopicIDs(userHandles.allObjects)
+    }
+    
 }
 

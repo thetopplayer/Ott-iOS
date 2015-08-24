@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8152.3" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8124.4"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -19,12 +19,59 @@
                     <connections>
                         <segue destination="DqR-cd-zmI" kind="relationship" relationship="viewControllers" id="ExY-pV-f2W"/>
                         <segue destination="SIL-Bg-oMj" kind="relationship" relationship="viewControllers" id="EnI-a6-cLg"/>
+                        <segue destination="ZY9-t6-LQx" kind="relationship" relationship="viewControllers" id="IEA-1n-5Ar"/>
                         <segue destination="nzE-nJ-Srz" kind="relationship" relationship="viewControllers" id="83G-ev-H4m"/>
                     </connections>
                 </tabBarController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="HuB-VB-40B" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-1890" y="604"/>
+        </scene>
+        <!--Following-->
+        <scene sceneID="tMA-bo-cxR">
+            <objects>
+                <tableViewController title="Following" id="2VR-Yd-Bjy" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="xMA-k6-T4q">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <prototypes>
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="Trh-ad-Q15">
+                                <rect key="frame" x="0.0" y="92" width="600" height="44"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="Trh-ad-Q15" id="W78-pU-D65">
+                                    <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                    <autoresizingMask key="autoresizingMask"/>
+                                </tableViewCellContentView>
+                            </tableViewCell>
+                        </prototypes>
+                        <connections>
+                            <outlet property="dataSource" destination="2VR-Yd-Bjy" id="PY5-Sr-BnA"/>
+                            <outlet property="delegate" destination="2VR-Yd-Bjy" id="WgK-ey-qFn"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" title="Following" id="PEJ-ha-FN6"/>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="O5M-pL-OO7" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-1788" y="1957"/>
+        </scene>
+        <!--Following-->
+        <scene sceneID="eQs-v5-poh">
+            <objects>
+                <navigationController title="Following" id="ZY9-t6-LQx" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Following" image="manStar" id="47a-Sh-qZS"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="UjK-BV-bKK">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="2VR-Yd-Bjy" kind="relationship" relationship="rootViewController" id="8ZD-VO-sdD"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="zHj-hg-uBO" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-2608" y="1957"/>
         </scene>
         <!--Mine Nav Controller-->
         <scene sceneID="oA5-uc-Dmk">
@@ -265,6 +312,7 @@
         <image name="gears" width="30" height="30"/>
         <image name="home" width="30" height="30"/>
         <image name="local" width="30" height="30"/>
+        <image name="manStar" width="29" height="30"/>
         <image name="trending" width="30" height="30"/>
     </resources>
 </document>

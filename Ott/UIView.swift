@@ -48,14 +48,14 @@ extension UIView {
     func addRoundedBorder(withColor color: UIColor) {
         
         self.layer.cornerRadius = 4.0
+        self.layer.masksToBounds = true
         addBorder(withColor: color)
     }
     
     
     func addRoundedBorder() {
         
-        self.layer.cornerRadius = 4.0
-        addBorder()
+        addRoundedBorder(withColor: UIColor.darkGrayColor())
     }
     
     

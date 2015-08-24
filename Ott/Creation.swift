@@ -42,12 +42,14 @@ class Creation: BaseObject, MKAnnotation {
     
     //MARK: - Attributes
 
+    @NSManaged var authorID: String?
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
     
     func setAuthor(author: User) {
         
         self[DataKeys.Author] = author
+        authorID = author.objectId
         authorName = author.name
         authorHandle = author.handle
     }

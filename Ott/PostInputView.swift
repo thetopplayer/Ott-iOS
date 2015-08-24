@@ -21,9 +21,8 @@ class PostInputView: UIView, UITextViewDelegate {
     @IBOutlet weak var heightLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var textView: TextView!
-//    @IBOutlet weak var ratingLabel: UILabel!
+    @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet weak var slider: UISlider!
-    @IBOutlet weak var postButton: UIButton!
     
     var delegate: PostInputViewDelegate?
     
@@ -55,9 +54,9 @@ class PostInputView: UIView, UITextViewDelegate {
         slider.tintColor = UIColor.tint()
         slider.addTarget(self, action: "handleSliderAction:", forControlEvents: UIControlEvents.ValueChanged)
         
-        postButton.setTitle("", forState: UIControlState.Normal)
-        postButton.setTitle("Post", forState: UIControlState.Disabled)
-        postButton.addTarget(self, action: "handlePostAction:", forControlEvents: UIControlEvents.TouchUpInside)
+        let tapGR = UITapGestureRecognizer(target: self, action: "handlePostAction")
+        ratingLabel.addGestureRecognizer(tapGR)
+        ratingLabel.userInteractionEnabled = true
         
         let swipeGR = UISwipeGestureRecognizer(target: self, action: "handleSwipeDown")
         swipeGR.direction = .Down
@@ -87,25 +86,32 @@ class PostInputView: UIView, UITextViewDelegate {
         defaultViewHeightWithoutText = minimumViewHeight - currentTextViewContentHeight
     }
     
-    private var didAddBorderToButton = false
+    private var didDrawActiveLabel = false
     private func updateDisplay(withRating rating: Rating?) {
         
         dispatch_async(dispatch_get_main_queue(), {
             
             if let rating = rating {
                 
-                if self.didAddBorderToButton == false {
-                    self.postButton.addRoundedBorder(withColor: UIColor.tint())
-                    self.didAddBorderToButton = true
+                if self.didDrawActiveLabel == false {
+                    
+                    self.ratingLabel.addRoundedBorder(withColor: UIColor.tint())
+                    self.ratingLabel.backgroundColor = UIColor.tint()
+                    self.ratingLabel.textColor = UIColor.whiteColor()
+                    self.ratingLabel.font = UIFont.boldSystemFontOfSize(20)
+                    self.didDrawActiveLabel = true
                 }
                 
-                self.postButton.setTitle(rating.text(), forState: UIControlState.Normal)
+                self.ratingLabel.text = rating.text()
             }
             else {
                 
-                self.postButton.enabled = false
-                self.postButton.removeBorder()
-                self.didAddBorderToButton = false
+                self.ratingLabel.addRoundedBorder(withColor: UIColor.lightGrayColor())
+                self.ratingLabel.backgroundColor = UIColor.whiteColor()
+                self.ratingLabel.textColor = UIColor.lightGrayColor()
+                self.ratingLabel.font = UIFont.systemFontOfSize(15)
+                self.ratingLabel.text = "Post"
+                self.didDrawActiveLabel = false
             }
         })
     }
@@ -114,12 +120,7 @@ class PostInputView: UIView, UITextViewDelegate {
     
     //MARK: - Data
     
-    var rating: Rating? {
-        didSet {
-            postButton.enabled = rating != nil
-        }
-    }
-    
+    var rating: Rating?
     
     var comment: String? {
         
@@ -150,10 +151,12 @@ class PostInputView: UIView, UITextViewDelegate {
     }
     
     
-    func handlePostAction(sender: UISlider) {
+    func handlePostAction() {
         
-        resignFirstResponder()
-        delegate?.postInputViewPostActionDidOccur()
+        if rating != nil {
+            resignFirstResponder()
+            delegate?.postInputViewPostActionDidOccur()
+        }
     }
     
     

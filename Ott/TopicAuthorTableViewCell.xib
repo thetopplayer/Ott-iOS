@@ -21,8 +21,8 @@
                                 <constraint firstAttribute="height" constant="36" id="VEl-v4-BHk"/>
                             </constraints>
                         </imageView>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
-                            <rect key="frame" x="66" y="10" width="524" height="18"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
+                            <rect key="frame" x="66" y="10" width="437" height="18"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="18" id="9YA-fW-X9V"/>
                             </constraints>
@@ -30,33 +30,32 @@
                             <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
                             <nil key="highlightedColor"/>
                         </label>
-                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-bD-3Bi">
-                            <rect key="frame" x="66" y="32" width="524" height="16"/>
+                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-bD-3Bi">
+                            <rect key="frame" x="66" y="32" width="437" height="16"/>
                             <fontDescription key="fontDescription" type="system" pointSize="13"/>
                             <color key="textColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
                             <nil key="highlightedColor"/>
                         </label>
+                        <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="GpH-nQ-Jok">
+                            <rect key="frame" x="511" y="13" width="75" height="30"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="30" id="828-5K-4jV"/>
+                                <constraint firstAttribute="width" constant="75" id="rBd-Wk-pnY"/>
+                            </constraints>
+                            <state key="normal" title="Follow"/>
+                        </button>
                     </subviews>
                     <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     <constraints>
-                        <constraint firstAttribute="bottom" secondItem="yu5-IZ-XAd" secondAttribute="bottom" constant="6" id="20g-a5-Osa"/>
                         <constraint firstItem="LOS-bD-3Bi" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="7Nl-ik-6mL"/>
+                        <constraint firstAttribute="trailing" secondItem="GpH-nQ-Jok" secondAttribute="trailing" constant="15" id="CaL-EY-DU6"/>
                         <constraint firstItem="IZQ-U4-WaG" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="Gls-ao-2G0"/>
-                        <constraint firstAttribute="bottom" secondItem="LOS-bD-3Bi" secondAttribute="bottom" constant="10" id="Hdf-EG-pMr"/>
                         <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="4" id="JVq-2N-jo6"/>
                         <constraint firstItem="yu5-IZ-XAd" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="10" id="ThC-b1-gl7"/>
-                        <constraint firstAttribute="trailing" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="12" id="cdh-Kw-wzw"/>
-                        <constraint firstAttribute="trailing" secondItem="LOS-bD-3Bi" secondAttribute="trailing" constant="12" id="gFX-Di-3a3"/>
                         <constraint firstItem="IZQ-U4-WaG" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="10" id="gvO-3P-q0V"/>
                         <constraint firstItem="yu5-IZ-XAd" firstAttribute="leading" secondItem="wVt-mt-xss" secondAttribute="leading" constant="16" id="hr8-pQ-P3P"/>
                         <constraint firstAttribute="height" constant="56" id="wn0-p5-XFJ"/>
                     </constraints>
-                    <variation key="default">
-                        <mask key="constraints">
-                            <exclude reference="20g-a5-Osa"/>
-                            <exclude reference="Hdf-EG-pMr"/>
-                        </mask>
-                    </variation>
                 </view>
             </subviews>
             <constraints>
@@ -71,6 +70,7 @@
                 <outlet property="authorHandleLabel" destination="LOS-bD-3Bi" id="Gci-DL-9x4"/>
                 <outlet property="authorImageView" destination="yu5-IZ-XAd" id="vNl-px-7kn"/>
                 <outlet property="authorNameLabel" destination="IZQ-U4-WaG" id="wIY-kX-XQN"/>
+                <outlet property="followButton" destination="GpH-nQ-Jok" id="R9w-Bj-Qkm"/>
                 <outlet property="innerContentContainer" destination="wVt-mt-xss" id="v91-QN-GV6"/>
             </connections>
             <point key="canvasLocation" x="241" y="353"/>

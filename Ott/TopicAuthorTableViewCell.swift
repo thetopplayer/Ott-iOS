@@ -13,6 +13,7 @@ class TopicAuthorTableViewCell: TableViewCell {
     @IBOutlet var authorNameLabel: UILabel!
     @IBOutlet var authorHandleLabel: UILabel!
     @IBOutlet var authorImageView: UIImageView!
+    @IBOutlet var followButton: UIButton!
     
     
     override func awakeFromNib() {
@@ -20,7 +21,6 @@ class TopicAuthorTableViewCell: TableViewCell {
         super.awakeFromNib()
         contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         innerContentContainer?.addBorder()
-
         authorImageView.clipsToBounds = true
     }
     
@@ -39,6 +39,28 @@ class TopicAuthorTableViewCell: TableViewCell {
             
             authorNameLabel.text = topic.authorName
             authorHandleLabel.text = topic.authorHandle
+            
+            if let authorHandle = topic.authorHandle {
+                
+                followButton.hidden = false
+                
+                if currentUser().isFollowingUserWithHandle(authorHandle) {
+                    followButton.setTitle("Unfollow", forState: UIControlState.Normal)
+                    let color = UIColor.redColor()
+                    followButton.tintColor = color
+                    followButton.addRoundedBorder(withColor: color)
+                }
+                else {
+                    
+                    followButton.setTitle("Follow", forState: UIControlState.Normal)
+                    let color = UIColor.tint()
+                    followButton.tintColor = color
+                    followButton.addRoundedBorder(withColor: color)
+                }
+            }
+            else {
+                followButton.hidden = true
+            }
             
         }
     }
