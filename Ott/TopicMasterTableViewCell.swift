@@ -17,6 +17,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var contentLabel: UILabel!
+    @IBOutlet var responseStatusImageView: UIImageView!
     @IBOutlet var topicImageView: UIImageView?
     
     
@@ -41,10 +42,21 @@ class TopicMasterTableViewCell: TableViewCell {
             
             topicImageView.contentMode = .ScaleAspectFill
             topicImageView.clipsToBounds = true
+            topicImageView.addBorder()
         }
         
         selectionStyle = .None
     }
+    
+    
+    static var didRespondImage: UIImage = {
+        return UIImage(named: "arrowBack")!
+        }()
+    
+    
+    static var didNotRespondImage: UIImage = {
+        return UIImage(named: "smallDot")!
+        }()
     
     
     private func updateContents() {
@@ -54,6 +66,15 @@ class TopicMasterTableViewCell: TableViewCell {
             topBarLabel.attributedText = timeAndLocationAttributedString(topic)
             contentLabel.attributedText = attributedContent()
             statusLabel.attributedText = attributedDescription()
+            
+            if currentUser().didPostToTopic(topic) {
+                responseStatusImageView.tintColor = UIColor.lightGrayColor()
+                responseStatusImageView.image = TopicMasterTableViewCell.didRespondImage
+            }
+            else {
+                responseStatusImageView.tintColor = UIColor.aqua()
+                responseStatusImageView.image = TopicMasterTableViewCell.didNotRespondImage
+            }
             
             if topic.hasImage {
 

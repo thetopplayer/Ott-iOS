@@ -234,7 +234,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-   
+    
+    private var postingLabel: TransientLabel = {
+        return TransientLabel(message: "Posting...", animationStyle: .FadeUp)
+        }()
+    
+    
     
     
     
@@ -272,10 +277,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.locationName = LocationManager.sharedInstance.locationName
         myPost.saveEventually()
         
-        currentUser().archivePostedTopicID(myTopic!.objectId!)
-        
-        
-        // TODO :  topic needs to know to update its rating
+        if let topicID = myTopic!.objectId {
+            currentUser().archivePostedTopicID(topicID)
+        }
+        else {
+            print("no topic id")
+        }
     }
     
     
@@ -301,8 +308,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
 
     func postInputViewPostActionDidOccur() {
         
+        postingLabel.display(inView: view) { () -> Void in
+            self.refreshDisplay() }
+
         saveChanges()
-        refreshDisplay()
     }
     
     
@@ -389,7 +398,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         var top = CGFloat(64.0)
         if let navHeight = navigationController?.navigationBar.frame.size.height {
-            top = navHeight + UIApplication.sharedApplication().statusBarFrame.size.height
+            top = navHeight + 20
+//            top = navHeight + UIApplication.sharedApplication().statusBarFrame.size.height
+            // doing this messes up when hotspot is active
         }
         
         tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)

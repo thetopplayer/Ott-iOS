@@ -17,7 +17,6 @@ func openSettings() {
 
 
 
-
 //MARK: - User Defaults
 
 private let signedUpUserDefaultsKey = "signedUp"

@@ -88,14 +88,14 @@
                                                         <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="piC-Pq-FMf">
                                                             <rect key="frame" x="13" y="44" width="506" height="31"/>
                                                         </slider>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="Post" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PbW-de-Mei">
-                                                            <rect key="frame" x="541" y="44" width="50" height="31"/>
+                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PbW-de-Mei">
+                                                            <rect key="frame" x="531" y="44" width="56" height="31"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="31" id="R6R-Bz-k0Q"/>
-                                                                <constraint firstAttribute="width" constant="50" id="fK2-gX-W9k"/>
+                                                                <constraint firstAttribute="width" constant="56" id="fK2-gX-W9k"/>
                                                             </constraints>
                                                             <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                            <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
@@ -108,7 +108,7 @@
                                                         <constraint firstItem="piC-Pq-FMf" firstAttribute="top" secondItem="7bz-61-Iij" secondAttribute="bottom" constant="6" id="Xeq-RO-hJ2"/>
                                                         <constraint firstItem="7bz-61-Iij" firstAttribute="leading" secondItem="FYl-C6-aKc" secondAttribute="leading" constant="15" id="prx-LT-L6L"/>
                                                         <constraint firstItem="7bz-61-Iij" firstAttribute="top" secondItem="FYl-C6-aKc" secondAttribute="top" constant="4" id="rzb-bN-jHM"/>
-                                                        <constraint firstItem="PbW-de-Mei" firstAttribute="leading" secondItem="piC-Pq-FMf" secondAttribute="trailing" constant="24" id="t50-Sw-Jdw"/>
+                                                        <constraint firstItem="PbW-de-Mei" firstAttribute="leading" secondItem="piC-Pq-FMf" secondAttribute="trailing" constant="18" id="t50-Sw-Jdw"/>
                                                     </constraints>
                                                 </view>
                                                 <blurEffect style="light"/>

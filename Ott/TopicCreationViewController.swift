@@ -58,6 +58,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     }
     
     
+    private var postingLabel: TransientLabel = {
+        return TransientLabel(message: "Posting...", animationStyle: .Fade)
+    }()
+    
     
     //MARK: - Data
     
@@ -72,9 +76,34 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
-        topic.saveEventually()
+        topic.saveInBackgroundWithBlock() { (succeeded, error) in
+         
+            if succeeded {
+                
+                if let topicID = topic.objectId {
+                    currentUser().archiveAuthoredTopicID(topicID)
+                }
+                else {
+                    print("ERROR:  no topic id for topic with name = \(topic.name)")
+                }
+            }
+            else {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.postingLabel.abortDisplay()
+                    
+                    if let error = error {
+                        (self as UIViewController).presentOKAlertWithError(error)
+                    }
+                    else {
+                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.")
+                        
+                    }
+                }
+            }
+        }
         
-        currentUser().archiveAuthoredTopicID(topic.objectId!)
     }
     
     
@@ -209,7 +238,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             saveChanges()
         }
         
-        dismissViewControllerAnimated(true) { () -> Void in }
+        postingLabel.display(inView: view) { () -> Void in
+            self.dismissViewControllerAnimated(true) { () -> Void in }
+        }
     }
     
     

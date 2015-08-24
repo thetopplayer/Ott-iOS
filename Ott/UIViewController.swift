@@ -9,6 +9,14 @@
 
 import UIKit
 
+
+func topmostViewController() -> UIViewController? {
+    
+    return UIApplication.sharedApplication().keyWindow?.rootViewController!.topmostViewController()
+}
+
+
+
 extension UIViewController {
     
     func topmostViewController() -> UIViewController? {
@@ -38,14 +46,25 @@ extension UIViewController {
         
         return controller
     }
-}
-
-
-
-func topmostViewController() -> UIViewController? {
     
-    return UIApplication.sharedApplication().keyWindow?.rootViewController!.topmostViewController()
+    
+    func presentOKAlert(title title: String?, message: String?) {
+        
+        let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
+        
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+        alertViewController.addAction(okAction)
+        
+        presentViewController(alertViewController, animated: true, completion: nil)
+    }
+    
+    
+    
+    func presentOKAlertWithError(error: NSError) {
+        
+        let title = "Error"
+        let message = error.localizedDescription
+        presentOKAlert(title: title, message: message)
+    }
+    
 }
-
-
-

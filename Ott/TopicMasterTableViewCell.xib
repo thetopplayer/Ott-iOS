@@ -51,10 +51,19 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="fSG-Rv-Ga8">
+                                        <rect key="frame" x="555" y="3" width="20" height="20"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="20" id="1OF-OP-24H"/>
+                                            <constraint firstAttribute="width" constant="20" id="iZT-z0-gJb"/>
+                                        </constraints>
+                                    </imageView>
                                 </subviews>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="maL-aq-AFu" secondAttribute="trailing" constant="20" id="D8K-5c-hqt"/>
+                                    <constraint firstItem="fSG-Rv-Ga8" firstAttribute="centerY" secondItem="Ocq-Ug-dWS" secondAttribute="centerY" id="M1D-K8-rPv"/>
+                                    <constraint firstAttribute="trailing" secondItem="fSG-Rv-Ga8" secondAttribute="trailing" constant="4" id="UIh-ZF-wzk"/>
                                     <constraint firstItem="maL-aq-AFu" firstAttribute="top" secondItem="Ocq-Ug-dWS" secondAttribute="top" constant="3" id="o2q-k2-14f"/>
                                     <constraint firstAttribute="height" constant="25" id="tJs-kV-Za0"/>
                                     <constraint firstItem="maL-aq-AFu" firstAttribute="leading" secondItem="Ocq-Ug-dWS" secondAttribute="leading" constant="8" id="ucl-OW-rGo"/>
@@ -103,12 +112,16 @@
             <connections>
                 <outlet property="contentLabel" destination="Drb-r5-dKV" id="KIe-zc-lG3"/>
                 <outlet property="innerContentContainer" destination="yin-0g-e6x" id="ppy-Yf-3X0"/>
+                <outlet property="responseStatusImageView" destination="fSG-Rv-Ga8" id="Nlk-kQ-PQg"/>
                 <outlet property="statusBar" destination="iEa-13-NkY" id="uOn-BN-cJM"/>
                 <outlet property="statusLabel" destination="6P3-2x-inN" id="yqB-Zm-6Aw"/>
                 <outlet property="topBar" destination="Ocq-Ug-dWS" id="pui-MT-Owo"/>
                 <outlet property="topBarLabel" destination="maL-aq-AFu" id="IG6-mh-eVz"/>
             </connections>
-            <point key="canvasLocation" x="426" y="454.5"/>
+            <point key="canvasLocation" x="228" y="332.5"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="smallDot" width="20" height="20"/>
+    </resources>
 </document>
