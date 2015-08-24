@@ -37,28 +37,55 @@ class LocalViewController: TopicMasterViewController {
     
     override func update() {
         
-        if let location = LocationManager.sharedInstance.location {
+        let updatedKey = "updatedAt"
+        let cacheName = "localTopics"
+        
+        let cachedFetchOperation = NSBlockOperation(block: { () -> Void in
             
-            let fetchOperation = NSBlockOperation(block: { () -> Void in
+            let query = Topic.query()!
+            query.orderByDescending(updatedKey)
+            query.fromPinWithName(cacheName)
+            var error: NSError?
+            let objects = query.findObjects(&error)
+            if let objects = objects as? [Topic] {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    print("returning pinned objects")
+                    self.updateTable(withData: objects)
+                }
+            }
+        })
+        
+        operationQueue().addOperation(cachedFetchOperation)
+        
+        if let location = LocationManager.sharedInstance.location {
+
+            // ADD GUARD FOR REACHABILITY
+            
+            let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
                 
                 let query = Topic.query()!
-                let geoPoint = PFGeoPoint(location: location)
-                query.whereKey(DataKeys.Location, nearGeoPoint: geoPoint, withinMiles: 20)
-                let updatedKey = "updatedAt"
-                query.whereKey(updatedKey, greaterThanOrEqualTo: self.lastUpdated)
                 query.orderByDescending(updatedKey)
+                
+                query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
+                query.whereKey(updatedKey, greaterThanOrEqualTo: NSDate().daysFrom(-7))
                 
                 var error: NSError?
                 let objects = query.findObjects(&error)
                 if let objects = objects as? [Topic] {
                     
+                    PFObject.unpinAllObjectsWithName(cacheName)  // unpin cached
+                    PFObject.pinAll(objects, withName: cacheName) // cache retrieved objects
+                    
                     dispatch_async(dispatch_get_main_queue()) {
+                        print("returning fetched objects")
                         self.updateTable(withData: objects)
                     }
                 }
             })
             
-            operationQueue().addOperation(fetchOperation)
+            onlineFetchOperation.addDependencies([cachedFetchOperation])
+            operationQueue().addOperation(onlineFetchOperation)
         }
     }
     

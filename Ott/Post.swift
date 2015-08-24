@@ -8,6 +8,19 @@
 
 import UIKit
 
+
+extension DataKeys {
+    
+    static var Topic: String {
+        return "topic"
+    }
+    
+    static var TopicName: String {
+        return "topicName"
+    }
+}
+
+
 class Post: Creation, PFSubclassing {
     
     override class func initialize() {
@@ -25,12 +38,24 @@ class Post: Creation, PFSubclassing {
     }
     
     
-    @NSManaged var topicName: String?
+    /** Use this to create */
+    class func createWithAuthor(author: User, topic: Topic) -> Post {
+        
+        let post = Post()
+        post.setAuthor(author)
+        post.setTopic(topic)
+        return post
+    }
     
+    
+    //MARK: - Attributes
+    
+    @NSManaged var topicName: String?
     
     func setTopic(topic: Topic) {
         
-        let topicKey = "topic"        
-        self[topicKey] = topic
+        self[DataKeys.Topic] = topic
+        topicName = topic.name
     }
+    
 }

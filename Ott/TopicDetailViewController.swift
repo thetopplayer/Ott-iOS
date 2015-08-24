@@ -265,15 +265,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func saveChanges() {
         
-        let myPost = Post()
+        let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
-
-        myTopic!.addPost(myPost)
-        currentUser().addPost(myPost)
-        currentUser().save()
+        myPost.saveEventually()
+        
+        currentUser().archivePostedTopicID(myTopic!.objectId!)
+        
+        
+        // TODO :  topic needs to know to update its rating
     }
     
     

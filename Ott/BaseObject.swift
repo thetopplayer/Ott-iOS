@@ -33,7 +33,7 @@ class DataKeys {
 }
 
 
-class BaseObject: PFObject, CachableImage {
+class BaseObject: PFObject {
     
     
     //MARK: - Attributes
@@ -60,19 +60,5 @@ class BaseObject: PFObject, CachableImage {
         set {
             self[DataKeys.Location] = PFGeoPoint(location: newValue)
         }
-    }
-    
-    
-    //MARK: - CachableImage
-    
-    // need to do all this (rather than simply declaring a var in the protocol) because of apparent swift 2.0 bugs when trying to set the var in the image code
-    
-    private var _cachedImage: UIImage?
-    var cachedImage: UIImage? {
-        return _cachedImage
-    }
-    
-    func setCachedImage(image: UIImage?) {
-        _cachedImage = image
     }
 }

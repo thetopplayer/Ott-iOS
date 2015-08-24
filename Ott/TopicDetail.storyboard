@@ -73,44 +73,31 @@
                                                     <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                                                     <subviews>
                                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="7bz-61-Iij" customClass="TextView" customModule="Ott" customModuleProvider="target">
-                                                            <rect key="frame" x="56" y="8" width="531" height="32"/>
+                                                            <rect key="frame" x="15" y="8" width="572" height="28"/>
                                                             <fontDescription key="fontDescription" type="system" pointSize="18"/>
                                                             <textInputTraits key="textInputTraits" autocapitalizationType="sentences"/>
                                                         </textView>
                                                         <slider opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="piC-Pq-FMf">
-                                                            <rect key="frame" x="18" y="48" width="495" height="31"/>
+                                                            <rect key="frame" x="13" y="44" width="506" height="31"/>
                                                         </slider>
                                                         <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="BJW-9C-xOS">
-                                                            <rect key="frame" x="537" y="47" width="50" height="32"/>
+                                                            <rect key="frame" x="537" y="43" width="50" height="32"/>
                                                             <constraints>
                                                                 <constraint firstAttribute="width" constant="50" id="1o3-V3-RyU"/>
                                                                 <constraint firstAttribute="height" constant="32" id="Oj4-C2-3gm"/>
                                                             </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="17"/>
+                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
                                                             <state key="normal" title="Post"/>
                                                         </button>
-                                                        <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="wtP-rn-61e">
-                                                            <rect key="frame" x="16" y="8" width="32" height="32"/>
-                                                            <constraints>
-                                                                <constraint firstAttribute="width" constant="32" id="MLQ-Ss-Wn8"/>
-                                                                <constraint firstAttribute="height" constant="32" id="pln-Dq-XYe"/>
-                                                            </constraints>
-                                                            <fontDescription key="fontDescription" type="boldSystem" pointSize="22"/>
-                                                            <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
-                                                            <nil key="highlightedColor"/>
-                                                            <size key="shadowOffset" width="0.0" height="0.0"/>
-                                                        </label>
                                                     </subviews>
                                                     <constraints>
-                                                        <constraint firstItem="wtP-rn-61e" firstAttribute="leading" secondItem="FYl-C6-aKc" secondAttribute="leading" constant="16" id="2V8-jg-ZYz"/>
-                                                        <constraint firstAttribute="bottom" secondItem="BJW-9C-xOS" secondAttribute="bottom" constant="7" id="6Ja-94-f0H"/>
-                                                        <constraint firstItem="7bz-61-Iij" firstAttribute="leading" secondItem="wtP-rn-61e" secondAttribute="trailing" constant="8" id="AON-bK-kIk"/>
-                                                        <constraint firstItem="piC-Pq-FMf" firstAttribute="leading" secondItem="FYl-C6-aKc" secondAttribute="leading" constant="20" id="CEI-jM-8jh"/>
                                                         <constraint firstAttribute="trailing" secondItem="7bz-61-Iij" secondAttribute="trailing" constant="15" id="F3R-wm-iU1"/>
-                                                        <constraint firstAttribute="bottom" secondItem="piC-Pq-FMf" secondAttribute="bottom" constant="8" id="FAp-uL-eaX"/>
-                                                        <constraint firstItem="BJW-9C-xOS" firstAttribute="leading" secondItem="piC-Pq-FMf" secondAttribute="trailing" constant="26" id="Gcv-WO-NBN"/>
-                                                        <constraint firstItem="wtP-rn-61e" firstAttribute="top" secondItem="FYl-C6-aKc" secondAttribute="top" constant="8" id="Po3-9P-kCN"/>
+                                                        <constraint firstAttribute="bottom" secondItem="piC-Pq-FMf" secondAttribute="bottom" constant="12" id="FAp-uL-eaX"/>
+                                                        <constraint firstItem="piC-Pq-FMf" firstAttribute="leading" secondItem="FYl-C6-aKc" secondAttribute="leading" constant="15" id="FsI-s0-gLK"/>
+                                                        <constraint firstItem="BJW-9C-xOS" firstAttribute="leading" secondItem="piC-Pq-FMf" secondAttribute="trailing" constant="20" id="Gcv-WO-NBN"/>
+                                                        <constraint firstItem="BJW-9C-xOS" firstAttribute="centerY" secondItem="piC-Pq-FMf" secondAttribute="centerY" id="cwk-Iz-8Ah"/>
                                                         <constraint firstItem="BJW-9C-xOS" firstAttribute="top" secondItem="7bz-61-Iij" secondAttribute="bottom" constant="7" id="jBQ-bm-Pyg"/>
+                                                        <constraint firstItem="7bz-61-Iij" firstAttribute="leading" secondItem="FYl-C6-aKc" secondAttribute="leading" constant="15" id="prx-LT-L6L"/>
                                                         <constraint firstItem="7bz-61-Iij" firstAttribute="top" secondItem="FYl-C6-aKc" secondAttribute="top" constant="8" id="rzb-bN-jHM"/>
                                                         <constraint firstAttribute="trailing" secondItem="BJW-9C-xOS" secondAttribute="trailing" constant="15" id="uug-9R-0tt"/>
                                                     </constraints>
@@ -139,7 +126,6 @@
                                     <outlet property="containerView" destination="urz-ip-t9q" id="UJq-z1-3hL"/>
                                     <outlet property="heightLayoutConstraint" destination="8Nu-Dm-YTo" id="nMQ-JU-j5q"/>
                                     <outlet property="postButton" destination="BJW-9C-xOS" id="bVZ-CX-CaC"/>
-                                    <outlet property="ratingLabel" destination="wtP-rn-61e" id="MEd-K7-ggj"/>
                                     <outlet property="slider" destination="piC-Pq-FMf" id="gbb-cS-wZq"/>
                                     <outlet property="textView" destination="7bz-61-Iij" id="zZW-eN-hK6"/>
                                 </connections>

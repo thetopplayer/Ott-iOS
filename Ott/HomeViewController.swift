@@ -100,8 +100,6 @@ class HomeViewController: ViewController {
     
     private func updateDisplayedInformation() {
         
-        let user = currentUser()
-        
         self.nameTextLabel.text = currentUser().name
         self.handleTextLabel.text = currentUser().username
         if currentUser().hasImage {
@@ -123,10 +121,10 @@ class HomeViewController: ViewController {
             avatarImageView.image = User.defaultAvatar
         }
         
-        summaryTextLabel.attributedText = self.attributedUserDetails(user)
+//        summaryTextLabel.attributedText = self.attributedUserDetails(user)
     }
     
-    
+    /*
     private func attributedUserDetails(user: User) -> NSAttributedString {
         
         var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
@@ -155,6 +153,7 @@ class HomeViewController: ViewController {
         s1.appendAttributedString(s3)
         return s1
     }
+*/
 
     
     

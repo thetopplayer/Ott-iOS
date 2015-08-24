@@ -34,7 +34,7 @@ func currentUser() -> User {
 func fetchUserInBackground(phoneNumber phoneNumber: String, completion: (object: PFObject?, error: NSError?) -> Void) {
     
     let query = User.query()!
-    query.whereKey(User.phoneNumberKey, equalTo:phoneNumber)
+    query.whereKey(User.DataKeys.PhoneNumber, equalTo:phoneNumber)
     query.getFirstObjectInBackgroundWithBlock(completion)
 }
 
@@ -42,7 +42,7 @@ func fetchUserInBackground(phoneNumber phoneNumber: String, completion: (object:
 func fetchUserInBackground(handle handle: String, completion: (object: PFObject?, error: NSError?) -> Void) {
     
     let query = User.query()!
-    query.whereKey(User.handleKey, equalTo:handle)
+    query.whereKey(User.DataKeys.Handle, equalTo:handle)
     query.getFirstObjectInBackgroundWithBlock(completion)
 }
 
@@ -50,7 +50,7 @@ func fetchUserInBackground(handle handle: String, completion: (object: PFObject?
 func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
     
     let query = User.query()!
-    query.whereKey(User.phoneNumberKey, equalTo:phoneNumber)
+    query.whereKey(User.DataKeys.PhoneNumber, equalTo:phoneNumber)
     query.countObjectsInBackgroundWithBlock {
         
         (count: Int32, error: NSError?) -> Void in
@@ -62,7 +62,7 @@ func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUn
 func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
     
     let query = User.query()!
-    query.whereKey(User.handleKey, equalTo:handle)
+    query.whereKey(User.DataKeys.Handle, equalTo:handle)
     query.countObjectsInBackgroundWithBlock {
         
         (count: Int32, error: NSError?) -> Void in
@@ -73,9 +73,10 @@ func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool,
 
 
 
+
 //MARK: - User
 
-class User: PFUser, CachableImage {
+class User: PFUser {
 
     override class func initialize() {
         struct Static {
@@ -97,8 +98,25 @@ class User: PFUser, CachableImage {
     
     //MARK: - Core Attributes
     
-    static let phoneNumberKey = "phoneNumber"
-    static let handleKey = "username"
+    struct DataKeys {
+        
+        static var PhoneNumber: String {
+            return "phoneNumber"
+        }
+        
+        static var Handle: String {
+            return "username"
+        }
+        
+        static var NumberOfTopics: String {
+            return "numTopics"
+        }
+        
+        static var NumberOfPosts: String {
+            return "numPosts"
+        }
+    }
+    
     
     @NSManaged var phoneNumber: String?
     @NSManaged var name: String? // user's non-unique name
@@ -156,88 +174,104 @@ class User: PFUser, CachableImage {
     }
     
 
-    
+
     //MARK: - Posts and Topics
     
-    private let postsKey = "posts"
-    private let numberOfPostsKey = "numberPosts"
-    private let topicsKey = "topics"
-    private let numberOfTopicsKey = "numberTopics"
+    private var documentsDirectory: String = {
+        
+        do {
+            
+            let documentURL = try NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
+            return documentURL.path!
+        }
+        catch {
+            print("error getting document directory")
+            return ""
+        }
+    }()
     
-    var numberOfPosts: Int? {
-        return self[numberOfPostsKey] as? Int
+    
+    private var authoredTopicArchivePath: String {
+        
+        return documentsDirectory + "/authoredTopics.ott"
     }
     
     
-    var numberOfTopics: Int? {
-        return self[numberOfTopicsKey] as? Int
+    private func authoredTopicIDs() -> [String] {
+        
+        if let archive = NSArray(contentsOfFile: authoredTopicArchivePath) {
+            return archive as! [String]
+        }
+        
+        return Array<String>()
     }
     
     
-    func addPost(post: Post) {
+    private func archiveAuthoredTopicIDs(topicIDs: NSArray) {
         
-        let relation = relationForKey(postsKey)
-        relation.addObject(post)
-        incrementKey(numberOfPostsKey)
-
+        topicIDs.writeToFile(authoredTopicArchivePath, atomically: true)
     }
     
     
-    func removePost(post: Post) {
+    func archiveAuthoredTopicID(topicID: String) {
         
-        let relation = relationForKey(postsKey)
-        relation.removeObject(post)
-        incrementKey(numberOfPostsKey, byAmount: -1)
-    }
-
-    
-    func getPosts(completion: (success: Bool, posts: [Post]?) -> Void) {
-        
-        
+        let topicIDs = NSMutableSet()
+        topicIDs.unionSet(NSSet(array: authoredTopicIDs()) as! Set<String>)
+        topicIDs.addObject(topicID)
+        archiveAuthoredTopicIDs(topicIDs.allObjects)
     }
     
     
-//    func addTopic(topic: Topic) {
-//        
-//        incrementKey(numberOfTopicsKey)
-//        
-//        // todo - add ID to recently postedtopicids
-//    }
-//
-//    
-//    func removeTopic(topic: Topic) {
-//        
-//        let relation = relationForKey(topicsKey)
-//        relation.removeObject(topic)
-//        incrementKey(numberOfPostsKey, byAmount: -1)
-//    }
-    
-
-    func getTopics(completion: (success: Bool, posts: [Topic]?) -> Void) {
+    func didAuthorTopic(topic: Topic) -> Bool {
         
-        
-    }
-    
-    
-    private var recentlyPostedTopicIDs: [String]?
-    
-    func didPostToTopic(topic: Topic) -> Bool {
+        if let topicID = topic.objectId {
+            
+            return authoredTopicIDs().contains(topicID)
+        }
         
         return false
     }
     
     
-    
-    //MARK: - CachableImage
-    
-    // need to do all this (rather than simply declaring a var in the protocol) because of apparent swift 2.0 bugs when trying to set the var in the image code
-    
-    private var _cachedImage: UIImage?
-    var cachedImage: UIImage? {
-        return _cachedImage
+    private var postedTopicArchivePath: String {
+        
+        return documentsDirectory + "/postedTopics.ott"
     }
     
-    func setCachedImage(image: UIImage?) {
-        _cachedImage = image
-    }}
+    
+    private func postedTopicIDs() -> [String] {
+        
+        if let archive = NSArray(contentsOfFile: postedTopicArchivePath) {
+            return archive as! [String]
+        }
+        
+        return Array<String>()
+    }
+    
+    
+    private func archivePostedTopicIDs(topicIDs: NSArray) {
+        
+        topicIDs.writeToFile(postedTopicArchivePath, atomically: true)
+    }
+    
+    
+    func archivePostedTopicID(topicID: String) {
+        
+        let topicIDs = NSMutableSet()
+        topicIDs.unionSet(NSSet(array: postedTopicIDs()) as! Set<String>)
+        topicIDs.addObject(topicID)
+        archivePostedTopicIDs(topicIDs.allObjects)
+    }
+    
+    
+    func didPostToTopic(topic: Topic) -> Bool {
+        
+        if let topicID = topic.objectId {
+            
+            return postedTopicIDs().contains(topicID)
+        }
+        
+        return false
+    }
+}
 

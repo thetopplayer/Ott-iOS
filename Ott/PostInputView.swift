@@ -21,7 +21,7 @@ class PostInputView: UIView, UITextViewDelegate {
     @IBOutlet weak var heightLayoutConstraint: NSLayoutConstraint!
     @IBOutlet weak var containerView: UIView!
     @IBOutlet weak var textView: TextView!
-    @IBOutlet weak var ratingLabel: UILabel!
+//    @IBOutlet weak var ratingLabel: UILabel!
     @IBOutlet weak var slider: UISlider!
     @IBOutlet weak var postButton: UIButton!
     
@@ -41,7 +41,7 @@ class PostInputView: UIView, UITextViewDelegate {
         
         containerView.backgroundColor = UIColor(white: 0.9, alpha: 0.8)
         containerView.addBorder()
-        containerView.addUpShadow()
+//        containerView.addUpShadow()
         
         textView.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
         textView.textContainerInset = UIEdgeInsetsMake(6, 4, 2, 4)
@@ -52,11 +52,11 @@ class PostInputView: UIView, UITextViewDelegate {
         textView.showsHorizontalScrollIndicator = false
         textView.delegate = self
         
-        ratingLabel.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
-        ratingLabel.addRoundedBorder()
-        
+        slider.tintColor = UIColor.tint()
         slider.addTarget(self, action: "handleSliderAction:", forControlEvents: UIControlEvents.ValueChanged)
         
+        postButton.setTitle("", forState: UIControlState.Normal)
+        postButton.setTitle("Post", forState: UIControlState.Disabled)
         postButton.addTarget(self, action: "handlePostAction:", forControlEvents: UIControlEvents.TouchUpInside)
         
         let swipeGR = UISwipeGestureRecognizer(target: self, action: "handleSwipeDown")
@@ -76,7 +76,7 @@ class PostInputView: UIView, UITextViewDelegate {
         slider.setValue(0, animated: false)
         rating = nil
         displayTextViewPlaceholder()
-        postButton.enabled = false
+        
         updateDisplay(withRating: rating)
         
         textView.displayScrolling = false
@@ -87,20 +87,27 @@ class PostInputView: UIView, UITextViewDelegate {
         defaultViewHeightWithoutText = minimumViewHeight - currentTextViewContentHeight
     }
     
-    
+    private var didAddBorderToButton = false
     private func updateDisplay(withRating rating: Rating?) {
         
-        if let rating = rating {
+        dispatch_async(dispatch_get_main_queue(), {
             
-            let text = rating.text()
-            let color = rating.color()
-            
-            dispatch_async(dispatch_get_main_queue(), {
+            if let rating = rating {
                 
-                self.ratingLabel.text = text
-                self.ratingLabel.textColor = color
-            })
-        }
+                if self.didAddBorderToButton == false {
+                    self.postButton.addRoundedBorder(withColor: UIColor.tint())
+                    self.didAddBorderToButton = true
+                }
+                
+                self.postButton.setTitle(rating.text(), forState: UIControlState.Normal)
+            }
+            else {
+                
+                self.postButton.enabled = false
+                self.postButton.removeBorder()
+                self.didAddBorderToButton = false
+            }
+        })
     }
     
     

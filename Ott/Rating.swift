@@ -14,44 +14,25 @@ struct Rating {
     static let Minimum = 1
     static let Maximum = 10
     
-    private var _value: Int?
-    var value: Int? {
-        
-        set {
-            if Rating.withinRange(newValue) {
-                _value = value
-            }
-            else {
-                print("rating value out of range")
-                assert(false)
-            }
-
-        }
-        
-        get {
-            return _value
-        }
-    }
-    
-    
-    init() {
-        
-    }
-    
+    var value: Int?
     
     init(withFloat floatValue: Float?) {
         
         if let fv = floatValue {
             
             let tempValue = Int(1 + floor(fv * 9))
-            value = tempValue
+            if Rating.withinRange(tempValue) {
+                value = tempValue
+            }
         }
     }
     
     
     init(withValue value: Int?) {
         
-        self.value = value
+        if Rating.withinRange(value) {
+            self.value = value
+        }
     }
     
     
@@ -67,7 +48,7 @@ struct Rating {
     
     func color() -> UIColor {
         
-        if let r = _value {
+        if let r = value {
             
             let color = r < 5 ? UIColor.redColor() : UIColor.fern()
             return color
@@ -78,7 +59,7 @@ struct Rating {
     
     func text() -> String {
         
-        if let r = _value {
+        if let r = value {
             return "\(r)"
         }
         return "_"

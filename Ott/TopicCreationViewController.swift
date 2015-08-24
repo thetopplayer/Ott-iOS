@@ -72,7 +72,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
-        topic.saveInBackground()
+        topic.saveEventually()
+        
+        currentUser().archiveAuthoredTopicID(topic.objectId!)
     }
     
     
