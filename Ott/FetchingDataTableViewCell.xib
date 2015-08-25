@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <deployment identifier="iOS"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" restorationIdentifier="fetchingCell" selectionStyle="default" indentationWidth="10" reuseIdentifier="fetchingCell" rowHeight="50" id="zhs-5R-kf2" customClass="FetchingDataTableViewCell" customModule="Ott" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="485" height="50"/>
+            <autoresizingMask key="autoresizingMask"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="zhs-5R-kf2" id="9hK-rM-fzT">
+                <rect key="frame" x="0.0" y="0.0" width="485" height="49"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Mdm-47-TSs">
+                        <rect key="frame" x="8" y="8" width="469" height="33"/>
+                        <subviews>
+                            <activityIndicatorView opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" animating="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="LZs-Qd-o9g">
+                                <rect key="frame" x="280" y="7" width="20" height="20"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="20" id="XaO-k7-rbm"/>
+                                    <constraint firstAttribute="height" constant="20" id="q1t-Y2-X3c"/>
+                                </constraints>
+                                <color key="color" white="0.33333333333333331" alpha="1" colorSpace="calibratedWhite"/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Fetching..." textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bKL-KL-VKN">
+                                <rect key="frame" x="198" y="6" width="73" height="21"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="120" id="DxM-Sq-s8W"/>
+                                    <constraint firstAttribute="height" constant="21" id="Qz6-sW-8uh"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="15"/>
+                                <color key="textColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
+                                <nil key="highlightedColor"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="DxM-Sq-s8W"/>
+                                    </mask>
+                                </variation>
+                            </label>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="LZs-Qd-o9g" firstAttribute="centerY" secondItem="bKL-KL-VKN" secondAttribute="centerY" id="HqH-8a-lBC"/>
+                            <constraint firstItem="LZs-Qd-o9g" firstAttribute="leading" secondItem="bKL-KL-VKN" secondAttribute="trailing" constant="8" id="IFt-BM-SE4"/>
+                            <constraint firstItem="bKL-KL-VKN" firstAttribute="centerX" secondItem="Mdm-47-TSs" secondAttribute="centerX" id="NAq-LE-az4"/>
+                            <constraint firstItem="bKL-KL-VKN" firstAttribute="centerY" secondItem="Mdm-47-TSs" secondAttribute="centerY" id="S6w-lM-OSb"/>
+                            <constraint firstAttribute="height" constant="33" id="zAq-rz-PyQ"/>
+                        </constraints>
+                    </view>
+                </subviews>
+                <constraints>
+                    <constraint firstItem="Mdm-47-TSs" firstAttribute="top" secondItem="9hK-rM-fzT" secondAttribute="topMargin" id="7XM-8G-DWp"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="Mdm-47-TSs" secondAttribute="trailing" id="Fwr-sS-LIF"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="Mdm-47-TSs" secondAttribute="bottom" id="MNa-Y2-F4x"/>
+                    <constraint firstItem="Mdm-47-TSs" firstAttribute="leading" secondItem="9hK-rM-fzT" secondAttribute="leadingMargin" id="eS3-sH-dII"/>
+                </constraints>
+            </tableViewCellContentView>
+            <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+            <connections>
+                <outlet property="activityIndicator" destination="LZs-Qd-o9g" id="sBz-dX-3uE"/>
+                <outlet property="innerContentContainer" destination="Mdm-47-TSs" id="0ta-Jc-ovy"/>
+                <outlet property="label" destination="bKL-KL-VKN" id="jAI-dk-64w"/>
+            </connections>
+            <point key="canvasLocation" x="540.5" y="351"/>
+        </tableViewCell>
+    </objects>
+</document>

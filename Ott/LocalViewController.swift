@@ -37,13 +37,12 @@ class LocalViewController: TopicMasterViewController {
     
     override func update() {
         
-        let updatedKey = "updatedAt"
         let cacheName = "localTopics"
         
         let cachedFetchOperation = NSBlockOperation(block: { () -> Void in
             
             let query = Topic.query()!
-            query.orderByDescending(updatedKey)
+            query.orderByDescending(DataKeys.UpdatedAt)
             query.fromPinWithName(cacheName)
             var error: NSError?
             let objects = query.findObjects(&error)
@@ -65,10 +64,10 @@ class LocalViewController: TopicMasterViewController {
             let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
                 
                 let query = Topic.query()!
-                query.orderByDescending(updatedKey)
+                query.orderByDescending(DataKeys.UpdatedAt)
                 
                 query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
-                query.whereKey(updatedKey, greaterThanOrEqualTo: NSDate().daysFrom(-7))
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: NSDate().daysFrom(-7))
                 
                 var error: NSError?
                 let objects = query.findObjects(&error)

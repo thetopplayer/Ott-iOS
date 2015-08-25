@@ -19,6 +19,10 @@ import MapKit
 
 class DataKeys {
     
+    static var UpdatedAt: String {
+        return "updatedAt"
+    }
+    
     static var Comment: String {
         return "comment"
     }

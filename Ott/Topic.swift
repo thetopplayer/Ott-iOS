@@ -63,70 +63,10 @@ class Topic: Creation, PFSubclassing {
     }
     
     
-    class func fetchTopicsNearLocation(location: CLLocation, withinMiles: Double, completion: PFArrayResultBlock) {
-        
-        let geoPoint = PFGeoPoint(location: location)
-        
-        let query = Topic.query()!
-        query.whereKey(DataKeys.Location, nearGeoPoint: geoPoint, withinMiles: withinMiles)
-        query.findObjectsInBackgroundWithBlock(completion)
-    }
-    
-    
-    class func fetchTrendingTopics(completion: PFBooleanResultBlock) {
-        
-    }
-    
-    
-    class func fetchTopicsWithUser(user: User, completion: PFBooleanResultBlock) {
-        
-    }
-    
-    
 
     //MARK: - Attributes
     
     @NSManaged var name: String?
-    
-    var averageRating: Int? {
-        
-        set {
-            if let val = newValue {
-                self[DataKeys.AverageRating] = val
-            }
-        }
-        
-        get {
-            return self[DataKeys.AverageRating] as? Int
-        }
-    }
-    
-    
     @NSManaged var numberOfPosts: Int
-//    var numberOfPosts: Int? {
-//        return self[DataKeys.NumberOfPosts] as? Int
-//    }
-    
-    
-    func addPost(post: Post) {
-        
-        let relation = relationForKey(DataKeys.Posts)
-        relation.addObject(post)
-        incrementKey(DataKeys.NumberOfPosts)
-    }
-    
-    
-    func removePost(post: Post) {
-        
-        let relation = relationForKey(DataKeys.Posts)
-        relation.removeObject(post)
-        incrementKey(DataKeys.NumberOfPosts,byAmount: -1)
-    }
-    
-    
-    func getPosts(completion: (success: Bool, posts: [Post]?) -> Void) {
-        
-    }
-
 }
 

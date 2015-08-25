@@ -132,60 +132,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func refreshDisplay(refreshingData refreshingData:Bool = true) {
-        
-        //        func postsArrangedByTimestamp(posts: Set<Post>?) -> [Post] {
-        //
-        //            var result: [Post]?
-        //            if let posts = _myTopic!.posts {
-        //
-        //                result = posts.sort({ (first, second) -> Bool in
-        //                    let d1 = first.createdAt
-        //                    let d2 = second.createdAt
-        //                    return d1.compare(d2) == .OrderedDescending
-        //                })
-        //            }
-        //            else {
-        //                result = []
-        //            }
-        //            return result!
-        //        }
-        
-        if myTopic == nil {
-            return
-        }
+    func refreshDisplay() {
         
         // enter edit mode if the user has not yet posted to this topic
         displayMode = currentUser().didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
         setDisplayType(.List)
         
-        
-        func fetchCompletion(success: Bool, posts: [Post]?) {
+        dispatch_async(dispatch_get_main_queue()) {
             
-            if success == false {
-                return
-            }
+            print("is fetching posts = \(self.isFetchingPosts)")
             
-            if posts == nil {
-                self.arrangedPosts = []
-                return
-            }
-            
-            self.arrangedPosts = posts!.sort({ (first, second) -> Bool in
-                let d1 = first.createdAt!
-                let d2 = second.createdAt!
-                return d1.compare(d2) == .OrderedDescending
-            })
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                self.tableView.reloadData()
-                self.setMapAnnotations(forPosts: self.arrangedPosts)
-            }
+            self.tableView.reloadData()
+            self.setMapAnnotations(forPosts: self.arrangedPosts)
         }
-        
-        myTopic!.getPosts(fetchCompletion)
     }
-    
     
     
     private enum DisplayType {
@@ -241,33 +201,55 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     
-    
-    
     //MARK: - Data
     
-    private lazy var operationQueue: OperationQueue = {
-        
-        return OperationQueue()
-    }()
-    
-    
-    private var _myTopic: Topic?
     var myTopic: Topic? {
         
-        set {
-            _myTopic = newValue
+        didSet {
             refreshDisplay()
-        }
-        
-        get {
-            return _myTopic;
+            fetchPosts()
         }
     }
     
     
-    private var arrangedPosts = [Post]()
+    private var arrangedPosts = [Post]() {
+        
+        didSet {
+            refreshDisplay()
+        }
+    }
     
+    private var isFetchingPosts = false
     
+    private func fetchPosts() {
+
+        isFetchingPosts = true
+        
+        // ADD GUARD FOR REACHABILITY
+        
+        let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
+            
+            let query = Post.query()!
+            query.orderByDescending(DataKeys.UpdatedAt)
+            
+            query.whereKey(DataKeys.Topic, equalTo: self.myTopic!)
+            
+            var error: NSError?
+            let objects = query.findObjects(&error)
+            if let objects = objects as? [Post] {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.isFetchingPosts = false
+                    self.arrangedPosts = objects
+                }
+            }
+        })
+        
+        operationQueue().addOperation(onlineFetchOperation)
+    }
+    
+
     private func saveChanges() {
         
         let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
@@ -355,15 +337,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let topicSection = 0
     private let textCellViewNibName = "TopicTextTableViewCell"
     private let textCellViewIdentifier = "textCell"
+    private let textCellViewHeight = CGFloat(78)
     private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
+    private let imageCellViewHeight = CGFloat(275)
     private let authorCellViewNibName = "TopicAuthorTableViewCell"
     private let authorCellViewIdentifer = "authorCell"
-    private let textCellViewHeight = CGFloat(78)
-    private let imageCellViewHeight = CGFloat(275)
     private let authorCellViewHeight = CGFloat(56)
     
     private let postsSection = 1
+    private let fetchingDataCellViewNibName = "FetchingDataTableViewCell"
+    private let fetchingDataCellViewIdentifer = "fetchingCell"
+    private let fetchingDataCellViewHeight = CGFloat(50)
     private let postCellNibName = "PostDetailTableViewCell"
     private let postCellIdentifier = "postCell"
     private let postCellHeight = CGFloat(125)
@@ -383,14 +368,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let nib = UINib(nibName: textCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: textCellViewIdentifier)
         
-        let nib2 = UINib(nibName: imageCellViewNibName, bundle: nil)
-        tableView.registerNib(nib2, forCellReuseIdentifier: imageCellViewIdentifer)
+        let nib1 = UINib(nibName: imageCellViewNibName, bundle: nil)
+        tableView.registerNib(nib1, forCellReuseIdentifier: imageCellViewIdentifer)
         
-        let nib4 = UINib(nibName: authorCellViewNibName, bundle: nil)
-        tableView.registerNib(nib4, forCellReuseIdentifier: authorCellViewIdentifer)
+        let nib2 = UINib(nibName: authorCellViewNibName, bundle: nil)
+        tableView.registerNib(nib2, forCellReuseIdentifier: authorCellViewIdentifer)
         
-        let nib5 = UINib(nibName: postCellNibName, bundle: nil)
-        tableView.registerNib(nib5, forCellReuseIdentifier: postCellIdentifier)
+        let nib3 = UINib(nibName: fetchingDataCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: fetchingDataCellViewIdentifer)
+        
+        let nib4 = UINib(nibName: postCellNibName, bundle: nil)
+        tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
     }
     
     
@@ -443,31 +431,37 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if myTopic == nil {
+        if let topic = myTopic {
+            
+            var number = 0
+            if section == topicSection {
+                
+                number = 2  // text and author
+                if topic.hasImage {
+                    number++
+                }
+            }
+            else if section == postsSection {
+                
+                if isFetchingPosts {
+                    number = 1 // fetching cell
+                }
+                else {
+                    number = arrangedPosts.count
+                }
+            }
+            
+            return number
+        }
+        else {
             return 0
         }
         
-        let topic = myTopic!
-        var number = 0
-        
-        if section == topicSection {
-            
-            number = 2  // text and author
-            
-            if topic.hasImage {
-                number++
-            }
-        }
-        else if section == postsSection {
-            number = arrangedPosts.count
-        }
-        
-        return number
     }
     
     
     enum TableCellType {
-        case TopicText, TopicImage, TopicAuthor, Post
+        case TopicText, TopicImage, TopicAuthor, Fetching, Post
     }
     
     
@@ -504,7 +498,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
         else if indexPath.section == postsSection {
-            cellType = .Post
+            
+            if isFetchingPosts {
+                cellType = .Fetching
+            }
+            else {
+                cellType = .Post
+            }
         }
         
         return cellType!
@@ -525,6 +525,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             height = authorCellViewHeight
+            
+        case .Fetching:
+            height = fetchingDataCellViewHeight
             
         case .Post:
             height = postCellHeight
@@ -558,6 +561,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return cell
         }
         
+        func initializeFetchingCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(fetchingDataCellViewIdentifer) as! FetchingDataTableViewCell
+            cell.startAnimating(withMessage: "Fetching Posts...")
+            return cell
+        }
+        
+        
         func initializePostCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
@@ -578,6 +589,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             cell = initializeAuthorCell()
+            
+        case .Fetching:
+            cell = initializeFetchingCell()
             
         case .Post:
             cell = initializePostCell()
