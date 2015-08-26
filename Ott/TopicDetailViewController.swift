@@ -146,10 +146,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         dispatch_async(dispatch_get_main_queue()) {
             
-            print("is fetching posts = \(self.isFetchingPosts)")
-            
-            self.tableView.reloadData()
-            self.setMapAnnotations(forPosts: self.arrangedPosts)
+            self.refreshTableView()
+            self.setMapAnnotations(forPosts: self.data)
         }
     }
     
@@ -206,6 +204,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }()
     
     
+    private func displayFetchingIndicator() {
+        
+        print("fetching posts")
+    }
+    
+    
+    private func hideFetchingIndicator() {
+        
+        print("done fetching posts")
+    }
+    
+    
     
     //MARK: - Data
     
@@ -227,11 +237,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
 
-    private var isFetchingPosts = false
-    
     private func fetchPosts() {
 
-        isFetchingPosts = true
+        displayFetchingIndicator()
         
         // ADD GUARD FOR REACHABILITY
         
@@ -244,10 +252,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             var error: NSError?
             let objects = query.findObjects(&error)
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.hideFetchingIndicator()
+            }
+            
             if let objects = objects as? [Post] {
-                
-                self.isFetchingPosts = false
-                updateTable(withData: objects)
+                self.updateTable(withData: objects)
             }
         })
         
@@ -376,9 +387,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let authorCellViewHeight = CGFloat(56)
     
     private let postsSection = 1
-    private let fetchingDataCellViewNibName = "FetchingDataTableViewCell"
-    private let fetchingDataCellViewIdentifer = "fetchingCell"
-    private let fetchingDataCellViewHeight = CGFloat(50)
     private let postCellNibName = "PostDetailTableViewCell"
     private let postCellIdentifier = "postCell"
     private let postCellHeight = CGFloat(125)
@@ -404,9 +412,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let nib2 = UINib(nibName: authorCellViewNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: authorCellViewIdentifer)
         
-        let nib3 = UINib(nibName: fetchingDataCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: fetchingDataCellViewIdentifer)
-        
         let nib4 = UINib(nibName: postCellNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
     }
@@ -414,6 +419,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func refreshTableView() {
         
+        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
+            
+            let first = a as! BaseObject
+            let second = b as! BaseObject
+            return first.createdAt!.laterDate(second.createdAt!) == first.createdAt!
+        }
+        
+        tableView.updateByAppending(existingData: &data, withData: updatedData, inSection: postsSection,sortingArraysWith: sortFn)
     }
     
     
@@ -478,13 +491,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
             else if section == postsSection {
                 
-                if isFetchingPosts {
-                    number = 1 // fetching cell
-                }
-                else {
-                    number = arrangedPosts.count
-                }
-            }
+                number = data.count
+             }
             
             return number
         }
@@ -496,7 +504,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     enum TableCellType {
-        case TopicText, TopicImage, TopicAuthor, Fetching, Post
+        case TopicText, TopicImage, TopicAuthor, Post
     }
     
     
@@ -534,12 +542,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         else if indexPath.section == postsSection {
             
-            if isFetchingPosts {
-                cellType = .Fetching
-            }
-            else {
-                cellType = .Post
-            }
+            cellType = .Post
         }
         
         return cellType!
@@ -560,9 +563,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             height = authorCellViewHeight
-            
-        case .Fetching:
-            height = fetchingDataCellViewHeight
             
         case .Post:
             height = postCellHeight
@@ -596,17 +596,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return cell
         }
         
-        func initializeFetchingCell() -> UITableViewCell {
-            
-            let cell = tableView.dequeueReusableCellWithIdentifier(fetchingDataCellViewIdentifer) as! FetchingDataTableViewCell
-            cell.startAnimating(withMessage: "Fetching Posts...")
-            return cell
-        }
-        
         func initializePostCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
-            cell.displayedPost = arrangedPosts[indexPath.row]
+            cell.displayedPost = data[indexPath.row]
             return cell
         }
         
@@ -623,9 +616,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             cell = initializeAuthorCell()
-            
-        case .Fetching:
-            cell = initializeFetchingCell()
             
         case .Post:
             cell = initializePostCell()

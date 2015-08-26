@@ -75,7 +75,7 @@ class TopicMasterViewController: TableViewController {
         super.didReceiveMemoryWarning()
         
         if isVisible() == false {
-            data = []
+            data.removeAll()
         }
     }
     
@@ -211,7 +211,7 @@ class TopicMasterViewController: TableViewController {
             }
             
             return Array(finalSet).sort({ (a, b) -> Bool in
-                return a.updatedAt!.laterDate(b.updatedAt!) == a.updatedAt!
+                return a.createdAt!.laterDate(b.createdAt!) == a.createdAt!
             })
            
         }()
@@ -229,7 +229,7 @@ class TopicMasterViewController: TableViewController {
             
             // replace the data used by the table
             self.data = finalData
-            self.updatedData = []
+            self.updatedData.removeAll()
             
             self.tableView.beginUpdates()
             if replacingExistingData {
