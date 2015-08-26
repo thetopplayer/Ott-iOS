@@ -75,6 +75,7 @@ class TransientLabel: UILabel {
     
     func abortDisplay() {
         
+        self.removeFromSuperview()
         completionTimer?.invalidate()
     }
 }

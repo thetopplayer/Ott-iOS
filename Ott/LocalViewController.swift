@@ -58,16 +58,16 @@ class LocalViewController: TopicMasterViewController {
         operationQueue().addOperation(cachedFetchOperation)
         
         if let location = LocationManager.sharedInstance.location {
-
+            
             // ADD GUARD FOR REACHABILITY
             
             let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
                 
                 let query = Topic.query()!
-                query.orderByDescending(DataKeys.UpdatedAt)
+                query.orderByDescending(DataKeys.CreatedAt)
                 
                 query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
-                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: NSDate().daysFrom(-7))
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: NSDate().daysFrom(-7))
                 
                 var error: NSError?
                 let objects = query.findObjects(&error)
@@ -114,4 +114,30 @@ class LocalViewController: TopicMasterViewController {
     }
     
 
+    
+    //MARK: - Observations
+    
+    override func startObservations() {
+        
+        super.startObservations()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidCreateTopicNotification:", name: TopicCreationViewController.Notifications.DidUploadTopic, object: nil)
+    }
+    
+    
+    func handleLocationChangeNotification(notification: NSNotification) {
+        
+        update()
+    }
+    
+    
+    func handleDidCreateTopicNotification(notification: NSNotification) {
+        
+        if let topic = notification.userInfo?[TopicCreationViewController.Notifications.TopicKey as NSObject] as? Topic {
+            
+            updateTable(withData: [topic], replacingExistingData: false)
+        }
+    }
 }

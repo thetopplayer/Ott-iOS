@@ -109,17 +109,31 @@ class User: PFUser {
         }
         
         static var NumberOfTopics: String {
-            return "numTopics"
+            return "numberOfTopics"
         }
         
         static var NumberOfPosts: String {
-            return "numPosts"
+            return "numberOfPosts"
         }
+    }
+    
+    
+    /** Use this to create */
+    class func create() -> User {
+        
+        let user = User()
+        user.numberOfTopics = 0
+        user.numberOfPosts = 0
+        
+        return user
     }
     
     
     @NSManaged var phoneNumber: String?
     @NSManaged var name: String? // user's non-unique name
+    @NSManaged var numberOfTopics: Int
+    @NSManaged var numberOfPosts: Int
+    
     
     // the user's handle is stored as his username
     // password is created by setting the handle

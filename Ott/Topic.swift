@@ -13,7 +13,7 @@ import MapKit
 extension DataKeys {
     
     static var AverageRating: String {
-        return "aveRating"
+        return "averageRating"
     }
     
     static var Posts: String {
@@ -21,7 +21,7 @@ extension DataKeys {
     }
     
     static var NumberOfPosts: String {
-        return "numPosts"
+        return "numberOfPosts"
     }
 }
 
@@ -49,7 +49,8 @@ class Topic: Creation, PFSubclassing {
         let topic = Topic()
         topic.setAuthor(author)
         topic.numberOfPosts = 0
-        
+        topic.averageRating = 0
+
         return topic
     }
     
@@ -68,5 +69,6 @@ class Topic: Creation, PFSubclassing {
     
     @NSManaged var name: String?
     @NSManaged var numberOfPosts: Int
+    @NSManaged var averageRating: Float
 }
 

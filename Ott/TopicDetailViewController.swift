@@ -20,6 +20,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     
     
+    struct Notifications {
+        
+        static let DidUploadPost = "didUploadPost"
+    }
+    
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -212,13 +218,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var arrangedPosts = [Post]() {
+    private var data = [Post]()
+    private var updatedData = [Post]()
+    func updateTable(withData data: [Post]) {
         
-        didSet {
-            refreshDisplay()
-        }
+        updatedData = data
+        refreshTableView()
     }
     
+
     private var isFetchingPosts = false
     
     private func fetchPosts() {
@@ -230,7 +238,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
             
             let query = Post.query()!
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             
             query.whereKey(DataKeys.Topic, equalTo: self.myTopic!)
             
@@ -238,11 +246,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             let objects = query.findObjects(&error)
             if let objects = objects as? [Post] {
                 
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.isFetchingPosts = false
-                    self.arrangedPosts = objects
-                }
+                self.isFetchingPosts = false
+                updateTable(withData: objects)
             }
         })
         
@@ -257,14 +262,39 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.comment = postInputView.comment
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
-        myPost.saveEventually()
+        myPost.saveInBackgroundWithBlock() { (succeeded, error) in
+            
+            if succeeded {
+                
+                self.fetchPosts() // update display
+                
+                if let topicID = self.myTopic!.objectId {
+                    
+                    currentUser().archivePostedTopicID(topicID)
+                    NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidUploadPost,
+                        object: self)
+                }
+                else {
+                    print("ERROR:  in posting post -> no topic id for topic with name = \(self.myTopic!.name)")
+                }
+            }
+            else {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.postingLabel.abortDisplay()
+                    
+                    if let error = error {
+                        (self as UIViewController).presentOKAlertWithError(error)
+                    }
+                    else {
+                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.")
+                        
+                    }
+                }
+            }
+        }
         
-        if let topicID = myTopic!.objectId {
-            currentUser().archivePostedTopicID(topicID)
-        }
-        else {
-            print("no topic id")
-        }
     }
     
     
@@ -379,6 +409,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         let nib4 = UINib(nibName: postCellNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
+    }
+    
+    
+    func refreshTableView() {
+        
     }
     
     
@@ -567,7 +602,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             cell.startAnimating(withMessage: "Fetching Posts...")
             return cell
         }
-        
         
         func initializePostCell() -> UITableViewCell {
             

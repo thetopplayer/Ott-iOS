@@ -54,7 +54,7 @@ extension String {
     
     func stringByRemovingNonDecimalDigits() -> String {
         
-        return "".join(self.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet))
+        return self.componentsSeparatedByCharactersInSet(NSCharacterSet.decimalDigitCharacterSet().invertedSet).joinWithSeparator("")
     }
     
     

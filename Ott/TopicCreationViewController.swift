@@ -11,6 +11,14 @@ import UIKit
 
 class TopicCreationViewController: TableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, TopicCreationTitleTableViewCellDelegate, TopicCreationButtonTableViewCellDelegate {
 
+    
+    struct Notifications {
+        
+        static let DidUploadTopic = "didUploadTopic"
+        static let TopicKey = "topic"
+    }
+
+    
     private var titleCellView: TopicCreationTitleTableViewCell?
     private var imageCellView: ImageTableViewCell?
     
@@ -81,7 +89,11 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             if succeeded {
                 
                 if let topicID = topic.objectId {
+                    
                     currentUser().archiveAuthoredTopicID(topicID)
+                    let userinfo = [TopicCreationViewController.Notifications.TopicKey: topic]
+                    NSNotificationCenter.defaultCenter().postNotificationName(TopicCreationViewController.Notifications.DidUploadTopic,
+                        object: self, userInfo: userinfo)
                 }
                 else {
                     print("ERROR:  no topic id for topic with name = \(topic.name)")

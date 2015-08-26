@@ -75,7 +75,7 @@ class TopicMasterViewController: TableViewController {
         super.didReceiveMemoryWarning()
         
         if isVisible() == false {
-            data = nil
+            data = []
         }
     }
     
@@ -90,12 +90,7 @@ class TopicMasterViewController: TableViewController {
     
     private func updateNoDataLabel() {
         
-        if data == nil {
-            noDataLabel?.hidden = false
-        }
-        else {
-            noDataLabel?.hidden = data!.count > 0
-        }
+        noDataLabel?.hidden = data.count > 0
     }
     
     
@@ -112,23 +107,12 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    private var data: [Topic]?
-
-    func updateTable(withData withData: [Topic]?) {
+    private var data = [Topic]()
+    private var updatedData = [Topic]()
+    func updateTable(withData data: [Topic], replacingExistingData: Bool = true) {
         
-        if data == nil {
-            
-            data = withData
-            refreshTableView()
-            return
-        }
-        
-        
-        // insert rows for new data
-        // update existing rows with updated data
-        
-        
-        
+        updatedData = data
+        refreshTableView(replacingExistingData: replacingExistingData)
     }
     
     
@@ -190,15 +174,73 @@ class TopicMasterViewController: TableViewController {
     }
 
     
-    private func refreshTableView() {
+    private func refreshTableView(replacingExistingData replacingExistingData: Bool = true) {
         
-        // TODO - compare previous and new data sets and insert/delete rows, instead of reloading all
+        let existingSet = Set(data)
+        let updatedSet = Set(updatedData)
         
-        NSLog("refreshing table view")
+        // deletions
+        let removedObjects = existingSet.subtract(updatedSet)
+        var indexPathsForRemoval = [NSIndexPath]()
+        for var index = 0; index < data.count; index++ {
+            if removedObjects.contains(data[index]) {
+                let ip = NSIndexPath(forRow: index, inSection: 0)
+                indexPathsForRemoval.append(ip)
+            }
+        }
+        
+        // updates
+        let updatedObjects = updatedSet.intersect(existingSet)
+        var indexPathsForUpdate = [NSIndexPath]()
+        for var index = 0; index < data.count; index++ {
+            if updatedObjects.contains(data[index]) {
+                let ip = NSIndexPath(forRow: index, inSection: 0)
+                indexPathsForUpdate.append(ip)
+            }
+        }
+        
+        // insertions
+        let addedObjects = updatedSet.subtract(existingSet)
+        let finalData: [Topic] = {
+            
+            var finalSet = addedObjects.union(updatedObjects)
+            
+            // add back removed objects if we aren't deleting any
+            if replacingExistingData == false {
+                finalSet = finalSet.union(removedObjects)
+            }
+            
+            return Array(finalSet).sort({ (a, b) -> Bool in
+                return a.updatedAt!.laterDate(b.updatedAt!) == a.updatedAt!
+            })
+           
+        }()
+        
+        var indexPathsForInsert = [NSIndexPath]()
+        for var index = 0; index < finalData.count; index++ {
+            if addedObjects.contains(finalData[index]) {
+                let ip = NSIndexPath(forRow: index, inSection: 0)
+                indexPathsForInsert.append(ip)
+            }
+        }
+        
+        // implement
         dispatch_async(dispatch_get_main_queue(), {
             
+            // replace the data used by the table
+            self.data = finalData
+            self.updatedData = []
+            
+            self.tableView.beginUpdates()
+            if replacingExistingData {
+                self.tableView.deleteRowsAtIndexPaths(indexPathsForRemoval, withRowAnimation: .Automatic)
+            }
+            
+            self.tableView.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
+            self.tableView.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
+            self.tableView.endUpdates()
+            
             self.updateNoDataLabel()
-            self.tableView.reloadData()
             self.lastRefreshedTableView = NSDate()
         })
     }
@@ -211,16 +253,13 @@ class TopicMasterViewController: TableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if data != nil {
-            return data!.count
-        }
-        return 0
+        return data.count
     }
     
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let theTopic = data![indexPath.row]
+        let theTopic = data[indexPath.row]
         
         let identifier = theTopic.hasImage ? imageCellIdentifier: cellIdentifier
         let cell = tableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
@@ -264,7 +303,7 @@ class TopicMasterViewController: TableViewController {
     
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        selection = data![indexPath.row]
+        selection = data[indexPath.row]
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
     
@@ -273,7 +312,7 @@ class TopicMasterViewController: TableViewController {
     //MARK: - Observations
     
     private var didStartObservations = false
-    private func startObservations() {
+    func startObservations() {
         
         if didStartObservations {
             return
@@ -281,7 +320,7 @@ class TopicMasterViewController: TableViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostNotification:", name: TopicDetailViewController.Notifications.DidUploadPost, object: nil)
         
         didStartObservations = true
     }
@@ -309,8 +348,8 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    func handleLocationChangeNotification(notification: NSNotification) {
-
+    func handleDidPostNotification(notification: NSNotification) {
+        
         update()
     }
     

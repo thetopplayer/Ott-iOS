@@ -49,7 +49,6 @@ class Creation: BaseObject, MKAnnotation {
     func setAuthor(author: User) {
         
         self[DataKeys.Author] = author
-        authorID = author.objectId
         authorName = author.name
         authorHandle = author.handle
     }

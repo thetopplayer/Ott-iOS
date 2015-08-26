@@ -19,6 +19,10 @@ import MapKit
 
 class DataKeys {
     
+    static var CreatedAt: String {
+        return "createdAt"
+    }
+    
     static var UpdatedAt: String {
         return "updatedAt"
     }
@@ -64,5 +68,28 @@ class BaseObject: PFObject {
         set {
             self[DataKeys.Location] = PFGeoPoint(location: newValue)
         }
+    }
+    
+    
+    //MARK: - NSObject Protocol
+    
+    override func isEqual(object: AnyObject?) -> Bool {
+        
+        if let otherObject = object as? BaseObject {
+            
+            return otherObject.hash == hash
+        }
+        
+        return false
+    }
+    
+    
+    override var hash: Int {
+        
+        if let objectId = objectId {
+            return objectId.hash
+        }
+        
+        return super.hash
     }
 }
