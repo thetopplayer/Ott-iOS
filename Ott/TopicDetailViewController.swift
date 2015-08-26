@@ -147,7 +147,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         dispatch_async(dispatch_get_main_queue()) {
             
             self.refreshTableView()
-            self.setMapAnnotations(forPosts: self.data)
+            self.setMapAnnotations(forPosts: self.posts)
         }
     }
     
@@ -228,11 +228,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var data = [Post]()
-    private var updatedData = [Post]()
+    private var posts = [Post]()
+    private var updatedPosts = [Post]()
     func updateTable(withData data: [Post]) {
         
-        updatedData = data
+        updatedPosts = data
         refreshTableView()
     }
     
@@ -426,7 +426,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return first.createdAt!.laterDate(second.createdAt!) == first.createdAt!
         }
         
-        tableView.updateByAppending(existingData: &data, withData: updatedData, inSection: postsSection,sortingArraysWith: sortFn)
+        tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: postsSection,sortingArraysWith: sortFn)
+        
+        print("posts = \(posts)")
     }
     
     
@@ -444,12 +446,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        
-        var number: Int = 0
-        if let myTopic = myTopic {
-            number = currentUser().didPostToTopic(myTopic) ? 2 : 1
-        }
-        return number
+
+        return 2
     }
 
 
@@ -491,7 +489,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
             else if section == postsSection {
                 
-                number = data.count
+                number = posts.count
              }
             
             return number
@@ -599,7 +597,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializePostCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
-            cell.displayedPost = data[indexPath.row]
+            cell.displayedPost = posts[indexPath.row]
             return cell
         }
         

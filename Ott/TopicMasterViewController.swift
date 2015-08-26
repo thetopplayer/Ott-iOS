@@ -176,69 +176,23 @@ class TopicMasterViewController: TableViewController {
     
     private func refreshTableView(replacingExistingData replacingExistingData: Bool = true) {
         
-        let existingSet = Set(data)
-        let updatedSet = Set(updatedData)
-        
-        // deletions
-        let removedObjects = existingSet.subtract(updatedSet)
-        var indexPathsForRemoval = [NSIndexPath]()
-        for var index = 0; index < data.count; index++ {
-            if removedObjects.contains(data[index]) {
-                let ip = NSIndexPath(forRow: index, inSection: 0)
-                indexPathsForRemoval.append(ip)
-            }
+        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
+            
+            let first = a as! BaseObject
+            let second = b as! BaseObject
+            return first.createdAt!.laterDate(second.createdAt!) == first.createdAt!
         }
         
-        // updates
-        let updatedObjects = updatedSet.intersect(existingSet)
-        var indexPathsForUpdate = [NSIndexPath]()
-        for var index = 0; index < data.count; index++ {
-            if updatedObjects.contains(data[index]) {
-                let ip = NSIndexPath(forRow: index, inSection: 0)
-                indexPathsForUpdate.append(ip)
-            }
+        if replacingExistingData {
+            
+            tableView.updateByReplacing(datasourceData: &data, withData: updatedData, inSection: 0,sortingArraysWith: sortFn)
+        }
+        else {
+            
+            tableView.updateByAddingTo(datasourceData: &data, withData: updatedData, inSection: 0,sortingArraysWith: sortFn)
         }
         
-        // insertions
-        let addedObjects = updatedSet.subtract(existingSet)
-        let finalData: [Topic] = {
-            
-            var finalSet = addedObjects.union(updatedObjects)
-            
-            // add back removed objects if we aren't deleting any
-            if replacingExistingData == false {
-                finalSet = finalSet.union(removedObjects)
-            }
-            
-            return Array(finalSet).sort({ (a, b) -> Bool in
-                return a.createdAt!.laterDate(b.createdAt!) == a.createdAt!
-            })
-           
-        }()
-        
-        var indexPathsForInsert = [NSIndexPath]()
-        for var index = 0; index < finalData.count; index++ {
-            if addedObjects.contains(finalData[index]) {
-                let ip = NSIndexPath(forRow: index, inSection: 0)
-                indexPathsForInsert.append(ip)
-            }
-        }
-        
-        // implement
         dispatch_async(dispatch_get_main_queue(), {
-            
-            // replace the data used by the table
-            self.data = finalData
-            self.updatedData.removeAll()
-            
-            self.tableView.beginUpdates()
-            if replacingExistingData {
-                self.tableView.deleteRowsAtIndexPaths(indexPathsForRemoval, withRowAnimation: .Automatic)
-            }
-            
-            self.tableView.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
-            self.tableView.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
-            self.tableView.endUpdates()
             
             self.updateNoDataLabel()
             self.lastRefreshedTableView = NSDate()

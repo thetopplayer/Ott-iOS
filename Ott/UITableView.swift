@@ -16,7 +16,7 @@ extension UITableView {
     }
     
     
-    func updateByAppending<T: Hashable> (inout datasourceData datasourceData: [T], withData updatedData: [T], inSection section: Int, sortingArraysWith isOrderedBefore: (T, T) -> Bool) {
+    func updateByAddingTo<T: Hashable> (inout datasourceData datasourceData: [T], withData updatedData: [T], inSection section: Int, sortingArraysWith isOrderedBefore: (T, T) -> Bool) {
         
         _update(datasourceData: &datasourceData, withData: updatedData, replacingdatasourceData: false, inSection: section, sortingArraysWith: isOrderedBefore)
     }
