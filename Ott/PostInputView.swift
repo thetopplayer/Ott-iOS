@@ -127,7 +127,8 @@ class PostInputView: UIView, UITextViewDelegate {
         if _isDisplayingTextViewPlaceholder {
             return nil
         }
-        return textView.text
+        
+        return textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
     }
     
     

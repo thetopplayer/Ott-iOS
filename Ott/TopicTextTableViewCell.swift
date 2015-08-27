@@ -42,10 +42,14 @@ class TopicTextTableViewCell: TableViewCell {
     
     private func attributedContent(topic: Topic) -> NSAttributedString {
         
-        var titleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
-        titleAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(32)
+        let titleFont = UIFont.systemFontOfSize(32)
+        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName : titleFont]
         
-        let s1 = NSMutableAttributedString(string: topic.name!, attributes: titleAttributes)
+        let titleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: titleFont]
+        
+        let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
+        let s1 = NSAttributedString(string: topic.name!, attributes: titleAttributes)
+        fullString.appendAttributedString(s1)
         
         if let comment = topic.comment {
             
@@ -56,10 +60,10 @@ class TopicTextTableViewCell: TableViewCell {
             let text = "\n" + comment
             let s2 = NSAttributedString(string: text, attributes: commentAttributes)
             
-            s1.appendAttributedString(s2)
+            fullString.appendAttributedString(s2)
         }
         
-        return s1
+        return fullString
     }
     
 }

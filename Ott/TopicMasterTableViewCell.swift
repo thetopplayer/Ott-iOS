@@ -63,7 +63,7 @@ class TopicMasterTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            topBarLabel.attributedText = timeAndLocationAttributedString(topic)
+            topBarLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
             contentLabel.attributedText = attributedContent()
             statusLabel.attributedText = attributedDescription()
             
@@ -93,22 +93,25 @@ class TopicMasterTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor()]
-            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(22)
+            let titleFont = UIFont.systemFontOfSize(22)
+            let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName : titleFont]
             
-            let s1 = NSMutableAttributedString(string: topic.name!, attributes: boldAttributes)
+            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: titleFont]
+            
+            let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
+            let s1 = NSAttributedString(string: topic.name!, attributes: boldAttributes)
+            fullString.appendAttributedString(s1)
             
             if let comment = topic.comment {
                 
-                var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-                normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(14)
+                let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(14)]
                 
                 let text = "\n" + comment
                 let s2 = NSAttributedString(string: text, attributes: normalAttributes)
-                s1.appendAttributedString(s2)
+                fullString.appendAttributedString(s2)
             }
             
-            return s1
+            return fullString
         }
         
         return NSAttributedString(string: "")
@@ -119,16 +122,14 @@ class TopicMasterTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-            normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)
+            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)]
             
-            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(12)
+            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
             
             let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
             
-            let p = topic.numberOfPosts == 1 ? " rating " : " ratings "
-            let s2 = NSAttributedString(string: p + "since creation by ", attributes: normalAttributes)
+            let p = topic.numberOfPosts == 1 ? " post | " : " posts | "
+            let s2 = NSAttributedString(string: p + "authored by ", attributes: normalAttributes)
             let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
             let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)
             

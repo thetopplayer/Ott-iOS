@@ -25,83 +25,140 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        update()
+        fetchTopics(.Cached)
     }
 
     
-    override func viewWillAppear(animated: Bool) {
+    override func viewDidAppear(animated: Bool) {
         
-        super.viewWillAppear(animated)
+        super.viewDidAppear(animated)
+        startAutomaticallyUpdatingFetches()
+    }
+    
+    
+    override func viewDidDisappear(animated: Bool) {
+        
+        super.viewDidDisappear(animated)
+        stopAutomaticallyUpdatingFetches()
     }
     
     
     
     //MARK: - Data
     
-    var lastUpdated = NSDate.distantPast()
+    private var lastUpdated: NSDate?
     
-    override func update() {
+    private let dataCacheName = "localTopics"
+    private func replaceCachedTopics(withTopics withTopics: [Topic]) {
         
-        super.update()
-        let cacheName = "localTopics"
+        PFObject.unpinAllObjectsWithName(dataCacheName)
+        PFObject.pinAll(withTopics, withName: dataCacheName)
+    }
+    
+    private func appendToCachedData(withTopics withTopics: [Topic]) {
         
-        let cachedFetchOperation = NSBlockOperation(block: { () -> Void in
+        let updatedTopics = self.displayedTopics + withTopics
+        PFObject.unpinAllObjectsWithName(dataCacheName)  // unpin cached
+        PFObject.pinAll(updatedTopics, withName: dataCacheName) // cache retrieved objects
+    }
+
+    
+    private enum FetchType {
+        case Cached, NewLocation, UpdateCurrentLocation
+    }
+    
+    private func fetchTopics(type: FetchType) {
+        
+        // simply return all currently cached objects
+        let fetchFromCacheOperation = NSBlockOperation(block: { () -> Void in
             
             let query = Topic.query()!
             query.orderByDescending(DataKeys.UpdatedAt)
-            query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: self.lastUpdated)
-            query.fromPinWithName(cacheName)
+            query.fromPinWithName(self.dataCacheName)
+            
             var error: NSError?
             let objects = query.findObjects(&error)
-            if let objects = objects as? [Topic] {
-                
-                if let mostRecentTopicUpdate = objects.first?.updatedAt {
-                    
-                    self.lastUpdated = mostRecentTopicUpdate
-                    dispatch_async(dispatch_get_main_queue()) {
-                        print("returning pinned objects")
-                        self.updateTable(withData: objects)
-                    }
-                }
-                
+            if let topics = objects as? [Topic] {
+                self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
             }
         })
         
-        operationQueue().addOperation(cachedFetchOperation)
-        
-        if let location = LocationManager.sharedInstance.location {
+        // fetch objects for new location, replacing all cached objects
+        let fetchForNewLocationOperation = NSBlockOperation(block: { () -> Void in
             
-            // ADD GUARD FOR REACHABILITY
+            guard let location = LocationManager.sharedInstance.location else {
+                print("call to fetch for new location but have no location")
+                return
+            }
             
-            let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
+            let query = Topic.query()!
+            query.orderByDescending(DataKeys.CreatedAt)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
+            
+            var error: NSError?
+            let objects = query.findObjects(&error)
+            if let topics = objects as? [Topic] {
                 
-                let query = Topic.query()!
-                query.orderByDescending(DataKeys.CreatedAt)
-                
-                query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
-                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: self.lastUpdated)
-                
-                var error: NSError?
-                let objects = query.findObjects(&error)
-                if let objects = objects as? [Topic] {
+                self.replaceCachedTopics(withTopics: topics)
+                if let mostRecentTopicUpdate = topics.first?.updatedAt {
                     
-                    PFObject.unpinAllObjectsWithName(cacheName)  // unpin cached
-                    PFObject.pinAll(objects, withName: cacheName) // cache retrieved objects
-                    
-                    if let mostRecentTopicUpdate = objects.first?.updatedAt {
-                        self.lastUpdated = mostRecentTopicUpdate
-                        
-                        dispatch_async(dispatch_get_main_queue()) {
-                            print("returning fetched objects")
-                            self.updateTable(withData: objects)
-                        }
-                    }
+                    self.lastUpdated = mostRecentTopicUpdate
+                    self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
                 }
-            })
+            }
+        })
+        
+        // update objects for current location, fetching only recently updated ones
+        // and adding additional objects to cache
+        let fetchToUpdateLocationOperation = NSBlockOperation(block: { () -> Void in
             
-            onlineFetchOperation.addDependencies([cachedFetchOperation])
-            operationQueue().addOperation(onlineFetchOperation)
+            guard let location = LocationManager.sharedInstance.location else {
+                print("call to fetch update location but have no location")
+                return
+            }
+            
+            let query = Topic.query()!
+            query.orderByDescending(DataKeys.CreatedAt)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
+            
+            if let mostRecentlyFetchedUpdate = self.lastUpdated {
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: mostRecentlyFetchedUpdate)
+            }
+            
+            var error: NSError?
+            let objects = query.findObjects(&error)
+            if let topics = objects as? [Topic] {
+                
+                if let mostRecentTopicUpdate = topics.first?.updatedAt {
+                    
+                    self.appendToCachedData(withTopics: topics)
+                    self.lastUpdated = mostRecentTopicUpdate
+                    self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
+                }
+            }
+        })
+        
+        
+        switch type {
+            
+        case .Cached:
+            operationQueue().addOperation(fetchFromCacheOperation)
+            
+        case .NewLocation:
+            
+            // TODO : ADD GUARD FOR REACHABILITY
+            operationQueue().addOperation(fetchForNewLocationOperation)
+            
+        case .UpdateCurrentLocation:
+            
+            // TODO : ADD GUARD FOR REACHABILITY
+            operationQueue().addOperation(fetchToUpdateLocationOperation)
         }
+    }
+    
+    
+    override func update() {
+        fetchTopics(.UpdateCurrentLocation)
     }
     
     
@@ -151,9 +208,17 @@ class LocalViewController: TopicMasterViewController {
     
     func handleDidCreateTopicNotification(notification: NSNotification) {
         
-        if let topic = notification.userInfo?[TopicCreationViewController.Notifications.TopicKey as NSObject] as? Topic {
+        if let createdTopic = notification.userInfo?[TopicCreationViewController.Notifications.TopicKey as NSObject] as? Topic {
             
-            updateTable(withData: [topic], replacingExistingData: false)
+            
+            let updateOperation = NSBlockOperation(block: { () -> Void in
+
+                let topicArray = [createdTopic]
+                self.appendToCachedData(withTopics: topicArray)
+                self.refreshTableView(withTopics: topicArray, replacingDatasourceData: false)
+            })
+            
+            operationQueue().addOperation(updateOperation)
         }
     }
 }

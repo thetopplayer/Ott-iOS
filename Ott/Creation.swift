@@ -87,5 +87,4 @@ class Creation: BaseObject, MKAnnotation {
         return dateFormatter.stringFromDate(createdAt!)
     }
     
-
 }

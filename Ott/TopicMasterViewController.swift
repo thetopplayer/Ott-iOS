@@ -48,9 +48,7 @@ class TopicMasterViewController: TableViewController {
         noDataLabel!.text = "No Topics"
         
         self.view.addSubview(noDataLabel!)
-        
         startObservations()
-        startRefreshDataTimer()
     }
 
     
@@ -75,7 +73,7 @@ class TopicMasterViewController: TableViewController {
         super.didReceiveMemoryWarning()
         
         if isVisible() == false {
-            data.removeAll()
+            topics.removeAll()
         }
     }
     
@@ -90,7 +88,7 @@ class TopicMasterViewController: TableViewController {
     
     private func updateNoDataLabel() {
         
-        noDataLabel?.hidden = data.count > 0
+        noDataLabel?.hidden = displayedTopics.count > 0
     }
     
     
@@ -107,14 +105,10 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Data
     
-    private var data = [Topic]()
-    private var updatedData = [Topic]()
-    func updateTable(withData data: [Topic], replacingExistingData: Bool = true) {
-        
-        updatedData = data
-        refreshTableView(replacingExistingData: replacingExistingData)
+    private var topics = [Topic]()
+    var displayedTopics: [Topic] {
+        return topics
     }
-    
     
     var selection: Topic? {
         
@@ -132,13 +126,23 @@ class TopicMasterViewController: TableViewController {
     
 
     func _handleUpdateTimerFire(timer: NSTimer) {
+        print("autotimer fire")
         update()
     }
     
     
-    private func startRefreshDataTimer() {
+    private var autoRefreshTimer: NSTimer?
+    func startAutomaticallyUpdatingFetches() {
         
-        NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
+        autoRefreshTimer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
+    }
+    
+    
+    func stopAutomaticallyUpdatingFetches() {
+        
+        if let autoRefreshTimer = autoRefreshTimer {
+            autoRefreshTimer.invalidate()
+        }
     }
     
     
@@ -161,28 +165,26 @@ class TopicMasterViewController: TableViewController {
     }
 
     
-    private func refreshTableView(replacingExistingData replacingExistingData: Bool = true) {
+    func refreshTableView(withTopics updatedTopics: [Topic], replacingDatasourceData: Bool) {
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
             
-            let first = a as! BaseObject
-            let second = b as! BaseObject
-            return first.createdAt!.laterDate(second.createdAt!) == first.createdAt!
+            let firstTime = (a as! BaseObject).updatedAt!
+            let secondTime = (b as! BaseObject).updatedAt!
+            return firstTime.laterDate(secondTime) == firstTime
         }
         
-        if replacingExistingData {
+        if replacingDatasourceData {
             
-            tableView.updateByReplacing(datasourceData: &data, withData: updatedData, inSection: 0,sortingArraysWith: sortFn)
+            tableView.updateByReplacing(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
         else {
             
-            tableView.updateByAddingTo(datasourceData: &data, withData: updatedData, inSection: 0,sortingArraysWith: sortFn)
+            tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
         
         dispatch_async(dispatch_get_main_queue(), {
-            
             self.updateNoDataLabel()
-            self.lastRefreshedTableView = NSDate()
         })
     }
     
@@ -194,13 +196,13 @@ class TopicMasterViewController: TableViewController {
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return data.count
+        return displayedTopics.count
     }
     
 
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let theTopic = data[indexPath.row]
+        let theTopic = displayedTopics[indexPath.row]
         
         let identifier = theTopic.hasImage ? imageCellIdentifier: cellIdentifier
         let cell = tableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
@@ -232,19 +234,9 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-//    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-//
-//        let theTopic = data![indexPath.row]
-//        if theTopic.hasImage {
-//            return imageCellHeight
-//        }
-//        return cellHeight
-//    }
-    
-    
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
-        selection = data[indexPath.row]
+        selection = displayedTopics[indexPath.row]
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
     
@@ -283,7 +275,7 @@ class TopicMasterViewController: TableViewController {
         // update table if it was last refreshed yesterday, for example
         if let lastRefreshedToday = lastRefreshedTableView?.isToday() {
             if lastRefreshedToday == false {
-                refreshTableView()
+                update()
             }
         }
     }

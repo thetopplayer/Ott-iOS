@@ -23,6 +23,10 @@ extension DataKeys {
     static var NumberOfPosts: String {
         return "numberOfPosts"
     }
+    
+    static var LastPostLocationName: String {
+        return "lastPostLocationName"
+    }
 }
 
 
@@ -50,10 +54,19 @@ class Topic: Creation, PFSubclassing {
         topic.setAuthor(author)
         topic.numberOfPosts = 0
         topic.averageRating = 0
+        topic.lastPostLocationName = ""
 
         return topic
     }
     
+    
+    //MARK: - Attributes
+    
+    @NSManaged var name: String?
+    @NSManaged var numberOfPosts: Int
+    @NSManaged var averageRating: Float
+    @NSManaged var lastPostLocationName: String?
+
     
     
     //MARK: - Queries
@@ -62,13 +75,5 @@ class Topic: Creation, PFSubclassing {
         
         Topic.query()!.getObjectInBackgroundWithId(identifier, block: completion)
     }
-    
-    
-
-    //MARK: - Attributes
-    
-    @NSManaged var name: String?
-    @NSManaged var numberOfPosts: Int
-    @NSManaged var averageRating: Float
 }
 
