@@ -19,7 +19,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     
-    
     struct Notifications {
         
         static let DidUploadPost = "didUploadPost"
@@ -35,6 +34,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         postInputView.delegate = self
         postInputView.maximumViewHeight = 200
+        
+        var items = toolbar.items
+        let statusBarButtonItem = UIBarButtonItem(customView: statusLabel)
+        statusBarButtonItem.width = 120
+        items?.insert(statusBarButtonItem, atIndex: 2)
+        toolbar.setItems(items!, animated: false)
         
         setupTableView()
         startObservations()
@@ -143,12 +148,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         // enter edit mode if the user has not yet posted to this topic
         displayMode = currentUser().didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
         setDisplayType(.List)
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            
-            self.refreshTableView()
-            self.setMapAnnotations(forPosts: self.posts)
-        }
+        displayStatus()
     }
     
     
@@ -204,15 +204,48 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }()
     
     
-    private func displayFetchingIndicator() {
+    
+    lazy var statusLabel: UILabel = {
         
-        print("fetching posts")
+        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
+        label.font = UIFont.systemFontOfSize(13)
+        label.textAlignment = .Center
+        label.textColor = UIColor.darkGrayColor()
+        return label
+        }()
+    
+    
+    private func displayStatus() {
+        
+        func attributedStatus() -> NSAttributedString {
+            
+            var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
+            boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(13)
+            
+            var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
+            normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(13)
+            
+            let s1 = NSMutableAttributedString(string: "\(posts.count)", attributes: boldAttributes)
+            
+            let text = " posts"
+            let s2 = NSAttributedString(string: text, attributes: normalAttributes)
+            s1.appendAttributedString(s2)
+            return s1
+        }
+        
+        statusLabel.attributedText = attributedStatus()
+    }
+
+    
+    private func displayFetchingStatus() {
+        
+        statusLabel.text = "Fetching posts..."
     }
     
     
-    private func hideFetchingIndicator() {
+    private func hideFetchingStatus() {
         
-        print("done fetching posts")
+        displayStatus()
     }
     
     
@@ -228,18 +261,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var posts = [Post]()
-    private var updatedPosts = [Post]()
-    func updateTable(withData data: [Post]) {
+    private var posts = [Post]() {
         
-        updatedPosts = data
-        refreshTableView()
+        didSet {
+            displayStatus()
+        }
     }
     
-
     private func fetchPosts() {
 
-        displayFetchingIndicator()
+        displayFetchingStatus()
         
         // ADD GUARD FOR REACHABILITY
         
@@ -254,13 +285,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             let objects = query.findObjects(&error)
             
             dispatch_async(dispatch_get_main_queue()) {
-                self.hideFetchingIndicator()
+                
+                self.hideFetchingStatus()
+                
+                if let objects = objects as? [Post] {
+                    self.refreshTableView(withUpdatedPosts: objects)
+                    self.refreshMapView(withUpdatedPosts: objects)
+                }
             }
-            
-            if let objects = objects as? [Post] {
-                self.updateTable(withData: objects)
-            }
-        })
+         })
         
         operationQueue().addOperation(onlineFetchOperation)
     }
@@ -417,7 +450,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func refreshTableView() {
+    func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
             
@@ -427,8 +460,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: postsSection,sortingArraysWith: sortFn)
-        
-        print("posts = \(posts)")
     }
     
     
@@ -632,6 +663,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         mapView.delegate = self
     }
     
+    
+    private func refreshMapView(withUpdatedPosts withUpdatedPosts: [Post]) {
+    
+        // todo:  update annotations
+    }
+
     
     private func setMapAnnotations(forPosts posts: [MKAnnotation]) {
         

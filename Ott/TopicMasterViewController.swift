@@ -125,20 +125,7 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    private var _lastUpdated: NSDate?
-    var lastUpdated: NSDate {
-        
-        if let date = _lastUpdated {
-            return date
-        }
-        return NSDate.distantPast()
-    }
-    
-
     func update() {
-
-        _lastUpdated = NSDate()
-        
         //stub
         NSLog("NEED TO IMPLEMENT UPDATE FUNCTION")
     }

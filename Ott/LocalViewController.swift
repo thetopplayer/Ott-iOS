@@ -11,6 +11,9 @@ import UIKit
 class LocalViewController: TopicMasterViewController {
 
     
+    @IBOutlet var statusToolbarItem: UIBarButtonItem!
+    
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -35,23 +38,32 @@ class LocalViewController: TopicMasterViewController {
     
     //MARK: - Data
     
+    var lastUpdated = NSDate.distantPast()
+    
     override func update() {
         
+        super.update()
         let cacheName = "localTopics"
         
         let cachedFetchOperation = NSBlockOperation(block: { () -> Void in
             
             let query = Topic.query()!
             query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: self.lastUpdated)
             query.fromPinWithName(cacheName)
             var error: NSError?
             let objects = query.findObjects(&error)
             if let objects = objects as? [Topic] {
                 
-                dispatch_async(dispatch_get_main_queue()) {
-                    print("returning pinned objects")
-                    self.updateTable(withData: objects)
+                if let mostRecentTopicUpdate = objects.first?.updatedAt {
+                    
+                    self.lastUpdated = mostRecentTopicUpdate
+                    dispatch_async(dispatch_get_main_queue()) {
+                        print("returning pinned objects")
+                        self.updateTable(withData: objects)
+                    }
                 }
+                
             }
         })
         
@@ -67,7 +79,7 @@ class LocalViewController: TopicMasterViewController {
                 query.orderByDescending(DataKeys.CreatedAt)
                 
                 query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
-                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: NSDate().daysFrom(-7))
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: self.lastUpdated)
                 
                 var error: NSError?
                 let objects = query.findObjects(&error)
@@ -76,9 +88,13 @@ class LocalViewController: TopicMasterViewController {
                     PFObject.unpinAllObjectsWithName(cacheName)  // unpin cached
                     PFObject.pinAll(objects, withName: cacheName) // cache retrieved objects
                     
-                    dispatch_async(dispatch_get_main_queue()) {
-                        print("returning fetched objects")
-                        self.updateTable(withData: objects)
+                    if let mostRecentTopicUpdate = objects.first?.updatedAt {
+                        self.lastUpdated = mostRecentTopicUpdate
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            print("returning fetched objects")
+                            self.updateTable(withData: objects)
+                        }
                     }
                 }
             })
