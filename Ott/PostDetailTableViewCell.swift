@@ -52,14 +52,14 @@ class PostDetailTableViewCell: TableViewCell {
         
         if let post = displayedPost {
             
-            topBarLabel.attributedText = timeAndLocationAttributedString(post)
+            topBarLabel.attributedText = attributedDescription(post)
             
             ratingLabel.text = post.rating?.text()
             ratingLabel.textColor = post.rating?.color()
             let comment = post.comment != nil ? post.comment! : ""
             commentLabel.text = comment
             
-            statusLabel.attributedText = attributedDescription(post)
+            statusLabel.attributedText = timeAndLocationAttributedString(post)
         }
         else {
             
@@ -72,11 +72,10 @@ class PostDetailTableViewCell: TableViewCell {
     
     private func attributedDescription(topic: Post) -> NSAttributedString {
         
-        var normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-        normalAttributes[NSFontAttributeName] = UIFont.systemFontOfSize(12)
+        let font = UIFont.systemFontOfSize(12)
+        let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: font]
         
-        var boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-        boldAttributes[NSFontAttributeName] = UIFont.boldSystemFontOfSize(12)
+        let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: font]
         
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = .MediumStyle

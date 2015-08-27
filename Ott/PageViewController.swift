@@ -43,7 +43,7 @@ class PageViewController: UIViewController {
         if value {
             
             button.enabled = true
-            button.backgroundColor = UIColor.sky()
+            button.backgroundColor = UIColor.tint()
         }
         else {
             

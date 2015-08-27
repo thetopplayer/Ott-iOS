@@ -137,7 +137,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     private let titleCellHeight = CGFloat(150)
     private let imageCellHeight = CGFloat(275)
-    private let buttonCellHeight = CGFloat(50)
+    private let buttonCellHeight = CGFloat(68)
 
     private func setupTableView() {
      

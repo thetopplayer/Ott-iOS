@@ -63,16 +63,16 @@ class TopicMasterTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            topBarLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
+            topBarLabel.attributedText = attributedDescription()
             contentLabel.attributedText = attributedContent()
-            statusLabel.attributedText = attributedDescription()
+            statusLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
             
             if currentUser().didPostToTopic(topic) {
                 responseStatusImageView.tintColor = UIColor.lightGrayColor()
                 responseStatusImageView.image = TopicMasterTableViewCell.didRespondImage
             }
             else {
-                responseStatusImageView.tintColor = UIColor.aqua()
+                responseStatusImageView.tintColor = UIColor.tint()
                 responseStatusImageView.image = TopicMasterTableViewCell.didNotRespondImage
             }
             
@@ -122,9 +122,9 @@ class TopicMasterTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)]
+            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)]
             
-            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
+            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
             
             let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
             

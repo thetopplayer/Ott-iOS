@@ -1,39 +1,40 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8121.20" systemVersion="14E46" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8101.16"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell" rowHeight="50" id="thi-PT-g4C" customClass="TopicCreationButtonTableViewCell" customModule="Ott" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="50"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell" rowHeight="68" id="thi-PT-g4C" customClass="TopicCreationButtonTableViewCell" customModule="Ott" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="68"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="thi-PT-g4C" id="Ycz-Hr-QGZ">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="49"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="thi-PT-g4C" id="Ycz-Hr-QGZ">
+                <rect key="frame" x="0.0" y="0.0" width="600" height="67"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DpB-3p-5Lh">
-                        <rect key="frame" x="88" y="8" width="40" height="36"/>
+                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DpB-3p-5Lh">
+                        <rect key="frame" x="88" y="8" width="50" height="50"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="36" id="avj-EG-bwC"/>
-                            <constraint firstAttribute="width" constant="40" id="oIh-XC-xIx"/>
+                            <constraint firstAttribute="height" constant="50" id="avj-EG-bwC"/>
+                            <constraint firstAttribute="width" constant="50" id="oIh-XC-xIx"/>
                         </constraints>
-                        <state key="normal" image="camera"/>
+                        <state key="normal" image="cameraButton"/>
                     </button>
-                    <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n06-Qt-Or1">
-                        <rect key="frame" x="472" y="8" width="40" height="36"/>
+                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n06-Qt-Or1">
+                        <rect key="frame" x="462" y="8" width="50" height="50"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="36" id="efW-Rh-to0"/>
-                            <constraint firstAttribute="width" constant="40" id="qBC-le-5dL"/>
+                            <constraint firstAttribute="height" constant="50" id="efW-Rh-to0"/>
+                            <constraint firstAttribute="width" constant="50" id="qBC-le-5dL"/>
                         </constraints>
-                        <state key="normal" image="photos"/>
+                        <state key="normal" image="photosButton"/>
                     </button>
                 </subviews>
                 <constraints>
                     <constraint firstAttribute="trailingMargin" secondItem="n06-Qt-Or1" secondAttribute="trailing" constant="80" id="83f-Xz-atS"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="DpB-3p-5Lh" secondAttribute="bottom" id="J35-bY-ooX"/>
                     <constraint firstItem="DpB-3p-5Lh" firstAttribute="leading" secondItem="Ycz-Hr-QGZ" secondAttribute="leadingMargin" constant="80" id="RtG-Tu-pUf"/>
                     <constraint firstItem="n06-Qt-Or1" firstAttribute="top" secondItem="Ycz-Hr-QGZ" secondAttribute="topMargin" id="bva-Q9-QIi"/>
                     <constraint firstItem="DpB-3p-5Lh" firstAttribute="top" secondItem="Ycz-Hr-QGZ" secondAttribute="topMargin" id="cX9-wp-aq4"/>
@@ -43,11 +44,11 @@
                 <outlet property="cameraButton" destination="DpB-3p-5Lh" id="pec-tL-S6C"/>
                 <outlet property="photosButton" destination="n06-Qt-Or1" id="X4u-KK-ibb"/>
             </connections>
-            <point key="canvasLocation" x="475" y="373"/>
+            <point key="canvasLocation" x="475" y="382"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="camera" width="30" height="30"/>
-        <image name="photos" width="30" height="30"/>
+        <image name="cameraButton" width="50" height="50"/>
+        <image name="photosButton" width="50" height="50"/>
     </resources>
 </document>

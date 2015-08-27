@@ -33,7 +33,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         handleEntryStatusImageView.hidden = false
         
         if ok {
-            handleEntryStatusImageView.tintColor = UIColor.fern()
+            handleEntryStatusImageView.tintColor = UIColor.tint()
             handleEntryStatusImageView.image = self.okImage
         }
         else {
@@ -48,7 +48,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         nameEntryStatusImageView.hidden = false
         
         if ok {
-            nameEntryStatusImageView.tintColor = UIColor.fern()
+            nameEntryStatusImageView.tintColor = UIColor.tint()
             nameEntryStatusImageView.image = self.okImage
         }
         else {

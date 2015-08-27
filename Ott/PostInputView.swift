@@ -38,11 +38,11 @@ class PostInputView: UIView, UITextViewDelegate {
         
         super.awakeFromNib()
         
-        containerView.backgroundColor = UIColor(white: 0.9, alpha: 0.8)
+        containerView.backgroundColor = UIColor(white: 1.0, alpha: 0.8)
         containerView.addBorder()
-//        containerView.addUpShadow()
+        containerView.addUpShadow()
         
-        textView.backgroundColor = UIColor(white: 1.0, alpha: 0.6)
+        textView.backgroundColor = UIColor.whiteColor()
         textView.textContainerInset = UIEdgeInsetsMake(6, 4, 2, 4)
         textView.addRoundedBorder()
         textView.font = commentFont

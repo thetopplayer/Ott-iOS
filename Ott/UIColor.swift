@@ -12,24 +12,24 @@ extension UIColor {
     
     //MARK: - Colors
     
-    static func sky() -> UIColor {
-        return UIColor(red: 102.0/255.0, green: 204.0/255.0, blue: 1.0, alpha: 1.0)
-    }
-    
-    static func aqua() -> UIColor {
-        return UIColor(red: 0, green: 0.5, blue: 1.0, alpha: 1.0)
-    }
-    
-    static func fern() -> UIColor {
-        return UIColor(red: 0.25, green: 0.5, blue: 0, alpha: 1.0)
-    }
-        
+//    static func sky() -> UIColor {
+//        return UIColor(red: 102.0/255.0, green: 204.0/255.0, blue: 1.0, alpha: 1.0)
+//    }
+//    
+//    static func aqua() -> UIColor {
+//        return UIColor(red: 0, green: 0.5, blue: 1.0, alpha: 1.0)
+//    }
+//    
+//    static func fern() -> UIColor {
+//        return UIColor(red: 0.25, green: 0.5, blue: 0, alpha: 1.0)
+//    }
+//        
     static func background() -> UIColor {
-        return UIColor(hex: 0xE5F5FA)
+        return UIColor(hex: 0xE0B067)
     }
     
     static func tint() -> UIColor {
-        return UIColor(hex: 0xFF9311)
+        return UIColor(hex: 0x0490ED)
     }
     
     

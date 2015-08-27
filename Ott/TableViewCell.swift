@@ -85,13 +85,22 @@ class TableViewCell: UITableViewCell {
         return String(NSString(format: "%.1f mi away", convertedDistance))
     }
     
-
-    func timeAndLocationAttributedString(baseObject: BaseObject) -> NSAttributedString {
+    
+    private let normalAttributes : [String : AnyObject] = {
         
         let font = UIFont.systemFontOfSize(11)
-        let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: font]
+        return [NSForegroundColorAttributeName : UIColor.blackColor().colorWithAlphaComponent(0.75), NSFontAttributeName: font]
+        }()
+    
+    
+    private let darkAttributes : [String : AnyObject] = {
         
-        let darkAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: font]
+        let font = UIFont.systemFontOfSize(11)
+        return [NSForegroundColorAttributeName : UIColor.blackColor().colorWithAlphaComponent(0.9), NSFontAttributeName: font]
+        }()
+    
+    
+    func timeAndLocationAttributedString(baseObject: BaseObject) -> NSAttributedString {
         
         let s1 = NSMutableAttributedString(string: dateToString(baseObject.createdAt), attributes: darkAttributes)
         
@@ -135,11 +144,6 @@ class TableViewCell: UITableViewCell {
         if topic.numberOfPosts == 0 {
             return timeAndLocationAttributedString(topic)
         }
-        
-        let font = UIFont.systemFontOfSize(11)
-        let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: font]
-        
-        let darkAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: font]
         
         let s1 = NSMutableAttributedString(string: dateToString(topic.updatedAt), attributes: darkAttributes)
         

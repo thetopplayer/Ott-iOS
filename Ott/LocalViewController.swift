@@ -70,7 +70,7 @@ class LocalViewController: TopicMasterViewController {
     private func fetchTopics(type: FetchType) {
         
         // simply return all currently cached objects
-        let fetchFromCacheOperation = NSBlockOperation(block: { () -> Void in
+        func fetchFromCache() {
             
             let query = Topic.query()!
             query.orderByDescending(DataKeys.UpdatedAt)
@@ -81,10 +81,11 @@ class LocalViewController: TopicMasterViewController {
             if let topics = objects as? [Topic] {
                 self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
             }
-        })
+
+        }
         
         // fetch objects for new location, replacing all cached objects
-        let fetchForNewLocationOperation = NSBlockOperation(block: { () -> Void in
+        func fetchForNewLocation() {
             
             guard let location = LocationManager.sharedInstance.location else {
                 print("call to fetch for new location but have no location")
@@ -106,11 +107,11 @@ class LocalViewController: TopicMasterViewController {
                     self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
                 }
             }
-        })
+        }
         
         // update objects for current location, fetching only recently updated ones
         // and adding additional objects to cache
-        let fetchToUpdateLocationOperation = NSBlockOperation(block: { () -> Void in
+        func fetchToUpdateLocation() {
             
             guard let location = LocationManager.sharedInstance.location else {
                 print("call to fetch update location but have no location")
@@ -122,7 +123,7 @@ class LocalViewController: TopicMasterViewController {
             query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
             
             if let mostRecentlyFetchedUpdate = self.lastUpdated {
-                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: mostRecentlyFetchedUpdate)
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: mostRecentlyFetchedUpdate)
             }
             
             var error: NSError?
@@ -136,22 +137,28 @@ class LocalViewController: TopicMasterViewController {
                     self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
                 }
             }
-        })
+        }
+        
         
         
         switch type {
             
         case .Cached:
+
+            let fetchFromCacheOperation = NSBlockOperation(block: fetchFromCache)
+            fetchFromCacheOperation.addCompletionBlock(fetchForNewLocation)
             operationQueue().addOperation(fetchFromCacheOperation)
             
         case .NewLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
+            let fetchForNewLocationOperation = NSBlockOperation(block: fetchForNewLocation)
             operationQueue().addOperation(fetchForNewLocationOperation)
             
         case .UpdateCurrentLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
+            let fetchToUpdateLocationOperation = NSBlockOperation(block: fetchToUpdateLocation)
             operationQueue().addOperation(fetchToUpdateLocationOperation)
         }
     }
