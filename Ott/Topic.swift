@@ -24,6 +24,10 @@ extension DataKeys {
         return "numberOfPosts"
     }
     
+    static var LastPostLocation: String {
+        return "lastPostLocation"
+    }
+    
     static var LastPostLocationName: String {
         return "lastPostLocationName"
     }
@@ -55,7 +59,7 @@ class Topic: Creation, PFSubclassing {
         topic.numberOfPosts = 0
         topic.averageRating = 0
         topic.lastPostLocationName = ""
-
+        
         return topic
     }
     
@@ -67,7 +71,51 @@ class Topic: Creation, PFSubclassing {
     @NSManaged var averageRating: Float
     @NSManaged var lastPostLocationName: String?
 
+    // because Parse only allows one geoPoint per record, use this to store
+    // additional location information
+    struct LocationCoordinates {
+        
+        let _myLocation: CLLocation
+        
+        init(withLocation: CLLocation) {
+            _myLocation = withLocation
+        }
+        
+        init(withCoordinateArray coordinateArray: [CLLocationDegrees]) {
+            _myLocation = CLLocation(latitude: coordinateArray.first!, longitude: coordinateArray.last!)
+        }
+        
+        func toArray() -> [CLLocationDegrees] {
+            return [location().coordinate.latitude, location().coordinate.longitude]
+        }
+        
+        func location() -> CLLocation {
+            return _myLocation
+        }
+    }
     
+    
+    var lastPostLocation: CLLocation? {
+        
+        get {
+            var clvalue: CLLocation?
+            if let coordinateArray = self[DataKeys.LastPostLocation] as? [CLLocationDegrees] {
+                let theLoc = LocationCoordinates(withCoordinateArray: coordinateArray)
+                clvalue = theLoc.location()
+            }
+            return clvalue
+        }
+        
+        set {
+            if let theLoc = newValue {
+                self[DataKeys.LastPostLocation] = LocationCoordinates(withLocation: theLoc).toArray()
+            }
+            else {
+                self[DataKeys.LastPostLocation] = NSNull()
+            }
+        }
+    }
+
     
     //MARK: - Queries
     

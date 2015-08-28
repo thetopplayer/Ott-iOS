@@ -105,11 +105,11 @@ class TableViewCell: UITableViewCell {
         let s1 = NSMutableAttributedString(string: dateToString(baseObject.createdAt), attributes: darkAttributes)
         
         var locationText = String()
-        if let _ = baseObject.location {
+        if let objectLocation = baseObject.location {
             
             locationText += "  |  "
             
-            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(baseObject.location!) {
+            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(objectLocation) {
                 
                 let distance = metersAway / 1000
                 
@@ -148,8 +148,33 @@ class TableViewCell: UITableViewCell {
         let s1 = NSMutableAttributedString(string: dateToString(topic.updatedAt), attributes: darkAttributes)
         
         var locationText = String()
-        if let lastPostLocationName = topic.lastPostLocationName {
-            locationText += "  |  \(lastPostLocationName)".uppercaseString
+        
+        if let lastPostLocation = topic.lastPostLocation {
+            
+            locationText += "  |  "
+            
+            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(lastPostLocation) {
+                
+                let distance = metersAway / 1000
+                
+                if distance < 1.0 {
+                    locationText += "Nearby"
+                }
+                else if distance < 15.0 {
+                    locationText += relativeDistanceString(distance)
+                }
+                else {
+                    
+                    if let locationName = topic.lastPostLocationName {
+                        locationText += locationName
+                    }
+                    else {
+                        locationText += relativeDistanceString(distance)
+                    }
+                }
+            }
+            
+            locationText = locationText.uppercaseString
         }
         
         let s2 = NSAttributedString(string: locationText, attributes: normalAttributes)

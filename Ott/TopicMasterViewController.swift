@@ -132,7 +132,7 @@ class TopicMasterViewController: TableViewController {
     
 
     func _handleUpdateTimerFire(timer: NSTimer) {
-        print("autotimer fire")
+
         update()
     }
     
