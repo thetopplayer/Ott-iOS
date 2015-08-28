@@ -148,6 +148,22 @@ class LocalViewController: TopicMasterViewController {
             }
         }
         
+        // on completion of fetching
+        func fetchCompletion() {
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.hideRefreshControl()
+                self.updateStatus()
+            }
+        }
+        
+        
+        /********/
+        
+        if displayedTopics.count == 0 {
+            updateStatus(.Fetching)
+        }
+        
         switch type {
             
 //        case .Cached:
@@ -160,14 +176,14 @@ class LocalViewController: TopicMasterViewController {
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchForNewLocationOperation = NSBlockOperation(block: fetchForNewLocation)
-            fetchForNewLocationOperation.addCompletionBlock(hideRefreshControl)
+            fetchForNewLocationOperation.addCompletionBlock(fetchCompletion)
             operationQueue.addOperation(fetchForNewLocationOperation)
             
         case .UpdateCurrentLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchToUpdateLocationOperation = NSBlockOperation(block: fetchToUpdateLocation)
-            fetchToUpdateLocationOperation.addCompletionBlock(hideRefreshControl)
+            fetchToUpdateLocationOperation.addCompletionBlock(fetchCompletion)
             operationQueue.addOperation(fetchToUpdateLocationOperation)
         }
     }
@@ -211,30 +227,11 @@ class LocalViewController: TopicMasterViewController {
         super.startObservations()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidCreateTopicNotification:", name: TopicCreationViewController.Notifications.DidUploadTopic, object: nil)
     }
     
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
         update()
-    }
-    
-    
-    func handleDidCreateTopicNotification(notification: NSNotification) {
-        
-        if let createdTopic = notification.userInfo?[TopicCreationViewController.Notifications.TopicKey as NSObject] as? Topic {
-            
-            
-            let updateOperation = NSBlockOperation(block: { () -> Void in
-
-                let topicArray = [createdTopic]
-//                self.appendToCachedData(withTopics: topicArray)
-                self.refreshTableView(withTopics: topicArray, replacingDatasourceData: false)
-            })
-            
-            operationQueue.addOperation(updateOperation)
-        }
     }
 }

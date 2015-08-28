@@ -151,7 +151,7 @@ class TopicMasterTableViewCell: TableViewCell {
             let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
             
             let p = topic.numberOfPosts == 1 ? " post | " : " posts | "
-            let s2 = NSAttributedString(string: p + "authored by ", attributes: normalAttributes)
+            let s2 = NSAttributedString(string: p + "by ", attributes: normalAttributes)
             let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
             let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)
             

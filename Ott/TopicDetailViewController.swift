@@ -206,10 +206,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var postingLabel: TransientLabel = {
-        return TransientLabel(message: "Posting...", animationStyle: .FadeUp)
-        }()
-    
+//    private var postingLabel: TransientLabel = {
+//        return TransientLabel(message: "Posting...", animationStyle: .FadeUp)
+//        }()
+//    
     
     lazy var statusLabel: UILabel = {
         
@@ -221,7 +221,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }()
     
     
-    private func displayStatus() {
+    
+    private enum StatusType {
+        case Normal, Fetching, Posting
+    }
+    
+    private func displayStatus(type type: StatusType = .Normal) {
         
         func attributedStatus() -> NSAttributedString {
             
@@ -238,19 +243,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return s1
         }
         
-        statusLabel.attributedText = attributedStatus()
-    }
-    
-    
-    private func displayFetchingStatus() {
         
-        statusLabel.text = "Fetching posts..."
-    }
-    
-    
-    private func hideFetchingStatus() {
-        
-        displayStatus()
+        switch type {
+            
+        case .Normal:
+            statusLabel.attributedText = attributedStatus()
+            
+        case .Fetching:
+            statusLabel.text = "Updating..."
+            
+        case .Posting:
+            statusLabel.text = "Posting..."
+        }
     }
     
     
@@ -275,7 +279,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func fetchPosts() {
         
-        displayFetchingStatus()
+        displayStatus(type: .Fetching)
         
         // ADD GUARD FOR REACHABILITY
         
@@ -291,7 +295,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                self.hideFetchingStatus()
+                self.displayStatus(type: .Normal)
                 
                 if let objects = objects as? [Post] {
                     self.refreshTableView(withUpdatedPosts: objects)
@@ -306,6 +310,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func saveChanges() {
         
+        guard let topicID = self.myTopic!.objectId else {
+            
+            print("ERROR:  in posting post -> no topic id for topic with name = \(self.myTopic!.name)")
+            return
+        }
+        
+        currentUser().archivePostedTopicID(topicID)
+        refreshDisplay()
+        displayStatus(type: .Posting)
+        
         let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
         myPost.rating = postInputView.rating
         myPost.comment = postInputView.comment
@@ -313,25 +327,21 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.locationName = LocationManager.sharedInstance.locationName
         myPost.saveInBackgroundWithBlock() { (succeeded, error) in
             
+            self.displayStatus(type: .Normal)
+            
             if succeeded {
                 
-                self.fetchPosts() // update display
-                
-                if let topicID = self.myTopic!.objectId {
+                dispatch_async(dispatch_get_main_queue()) {
                     
-                    currentUser().archivePostedTopicID(topicID)
                     NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidUploadPost,
                         object: self)
                 }
-                else {
-                    print("ERROR:  in posting post -> no topic id for topic with name = \(self.myTopic!.name)")
-                }
+                
+                self.fetchPosts() // update display
             }
             else {
                 
                 dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.postingLabel.abortDisplay()
                     
                     if let error = error {
                         (self as UIViewController).presentOKAlertWithError(error)
@@ -343,7 +353,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 }
             }
         }
-        
     }
     
     
@@ -368,9 +377,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     func postInputViewPostActionDidOccur() {
-        
-        postingLabel.display(inView: view) { () -> Void in
-            self.refreshDisplay() }
         
         saveChanges()
     }

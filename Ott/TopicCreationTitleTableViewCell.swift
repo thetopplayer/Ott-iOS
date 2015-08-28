@@ -11,7 +11,7 @@ import UIKit
 
 protocol TopicCreationTitleTableViewCellDelegate {
     
-    func titleViewTitleFieldDidChange(text: String?) -> Void
+    func validNameWasEntered(isValid: Bool) -> Void
 }
 
 
@@ -19,6 +19,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
 
     @IBOutlet weak var textField: UITextField!
     @IBOutlet weak var textView: UITextView!
+    @IBOutlet weak var warningLabel: UILabel!
 
     var delegate: TopicCreationTitleTableViewCellDelegate?
     
@@ -26,9 +27,12 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         
         super.awakeFromNib()
 
-        innerContentContainer?.addBorder()
-        textField.addRoundedBorder()
+        warningLabel.hidden = true
+        warningLabel.text = "\u{26A0}  You already authored this topic"
+        
         textField.delegate = self
+        textField.placeholder = "#name"
+        
         textView.addRoundedBorder()
         textView.delegate = self
         
@@ -50,7 +54,17 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         
         let ok = super.becomeFirstResponder()
         if ok {
-            textField.becomeFirstResponder()
+            if let length = title?.length {
+                if length > 0 {
+                    textView.becomeFirstResponder()
+                }
+                else {
+                    textField.becomeFirstResponder()
+                }
+            }
+            else {
+                textField.becomeFirstResponder()
+            }
          }
         
         return ok
@@ -69,7 +83,38 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     //MARK: - Data Entry
     
+    lazy var authoredTopicNames: [String] = {
+        
+        return currentUser().authoredTopicNames()
+    }()
+    
+    
+    func didAuthorTopicNamed(name: String?) -> Bool {
+        
+        if let name = name {
+            return authoredTopicNames.contains(name)
+        }
+        else {
+            return false
+        }
+    }
+    
+    
+    func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
+        
+        if textField.text!.length == 0 {
+            textField.text = "#"
+        }
+        
+        return true
+    }
+    
+    
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
+        
+        if range.location == 0 {
+            return false
+        }
         
         if string.containsCharacter(inCharacterSet: NSCharacterSet.newlineCharacterSet()) {
             textView.becomeFirstResponder()
@@ -111,11 +156,14 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     var title: String? {
         get {
-            return textField.text
+            let text = textField.text?.stringByReplacingOccurrencesOfString("#", withString: "")
+            return text
         }
         
         set {
-            textField.text = newValue
+            if let text = newValue?.stringByReplacingOccurrencesOfString("#", withString: "") {
+                textField.text = "#" + text
+            }
         }
     }
     
@@ -172,8 +220,14 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     func handleTextFieldDidChange(notification: NSNotification) {
   
-        if let delegate = delegate {
-            delegate.titleViewTitleFieldDidChange(textField!.text)
+        let didAuthor = didAuthorTopicNamed(title)
+        warningLabel.hidden = didAuthor == false
+        
+        if let nameLength = title?.length {
+            
+            if let delegate = delegate {
+                delegate.validNameWasEntered(didAuthor == false && nameLength > 0)
+            }
         }
     }
     

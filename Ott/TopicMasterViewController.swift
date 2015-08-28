@@ -11,8 +11,6 @@ import UIKit
 
 class TopicMasterViewController: TableViewController {
 
-    @IBOutlet var noDataLabel: UILabel?
-    
     struct Notification {
         static let selectionDidChange = "topicMasterViewSelectionDidChange"
     }
@@ -40,14 +38,7 @@ class TopicMasterViewController: TableViewController {
         super.viewDidLoad()
         
         setupTableView()
-        
-        let frame = CGRectMake(0, 180, view.bounds.size.width, 32)
-        noDataLabel = UILabel(frame: frame)
-        noDataLabel!.textAlignment = .Center
-        noDataLabel!.textColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
-        noDataLabel!.text = "No Topics"
-        
-        self.view.addSubview(noDataLabel!)
+        self.view.addSubview(statusLabel)
         startObservations()
     }
 
@@ -55,19 +46,10 @@ class TopicMasterViewController: TableViewController {
     override func viewDidLayoutSubviews() {
         
         super.viewDidLayoutSubviews()
-        if let label = noDataLabel {
-            label.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
-        }
+        statusLabel.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
     }
     
 
-    override func viewWillAppear(animated: Bool) {
-        
-        super.viewWillAppear(animated)
-        updateNoDataLabel()
-    }
-    
-    
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
@@ -86,9 +68,33 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Display
     
-    private func updateNoDataLabel() {
+    lazy var statusLabel: UILabel = {
         
-        noDataLabel?.hidden = displayedTopics.count > 0
+        let label = UILabel(frame: CGRectZero)
+        label.textAlignment = .Center
+        label.textColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+        label.text = "No Topics"
+        return label
+    }()
+    
+    
+    enum StatusType {
+        case Fetching, NoData, Default
+    }
+    
+    
+    func updateStatus(type: StatusType = .Default) {
+        
+        switch type {
+            
+        case .Fetching:
+            statusLabel.text = "Fetching Topics..."
+            statusLabel.hidden = false
+            
+        default:
+            statusLabel.text = "No Topics..."
+            statusLabel.hidden = displayedTopics.count > 0
+        }
     }
     
     
@@ -148,9 +154,7 @@ class TopicMasterViewController: TableViewController {
     
     func hideRefreshControl() {
         
-        dispatch_async(dispatch_get_main_queue()) {
-            self.refreshControl?.endRefreshing()
-        }
+        self.refreshControl?.endRefreshing()
     }
     
     
@@ -200,7 +204,7 @@ class TopicMasterViewController: TableViewController {
         }
         
         dispatch_async(dispatch_get_main_queue(), {
-            self.updateNoDataLabel()
+            self.updateStatus()
         })
     }
     
@@ -269,6 +273,9 @@ class TopicMasterViewController: TableViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: TopicCreationViewController.Notifications.DidUploadTopic, object: nil)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostNotification:", name: TopicDetailViewController.Notifications.DidUploadPost, object: nil)
         
         didStartObservations = true
@@ -294,6 +301,12 @@ class TopicMasterViewController: TableViewController {
                 update()
             }
         }
+    }
+    
+    
+    func handleDidUploadTopicNotification(notification: NSNotification) {
+        
+        update()
     }
     
     

@@ -8,31 +8,44 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="imageCell" rowHeight="276" id="4sn-YR-046" customClass="ImageTableViewCell" customModule="Ott" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="276"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="imageCell" rowHeight="281" id="4sn-YR-046" customClass="ImageTableViewCell" customModule="Ott" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="281"/>
             <autoresizingMask key="autoresizingMask"/>
             <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="4sn-YR-046" id="6se-py-Fn7">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="275"/>
+                <rect key="frame" x="0.0" y="0.0" width="600" height="280"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wCJ-A8-HSf">
-                        <rect key="frame" x="8" y="0.0" width="584" height="275"/>
-                        <color key="backgroundColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="zOP-o8-Hef">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="280"/>
+                        <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="wCJ-A8-HSf">
+                                <rect key="frame" x="8" y="8" width="584" height="264"/>
+                                <color key="backgroundColor" red="0.40000000600000002" green="0.80000001190000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="275" id="Mpu-CK-kmB"/>
+                                </constraints>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="Mpu-CK-kmB"/>
+                                    </mask>
+                                </variation>
+                            </imageView>
+                        </subviews>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="275" id="jMk-4S-Qe2"/>
+                            <constraint firstAttribute="bottom" secondItem="wCJ-A8-HSf" secondAttribute="bottom" constant="8" id="J1E-54-aDD"/>
+                            <constraint firstAttribute="height" constant="280" id="YVX-s6-Tq3"/>
+                            <constraint firstItem="wCJ-A8-HSf" firstAttribute="top" secondItem="zOP-o8-Hef" secondAttribute="top" constant="8" id="aFd-TL-gGA"/>
+                            <constraint firstAttribute="trailing" secondItem="wCJ-A8-HSf" secondAttribute="trailing" constant="8" id="gd0-au-9th"/>
+                            <constraint firstItem="wCJ-A8-HSf" firstAttribute="leading" secondItem="zOP-o8-Hef" secondAttribute="leading" constant="8" id="ofo-D2-kFK"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="jMk-4S-Qe2"/>
-                            </mask>
-                        </variation>
-                    </imageView>
+                    </view>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="bottomMargin" secondItem="wCJ-A8-HSf" secondAttribute="bottom" constant="-8" id="PNu-vT-U2P"/>
-                    <constraint firstItem="wCJ-A8-HSf" firstAttribute="leading" secondItem="6se-py-Fn7" secondAttribute="leadingMargin" id="Xbw-s0-JrO"/>
-                    <constraint firstItem="wCJ-A8-HSf" firstAttribute="top" secondItem="6se-py-Fn7" secondAttribute="topMargin" constant="-8" id="gLH-BZ-an7"/>
-                    <constraint firstAttribute="trailingMargin" secondItem="wCJ-A8-HSf" secondAttribute="trailing" id="xEj-fa-a7c"/>
+                    <constraint firstItem="zOP-o8-Hef" firstAttribute="top" secondItem="6se-py-Fn7" secondAttribute="topMargin" constant="-8" id="0zY-4D-tf2"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="zOP-o8-Hef" secondAttribute="bottom" constant="-8" id="atM-70-YP4"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="zOP-o8-Hef" secondAttribute="trailing" constant="-8" id="ie1-pm-y29"/>
+                    <constraint firstItem="zOP-o8-Hef" firstAttribute="leading" secondItem="6se-py-Fn7" secondAttribute="leadingMargin" constant="-8" id="xit-tf-jqN"/>
                 </constraints>
             </tableViewCellContentView>
             <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
@@ -42,6 +55,7 @@
             <connections>
                 <outlet property="topicImageView" destination="wCJ-A8-HSf" id="3cb-Ee-ClQ"/>
             </connections>
+            <point key="canvasLocation" x="558" y="532.5"/>
         </tableViewCell>
     </objects>
 </document>

@@ -18,15 +18,8 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         static let TopicKey = "topic"
     }
 
-    
     private var titleCellView: TopicCreationTitleTableViewCell?
-    private var imageCellView: ImageTableViewCell?
-    
     private var didPresentImagePicker = false
-    
-    private var image: UIImage?
-    private let imageSize = CGSizeMake(800, 800)
-    private let imageQuality = CGFloat(0.8)
     
     
     //MARK: - Lifecycle
@@ -42,27 +35,14 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         super.viewWillAppear(animated)
         
-        if didPresentImagePicker {
-            didPresentImagePicker = false
-            
-            let imagePath = NSIndexPath(forRow: 1, inSection: 0)
-            tableView.reloadRowsAtIndexPaths([imagePath], withRowAnimation: .Fade)
-        }
-        else {
+        if didPresentImagePicker == false {
             
             myTopic = Topic.createWithAuthor(currentUser())
             image = nil
             navigationItem.rightBarButtonItem?.enabled = false
-            
-            tableView.reloadData()
         }
-    }
-    
-    
-    override func viewDidAppear(animated: Bool) {
         
-        super.viewDidAppear(animated)
-        titleCellView?.becomeFirstResponder()
+        tableView.reloadData()
     }
     
     
@@ -72,6 +52,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     
     //MARK: - Data
+    
+    private var image: UIImage?
+    private let imageSize = CGSizeMake(800, 800)
+    private let imageQuality = CGFloat(0.8)
     
     var myTopic: Topic?
     
@@ -85,18 +69,13 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
         topic.saveInBackgroundWithBlock() { (succeeded, error) in
-         
+            
             if succeeded {
                 
-                if let topicID = topic.objectId {
-                    
-                    currentUser().archiveAuthoredTopicID(topicID)
-                    let userinfo = [TopicCreationViewController.Notifications.TopicKey: topic]
+                currentUser().archiveAuthoredTopicName(topic.name!)
+                dispatch_async(dispatch_get_main_queue()) {
                     NSNotificationCenter.defaultCenter().postNotificationName(TopicCreationViewController.Notifications.DidUploadTopic,
-                        object: self, userInfo: userinfo)
-                }
-                else {
-                    print("ERROR:  no topic id for topic with name = \(topic.name)")
+                        object: self)
                 }
             }
             else {
@@ -115,7 +94,6 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
                 }
             }
         }
-        
     }
     
     
@@ -130,20 +108,18 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     private let titleCellViewNibName = "TopicCreationTitleTableViewCell"
     private let titleCellViewIdentifier = "titleCell"
-    private let imageCellViewNibName = "TopicCreationImageTableViewCell"
+    private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
     private let buttonCellViewNibName = "TopicCreationButtonTableViewCell"
     private let buttonCellViewIdentifer = "buttonCell"
     
-    private let titleCellHeight = CGFloat(150)
-    private let imageCellHeight = CGFloat(275)
-    private let buttonCellHeight = CGFloat(68)
-
     private func setupTableView() {
      
         tableView.layoutMargins = UIEdgeInsetsZero
-        tableView.backgroundColor = UIColor.background()
-
+        tableView.backgroundColor = UIColor.whiteColor()
+        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.estimatedRowHeight = 100
+        
         let nib = UINib(nibName: titleCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: titleCellViewIdentifier)
         
@@ -179,56 +155,62 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         return 2
     }
     
-    override func tableView(tableView: UITableView, heightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
-        
-        if indexPath.row == 0 {
-            return titleCellHeight
-        }
-        
-        if image != nil {
-            return imageCellHeight
-        }
-        else {
-            return buttonCellHeight
-        }
-    }
-    
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        func initializeTextCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(titleCellViewIdentifier) as! TopicCreationTitleTableViewCell
+            cell.delegate = self
+            cell.title = myTopic?.name
+            cell.comment = myTopic?.comment
+            
+            titleCellView = cell
+            titleCellView?.becomeFirstResponder()
+            return cell
+        }
+        
+        func initializeButtonCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(buttonCellViewIdentifer) as! TopicCreationButtonTableViewCell
+            cell.delegate = self
+            return cell
+        }
+        
+        func initializeImageCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
+            cell.topicImageView?.image = image
+            return cell
+        }
+        
         
         var cell: UITableViewCell
         
         if indexPath.row == 0 {
             
-            titleCellView = tableView.dequeueReusableCellWithIdentifier(titleCellViewIdentifier) as? TopicCreationTitleTableViewCell
-            titleCellView!.delegate = self
-            titleCellView!.title = myTopic?.name
-            titleCellView!.comment = myTopic?.comment
-            
-            titleCellView!.becomeFirstResponder()
-            cell = titleCellView!
+            if image == nil {
+                cell = initializeTextCell()
+            }
+            else {
+                cell = initializeImageCell()
+            }
         }
         else {
             
-            if let image = image {
-                
-                imageCellView = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as? ImageTableViewCell
-                imageCellView!.topicImageView?.image = image
-                cell = imageCellView!
+            if image == nil {
+                cell = initializeButtonCell()
             }
             else {
-                
-                let theCell = tableView.dequeueReusableCellWithIdentifier(buttonCellViewIdentifer) as! TopicCreationButtonTableViewCell
-                theCell.delegate = self
-                cell = theCell
+                cell = initializeTextCell()
             }
         }
         
         return cell
     }
     
-    
 
+    
     //MARK: - Navigation
     
     @IBAction func handleCancelAction(sender: AnyObject) {
@@ -259,14 +241,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     //MARK: - TopicCreationTitleTableViewCellDelegate
     
-    func titleViewTitleFieldDidChange(text: String?) {
+    func validNameWasEntered(isValid: Bool) {
         
-        if let cnt = text?.characters.count {
-            navigationItem.rightBarButtonItem?.enabled = cnt > 0
-        }
-        else {
-            navigationItem.rightBarButtonItem?.enabled = false
-        }
+        navigationItem.rightBarButtonItem?.enabled = isValid
     }
     
     
@@ -299,13 +276,13 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
         self.image = image.resized(toSize: imageSize)
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: { self.titleCellView?.becomeFirstResponder() } )
     }
     
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        picker.dismissViewControllerAnimated(true, completion: { self.titleCellView?.becomeFirstResponder() } )
     }
 
 }

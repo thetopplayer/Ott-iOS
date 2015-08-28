@@ -211,7 +211,7 @@ class User: PFUser {
     }
     
     
-    private func authoredTopicIDs() -> [String] {
+    func authoredTopicNames() -> [String] {
         
         if let archive = NSArray(contentsOfFile: authoredTopicArchivePath) {
             return archive as! [String]
@@ -221,29 +221,24 @@ class User: PFUser {
     }
     
     
-    private func archiveAuthoredTopicIDs(topicIDs: NSArray) {
+    private func archiveAuthoredTopicNames(names: NSArray) {
         
-        topicIDs.writeToFile(authoredTopicArchivePath, atomically: true)
+        names.writeToFile(authoredTopicArchivePath, atomically: true)
     }
     
     
-    func archiveAuthoredTopicID(topicID: String) {
+    func archiveAuthoredTopicName(name: String) {
         
-        let topicIDs = NSMutableSet()
-        topicIDs.unionSet(NSSet(array: authoredTopicIDs()) as! Set<String>)
-        topicIDs.addObject(topicID)
-        archiveAuthoredTopicIDs(topicIDs.allObjects)
+        let topicNames = NSMutableSet()
+        topicNames.unionSet(NSSet(array: authoredTopicNames()) as! Set<String>)
+        topicNames.addObject(name)
+        archiveAuthoredTopicNames(topicNames.allObjects)
     }
     
     
     func didAuthorTopic(topic: Topic) -> Bool {
         
-        if let topicID = topic.objectId {
-            
-            return authoredTopicIDs().contains(topicID)
-        }
-        
-        return false
+        return authoredTopicNames().contains(topic.name!)
     }
     
     

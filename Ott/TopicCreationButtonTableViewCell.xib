@@ -8,43 +8,55 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner"/>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
-        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell" rowHeight="68" id="thi-PT-g4C" customClass="TopicCreationButtonTableViewCell" customModule="Ott" customModuleProvider="target">
-            <rect key="frame" x="0.0" y="0.0" width="600" height="68"/>
+        <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="buttonCell" rowHeight="71" id="thi-PT-g4C" customClass="TopicCreationButtonTableViewCell" customModule="Ott" customModuleProvider="target">
+            <rect key="frame" x="0.0" y="0.0" width="600" height="71"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="thi-PT-g4C" id="Ycz-Hr-QGZ">
-                <rect key="frame" x="0.0" y="0.0" width="600" height="67"/>
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="thi-PT-g4C" id="Ycz-Hr-QGZ">
+                <rect key="frame" x="0.0" y="0.0" width="600" height="70"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DpB-3p-5Lh">
-                        <rect key="frame" x="88" y="8" width="50" height="50"/>
+                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="uKa-uM-IP2">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="70"/>
+                        <subviews>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n06-Qt-Or1">
+                                <rect key="frame" x="470" y="10" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="efW-Rh-to0"/>
+                                    <constraint firstAttribute="width" constant="50" id="qBC-le-5dL"/>
+                                </constraints>
+                                <state key="normal" image="photosButton"/>
+                            </button>
+                            <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="DpB-3p-5Lh">
+                                <rect key="frame" x="80" y="10" width="50" height="50"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="50" id="avj-EG-bwC"/>
+                                    <constraint firstAttribute="width" constant="50" id="oIh-XC-xIx"/>
+                                </constraints>
+                                <state key="normal" image="cameraButton"/>
+                            </button>
+                        </subviews>
+                        <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstAttribute="height" constant="50" id="avj-EG-bwC"/>
-                            <constraint firstAttribute="width" constant="50" id="oIh-XC-xIx"/>
+                            <constraint firstItem="DpB-3p-5Lh" firstAttribute="leading" secondItem="uKa-uM-IP2" secondAttribute="leading" constant="80" id="HUF-vJ-yiD"/>
+                            <constraint firstItem="DpB-3p-5Lh" firstAttribute="centerY" secondItem="uKa-uM-IP2" secondAttribute="centerY" id="X20-zR-1gh"/>
+                            <constraint firstAttribute="trailing" secondItem="n06-Qt-Or1" secondAttribute="trailing" constant="80" id="d9g-1m-7dt"/>
+                            <constraint firstAttribute="height" constant="70" id="e9d-9b-aCs"/>
+                            <constraint firstItem="n06-Qt-Or1" firstAttribute="centerY" secondItem="uKa-uM-IP2" secondAttribute="centerY" id="ix3-My-BXe"/>
                         </constraints>
-                        <state key="normal" image="cameraButton"/>
-                    </button>
-                    <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="n06-Qt-Or1">
-                        <rect key="frame" x="462" y="8" width="50" height="50"/>
-                        <constraints>
-                            <constraint firstAttribute="height" constant="50" id="efW-Rh-to0"/>
-                            <constraint firstAttribute="width" constant="50" id="qBC-le-5dL"/>
-                        </constraints>
-                        <state key="normal" image="photosButton"/>
-                    </button>
+                    </view>
                 </subviews>
                 <constraints>
-                    <constraint firstAttribute="trailingMargin" secondItem="n06-Qt-Or1" secondAttribute="trailing" constant="80" id="83f-Xz-atS"/>
-                    <constraint firstAttribute="bottomMargin" secondItem="DpB-3p-5Lh" secondAttribute="bottom" id="J35-bY-ooX"/>
-                    <constraint firstItem="DpB-3p-5Lh" firstAttribute="leading" secondItem="Ycz-Hr-QGZ" secondAttribute="leadingMargin" constant="80" id="RtG-Tu-pUf"/>
-                    <constraint firstItem="n06-Qt-Or1" firstAttribute="top" secondItem="Ycz-Hr-QGZ" secondAttribute="topMargin" id="bva-Q9-QIi"/>
-                    <constraint firstItem="DpB-3p-5Lh" firstAttribute="top" secondItem="Ycz-Hr-QGZ" secondAttribute="topMargin" id="cX9-wp-aq4"/>
+                    <constraint firstItem="uKa-uM-IP2" firstAttribute="leading" secondItem="Ycz-Hr-QGZ" secondAttribute="leadingMargin" constant="-8" id="B1y-fG-fFI"/>
+                    <constraint firstAttribute="bottomMargin" secondItem="uKa-uM-IP2" secondAttribute="bottom" constant="-8" id="GLa-XK-B3u"/>
+                    <constraint firstAttribute="trailingMargin" secondItem="uKa-uM-IP2" secondAttribute="trailing" constant="-8" id="Qri-3k-2PD"/>
+                    <constraint firstItem="uKa-uM-IP2" firstAttribute="top" secondItem="Ycz-Hr-QGZ" secondAttribute="topMargin" constant="-8" id="ssZ-Qf-bK4"/>
                 </constraints>
             </tableViewCellContentView>
             <connections>
                 <outlet property="cameraButton" destination="DpB-3p-5Lh" id="pec-tL-S6C"/>
                 <outlet property="photosButton" destination="n06-Qt-Or1" id="X4u-KK-ibb"/>
             </connections>
-            <point key="canvasLocation" x="475" y="382"/>
+            <point key="canvasLocation" x="475" y="371.5"/>
         </tableViewCell>
     </objects>
     <resources>
