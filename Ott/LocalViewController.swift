@@ -148,8 +148,6 @@ class LocalViewController: TopicMasterViewController {
             }
         }
         
-        
-        
         switch type {
             
 //        case .Cached:
@@ -162,12 +160,14 @@ class LocalViewController: TopicMasterViewController {
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchForNewLocationOperation = NSBlockOperation(block: fetchForNewLocation)
+            fetchForNewLocationOperation.addCompletionBlock(hideRefreshControl)
             operationQueue.addOperation(fetchForNewLocationOperation)
             
         case .UpdateCurrentLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchToUpdateLocationOperation = NSBlockOperation(block: fetchToUpdateLocation)
+            fetchToUpdateLocationOperation.addCompletionBlock(hideRefreshControl)
             operationQueue.addOperation(fetchToUpdateLocationOperation)
         }
     }

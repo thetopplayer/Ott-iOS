@@ -146,6 +146,14 @@ class TopicMasterViewController: TableViewController {
     }
     
     
+    func hideRefreshControl() {
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.refreshControl?.endRefreshing()
+        }
+    }
+    
+    
     
     // MARK: - Table View
     
@@ -154,6 +162,14 @@ class TopicMasterViewController: TableViewController {
         tableView.separatorStyle = .None
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
+
+        refreshControl = {
+            
+            let rc = UIRefreshControl()
+            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+            rc.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
+            return rc
+        }()
         
         tableView.estimatedRowHeight = cellHeight
         

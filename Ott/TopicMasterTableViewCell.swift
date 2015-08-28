@@ -102,7 +102,7 @@ class TopicMasterTableViewCell: TableViewCell {
                     topic.getImage() {(success, image) in
                         
                         if success {
-                            self.topicImageView!.image = image
+                            self.topicImageView!.setImageWithFade(image)
                         }
                     }
                 }
@@ -116,7 +116,7 @@ class TopicMasterTableViewCell: TableViewCell {
         if let topic = displayedTopic {
             
             let titleFont = UIFont.systemFontOfSize(22)
-            let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName : titleFont]
+            let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName : titleFont]
             
             let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: titleFont]
             

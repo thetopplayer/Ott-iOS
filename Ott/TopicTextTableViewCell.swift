@@ -43,7 +43,7 @@ class TopicTextTableViewCell: TableViewCell {
     private func attributedContent(topic: Topic) -> NSAttributedString {
         
         let titleFont = UIFont.systemFontOfSize(32)
-        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName : titleFont]
+        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName : titleFont]
         
         let titleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: titleFont]
         

@@ -79,6 +79,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func _setDisplayMode(mode: DisplayMode) {
         
+        let animationDuration = 0.25
+        
         func showCancelButton() {
             
             let cancelButton = UIBarButtonItem(barButtonSystemItem: .Cancel, target: self, action: "handleCancelAction:")
@@ -95,29 +97,33 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func showPostInputView() {
             
-            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .LayoutSubviews, animations: { () -> Void in
+            func animations() {
                 
                 self.postInputViewBottomConstraint.constant = 0
                 self.toolbarBottomConstraint.constant = -self.toolbar.frame.size.height
                 
                 let bottom = self.postInputView.frame.size.height
                 self.adjustTableViewInsets(withBottom: bottom)
-                
-                }) { (_) -> Void in }
+                self.view.layoutIfNeeded()
+            }
+            
+            UIView.animateWithDuration(animationDuration, animations: animations)
         }
         
         
         func showToolbar() {
             
-            UIView.animateWithDuration(0.5, delay: 0, usingSpringWithDamping: 1.0, initialSpringVelocity: 0, options: .LayoutSubviews, animations: { () -> Void in
+            func animations() {
                 
                 self.postInputViewBottomConstraint.constant = -self.postInputView.frame.size.height
                 self.toolbarBottomConstraint.constant = 0
                 
                 let bottom = self.toolbar.frame.size.height
                 self.adjustTableViewInsets(withBottom: bottom)
-                
-                }) { (_) -> Void in }
+                self.view.layoutIfNeeded()
+            }
+            
+            UIView.animateWithDuration(animationDuration, animations: animations)
         }
         
         
