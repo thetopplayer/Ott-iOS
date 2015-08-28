@@ -25,7 +25,7 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        fetchTopics(.Cached)
+        fetchTopics(.NewLocation)
     }
 
     
@@ -46,8 +46,10 @@ class LocalViewController: TopicMasterViewController {
     
     //MARK: - Data
     
+    private let localRadius = Double(20)  // radius in miles for what is considered "local"
     private var lastUpdated: NSDate?
     
+    /*
     private let dataCacheName = "localTopics"
     private func replaceCachedTopics(withTopics withTopics: [Topic]) {
         
@@ -61,19 +63,26 @@ class LocalViewController: TopicMasterViewController {
         PFObject.unpinAllObjectsWithName(dataCacheName)  // unpin cached
         PFObject.pinAll(updatedTopics, withName: dataCacheName) // cache retrieved objects
     }
-
+*/
     
     private enum FetchType {
-        case Cached, NewLocation, UpdateCurrentLocation
+        case NewLocation, UpdateCurrentLocation
     }
     
     private func fetchTopics(type: FetchType) {
-        
+
+        /*
         // simply return all currently cached objects
         func fetchFromCache() {
             
+            guard let location = LocationManager.sharedInstance.location else {
+                print("call to fetch for new location but have no location")
+                return
+            }
+            
             let query = Topic.query()!
             query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             query.fromPinWithName(self.dataCacheName)
             
             var error: NSError?
@@ -81,8 +90,8 @@ class LocalViewController: TopicMasterViewController {
             if let topics = objects as? [Topic] {
                 self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
             }
-
         }
+        */
         
         // fetch objects for new location, replacing all cached objects
         func fetchForNewLocation() {
@@ -94,13 +103,13 @@ class LocalViewController: TopicMasterViewController {
             
             let query = Topic.query()!
             query.orderByDescending(DataKeys.CreatedAt)
-            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: 20)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             
             var error: NSError?
             let objects = query.findObjects(&error)
             if let topics = objects as? [Topic] {
                 
-                self.replaceCachedTopics(withTopics: topics)
+//                self.replaceCachedTopics(withTopics: topics)
                 if let mostRecentTopicUpdate = topics.first?.updatedAt {
                     
                     self.lastUpdated = mostRecentTopicUpdate
@@ -132,7 +141,7 @@ class LocalViewController: TopicMasterViewController {
                 
                 if let mostRecentTopicUpdate = topics.first?.updatedAt {
                     
-                    self.appendToCachedData(withTopics: topics)
+//                    self.appendToCachedData(withTopics: topics)
                     self.lastUpdated = mostRecentTopicUpdate
                     self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
                 }
@@ -143,23 +152,23 @@ class LocalViewController: TopicMasterViewController {
         
         switch type {
             
-        case .Cached:
-
-            let fetchFromCacheOperation = NSBlockOperation(block: fetchFromCache)
-            fetchFromCacheOperation.addCompletionBlock(fetchForNewLocation)
-            operationQueue().addOperation(fetchFromCacheOperation)
+//        case .Cached:
+//
+//            let fetchFromCacheOperation = NSBlockOperation(block: fetchFromCache)
+//            fetchFromCacheOperation.addCompletionBlock(fetchForNewLocation)
+//            operationQueue.addOperation(fetchFromCacheOperation)
             
         case .NewLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchForNewLocationOperation = NSBlockOperation(block: fetchForNewLocation)
-            operationQueue().addOperation(fetchForNewLocationOperation)
+            operationQueue.addOperation(fetchForNewLocationOperation)
             
         case .UpdateCurrentLocation:
             
             // TODO : ADD GUARD FOR REACHABILITY
             let fetchToUpdateLocationOperation = NSBlockOperation(block: fetchToUpdateLocation)
-            operationQueue().addOperation(fetchToUpdateLocationOperation)
+            operationQueue.addOperation(fetchToUpdateLocationOperation)
         }
     }
     
@@ -221,11 +230,11 @@ class LocalViewController: TopicMasterViewController {
             let updateOperation = NSBlockOperation(block: { () -> Void in
 
                 let topicArray = [createdTopic]
-                self.appendToCachedData(withTopics: topicArray)
+//                self.appendToCachedData(withTopics: topicArray)
                 self.refreshTableView(withTopics: topicArray, replacingDatasourceData: false)
             })
             
-            operationQueue().addOperation(updateOperation)
+            operationQueue.addOperation(updateOperation)
         }
     }
 }

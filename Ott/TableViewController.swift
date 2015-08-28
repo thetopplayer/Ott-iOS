@@ -11,14 +11,11 @@ import UIKit
 class TableViewController: UITableViewController {
 
     
-    static var _operationQueue: OperationQueue = {
-        return OperationQueue()
-        }()
-    
-    
-    func operationQueue() -> OperationQueue {
-        return ViewController._operationQueue
-    }
+    lazy var operationQueue: OperationQueue = {
+        let queue = OperationQueue()
+        queue.maxConcurrentOperationCount = 1
+        return queue
+    }()
     
     
     

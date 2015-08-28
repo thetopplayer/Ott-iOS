@@ -282,13 +282,13 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             
             titleCellView?.resignFirstResponder()
             didPresentImagePicker = true
-            operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+            operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
         }
         else {
             
             titleCellView?.resignFirstResponder()
             didPresentImagePicker = true
-            operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+            operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
         }
     }
     

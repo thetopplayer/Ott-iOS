@@ -14,6 +14,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     struct Notifications {
         
         static let SignificantLocationChangeDidOccur = "SignificantLocationChangeDidOccur"
+        static let PermissionDidChange = "PermissionDidChange"
     }
     
     
@@ -133,6 +134,8 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     //MARK: - Delegate
     
     func locationManager(manager: CLLocationManager, didChangeAuthorizationStatus status: CLAuthorizationStatus) {
+        
+        NSNotificationCenter.defaultCenter().postNotificationName(Notifications.PermissionDidChange, object: self)
         
         if permissionGranted {
             startUpdatingLocation()

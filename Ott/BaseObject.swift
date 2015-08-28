@@ -76,7 +76,6 @@ class BaseObject: PFObject {
     override func isEqual(object: AnyObject?) -> Bool {
         
         if let otherObject = object as? BaseObject {
-            
             return otherObject.hash == hash
         }
         

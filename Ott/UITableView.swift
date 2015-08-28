@@ -30,13 +30,12 @@ extension UITableView {
         // deletions
         let removedObjects = existingSet.subtract(updatedSet)
         var indexPathsForRemoval = [NSIndexPath]()
-        if replacingdatasourceData == false {
+        if replacingdatasourceData {
             
-            for var index = 0; index < datasourceData.count; index++ {
-                if removedObjects.contains(datasourceData[index]) {
-                    let ip = NSIndexPath(forRow: index, inSection: section)
-                    indexPathsForRemoval.append(ip)
-                }
+            for topic in removedObjects {
+                let row = datasourceData.indexOf(topic)!
+                let ip = NSIndexPath(forRow: row, inSection: section)
+                indexPathsForRemoval.append(ip)
             }
         }
         

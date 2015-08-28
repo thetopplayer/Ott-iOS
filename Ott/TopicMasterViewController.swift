@@ -44,7 +44,7 @@ class TopicMasterViewController: TableViewController {
         let frame = CGRectMake(0, 180, view.bounds.size.width, 32)
         noDataLabel = UILabel(frame: frame)
         noDataLabel!.textAlignment = .Center
-        noDataLabel!.textColor = UIColor.lightGrayColor()
+        noDataLabel!.textColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
         noDataLabel!.text = "No Topics"
         
         self.view.addSubview(noDataLabel!)

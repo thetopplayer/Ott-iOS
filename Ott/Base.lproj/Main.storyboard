@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8173.3" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="49e-Tb-3d3">
     <dependencies>
         <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8142"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Tab Bar Controller-->
+        <!--Main Tab Bar Controller-->
         <scene sceneID="yl2-sM-qoP">
             <objects>
-                <tabBarController storyboardIdentifier="mainViewController" modalTransitionStyle="crossDissolve" useStoryboardIdentifierAsRestorationIdentifier="YES" id="49e-Tb-3d3" sceneMemberID="viewController">
+                <tabBarController storyboardIdentifier="mainViewController" modalTransitionStyle="crossDissolve" useStoryboardIdentifierAsRestorationIdentifier="YES" id="49e-Tb-3d3" customClass="MainTabBarController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <nil key="simulatedBottomBarMetrics"/>
                     <tabBar key="tabBar" contentMode="scaleToFill" id="W28-zg-YXA">
                         <rect key="frame" x="0.0" y="975" width="768" height="49"/>
@@ -17,7 +17,6 @@
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                     </tabBar>
                     <connections>
-                        <segue destination="DqR-cd-zmI" kind="relationship" relationship="viewControllers" id="ExY-pV-f2W"/>
                         <segue destination="SIL-Bg-oMj" kind="relationship" relationship="viewControllers" id="EnI-a6-cLg"/>
                         <segue destination="ZY9-t6-LQx" kind="relationship" relationship="viewControllers" id="IEA-1n-5Ar"/>
                         <segue destination="nzE-nJ-Srz" kind="relationship" relationship="viewControllers" id="83G-ev-H4m"/>
@@ -259,59 +258,11 @@
             </objects>
             <point key="canvasLocation" x="-769" y="604"/>
         </scene>
-        <!--Local-->
-        <scene sceneID="aau-1B-Omy">
-            <objects>
-                <tableViewController title="Local" id="KQi-ka-Tsy" customClass="LocalViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="scR-MX-oSh">
-                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <outlet property="dataSource" destination="KQi-ka-Tsy" id="Kcj-OG-G2O"/>
-                            <outlet property="delegate" destination="KQi-ka-Tsy" id="rfk-Vg-4g1"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Local Topics" id="Xdb-Bk-FuD">
-                        <barButtonItem key="leftBarButtonItem" image="QRCode" id="hkD-fY-XWY">
-                            <connections>
-                                <action selector="presentTopicScanViewController:" destination="KQi-ka-Tsy" id="uGz-D5-UTO"/>
-                            </connections>
-                        </barButtonItem>
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="PWy-bu-emt">
-                            <connections>
-                                <action selector="presentTopicCreationViewController:" destination="KQi-ka-Tsy" id="5C4-mq-UXw"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="kOp-bf-phs" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="183" y="-676"/>
-        </scene>
-        <!--Local Nav Controller-->
-        <scene sceneID="Fbd-5u-1K8">
-            <objects>
-                <navigationController title="Local Nav Controller" id="DqR-cd-zmI" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Local" image="local" id="Zii-1k-9Ba"/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="A9Q-hv-ZXM">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="KQi-ka-Tsy" kind="relationship" relationship="rootViewController" id="a6V-2f-chN"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="TuO-nW-ua4" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-781" y="-676"/>
-        </scene>
     </scenes>
     <resources>
         <image name="QRCode" width="30" height="30"/>
         <image name="gears" width="30" height="30"/>
         <image name="home" width="30" height="30"/>
-        <image name="local" width="30" height="30"/>
         <image name="manStar" width="29" height="30"/>
         <image name="trending" width="30" height="30"/>
     </resources>
