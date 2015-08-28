@@ -11,7 +11,7 @@ import CoreLocation
 import QuartzCore
 
 class TopicMasterTableViewCell: TableViewCell {
-
+    
     @IBOutlet var topBar: UIView!
     @IBOutlet var topBarLabel: UILabel!
     @IBOutlet var statusBar: UIView!
@@ -21,10 +21,28 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var topicImageView: UIImageView?
     
     
+    private var _displayedTopic: Topic?
     var displayedTopic: Topic? {
         
-        didSet {
-            updateContents()
+        set {
+            if let oldTopic = _displayedTopic {
+                
+                if oldTopic.isEqual(newValue) {
+                    updateContents(ignoringImage: true)
+                }
+                else {
+                    _displayedTopic = newValue
+                    updateContents(ignoringImage: false)
+                }
+            }
+            else {
+                _displayedTopic = newValue
+                updateContents(ignoringImage: false)
+            }
+        }
+        
+        get {
+            return _displayedTopic
         }
     }
     
@@ -59,7 +77,7 @@ class TopicMasterTableViewCell: TableViewCell {
         }()
     
     
-    private func updateContents() {
+    private func updateContents(ignoringImage ignoringImage: Bool) {
         
         if let topic = displayedTopic {
             
@@ -77,11 +95,15 @@ class TopicMasterTableViewCell: TableViewCell {
             }
             
             if topic.hasImage {
-
-                topic.getImage() {(success, image) in
-                 
-                    if success {
-                        self.topicImageView!.image = image
+                
+                // don't reload image if we already have one
+                if self.topicImageView!.image == nil || ignoringImage == false {
+                    
+                    topic.getImage() {(success, image) in
+                        
+                        if success {
+                            self.topicImageView!.image = image
+                        }
                     }
                 }
             }
