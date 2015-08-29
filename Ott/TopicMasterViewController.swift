@@ -16,21 +16,7 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    private let cellNibName = "TopicMasterTableViewCell"
-    private let cellIdentifier = "topicCell"
-    private let cellHeight = CGFloat(125)
     
-    private let imageCellNibName = "TopicWithImageMasterTableViewCell"
-    private let imageCellIdentifier = "topicImageCell"
-    private let imageCellHeight = CGFloat(125)
-    
-    var headerReuseIdentifier: String?
-    var headerViewHeight = CGFloat(0.1)
-    var footerViewHeight = CGFloat(1.0)
-    
-    private var lastRefreshedTableView: NSDate?
-    
-       
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -161,6 +147,20 @@ class TopicMasterViewController: TableViewController {
     
     // MARK: - Table View
     
+    private let cellNibName = "TopicMasterTableViewCell"
+    private let cellIdentifier = "topicCell"
+    private let cellHeight = CGFloat(125)
+    
+    private let imageCellNibName = "TopicWithImageMasterTableViewCell"
+    private let imageCellIdentifier = "topicImageCell"
+    private let imageCellHeight = CGFloat(285)
+    
+    var headerReuseIdentifier: String?
+    var headerViewHeight = CGFloat(0.1)
+    var footerViewHeight = CGFloat(1.0)
+    
+    private var lastRefreshedTableView: NSDate?
+    
     private func setupTableView() {
         
         tableView.separatorStyle = .None
@@ -174,8 +174,6 @@ class TopicMasterViewController: TableViewController {
             rc.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
             return rc
         }()
-        
-        tableView.estimatedRowHeight = cellHeight
         
         let nib = UINib(nibName: cellNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: cellIdentifier)
@@ -220,6 +218,17 @@ class TopicMasterViewController: TableViewController {
     }
     
 
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        let theTopic = displayedTopics[indexPath.row]
+        if theTopic.hasImage {
+            return imageCellHeight
+        }
+        
+        return cellHeight
+    }
+    
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let theTopic = displayedTopics[indexPath.row]

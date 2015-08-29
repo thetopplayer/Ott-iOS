@@ -173,13 +173,17 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
             if isDisplayingTextViewPlaceholder {
                 return nil
             }
-            return textView.text
+            let text = textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            if text.length == 0 {
+                return nil
+            }
+            return text
         }
         
         set {
             if newValue != nil {
                 hideTextViewPlaceholder()
-                textView.text = newValue
+                textView.text = newValue!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             }
             else {
                 displayTextViewPlaceholder()

@@ -64,7 +64,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         let topic = myTopic!
         
         topic.name = titleCellView!.title
-        topic.comment = titleCellView!.comment
+        if let comment = titleCellView!.comment {
+            topic.comment = comment
+        }
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName

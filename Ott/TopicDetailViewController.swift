@@ -42,6 +42,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         toolbar.setItems(items!, animated: false)
         
         setupTableView()
+        setupMapView()
         startObservations()
     }
     
@@ -149,13 +150,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func refreshDisplay() {
         
-        let title = myTopic != nil ? "#" + myTopic!.name! : "Topic"
+        guard let myTopic = myTopic else {
+            return
+        }
+        
+        let title = "#" + myTopic.name!
         self.navigationItem.title = title
         
         // enter edit mode if the user has not yet posted to this topic
-        displayMode = currentUser().didPostToTopic(myTopic!) ? .PostDisplay : .PostCreation
-        setDisplayType(.List)
-        displayStatus()
+        if currentUser().didPostToTopic(myTopic) {
+            
+            displayMode = .PostDisplay
+        }
+        else {
+            
+            displayMode = .PostCreation
+            setDisplayType(.List)
+            displayStatus()
+        }
     }
     
     
@@ -322,7 +334,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
         myPost.rating = postInputView.rating
-        myPost.comment = postInputView.comment
+        if let comment = postInputView.comment {
+            myPost.comment = comment
+        }
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
         myPost.saveInBackgroundWithBlock() { (succeeded, error) in
@@ -441,7 +455,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         tableView.delegate = self
         tableView.dataSource = self
-        //        tableView.rowHeight = UITableViewAutomaticDimension
+        tableView.rowHeight = UITableViewAutomaticDimension
         
         tableView.backgroundColor = UIColor.background()
         tableView.separatorStyle = .None
@@ -539,7 +553,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         else {
             return 0
         }
-        
     }
     
     
@@ -677,24 +690,26 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func refreshMapView(withUpdatedPosts updatedPosts: [Post]) {
         
+        let allObjects: [Creation] = [myTopic!] + updatedPosts
+        
         mapView.removeAnnotations(mapView.annotations)
-        mapView.addAnnotations(updatedPosts)
-        mapView.showAnnotations(updatedPosts, animated: true)
+        mapView.addAnnotations(allObjects)
+        mapView.showAnnotations(allObjects, animated: true)
     }
     
     
-    func mapViewWillStartRenderingMap(mapView: MKMapView) {
-        
-        mapView.alpha = 0
-    }
-    
-    
-    func mapViewDidFinishRenderingMap(mapView: MKMapView) {
-        
-        UIView.animateWithDuration(0.3) { () -> Void in
-            mapView.alpha = 1.0
-        }
-    }
+//    func mapViewWillStartRenderingMap(mapView: MKMapView) {
+//        
+//        mapView.alpha = 0
+//    }
+//    
+//    
+//    func mapViewDidFinishRenderingMap(mapView: MKMapView) {
+//        
+//        UIView.animateWithDuration(0.3) { () -> Void in
+//            mapView.alpha = 1.0
+//        }
+//    }
     
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
@@ -703,17 +718,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return nil
         }
         
-        let identifier = "annotation"
+        let topicIdentifier = "topicAnnotation"
+        let postIdentifier = "postAnnotation"
         
-        var view = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier)
-        if view == nil {
-            view = MKAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+        let isTopic = (annotation as! Creation) is Topic
+        let identifier = isTopic ? topicIdentifier : postIdentifier
+        
+        var annotationView: MKPinAnnotationView
+        if let view = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier) as? MKPinAnnotationView {
+            
+            annotationView = view
         }
         else {
-            view?.annotation = annotation
+            annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
+            annotationView.pinColor = isTopic ? .Purple : .Red
         }
         
-        return view
+        return annotationView
     }
     
     

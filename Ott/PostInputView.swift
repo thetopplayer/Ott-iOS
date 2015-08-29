@@ -128,7 +128,11 @@ class PostInputView: UIView, UITextViewDelegate {
             return nil
         }
         
-        return textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        let text = textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+        if text.length == 0 {
+            return nil
+        }
+        return text
     }
     
     
