@@ -13,5 +13,4 @@
 #import <Parse/PFObject+Subclass.h>
 #import <Bolts/BFTask.h>
 
-
 #endif /* Ott_Bridging_Header_h */

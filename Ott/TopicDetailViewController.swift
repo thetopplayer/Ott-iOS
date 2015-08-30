@@ -41,6 +41,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         items?.insert(statusBarButtonItem, atIndex: 2)
         toolbar.setItems(items!, animated: false)
         
+        displayMode == .RequirePostEntry
+        
         setupTableView()
         setupMapView()
         startObservations()
@@ -54,6 +56,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if let navController = navigationController as? NavigationController {
             myTopic = navController.topic
         }
+        refreshDisplay()
     }
     
     
@@ -66,7 +69,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     //MARK: - Display
     
     private enum DisplayMode {
-        case PostCreation, PostDisplay
+        case RequirePostEntry, AllData
     }
     
     
@@ -132,14 +135,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         switch mode {
             
-        case .PostCreation:
+        case .RequirePostEntry:
             
             showCancelButton()
             postInputView.reset()
             showPostInputView()
             mapToggleButton?.enabled = false
             
-        case .PostDisplay:
+        case .AllData:
             
             showDoneButton()
             showToolbar()
@@ -147,7 +150,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    
+
     func refreshDisplay() {
         
         guard let myTopic = myTopic else {
@@ -157,17 +160,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let title = "#" + myTopic.name!
         self.navigationItem.title = title
         
-        // enter edit mode if the user has not yet posted to this topic
-        if currentUser().didPostToTopic(myTopic) {
+        let shouldDisplayAllData = currentUser().didPostToTopic(myTopic)
+        if shouldDisplayAllData {
             
-            displayMode = .PostDisplay
+            let wasRequiringPostEntry = displayMode == .RequirePostEntry
+            displayMode = .AllData
+            
+            // update table view to show all data for first time
+            if wasRequiringPostEntry {
+                tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.Automatic)
+            }
         }
         else {
             
-            displayMode = .PostCreation
-            setDisplayType(.List)
-            displayStatus()
+            displayMode = .RequirePostEntry
         }
+        
+        displayStatus()
+        displayType = .List
     }
     
     
@@ -176,26 +186,21 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var displayedType: DisplayType? {
+    private var displayType: DisplayType? {
         
         didSet {
-            if let type = displayedType {
-                setDisplayType(type)
+            if let type = displayType {
+                _setDisplayType(type)
             }
         }
     }
     
     
-    private func setDisplayType(type: DisplayType) {
-        
-        let mapImageName = "paperMap"
-        let tableImageName = "list"
+    private func _setDisplayType(type: DisplayType) {
         
         switch type {
             
         case .Map:
-            
-            navigationItem.rightBarButtonItem?.image = UIImage(named: tableImageName)
             
             mapView.alpha = 0
             mapView.hidden = false
@@ -206,8 +211,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .List:
             
-            navigationItem.rightBarButtonItem?.image = UIImage(named: mapImageName)
-            
             UIView.animateWithDuration(0.25, animations: { () -> Void in
                 
                 self.mapView.alpha = 0
@@ -215,13 +218,29 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     self.mapView.hidden = true
             })
         }
+        
+        synchronizeDisplayButton()
     }
     
     
-//    private var postingLabel: TransientLabel = {
-//        return TransientLabel(message: "Posting...", animationStyle: .FadeUp)
-//        }()
-//    
+    private func synchronizeDisplayButton() {
+    
+        let mapImageName = "paperMap"
+        let tableImageName = "list"
+        
+        if let displayType = displayType {
+            
+            switch displayType {
+                
+            case .Map:
+                navigationItem.rightBarButtonItem?.image = UIImage(named: tableImageName)
+                
+            case .List:
+                navigationItem.rightBarButtonItem?.image = UIImage(named: mapImageName)
+             }
+        }
+    }
+
     
     lazy var statusLabel: UILabel = {
         
@@ -231,7 +250,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         label.textColor = UIColor.darkGrayColor()
         return label
         }()
-    
     
     
     private enum StatusType {
@@ -259,7 +277,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         switch type {
             
         case .Normal:
-            statusLabel.attributedText = attributedStatus()
+            
+            statusLabel.text = ""
+//            statusLabel.attributedText = attributedStatus()
             
         case .Fetching:
             statusLabel.text = "Updating..."
@@ -276,7 +296,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var myTopic: Topic? {
         
         didSet {
-            refreshDisplay()
             fetchPosts()
         }
     }
@@ -289,13 +308,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    private func fetchPosts() {
+    private func fetchPosts(reloadingTopic reloadTopic: Bool = false) {
         
         displayStatus(type: .Fetching)
         
         // ADD GUARD FOR REACHABILITY
         
         let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
+            
+            // update topic as well
+            if reloadTopic {
+               self.myTopic?.fetch()
+            }
             
             let query = Post.query()!
             query.orderByDescending(DataKeys.CreatedAt)
@@ -310,7 +334,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.displayStatus(type: .Normal)
                 
                 if let objects = objects as? [Post] {
+                    
                     self.refreshTableView(withUpdatedPosts: objects)
+                    if reloadTopic {
+                        self.refreshTopicStatistics()
+                    }
                     self.refreshMapView(withUpdatedPosts: objects)
                 }
             }
@@ -351,7 +379,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                         object: self)
                 }
                 
-                self.fetchPosts() // update display
+                self.fetchPosts(reloadingTopic: true) // update display
             }
             else {
                 
@@ -381,11 +409,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBAction func handleToggleViewAction(sender: AnyObject) {
         
-        if displayedType == .Map {
-            displayedType = .List
+        if displayType == .Map {
+            displayType = .List
         }
         else {
-            displayedType = .Map
+            displayType = .Map
         }
     }
     
@@ -398,7 +426,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBAction func handleEnterEditModeAction(sender: AnyObject) {
         
-        displayMode = .PostCreation
+        displayMode = .RequirePostEntry
     }
     
     
@@ -414,7 +442,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         discardChanges()
         
         if currentUser().didPostToTopic(myTopic!) {
-            displayMode = .PostDisplay
+            displayMode = .AllData
         }
         else {
             dismissViewControllerAnimated(true) { () -> Void in }
@@ -433,7 +461,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - TableView
     
-    private let topicSection = 0
+    enum TableViewSections: Int {
+        case Topic = 0
+        case Statistics = 1
+        case Posts = 2
+        
+        static func numberOfSections() -> Int {
+            return 3
+        }
+    }
+    
+    
     private let textCellViewNibName = "TopicTextTableViewCell"
     private let textCellViewIdentifier = "textCell"
     private let textCellViewHeight = CGFloat(78)
@@ -444,7 +482,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let authorCellViewIdentifer = "authorCell"
     private let authorCellViewHeight = CGFloat(56)
     
-    private let postsSection = 1
+    private let topicStatsCellViewNibName = "TopicStatisticsTableViewCell"
+    private let topicStatsCellViewIdentifer = "topicStats"
+    private let topicStatsCellViewHeight = CGFloat(100)
+    
     private let postCellNibName = "PostDetailTableViewCell"
     private let postCellIdentifier = "postCell"
     private let postCellHeight = CGFloat(125)
@@ -470,8 +511,19 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let nib2 = UINib(nibName: authorCellViewNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: authorCellViewIdentifer)
         
+        let nib3 = UINib(nibName: topicStatsCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: topicStatsCellViewIdentifer)
+        
         let nib4 = UINib(nibName: postCellNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: postCellIdentifier)
+    }
+    
+    
+    func refreshTopicStatistics() {
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
+        }
     }
     
     
@@ -484,7 +536,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return firstTime.laterDate(secondTime) == firstTime
         }
         
-        tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: postsSection,sortingArraysWith: sortFn)
+        tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
     }
     
     
@@ -493,8 +545,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         var top = CGFloat(64.0)
         if let navHeight = navigationController?.navigationBar.frame.size.height {
             top = navHeight + 20
-            //            top = navHeight + UIApplication.sharedApplication().statusBarFrame.size.height
-            // doing this messes up when hotspot is active
         }
         
         tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
@@ -503,25 +553,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
-        return 2
+        if displayMode == .AllData {
+            return TableViewSections.numberOfSections()
+        }
+        return 1
     }
     
     
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        if section == 0 {
-            return 0.1
-        }
-        
-        return 16
-    }
-    
-    
-    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
-        
-        let view = UITableViewHeaderFooterView(frame: CGRectZero)
-        view.contentView.backgroundColor = UIColor.background()
-        return view
+            return 0.01
     }
     
     
@@ -536,28 +577,31 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if let topic = myTopic {
             
             var number = 0
-            if section == topicSection {
+            
+            switch section {
                 
-                number = 2  // text and author
-                if topic.hasImage {
-                    number++
-                }
-            }
-            else if section == postsSection {
+            case TableViewSections.Topic.rawValue:
+                number = topic.hasImage ? 3 : 2
                 
+            case TableViewSections.Statistics.rawValue:
+                number = 1
+                
+            case TableViewSections.Posts.rawValue:
                 number = posts.count
+                
+            default:
+                assert(false)
             }
             
             return number
         }
-        else {
-            return 0
-        }
+        
+        return 0
     }
     
     
     enum TableCellType {
-        case TopicText, TopicImage, TopicAuthor, Post
+        case TopicText, TopicImage, TopicAuthor, TopicStats, Post
     }
     
     
@@ -565,12 +609,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         var cellType: TableCellType?
         
-        if indexPath.section == topicSection {
+        switch indexPath.section {
             
+        case TableViewSections.Topic.rawValue:
+            
+            let displayingImage = myTopic!.hasImage
             switch indexPath.row {
                 
             case 0:
-                if myTopic!.hasImage {
+                if displayingImage {
                     cellType = .TopicImage
                 }
                 else {
@@ -578,7 +625,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 }
                 
             case 1:
-                if myTopic!.hasImage {
+                if displayingImage {
                     cellType = .TopicText
                 }
                 else {
@@ -589,13 +636,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 cellType = .TopicAuthor
                 
             default:
-                NSLog("too many rows for section %d", indexPath.section)
                 assert(false)
             }
-        }
-        else if indexPath.section == postsSection {
             
+        case TableViewSections.Statistics.rawValue:
+            cellType = .TopicStats
+            
+        case TableViewSections.Posts.rawValue:
             cellType = .Post
+            
+        default:
+            assert(false)
         }
         
         return cellType!
@@ -616,6 +667,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             height = authorCellViewHeight
+            
+        case .TopicStats:
+            height = topicStatsCellViewHeight
             
         case .Post:
             height = postCellHeight
@@ -649,9 +703,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return cell
         }
         
+        func initializeStatsCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicStatsCellViewIdentifer) as! TopicStatisticsTableViewCell
+            cell.displayedTopic = myTopic
+            return cell
+        }
+        
         func initializePostCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
+            
             cell.displayedPost = posts[indexPath.row]
             return cell
         }
@@ -669,6 +731,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicAuthor:
             cell = initializeAuthorCell()
+            
+        case .TopicStats:
+            cell = initializeStatsCell()
             
         case .Post:
             cell = initializePostCell()
@@ -696,20 +761,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         mapView.addAnnotations(allObjects)
         mapView.showAnnotations(allObjects, animated: true)
     }
-    
-    
-//    func mapViewWillStartRenderingMap(mapView: MKMapView) {
-//        
-//        mapView.alpha = 0
-//    }
-//    
-//    
-//    func mapViewDidFinishRenderingMap(mapView: MKMapView) {
-//        
-//        UIView.animateWithDuration(0.3) { () -> Void in
-//            mapView.alpha = 1.0
-//        }
-//    }
     
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
@@ -820,7 +871,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             if keyboardIsCoveringContent() == false {
                 // only animate if not covering content to avoid drawing artifacts
-                let bottom = self.displayMode == .PostCreation ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
+                let bottom = self.displayMode == .RequirePostEntry ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                 self.adjustTableViewInsets(withBottom: bottom)
             }
             
@@ -830,7 +881,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
                 if keyboardIsCoveringContent() {
                     
-                    let bottom = self.displayMode == .PostCreation ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
+                    let bottom = self.displayMode == .RequirePostEntry ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                     self.adjustTableViewInsets(withBottom: bottom)
                 }}
     }
