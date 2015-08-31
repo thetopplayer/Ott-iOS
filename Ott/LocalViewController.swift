@@ -113,7 +113,9 @@ class LocalViewController: TopicMasterViewController {
                 if let mostRecentTopicUpdate = topics.first?.updatedAt {
                     
                     self.lastUpdated = mostRecentTopicUpdate
-                    self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
+                    }
                 }
             }
         }
@@ -143,7 +145,9 @@ class LocalViewController: TopicMasterViewController {
                     
 //                    self.appendToCachedData(withTopics: topics)
                     self.lastUpdated = mostRecentTopicUpdate
-                    self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
+                    dispatch_async(dispatch_get_main_queue()) {
+                        self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
+                    }
                 }
             }
         }
@@ -227,6 +231,8 @@ class LocalViewController: TopicMasterViewController {
         super.startObservations()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostNotification:", name: TopicDetailViewController.Notifications.DidUploadPost, object: nil)
     }
     
     
@@ -234,4 +240,11 @@ class LocalViewController: TopicMasterViewController {
         
         update()
     }
+    
+    
+    func handleDidPostNotification(notification: NSNotification) {
+        
+        print("handleDidPostNotification ")
+    }
+
 }

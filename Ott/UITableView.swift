@@ -27,7 +27,7 @@ extension UITableView {
         let existingSet = Set(datasourceData)
         let updatedSet = Set(updatedData)
         
-        // deletions
+        // deletions (anything in existing datasource that's not in the updated data)
         let removedObjects = existingSet.subtract(updatedSet)
         var indexPathsForRemoval = [NSIndexPath]()
         if replacingdatasourceData {
@@ -39,7 +39,7 @@ extension UITableView {
             }
         }
         
-        // updates
+        // updates (anyting in the updated data that's in the existing set)
         let updatedObjects = updatedSet.intersect(existingSet)
         var indexPathsForUpdate = [NSIndexPath]()
         for var index = 0; index < datasourceData.count; index++ {
@@ -49,7 +49,6 @@ extension UITableView {
             }
         }
         
-        // insertions
         let addedObjects = updatedSet.subtract(existingSet)
         let finalData: [T] = {
             
@@ -60,10 +59,15 @@ extension UITableView {
                 finalSet = finalSet.union(removedObjects)
             }
             
-            return Array(finalSet).sort(isOrderedBefore)
+            let sortedArray = Array(finalSet).sort(isOrderedBefore)
+            return sortedArray
             
             }()
         
+        // update the datasource
+        datasourceData = finalData
+        
+        // insertions (anything in the updated data that's not in the existing data)
         var indexPathsForInsert = [NSIndexPath]()
         for var index = 0; index < finalData.count; index++ {
             if addedObjects.contains(finalData[index]) {
@@ -72,21 +76,14 @@ extension UITableView {
             }
         }
         
-        // update the datasource
-        datasourceData = finalData
+        self.beginUpdates()
+        if replacingdatasourceData {
+            self.deleteRowsAtIndexPaths(indexPathsForRemoval, withRowAnimation: .Automatic)
+        }
         
-        // implement
-        dispatch_async(dispatch_get_main_queue(), {
-            
-            self.beginUpdates()
-            if replacingdatasourceData {
-                self.deleteRowsAtIndexPaths(indexPathsForRemoval, withRowAnimation: .Automatic)
-            }
-            
-            self.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
-            self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
-            self.endUpdates()
-        })
+        self.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
+        self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
+        self.endUpdates()
     }
     
 

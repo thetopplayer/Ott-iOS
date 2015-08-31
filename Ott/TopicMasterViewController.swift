@@ -285,8 +285,6 @@ class TopicMasterViewController: TableViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: TopicCreationViewController.Notifications.DidUploadTopic, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostNotification:", name: TopicDetailViewController.Notifications.DidUploadPost, object: nil)
-        
         didStartObservations = true
     }
     
@@ -318,12 +316,7 @@ class TopicMasterViewController: TableViewController {
         update()
     }
     
-    
-    func handleDidPostNotification(notification: NSNotification) {
-        
-        update()
-    }
-    
+
     
 
     // MARK: - Navigation

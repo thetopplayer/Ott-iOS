@@ -41,10 +41,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         items?.insert(statusBarButtonItem, atIndex: 2)
         toolbar.setItems(items!, animated: false)
         
-        displayMode == .RequirePostEntry
-        
         setupTableView()
         setupMapView()
+        displayType = .List  // affirmatively set in order to setup display
         startObservations()
     }
     
@@ -56,7 +55,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if let navController = navigationController as? NavigationController {
             myTopic = navController.topic
         }
-        refreshDisplay()
     }
     
     
@@ -151,47 +149,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
 
-    func refreshDisplay() {
-        
-        guard let myTopic = myTopic else {
-            return
-        }
-        
-        let title = "#" + myTopic.name!
-        self.navigationItem.title = title
-        
-        let shouldDisplayAllData = currentUser().didPostToTopic(myTopic)
-        if shouldDisplayAllData {
-            
-            let wasRequiringPostEntry = displayMode == .RequirePostEntry
-            displayMode = .AllData
-            
-            // update table view to show all data for first time
-            if wasRequiringPostEntry {
-                tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: UITableViewRowAnimation.Automatic)
-            }
-        }
-        else {
-            
-            displayMode = .RequirePostEntry
-        }
-        
-        displayStatus()
-        displayType = .List
-    }
-    
-    
     private enum DisplayType {
         case Map, List
     }
     
     
-    private var displayType: DisplayType? {
+    private var displayType: DisplayType = .List {
         
         didSet {
-            if let type = displayType {
-                _setDisplayType(type)
-            }
+            _setDisplayType(displayType)
         }
     }
     
@@ -224,23 +190,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private func synchronizeDisplayButton() {
-    
+        
         let mapImageName = "paperMap"
         let tableImageName = "list"
         
-        if let displayType = displayType {
+        switch displayType {
             
-            switch displayType {
-                
-            case .Map:
-                navigationItem.rightBarButtonItem?.image = UIImage(named: tableImageName)
-                
-            case .List:
-                navigationItem.rightBarButtonItem?.image = UIImage(named: mapImageName)
-             }
+        case .Map:
+            navigationItem.rightBarButtonItem?.image = UIImage(named: tableImageName)
+            
+        case .List:
+            navigationItem.rightBarButtonItem?.image = UIImage(named: mapImageName)
         }
     }
-
+    
     
     lazy var statusLabel: UILabel = {
         
@@ -273,19 +236,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return s1
         }
         
-        
-        switch type {
+        dispatch_async(dispatch_get_main_queue()) {
             
-        case .Normal:
-            
-            statusLabel.text = ""
-//            statusLabel.attributedText = attributedStatus()
-            
-        case .Fetching:
-            statusLabel.text = "Updating..."
-            
-        case .Posting:
-            statusLabel.text = "Posting..."
+            switch type {
+                
+            case .Normal:
+                
+                self.statusLabel.text = ""
+                
+            case .Fetching:
+                self.statusLabel.text = "Updating..."
+                
+            case .Posting:
+                self.statusLabel.text = "Posting..."
+            }
         }
     }
     
@@ -296,18 +260,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var myTopic: Topic? {
         
         didSet {
-            fetchPosts()
+            
+            displayMode = currentUser().didPostToTopic(myTopic!) ? .AllData : .RequirePostEntry
+
+            let title = "#" + myTopic!.name!
+            self.navigationItem.title = title
+            displayType = .List
+
+            if displayMode == .AllData {
+                fetchPosts()
+            }
         }
     }
     
     
-    private var posts = [Post]() {
-        
-        didSet {
-            displayStatus()
-        }
-    }
+    private var posts = [Post]()
     
+    private var _dateOfMostRecentPost: NSDate?
     private func fetchPosts(reloadingTopic reloadTopic: Bool = false) {
         
         displayStatus(type: .Fetching)
@@ -323,23 +292,27 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             let query = Post.query()!
             query.orderByDescending(DataKeys.CreatedAt)
-            
             query.whereKey(DataKeys.Topic, equalTo: self.myTopic!)
+            if let minDate = self._dateOfMostRecentPost {
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: minDate)
+            }
             
             var error: NSError?
             let objects = query.findObjects(&error)
             
-            dispatch_async(dispatch_get_main_queue()) {
+            self.displayStatus(type: .Normal)
+            
+            if let fetchedPosts = objects as? [Post] {
                 
-                self.displayStatus(type: .Normal)
-                
-                if let objects = objects as? [Post] {
+                if fetchedPosts.count > 0 {
                     
-                    self.refreshTableView(withUpdatedPosts: objects)
-                    if reloadTopic {
-                        self.refreshTopicStatistics()
+                    self._dateOfMostRecentPost = fetchedPosts.first?.createdAt
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        self.refreshTableView(withUpdatedPosts: fetchedPosts)
+                        self.refreshMapView(withUpdatedPosts: fetchedPosts)
                     }
-                    self.refreshMapView(withUpdatedPosts: objects)
                 }
             }
         })
@@ -356,8 +329,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
-        currentUser().archivePostedTopicID(topicID)
-        refreshDisplay()
+        if self.displayMode == .RequirePostEntry {
+            currentUser().archivePostedTopicID(topicID)
+            self.displayMode = .AllData
+        }
+        
         displayStatus(type: .Posting)
         
         let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
@@ -379,7 +355,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                         object: self)
                 }
                 
-                self.fetchPosts(reloadingTopic: true) // update display
+                self.fetchPosts(reloadingTopic: true) // update data for topic
             }
             else {
                 
@@ -466,7 +442,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         case Statistics = 1
         case Posts = 2
         
-        static func numberOfSections() -> Int {
+        static func maximumNumberOfSections() -> Int {
             return 3
         }
     }
@@ -519,14 +495,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func refreshTopicStatistics() {
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            self.tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
-        }
-    }
-    
-    
     func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
@@ -536,7 +504,30 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return firstTime.laterDate(secondTime) == firstTime
         }
         
-        tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
+        guard displayMode == .AllData else {
+            print("ERROR - trying to update table view but posts are not allowed")
+            return
+        }
+        
+        self.tableView.beginUpdates()
+        if tableView.numberOfSections == 1 {
+            
+            // this will be the case when going from requiring a post entry to displaying all data
+            
+            posts = updatedPosts
+            
+            let allDataSections = NSMutableIndexSet(index:TableViewSections.Statistics.rawValue)
+            allDataSections.addIndex(TableViewSections.Posts.rawValue)
+            self.tableView.insertSections(allDataSections, withRowAnimation: .Top)
+        }
+        else {
+            
+            let statsIndexPath = NSIndexPath(forRow: 0, inSection: TableViewSections.Statistics.rawValue)
+            self.tableView.reloadRowsAtIndexPaths([statsIndexPath], withRowAnimation: .None)
+            
+            tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
+        }
+        self.tableView.endUpdates()
     }
     
     
@@ -554,7 +545,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
         if displayMode == .AllData {
-            return TableViewSections.numberOfSections()
+            return TableViewSections.maximumNumberOfSections()
         }
         return 1
     }
