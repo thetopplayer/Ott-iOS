@@ -21,7 +21,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     struct Notifications {
         
-        static let DidUploadPost = "didUploadPost"
+        static let DidRefreshTopic = "didRefreshTopic"
+        static let TopicKey = "topic"
     }
     
     
@@ -280,14 +281,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func fetchPosts(reloadingTopic reloadTopic: Bool = false) {
         
         displayStatus(type: .Fetching)
-        
+
         // ADD GUARD FOR REACHABILITY
         
         let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
             
             // update topic as well
             if reloadTopic {
+                
                self.myTopic?.fetch()
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    let userInfo: [NSObject: AnyObject] = [TopicDetailViewController.Notifications.TopicKey: self.myTopic!]
+                    NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidRefreshTopic, object: self, userInfo: userInfo)
+                }
             }
             
             let query = Post.query()!
@@ -348,12 +355,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             self.displayStatus(type: .Normal)
             
             if succeeded {
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidUploadPost,
-                        object: self)
-                }
                 
                 self.fetchPosts(reloadingTopic: true) // update data for topic
             }

@@ -232,7 +232,7 @@ class LocalViewController: TopicMasterViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostNotification:", name: TopicDetailViewController.Notifications.DidUploadPost, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTopicRefreshNotification:", name: TopicDetailViewController.Notifications.DidRefreshTopic, object: nil)
     }
     
     
@@ -242,9 +242,19 @@ class LocalViewController: TopicMasterViewController {
     }
     
     
-    func handleDidPostNotification(notification: NSNotification) {
+    func handleTopicRefreshNotification(notification: NSNotification) {
         
-        print("handleDidPostNotification ")
+        let userInfo = notification.userInfo as! [String: Topic]
+        if let topic = userInfo[TopicDetailViewController.Notifications.TopicKey] {
+            
+            if let rowForTopic = displayedTopics.indexOf(topic) {
+                
+                tableView.beginUpdates()
+                let indexPath = NSIndexPath(forRow: rowForTopic, inSection: 0)
+                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
+                tableView.endUpdates()
+            }
+        }
     }
 
 }
