@@ -434,8 +434,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     
-    
-    
     //MARK: - TableView
     
     enum TableViewSections: Int {

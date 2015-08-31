@@ -69,17 +69,17 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    func updateStatus(type: StatusType = .Default) {
+    func displayStatus(type: StatusType = .Default) {
+        
+        statusLabel.hidden = displayedTopics.count > 0
         
         switch type {
             
         case .Fetching:
             statusLabel.text = "Fetching Topics..."
-            statusLabel.hidden = false
             
         default:
             statusLabel.text = "No Topics..."
-            statusLabel.hidden = displayedTopics.count > 0
         }
     }
     
@@ -202,7 +202,7 @@ class TopicMasterViewController: TableViewController {
         }
         
         dispatch_async(dispatch_get_main_queue(), {
-            self.updateStatus()
+            self.displayStatus()
         })
     }
     
