@@ -366,7 +366,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                         (self as UIViewController).presentOKAlertWithError(error)
                     }
                     else {
-                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.")
+                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.", completion: nil)
                         
                     }
                 }

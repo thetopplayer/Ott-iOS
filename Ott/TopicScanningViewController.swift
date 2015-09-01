@@ -12,7 +12,8 @@ import AVFoundation
 
 class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate {
 
-    
+    private let segueToTopicDetailIdentifier = "segueToTopicDetail"
+
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -187,51 +188,93 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     //MARK: - Data
     
-    var recognizedTopic: Topic?
+    private var fetchedObject: PFObject?
+    private var fetchOperation: NSBlockOperation?
+    
+    private func fetchObject(forCode code: String, completion: (success: Bool, error: NSError?) -> Void) {
+        
+        let fetchOperation = NSBlockOperation(block: { () -> Void in
+
+            if let query = ScanTransformer.sharedInstance.queryForCode(code) {
+                
+                var error: NSError?
+                let objects = query.findObjects(&error)
+                
+                if let theObject = objects!.first {
+                    
+                    switch theObject {
+                        
+                    case is User:
+                        
+                        print("user")
+                        
+                    case is Topic:
+                        
+                        print("topic")
+                        
+                    default:
+                        assert(false)
+                    }
+                }
+            }
+            else {
+                
+                // no query
+            }
+            
+        })
+        
+        self.fetchOperation = fetchOperation // save in case we need to cancel
+        operationQueue().addOperation(fetchOperation)
+    }
     
     
     private func handleRecognition(ofCode code: String) {
         
-        let alertViewController = UIAlertController(title: "Code Detected", message: "Fetching associated topic information...", preferredStyle: .Alert)
+        let alertViewController = UIAlertController(title: "Code Detected", message: "Fetching data...", preferredStyle: .Alert)
         
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
-        
-//            DataManager.sharedInstance.cancelFetchTopic()
-            self.handleCancelAction(self)
+            
+//            self.handleCancelAction(self)
         })
         
         alertViewController.addAction(cancelAction)
-
-        presentViewController(alertViewController, animated: true) { () -> Void in
+        
+        presentViewController(alertViewController, animated: true) { () }
+        
+        if ScanTransformer.sharedInstance.codeAppearsValid(code) {
             
-            func dataFetchCompletionHandler(theTopic: Topic?) {
+            fetchObject(forCode: code) { (success, error) in
                 
-                self.recognizedTopic = theTopic
-                
-                if self.recognizedTopic != nil {
-                    dispatch_after(0, dispatch_get_main_queue(), { () -> Void in
+                if success {
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
                         
-                        alertViewController.dismissViewControllerAnimated(false, completion: { () -> Void in
-                            self.performSegueWithIdentifier("segueToRatingEntry", sender: self)
-                        })
-                    })
+                    }
                 }
                 else {
                     
-                    dispatch_after(0, dispatch_get_main_queue(), { () -> Void in
+                    dispatch_async(dispatch_get_main_queue()) {
                         
-                        alertViewController.dismissViewControllerAnimated(false, completion: { () -> Void in
-                            self.handleCodeIsNotRecognized()
-                        })
-                    })
+                        if let error = error {
+                            (self as UIViewController).presentOKAlertWithError(error)
+                        }
+                        else {
+                            //                            (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred.  Please check your internet connection and try again.")
+                            
+                        }
+                    }
                 }
             }
+        }
+        else {
             
-//            DataManager.sharedInstance.fetchTopic(withIdentifier: code, completion: dataFetchCompletionHandler)
         }
     }
     
+
     
+
     private func handleScanFailure() {
         
         let alertViewController = UIAlertController(title: "Detection Failed", message: "Try again?", preferredStyle: .Alert)
@@ -261,9 +304,19 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
         presentViewController(alertViewController, animated: true) { () -> Void in }
     }
 
+
+private func presentObjectDetailView() {
     
+}
+
+
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
+        if segue.identifier == segueToTopicDetailIdentifier {
+            
+            let topicDetailController = segue.destinationViewController as! TopicDetailViewController
+
+        }
     }
     
     
@@ -297,7 +350,12 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     
     //MARK: - Navigation
+
+func displayUserDetailsForUser(user: User) {
     
+}
+
+
     @IBAction func handleCancelAction(sender: AnyObject) {
         
         stopScanning()

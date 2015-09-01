@@ -47,8 +47,34 @@ extension String {
     
     
     var length : Int {
-        
         return self.characters.count
+    }
+    
+    
+    func characterAtIndex(index: Int) -> Character? {
+        
+        if index < self.length {
+            
+            let idx = startIndex.advancedBy(index)
+            return self[idx]
+        }
+        return nil
+    }
+    
+    
+    func substring(startingAt startingAt: Int, length: Int) -> String {
+        
+        let start = startIndex.advancedBy(startingAt)
+        let end = start.advancedBy(length)
+        let range = start..<end
+        return substringWithRange(range)
+    }
+    
+    
+    func substringToEnd(startingAt startingAt: Int) -> String {
+        
+        let index = startIndex.advancedBy(startingAt)
+        return substringFromIndex(index)
     }
     
     
@@ -76,5 +102,4 @@ extension String {
         
         return containsCharacter(inCharacterSet: _unnacceptableNameCharacters) == false
     }
-
 }

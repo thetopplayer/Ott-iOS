@@ -48,14 +48,14 @@ extension UIViewController {
     }
     
     
-    func presentOKAlert(title title: String?, message: String?) {
+    func presentOKAlert(title title: String?, message: String?, completion: (() -> Void)?) {
         
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
         alertViewController.addAction(okAction)
         
-        presentViewController(alertViewController, animated: true, completion: nil)
+        presentViewController(alertViewController, animated: true, completion: completion)
     }
     
     
@@ -64,7 +64,7 @@ extension UIViewController {
         
         let title = "Error"
         let message = error.localizedDescription
-        presentOKAlert(title: title, message: message)
+        presentOKAlert(title: title, message: message,  completion: nil)
     }
     
 }
