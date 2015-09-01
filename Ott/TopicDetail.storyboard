@@ -41,6 +41,23 @@
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6Ch-ty-LY7">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
                             </mapView>
+                            <view opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" translatesAutoresizingMaskIntoConstraints="NO" id="qt1-9o-7zW">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <subviews>
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FUJ-mg-lny">
+                                        <rect key="frame" x="180" y="118" width="240" height="240"/>
+                                        <constraints>
+                                            <constraint firstAttribute="height" constant="240" id="iRF-4u-ahg"/>
+                                            <constraint firstAttribute="width" constant="240" id="qc1-7h-Dpw"/>
+                                        </constraints>
+                                    </imageView>
+                                </subviews>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <constraints>
+                                    <constraint firstItem="FUJ-mg-lny" firstAttribute="centerX" secondItem="qt1-9o-7zW" secondAttribute="centerX" id="RIE-rE-gVE"/>
+                                    <constraint firstItem="FUJ-mg-lny" firstAttribute="top" secondItem="qt1-9o-7zW" secondAttribute="top" constant="118" id="hEg-V1-VS1"/>
+                                </constraints>
+                            </view>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fhB-VS-06h">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
                                 <constraints>
@@ -143,6 +160,7 @@
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
+                            <constraint firstItem="qt1-9o-7zW" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="5RK-Zp-wkX"/>
                             <constraint firstAttribute="trailingMargin" secondItem="Y5K-j4-5dG" secondAttribute="trailing" constant="-16" id="9Ra-hf-xhb"/>
                             <constraint firstAttribute="bottomMargin" secondItem="N7I-Dk-brQ" secondAttribute="bottom" id="Aah-Oo-Wt2"/>
                             <constraint firstAttribute="trailingMargin" secondItem="fhB-VS-06h" secondAttribute="trailing" constant="-20" id="Al6-KO-brV"/>
@@ -156,7 +174,10 @@
                             <constraint firstItem="N7I-Dk-brQ" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="eit-wa-jk8"/>
                             <constraint firstItem="fhB-VS-06h" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-20" id="gBh-op-jTk"/>
                             <constraint firstAttribute="trailingMargin" secondItem="N7I-Dk-brQ" secondAttribute="trailing" constant="-20" id="h76-Os-Wiv"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="qt1-9o-7zW" secondAttribute="trailing" constant="-20" id="iVm-jd-Ify"/>
+                            <constraint firstItem="x3V-j2-dd8" firstAttribute="top" secondItem="qt1-9o-7zW" secondAttribute="bottom" id="lbf-4k-hxD"/>
                             <constraint firstItem="Y5K-j4-5dG" firstAttribute="leading" secondItem="gyZ-E2-gK4" secondAttribute="leadingMargin" constant="-16" id="uiA-Bd-UHm"/>
+                            <constraint firstItem="qt1-9o-7zW" firstAttribute="top" secondItem="gyZ-E2-gK4" secondAttribute="topMargin" id="xWh-bE-7O5"/>
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="xsj-vc-ee9">
@@ -171,6 +192,8 @@
                         <outlet property="mapView" destination="6Ch-ty-LY7" id="ODM-Yv-QYD"/>
                         <outlet property="postInputView" destination="N7I-Dk-brQ" id="CL8-nq-AyE"/>
                         <outlet property="postInputViewBottomConstraint" destination="Aah-Oo-Wt2" id="lvj-pF-fvv"/>
+                        <outlet property="qrCodeDisplayView" destination="qt1-9o-7zW" id="N4J-ja-FPm"/>
+                        <outlet property="qrCodeImageView" destination="FUJ-mg-lny" id="4eQ-GN-YtJ"/>
                         <outlet property="tableView" destination="Y5K-j4-5dG" id="fyV-8u-CwC"/>
                         <outlet property="toolbar" destination="fhB-VS-06h" id="GrT-kY-bdg"/>
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>
