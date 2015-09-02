@@ -8,10 +8,10 @@
 
 
 /*
-    Used to encode and decode PFObject objectIds from QRCodes
+    Used to encode and decode PFObject objectIds from AztecCodes
 
-    objectId -> code encoding a prefix and identifier for class type -> QRCode
-    QRCode -> code -> PFQuery for appropriate class and objectID
+    objectId -> code encoding a prefix and identifier for class type -> AztecCode
+    AztecCode -> code -> PFQuery for appropriate class and objectID
 
 */
 
@@ -21,29 +21,14 @@ import UIKit
 
 /* 
 adapted from 
-https://github.com/aschuch/QRCode/blob/master/QRCode/QRCode.swift
+https://github.com/aschuch/AztecCode/blob/master/AztecCode/AztecCode.swift
 */
-class QRCode {
+class AztecCode {
     
-    /**
-    The level of error correction.
+    /// CIAztecCodeGenerator generates 15x15 images with padding by default
+    let DefaultAztecCodeSize = CGSize(width: 19, height: 19)
     
-    - Low:      7%
-    - Medium:   15%
-    - Quartile: 25%
-    - High:     30%
-    */
-    enum ErrorCorrection: String {
-        case Low = "L"
-        case Medium = "M"
-        case Quartile = "Q"
-        case High = "H"
-    }
-    
-    /// CIQRCodeGenerator generates 27x27px images per default
-    let DefaultQRCodeSize = CGSize(width: 27, height: 27)
-    
-    /// Data contained in the generated QRCode
+    /// Data contained in the generated AztecCode
     let data: NSData
     
     /// Foreground color of the output
@@ -57,9 +42,6 @@ class QRCode {
     /// Size of the output
     var size = CGSize(width: 200, height: 200)
     
-    /// The error correction. The default value is `.Low`.
-    var errorCorrection = ErrorCorrection.Low
-    
     
     // MARK: Init
     
@@ -72,33 +54,43 @@ class QRCode {
     }
     
     
-    // MARK: Generate QRCode
+    // MARK: Generate AztecCode
     
-    /// The QRCode's UIImage representation
-    var image: UIImage {
-        return UIImage(CIImage: ciImage)
+    /// The AztecCode's UIImage representation
+    var image: UIImage? {
+        
+        if let ciImage = ciImage {
+            return UIImage(CIImage: ciImage)
+        }
+        return nil
     }
     
-    /// The QRCode's CIImage representation
-    var ciImage: CIImage {
-        // Generate QRCode
-        let qrFilter = CIFilter(name: "CIQRCodeGenerator")
-        qrFilter!.setDefaults()
-        qrFilter!.setValue(data, forKey: "inputMessage")
-        qrFilter!.setValue(self.errorCorrection.rawValue, forKey: "inputCorrectionLevel")
+    /// The AztecCode's CIImage representation
+    var ciImage: CIImage? {
+        
+        // Generate AztecCode
+        guard let azFilter = CIFilter(name: "CIAztecCodeGenerator") else {
+            return nil
+        }
+
+        azFilter.setDefaults()
+        azFilter.setValue(data, forKey: "inputMessage")
         
         // Color code and background
-        let colorFilter = CIFilter(name: "CIFalseColor")
-        colorFilter!.setDefaults()
-        colorFilter!.setValue(qrFilter!.outputImage, forKey: "inputImage")
-        colorFilter!.setValue(color, forKey: "inputColor0")
-        colorFilter!.setValue(backgroundColor, forKey: "inputColor1")
+        guard let colorFilter = CIFilter(name: "CIFalseColor") else {
+            return nil
+        }
+        
+        colorFilter.setDefaults()
+        colorFilter.setValue(azFilter.outputImage, forKey: "inputImage")
+        colorFilter.setValue(color, forKey: "inputColor0")
+        colorFilter.setValue(backgroundColor, forKey: "inputColor1")
         
         // Size
-        let sizeRatioX = size.width / DefaultQRCodeSize.width
-        let sizeRatioY = size.height / DefaultQRCodeSize.height
+        let sizeRatioX = size.width / DefaultAztecCodeSize.width
+        let sizeRatioY = size.height / DefaultAztecCodeSize.height
         let transform = CGAffineTransformMakeScale(sizeRatioX, sizeRatioY)
-        let transformedImage = colorFilter!.outputImage!.imageByApplyingTransform(transform)
+        let transformedImage = colorFilter.outputImage!.imageByApplyingTransform(transform)
         
         return transformedImage
     }
@@ -223,10 +215,10 @@ class ScanTransformer {
             return nil
         }
         
-        let qrCode = QRCode(code!)
-        qrCode.size = size
+        let azCode = AztecCode(code!)
+        azCode.size = size
         
-        return qrCode.image
+        return azCode.image
     }
     
     
@@ -234,42 +226,4 @@ class ScanTransformer {
         
         return image(fromCode: codeForObject(object))
     }
-    
-    
-    
-//    //MARK: - Export Alert
-//    
-//    private var exportAlert: TKAlert?
-//    func presentExportAlertForObject(object: PFObject) {
-//        
-//        if exportAlert == nil {
-//            
-//            let alert = TKAlert()
-//            alert.title = "Export"
-//            alert.style.backgroundStyle = TKAlertBackgroundStyle.Blur
-//            alert.actionsLayout = TKAlertActionsLayout.Vertical
-//            
-//            alert.addActionWithTitle("Print") { (TKAlert, TKAlertAction) -> Bool in
-//                
-//                return true
-//            }
-//
-//            alert.addActionWithTitle("Email") { (TKAlert, TKAlertAction) -> Bool in
-//                
-//                return true
-//            }
-//            
-//            alert.addActionWithTitle("Save to Photos") { (TKAlert, TKAlertAction) -> Bool in
-//                
-//                // todo :  test for photo access first
-//                
-//                return true
-//            }
-//            
-//            exportAlert = alert
-//        }
-//        
-//        exportAlert!.show(true)
-//    }
-//    
 }

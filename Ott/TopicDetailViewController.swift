@@ -12,14 +12,14 @@ import MapKit
 
 class TopicDetailViewController: ViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, PostInputViewDelegate {
     
-    @IBOutlet weak var qrCodeDisplayView: UIView!
-    @IBOutlet weak var qrCodeImageView: UIImageView!
     @IBOutlet weak var tableView: UITableView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var postInputView: PostInputView!
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
+    
+    let segueToExportIdentifier = "segueToExport"
     
     struct Notifications {
         
@@ -43,8 +43,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         statusBarButtonItem.width = 120
         items?.insert(statusBarButtonItem, atIndex: 2)
         toolbar.setItems(items!, animated: false)
-        
-        qrCodeDisplayView.hidden = true
         
         setupTableView()
         setupMapView()
@@ -410,73 +408,88 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayMode = .RequirePostEntry
     }
     
-    
-    lazy private var alertViewController: UIAlertController = {
-        
-        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-        
-        let printAction = UIAlertAction(title: "Print", style: UIAlertActionStyle.Default, handler: { action in
-            
-            self.hideCodeView()
-        })
-        
-        let emailAction = UIAlertAction(title: "Email", style: UIAlertActionStyle.Default, handler: { action in
-            
-            self.hideCodeView()
-        })
-        
-        let photosAction = UIAlertAction(title: "Save to Photos", style: UIAlertActionStyle.Default, handler: { action in
-            
-            self.hideCodeView()
-        })
-        
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
-            
-            self.hideCodeView()
-        })
-        
-        controller.addAction(printAction)
-        controller.addAction(emailAction)
-        controller.addAction(photosAction)
-        controller.addAction(cancelAction)
-        
-        return controller
-        }()
-    
-    
-    private func showCodeViewAndPresentAlert() {
-        
-        self.qrCodeDisplayView.alpha = 0
-        self.qrCodeImageView.alpha = 0
-        self.qrCodeDisplayView.hidden = false
-        UIView.animateWithDuration(0.3, animations: { () -> Void in
-            
-            self.qrCodeDisplayView.alpha = 1
-            self.qrCodeImageView.alpha = 1
-            }, completion: { (Bool) -> Void in
-                
-                self.presentViewController(self.alertViewController, animated: true, completion: nil)
-        })
-    }
-    
-    
-    private func hideCodeView() {
-        
-        UIView.animateWithDuration(0.3, animations: { () -> Void in
-            
-            self.qrCodeDisplayView.alpha = 0
-            self.qrCodeImageView.alpha = 0
-            }, completion: { (Bool) -> Void in
-                
-                self.qrCodeDisplayView.hidden = true
-        })
-    }
+//    private var qrCodeImage: UIImage?
+//    
+//    lazy private var alertViewController: UIAlertController = {
+//        
+//        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+//        
+//        let printAction = UIAlertAction(title: "Print", style: UIAlertActionStyle.Default, handler: { action in
+//            
+//            let printController = UIPrintInteractionController.sharedPrintController()
+//            let printInfo = UIPrintInfo(dictionary:nil)
+//            printInfo.outputType = UIPrintInfoOutputType.General
+//            printInfo.jobName = "Ott Code"
+//            printController.printInfo = printInfo
+//            
+//            printController.printingItem = self.qrCodeImage
+//            
+//            printController.presentAnimated(true) { (controller, status, error) -> Void in
+//                
+////                self.hideCodeView()
+//            }
+//        })
+//        
+//        let emailAction = UIAlertAction(title: "Email", style: UIAlertActionStyle.Default, handler: { action in
+//            
+//            self.hideCodeView()
+//        })
+//        
+//        let photosAction = UIAlertAction(title: "Save to Photos", style: UIAlertActionStyle.Default, handler: { action in
+//            
+//            self.hideCodeView()
+//        })
+//        
+//        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
+//            
+//            self.hideCodeView()
+//        })
+//        
+//        controller.addAction(printAction)
+//        controller.addAction(emailAction)
+//        controller.addAction(photosAction)
+//        controller.addAction(cancelAction)
+//        
+//        return controller
+//        }()
+//    
+//    
+//    private func showCodeViewAndPresentAlert() {
+//        
+//        self.qrCodeDisplayView.alpha = 0
+//        self.qrCodeImageView.alpha = 0
+//        self.qrCodeDisplayView.hidden = false
+//        UIView.animateWithDuration(0.3, animations: { () -> Void in
+//            
+//            self.qrCodeDisplayView.alpha = 1
+//            self.qrCodeImageView.alpha = 1
+//            }, completion: { (Bool) -> Void in
+//                
+//                self.presentViewController(self.alertViewController, animated: true, completion: nil)
+//        })
+//    }
+//    
+//    
+//    private func hideCodeView() {
+//        
+//        UIView.animateWithDuration(0.3, animations: { () -> Void in
+//            
+//            self.qrCodeDisplayView.alpha = 0
+//            self.qrCodeImageView.alpha = 0
+//            }, completion: { (Bool) -> Void in
+//                
+//                self.qrCodeDisplayView.hidden = true
+//        })
+//    }
 
     
     @IBAction func handleExportAction(sender: AnyObject) {
         
-        qrCodeImageView.image = ScanTransformer.sharedInstance.imageForObject(myTopic!)
-        showCodeViewAndPresentAlert()
+        performSegueWithIdentifier(segueToExportIdentifier, sender: self)
+//        
+//        qrCodeImage = ScanTransformer.sharedInstance.imageForObject(myTopic!)
+//        qrCodeImageView.image = qrCodeImage
+//        showCodeViewAndPresentAlert()
     }
     
     
@@ -497,6 +510,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBAction func handleDoneAction(sender: AnyObject) {
         
         dismissViewControllerAnimated(true) { () -> Void in }
+    }
+    
+    
+    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
+        
+        if let destinationController = segue.destinationViewController as? TopicExportViewController {
+            destinationController.myTopic = myTopic
+        }
     }
     
     
