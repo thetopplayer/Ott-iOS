@@ -255,7 +255,7 @@ class ScanTransformer {
            
             let diameter = codeImageHeight / 0.7
             let padding = 0.5 * (diameter - codeImageHeight)
-            return CGFloat(ceilf(Float(padding) + 1))
+            return CGFloat(ceilf(Float(padding)))
         }()
         
         let imageFrame = CGRectMake(0, 0, maskedCodeImage.size.width + 2 * innerDotBorder, maskedCodeImage.size.height + 2 * innerDotBorder)

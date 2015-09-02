@@ -7,11 +7,13 @@
 //
 
 import UIKit
+import MessageUI
 
-class TopicExportViewController: ViewController, UIPrintInteractionControllerDelegate {
+
+class TopicExportViewController: ViewController, UIPrintInteractionControllerDelegate, MFMailComposeViewControllerDelegate {
 
     @IBOutlet weak var topicLabel: UILabel!
-    @IBOutlet weak var qrCodeImageView: UIImageView!
+    @IBOutlet weak var codeImageView: UIImageView!
     
     
     override func prefersStatusBarHidden() -> Bool {
@@ -30,20 +32,20 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
     
     var imageBackgroundColor = UIColor.colorWithHex(0xDEEEFF)
     var imageColor = UIColor.blackColor()
-    var imageScale = CGFloat(4)
+    var imageScale = CGFloat(5)
     
     private func setupDisplay() {
         
         if let topic = myTopic {
             
-            topicLabel.text = topic.name!
-            qrCodeImage = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: imageBackgroundColor, color: imageColor, scale: imageScale)
-            qrCodeImageView.image = qrCodeImage
+            topicLabel.text = "#" + topic.name!
+            codeImage = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: imageBackgroundColor, color: imageColor, scale: imageScale)
+            codeImageView.image = codeImage
         }
     }
     
     
-    private var qrCodeImage: UIImage?
+    private var codeImage: UIImage?
     
     class ImagePrintRenderer: UIPrintPageRenderer {
         
@@ -73,7 +75,7 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
         let printController = UIPrintInteractionController.sharedPrintController()
         printController.delegate = self
         
-        printController.printPageRenderer = ImagePrintRenderer(forImage: qrCodeImage!)
+        printController.printPageRenderer = ImagePrintRenderer(forImage: codeImage!)
         
         printController.presentAnimated(true) { (controller, status, error) -> Void in
             
@@ -83,6 +85,25 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
     
     @IBAction func handleEmailAction(sender: AnyObject) {
         
+        let emailVC = MFMailComposeViewController()
+        emailVC.mailComposeDelegate = self
+        
+        let subject = "Ott image for #" + myTopic!.name!
+        emailVC.setSubject(subject)
+        
+        if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
+            
+            emailVC.setMessageBody("Users will be sent directly to your topic when they scan this image from within the Ott app.", isHTML: true)
+            
+            let filename = myTopic!.name! + ".jpeg"
+            emailVC.addAttachmentData(jpegData, mimeType:"image/jpeg", fileName:filename)
+        }
+        else {
+            
+            emailVC.setMessageBody("ERROR exporting image", isHTML: true)
+        }
+        
+        presentViewController(emailVC, animated: true, completion: nil)
     }
     
     
@@ -105,4 +126,12 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
         handleCancelAction(self)
     }
     
+    
+    
+    //MARK: - Email Delegate
+    
+    func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
+        
+        controller.dismissViewControllerAnimated(true, completion: { self.handleCancelAction(self) })
+    }
 }

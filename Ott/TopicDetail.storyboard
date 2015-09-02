@@ -250,7 +250,7 @@
                     </view>
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
-                        <outlet property="qrCodeImageView" destination="FUJ-mg-lny" id="i01-Nh-Uww"/>
+                        <outlet property="codeImageView" destination="FUJ-mg-lny" id="MHt-rB-tco"/>
                         <outlet property="topicLabel" destination="T7Z-BP-bKn" id="sck-m8-wRC"/>
                     </connections>
                 </viewController>

@@ -73,7 +73,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     private func requestAccessToCamera() {
         
-        let alertViewController = UIAlertController(title: "Camera Access", message: "This app can recognize QR codes associated with topics.  In order to enable this feature, you will be asked to provide the app with access to your camera.", preferredStyle: .Alert)
+        let alertViewController = UIAlertController(title: "Camera Access", message: "This app can recognize 2D bar codes associated with topics.  In order to enable this feature, you will be asked to provide the app with access to your camera.", preferredStyle: .Alert)
         
         func nextHandler(action: UIAlertAction) {
             
