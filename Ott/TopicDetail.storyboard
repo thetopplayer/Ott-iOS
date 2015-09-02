@@ -194,11 +194,11 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FUJ-mg-lny">
-                                <rect key="frame" x="180" y="125" width="240" height="240"/>
+                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FUJ-mg-lny">
+                                <rect key="frame" x="150" y="111" width="300" height="300"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="240" id="iRF-4u-ahg"/>
-                                    <constraint firstAttribute="width" constant="240" id="qc1-7h-Dpw"/>
+                                    <constraint firstAttribute="height" constant="300" id="iRF-4u-ahg"/>
+                                    <constraint firstAttribute="width" constant="300" id="qc1-7h-Dpw"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TOPIC NAME" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="T7Z-BP-bKn">
@@ -243,7 +243,7 @@
                             <constraint firstItem="T7Z-BP-bKn" firstAttribute="leading" secondItem="ebH-l1-JEk" secondAttribute="leadingMargin" id="O6g-wf-Nfj"/>
                             <constraint firstItem="zFI-AB-jBf" firstAttribute="leading" secondItem="ebH-l1-JEk" secondAttribute="leadingMargin" constant="-20" id="WTj-ZE-Y5b"/>
                             <constraint firstItem="FUJ-mg-lny" firstAttribute="centerX" secondItem="ebH-l1-JEk" secondAttribute="centerX" id="dB8-aY-Lqm"/>
-                            <constraint firstItem="FUJ-mg-lny" firstAttribute="top" secondItem="T7Z-BP-bKn" secondAttribute="bottom" constant="54" id="pk9-Jc-DS6"/>
+                            <constraint firstItem="FUJ-mg-lny" firstAttribute="top" secondItem="T7Z-BP-bKn" secondAttribute="bottom" constant="40" id="pk9-Jc-DS6"/>
                             <constraint firstItem="Sde-uB-Uua" firstAttribute="top" secondItem="zFI-AB-jBf" secondAttribute="bottom" id="s3T-tI-lJZ"/>
                             <constraint firstAttribute="trailingMargin" secondItem="zFI-AB-jBf" secondAttribute="trailing" constant="-20" id="uJ5-7d-g5U"/>
                         </constraints>

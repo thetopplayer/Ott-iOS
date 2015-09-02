@@ -150,7 +150,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
             session.addOutput(metaDataOutput)
         }
         
-        metaDataOutput.metadataObjectTypes = [AVMetadataObjectTypeQRCode]
+        metaDataOutput.metadataObjectTypes = [AVMetadataObjectTypeAztecCode]
         
         let pv = AVCaptureVideoPreviewLayer(session: session)
         pv.videoGravity = AVLayerVideoGravityResizeAspectFill

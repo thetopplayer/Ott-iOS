@@ -137,4 +137,14 @@ extension UIImage {
         
         return nil
     }
+    
+    
+    func maskToPath(path: UIBezierPath) -> UIImage {
+        
+        UIGraphicsBeginImageContextWithOptions(self.size, false, 0);
+        path.addClip()
+        drawAtPoint(CGPointZero)
+        let maskedImage = UIGraphicsGetImageFromCurrentImageContext()
+        return maskedImage
+    }
 }

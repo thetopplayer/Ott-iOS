@@ -28,13 +28,16 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
     
     var myTopic: Topic?
     
+    var imageBackgroundColor = UIColor.colorWithHex(0xDEEEFF)
+    var imageColor = UIColor.blackColor()
+    var imageScale = CGFloat(4)
     
     private func setupDisplay() {
         
         if let topic = myTopic {
             
             topicLabel.text = topic.name!
-            qrCodeImage = ScanTransformer.sharedInstance.imageForObject(topic)
+            qrCodeImage = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: imageBackgroundColor, color: imageColor, scale: imageScale)
             qrCodeImageView.image = qrCodeImage
         }
     }

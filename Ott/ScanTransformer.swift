@@ -19,31 +19,14 @@
 
 import UIKit
 
-/* 
-adapted from 
-https://github.com/aschuch/AztecCode/blob/master/AztecCode/AztecCode.swift
-*/
+
 class AztecCode {
     
     /// CIAztecCodeGenerator generates 15x15 images with padding by default
-    let DefaultAztecCodeSize = CGSize(width: 19, height: 19)
+    static let defaultCodeSize = CGSize(width: 19, height: 19)
+    static let defaultPadding = CGFloat(2)
     
-    /// Data contained in the generated AztecCode
     let data: NSData
-    
-    /// Foreground color of the output
-    /// Defaults to black
-    var color = CIColor(red: 0, green: 0, blue: 0)
-    
-    /// Background color of the output
-    /// Defaults to white
-    var backgroundColor = CIColor(red: 1, green: 1, blue: 1)
-    
-    /// Size of the output
-    var size = CGSize(width: 200, height: 200)
-    
-    
-    // MARK: Init
     
     init(_ data: NSData) {
         self.data = data
@@ -54,48 +37,88 @@ class AztecCode {
     }
     
     
-    // MARK: Generate AztecCode
-    
-    /// The AztecCode's UIImage representation
-    var image: UIImage? {
+    func image(backgroundColor backgroundColor: UIColor, color: UIColor, scale: CGFloat) -> UIImage? {
         
-        if let ciImage = ciImage {
-            return UIImage(CIImage: ciImage)
+        if let ciimage = ciImage(backgroundColor: backgroundColor, color: color, scale: scale) {
+            return UIImage(CIImage: ciimage)
         }
         return nil
     }
     
-    /// The AztecCode's CIImage representation
-    var ciImage: CIImage? {
+    
+    func ciImage(backgroundColor backgroundColor: UIColor, color: UIColor, scale: CGFloat = 1) -> CIImage? {
         
-        // Generate AztecCode
         guard let azFilter = CIFilter(name: "CIAztecCodeGenerator") else {
             return nil
         }
-
+        
         azFilter.setDefaults()
         azFilter.setValue(data, forKey: "inputMessage")
         
-        // Color code and background
         guard let colorFilter = CIFilter(name: "CIFalseColor") else {
             return nil
         }
         
+        // convert colors
+        var red = CGFloat(0), green = CGFloat(0), blue = CGFloat(0), alpha = CGFloat(0)
+        backgroundColor.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        let backgroundCIColor = CIColor(red: red, green: green, blue: blue)
+        color.getRed(&red, green: &green, blue: &blue, alpha: &alpha)
+        let foregroundCIColor = CIColor(red: red, green: green, blue: blue)
+        
         colorFilter.setDefaults()
         colorFilter.setValue(azFilter.outputImage, forKey: "inputImage")
-        colorFilter.setValue(color, forKey: "inputColor0")
-        colorFilter.setValue(backgroundColor, forKey: "inputColor1")
+        colorFilter.setValue(foregroundCIColor, forKey: "inputColor0")
+        colorFilter.setValue(backgroundCIColor, forKey: "inputColor1")
         
-        // Size
-        let sizeRatioX = size.width / DefaultAztecCodeSize.width
-        let sizeRatioY = size.height / DefaultAztecCodeSize.height
-        let transform = CGAffineTransformMakeScale(sizeRatioX, sizeRatioY)
+        let transform = CGAffineTransformMakeScale(scale, scale)
         let transformedImage = colorFilter.outputImage!.imageByApplyingTransform(transform)
         
         return transformedImage
     }
 }
 
+
+class DotView: UIView {
+    
+    var fillColor = UIColor.whiteColor()
+    var borderColor = UIColor.blueColor()
+    var borderWidth = CGFloat(1)
+    
+    override init(frame: CGRect) {
+        
+        super.init(frame: frame)
+        backgroundColor = UIColor.clearColor()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        
+        super.init(coder: aDecoder)
+        backgroundColor = UIColor.clearColor()
+    }
+    
+    
+    convenience init(frame: CGRect, fillColor: UIColor, borderColor: UIColor, borderWidth: CGFloat) {
+        
+        self.init(frame: frame)
+        self.fillColor = fillColor
+        self.borderColor = borderColor
+        self.borderWidth = borderWidth
+    }
+    
+    
+    override func drawRect(rect: CGRect) {
+        
+        let rect = CGRectMake(borderWidth, borderWidth, bounds.size.width - 2 * borderWidth, bounds.size.height - 2 * borderWidth)
+        let path = UIBezierPath(ovalInRect: rect)
+        fillColor.setFill()
+        path.fill()
+        
+        path.lineWidth = borderWidth
+        borderColor.setStroke()
+        path.stroke()
+    }
+}
 
 
 class ScanTransformer {
@@ -107,7 +130,7 @@ class ScanTransformer {
     
     private let codePrefixLength = 4
     private let queryCodePosition = 3
-    private let codePrefix = "ott"
+    let codePrefix = "ott"
     
     enum QueryType: Character {
         case User = "0"
@@ -200,7 +223,7 @@ class ScanTransformer {
         }
         
         if let theType = queryTypeForObject(object) {
-            var result = String(codePrefix)
+            var result = codePrefix
             result.append(theType.rawValue)
             return result + objectID
         }
@@ -209,21 +232,49 @@ class ScanTransformer {
     }
     
     
-    private func image(fromCode code: String?, size: CGSize = CGSizeMake(100, 100)) -> UIImage? {
+    private func image(fromCode code: String?, backgroundColor: UIColor, color: UIColor, scale: CGFloat) -> UIImage? {
         
         if code == nil {
             return nil
         }
         
         let azCode = AztecCode(code!)
-        azCode.size = size
+        guard let codeImage = azCode.image(backgroundColor: backgroundColor, color: color, scale: scale) else {
+            print("ERROR - unable to generate code image")
+            return nil
+        }
         
-        return azCode.image
+        // mask edges (corners) of code image
+        let codePadding = (AztecCode.defaultPadding * scale) + 4
+        let codeImageHeight = codeImage.size.height
+        let maskPath = UIBezierPath(ovalInRect: CGRectMake(-codePadding, -codePadding, codeImageHeight + 2 * codePadding, codeImageHeight + 2 * codePadding))
+        let maskedCodeImage = codeImage.maskToPath(maskPath)
+        
+        let dotBorderWidth = CGFloat(1)
+        let innerDotBorder: CGFloat = {
+           
+            let diameter = codeImageHeight / 0.7
+            let padding = 0.5 * (diameter - codeImageHeight)
+            return CGFloat(ceilf(Float(padding) + 1))
+        }()
+        
+        let imageFrame = CGRectMake(0, 0, maskedCodeImage.size.width + 2 * innerDotBorder, maskedCodeImage.size.height + 2 * innerDotBorder)
+        let dotView = DotView(frame: imageFrame, fillColor: backgroundColor, borderColor: color, borderWidth: dotBorderWidth)
+        let dotImage = dotView.image()
+        
+        UIGraphicsBeginImageContextWithOptions(imageFrame.size, false, 0.0)
+        dotImage.drawInRect(imageFrame)
+        maskedCodeImage.drawInRect(CGRectMake(innerDotBorder, innerDotBorder, maskedCodeImage.size.width, maskedCodeImage.size.height))
+        let combinedImage = UIGraphicsGetImageFromCurrentImageContext();
+        UIGraphicsEndImageContext();
+
+        return combinedImage
     }
     
     
-    func imageForObject(object: PFObject) -> UIImage? {
+    func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, scale: CGFloat) -> UIImage? {
         
-        return image(fromCode: codeForObject(object))
+        let code = codeForObject(object)
+        return image(fromCode: code, backgroundColor: backgroundColor, color: color, scale: scale)
     }
 }
