@@ -1,5 +1,5 @@
 //
-//  TopicScanningViewController.swift
+//  ScanViewController.swift
 //  Ott
 //
 //  Created by Max on 6/25/15.
@@ -10,9 +10,7 @@ import UIKit
 import AVFoundation
 
 
-class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate {
-
-    private let segueToTopicDetailIdentifier = "segueToTopicDetail"
+class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate {
 
     //MARK: - Lifecycle
     
@@ -188,91 +186,96 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     //MARK: - Data
     
-    private var fetchedObject: PFObject?
-    private var fetchOperation: NSBlockOperation?
+    private var fetchOperation: BlockOperation?
     
-    private func fetchObject(forCode code: String, completion: (success: Bool, error: NSError?) -> Void) {
+    private func fetchObject(forCode code: String) {
         
-        let fetchOperation = NSBlockOperation(block: { () -> Void in
-
+        func fetchObject() {
+            
             if let query = ScanTransformer.sharedInstance.queryForCode(code) {
                 
                 var error: NSError?
                 let objects = query.findObjects(&error)
                 
-                if let theObject = objects!.first {
+                dispatch_async(dispatch_get_main_queue()) {
                     
-                    switch theObject {
+                    self.fetchingAlertViewController.dismissViewControllerAnimated(true, completion: { () -> Void in
                         
-                    case is User:
-                        
-                        print("user")
-                        
-                    case is Topic:
-                        
-                        print("topic")
-                        
-                    default:
-                        assert(false)
-                    }
+                        if let theObject = objects!.first as? PFObject {
+                            
+                            switch theObject {
+                                
+                            case is User:
+                                self.displayDetailsForUser(theObject as! User)
+                                
+                            case is Topic:
+                                self.displayDetailsForTopic(theObject as! Topic)
+                                
+                            default:
+                                self.handleCodeIsNotRecognized()
+                            }
+                        }
+                    })
                 }
             }
             else {
                 
+                assert(false)
                 // no query
             }
+        }
+        
+
+        let fetchOperation: BlockOperation = {
             
-        })
+            let reachabilityCondition: ReachabilityCondition = {
+                
+                let host = NSURL(string: "http://api.parse.com")
+                return ReachabilityCondition(host: host!)
+                }()
+            
+            let timeoutObserver = TimeoutObserver(timeout: 3600)
+            
+            let operation = BlockOperation {
+                fetchObject()
+            }
+            
+            operation.addCondition(reachabilityCondition)
+            operation.addObserver(timeoutObserver)
+            return operation
+            }()
         
         self.fetchOperation = fetchOperation // save in case we need to cancel
         operationQueue().addOperation(fetchOperation)
     }
     
     
-    private func handleRecognition(ofCode code: String) {
+    lazy var fetchingAlertViewController: UIAlertController = {
         
-        let alertViewController = UIAlertController(title: "Code Detected", message: "Fetching data...", preferredStyle: .Alert)
+        let controller = UIAlertController(title: "Code Detected", message: "Fetching data...", preferredStyle: .Alert)
         
         let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
             
-//            self.handleCancelAction(self)
+            self.fetchOperation?.cancel()
         })
         
-        alertViewController.addAction(cancelAction)
+        controller.addAction(cancelAction)
+        return controller
+        }()
+    
+    
+    private func handleRecognition(ofCode code: String) {
         
-        presentViewController(alertViewController, animated: true) { () }
-        
-        if ScanTransformer.sharedInstance.codeAppearsValid(code) {
+        presentViewController(fetchingAlertViewController, animated: true) { action in
             
-            fetchObject(forCode: code) { (success, error) in
-                
-                if success {
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        
-                    }
-                }
-                else {
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        
-                        if let error = error {
-                            (self as UIViewController).presentOKAlertWithError(error)
-                        }
-                        else {
-                            //                            (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred.  Please check your internet connection and try again.")
-                            
-                        }
-                    }
-                }
+            if ScanTransformer.sharedInstance.codeAppearsValid(code) {
+                self.fetchObject(forCode: code)
+            }
+            else {
+                self.handleCodeIsNotRecognized()
             }
         }
-        else {
-            
-        }
     }
-    
-
     
 
     private func handleScanFailure() {
@@ -282,7 +285,7 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler:
             { action in self.startScanning() })
         
-        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in self.handleCancelAction(self) })
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in self.handleCancelScanAction(self) })
         
         alertViewController.addAction(okAction)
         alertViewController.addAction(cancelAction)
@@ -292,33 +295,18 @@ class TopicScanningViewController: ViewController, AVCaptureMetadataOutputObject
     
     private func handleCodeIsNotRecognized() {
         
-        let alertViewController = UIAlertController(title: "Invalid Code", message: "The scanned code does not represent a valid topic.  Do you want to scan another?", preferredStyle: .Alert)
+        let alertViewController = UIAlertController(title: "Invalid Code", message: "The scanned code does not represent an Ott object.  Do you want to scan another?", preferredStyle: .Alert)
         
         let okAction = UIAlertAction(title: "Yes", style: UIAlertActionStyle.Default, handler:
             { action in self.startScanning() })
         
-        let cancelAction = UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { action in self.handleCancelAction(self) })
+        let cancelAction = UIAlertAction(title: "No", style: UIAlertActionStyle.Cancel, handler: { action in self.handleCancelScanAction(self) })
         
         alertViewController.addAction(okAction)
         alertViewController.addAction(cancelAction)
         presentViewController(alertViewController, animated: true) { () -> Void in }
     }
 
-
-private func presentObjectDetailView() {
-    
-}
-
-
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        
-        if segue.identifier == segueToTopicDetailIdentifier {
-            
-            let topicDetailController = segue.destinationViewController as! TopicDetailViewController
-
-        }
-    }
-    
     
     
     //MARK: - Actions
@@ -350,13 +338,21 @@ private func presentObjectDetailView() {
     
     
     //MARK: - Navigation
-
-func displayUserDetailsForUser(user: User) {
     
-}
+    func displayDetailsForTopic(topic: Topic) {
+        
+        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: topic)
+    }
+    
+    
+    func displayDetailsForUser(user: User) {
 
-
-    @IBAction func handleCancelAction(sender: AnyObject) {
+        print("details for user")
+//        (navigationController as! NavigationController).presentUserDetailViewController(withUser: user)
+    }
+    
+    
+    @IBAction func handleCancelScanAction(sender: AnyObject) {
         
         stopScanning()
         dismissViewControllerAnimated(true) { () -> Void in

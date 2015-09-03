@@ -14,7 +14,10 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
 
     @IBOutlet weak var topicLabel: UILabel!
     @IBOutlet weak var codeImageView: UIImageView!
-    
+    @IBOutlet weak var printButtonItem: UIBarButtonItem!
+    @IBOutlet weak var emailButtonItem: UIBarButtonItem!
+    @IBOutlet weak var saveToPhotosButtonItem: UIBarButtonItem!
+   
     
     override func prefersStatusBarHidden() -> Bool {
         return true;
@@ -25,27 +28,54 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
         
         super.viewWillAppear(animated)
         setupDisplay()
+        generateImage()
     }
 
     
     var myTopic: Topic?
     
+    private var codeImage: UIImage?
     var imageBackgroundColor = UIColor.colorWithHex(0xDEEEFF)
     var imageColor = UIColor.blackColor()
     var imageScale = CGFloat(5)
+    
+    private func generateImage() {
+        
+        guard let topic = myTopic else {
+            return
+        }
+        
+        let generateImageOperation = NSBlockOperation { () -> Void in
+            
+            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, scale: self.imageScale) {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.codeImage = image
+                    self.codeImageView.image = image
+                    self.printButtonItem.enabled = true
+                    self.emailButtonItem.enabled = true
+                    self.saveToPhotosButtonItem.enabled = true
+                }
+            }
+        }
+        
+        operationQueue().addOperation(generateImageOperation)
+    }
+    
     
     private func setupDisplay() {
         
         if let topic = myTopic {
             
             topicLabel.text = "#" + topic.name!
-            codeImage = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: imageBackgroundColor, color: imageColor, scale: imageScale)
-            codeImageView.image = codeImage
+
+            self.printButtonItem.enabled = false
+            self.emailButtonItem.enabled = false
+            self.saveToPhotosButtonItem.enabled = false
         }
     }
     
-    
-    private var codeImage: UIImage?
     
     class ImagePrintRenderer: UIPrintPageRenderer {
         
@@ -109,6 +139,15 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
     
     @IBAction func handlePhotosAction(sender: AnyObject) {
         
+        UIImageWriteToSavedPhotosAlbum(codeImage!, self, "image:didFinishSavingWithError:contextInfo:", nil)
+    }
+    
+    
+    func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo:UnsafePointer<Void>) {
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.handleCancelAction(self)
+        }
     }
     
     

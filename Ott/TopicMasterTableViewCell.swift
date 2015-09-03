@@ -25,18 +25,14 @@ class TopicMasterTableViewCell: TableViewCell {
     var displayedTopic: Topic? {
         
         set {
-            if let oldTopic = _displayedTopic {
-                
-                if oldTopic.isEqual(newValue) {
-                    updateContents(ignoringImage: true)
-                }
-                else {
-                    _displayedTopic = newValue
-                    updateContents(ignoringImage: false)
-                }
+            
+            let oldTopic = _displayedTopic
+            _displayedTopic = newValue
+            
+            if oldTopic != nil {
+                updateContents(ignoringImage: oldTopic!.isEqual(newValue))
             }
             else {
-                _displayedTopic = newValue
                 updateContents(ignoringImage: false)
             }
         }

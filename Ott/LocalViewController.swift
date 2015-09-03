@@ -26,6 +26,7 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.rightBarButtonItem = createButton
         
         fetchTopics(.Cached)
+        fetchTopics(.NewLocation)
     }
 
     
@@ -157,26 +158,42 @@ class LocalViewController: TopicMasterViewController {
         
         displayStatus(.Fetching)
         
+        let reachabilityCondition: ReachabilityCondition = {
+            
+            let host = NSURL(string: "http://api.parse.com")
+            return ReachabilityCondition(host: host!)
+            }()
+        
+        let timeoutObserver = TimeoutObserver(timeout: 3600)
+        
+        
         switch type {
             
         case .Cached:
 
-            let fetchFromCacheOperation = NSBlockOperation(block: fetchFromCache)
-            fetchFromCacheOperation.addCompletionBlock(fetchForNewLocation)
+            let fetchFromCacheOperation = BlockOperation {
+                fetchFromCache()
+            }
             operationQueue.addOperation(fetchFromCacheOperation)
             
         case .NewLocation:
             
-            // TODO : ADD GUARD FOR REACHABILITY
-            let fetchForNewLocationOperation = NSBlockOperation(block: fetchForNewLocation)
+            let fetchForNewLocationOperation = BlockOperation {
+                fetchForNewLocation()
+            }
             fetchForNewLocationOperation.addCompletionBlock(fetchCompletion)
+            fetchForNewLocationOperation.addCondition(reachabilityCondition)
+            fetchForNewLocationOperation.addObserver(timeoutObserver)
             operationQueue.addOperation(fetchForNewLocationOperation)
             
         case .UpdateCurrentLocation:
             
-            // TODO : ADD GUARD FOR REACHABILITY
-            let fetchToUpdateLocationOperation = NSBlockOperation(block: fetchToUpdateLocation)
+            let fetchToUpdateLocationOperation = BlockOperation {
+                fetchToUpdateLocation()
+            }
             fetchToUpdateLocationOperation.addCompletionBlock(fetchCompletion)
+            fetchToUpdateLocationOperation.addCondition(reachabilityCondition)
+            fetchToUpdateLocationOperation.addObserver(timeoutObserver)
             operationQueue.addOperation(fetchToUpdateLocationOperation)
         }
     }

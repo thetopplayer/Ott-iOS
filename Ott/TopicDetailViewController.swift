@@ -6,6 +6,14 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
+
+/*
+
+Note that the topic is obtained from the Navigation Controller
+
+*/
+
+
 import UIKit
 import MapKit
 
@@ -47,6 +55,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         setupTableView()
         setupMapView()
         displayType = .List  // affirmatively set in order to setup display
+        
         startObservations()
     }
     
@@ -57,6 +66,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if let navController = navigationController as? NavigationController {
             myTopic = navController.topic
+            initializeViewForTopic()
         }
     }
     
@@ -68,6 +78,30 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     //MARK: - Display
+    
+    private var didInitializeViewForTopic = false
+    private func initializeViewForTopic() {
+                
+        guard let topic = myTopic else {
+            return
+        }
+        
+        if didInitializeViewForTopic == false {
+            
+            displayMode = currentUser().didPostToTopic(topic) ? .AllData : .RequirePostEntry
+            
+            let title = "#" + topic.name!
+            self.navigationItem.title = title
+            displayType = .List
+            
+            if displayMode == .AllData {
+                fetchPosts()
+            }
+            
+            didInitializeViewForTopic = true
+       }
+    }
+    
     
     private enum DisplayMode {
         case RequirePostEntry, AllData
@@ -260,44 +294,24 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Data
     
-    var myTopic: Topic? {
-        
-        didSet {
-            
-            displayMode = currentUser().didPostToTopic(myTopic!) ? .AllData : .RequirePostEntry
-
-            let title = "#" + myTopic!.name!
-            self.navigationItem.title = title
-            displayType = .List
-
-            if displayMode == .AllData {
-                fetchPosts()
-            }
-        }
-    }
-    
-    
+    var myTopic: Topic?
     private var posts = [Post]()
     
     private var _dateOfMostRecentPost: NSDate?
-    private func fetchPosts(reloadingTopic reloadTopic: Bool = false) {
+    
+    private func fetchPosts(reloadingTopic reloadingTopic: Bool = false) {
         
-        displayStatus(type: .Fetching)
-
-        // ADD GUARD FOR REACHABILITY
-        
-        let onlineFetchOperation = NSBlockOperation(block: { () -> Void in
+        func reloadTopic() {
             
-            // update topic as well
-            if reloadTopic {
+            self.myTopic?.fetch()
+            dispatch_async(dispatch_get_main_queue()) {
                 
-               self.myTopic?.fetch()
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    let userInfo: [NSObject: AnyObject] = [TopicDetailViewController.Notifications.TopicKey: self.myTopic!]
-                    NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidRefreshTopic, object: self, userInfo: userInfo)
-                }
+                let userInfo: [NSObject: AnyObject] = [TopicDetailViewController.Notifications.TopicKey: self.myTopic!]
+                NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidRefreshTopic, object: self, userInfo: userInfo)
             }
+        }
+        
+        func fetchPosts() {
             
             let query = Post.query()!
             query.orderByDescending(DataKeys.CreatedAt)
@@ -324,9 +338,57 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     }
                 }
             }
-        })
+        }
         
-        operationQueue().addOperation(onlineFetchOperation)
+        
+        /*****/
+        
+        displayStatus(type: .Fetching)
+
+        let reachabilityCondition: ReachabilityCondition = {
+            
+            let host = NSURL(string: "http://api.parse.com")
+            return ReachabilityCondition(host: host!)
+            }()
+        
+        if reloadingTopic {
+            
+            let reloadOperation: BlockOperation = {
+                
+                let operation = BlockOperation {
+                    reloadTopic()
+                }
+                
+                operation.addCondition(reachabilityCondition)
+                let timeoutObserver = TimeoutObserver(timeout: 3600)
+                operation.addObserver(timeoutObserver)
+                return operation
+                }()
+            
+            operationQueue().addOperation(reloadOperation)
+        }
+        
+        let fetchPostsOperation: BlockOperation = {
+            
+            let operation = BlockOperation {
+                fetchPosts()
+            }
+            
+            operation.addCondition(reachabilityCondition)
+            let timeoutObserver = TimeoutObserver(timeout: 3600)
+            operation.addObserver(timeoutObserver)
+            return operation
+            }()
+        
+        operationQueue().addOperation(fetchPostsOperation)
+    }
+    
+    
+    private func abortFetches() {
+        
+        for operation in operationQueue().operations {
+            operation.cancel()
+        }
     }
     
     
@@ -352,7 +414,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
-        myPost.saveInBackgroundWithBlock() { (succeeded, error) in
+        myPost.saveEventually() { (succeeded, error) in
             
             self.displayStatus(type: .Normal)
             
@@ -408,88 +470,17 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayMode = .RequirePostEntry
     }
     
-//    private var qrCodeImage: UIImage?
-//    
-//    lazy private var alertViewController: UIAlertController = {
-//        
-//        let controller = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
-//        
-//        let printAction = UIAlertAction(title: "Print", style: UIAlertActionStyle.Default, handler: { action in
-//            
-//            let printController = UIPrintInteractionController.sharedPrintController()
-//            let printInfo = UIPrintInfo(dictionary:nil)
-//            printInfo.outputType = UIPrintInfoOutputType.General
-//            printInfo.jobName = "Ott Code"
-//            printController.printInfo = printInfo
-//            
-//            printController.printingItem = self.qrCodeImage
-//            
-//            printController.presentAnimated(true) { (controller, status, error) -> Void in
-//                
-////                self.hideCodeView()
-//            }
-//        })
-//        
-//        let emailAction = UIAlertAction(title: "Email", style: UIAlertActionStyle.Default, handler: { action in
-//            
-//            self.hideCodeView()
-//        })
-//        
-//        let photosAction = UIAlertAction(title: "Save to Photos", style: UIAlertActionStyle.Default, handler: { action in
-//            
-//            self.hideCodeView()
-//        })
-//        
-//        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
-//            
-//            self.hideCodeView()
-//        })
-//        
-//        controller.addAction(printAction)
-//        controller.addAction(emailAction)
-//        controller.addAction(photosAction)
-//        controller.addAction(cancelAction)
-//        
-//        return controller
-//        }()
-//    
-//    
-//    private func showCodeViewAndPresentAlert() {
-//        
-//        self.qrCodeDisplayView.alpha = 0
-//        self.qrCodeImageView.alpha = 0
-//        self.qrCodeDisplayView.hidden = false
-//        UIView.animateWithDuration(0.3, animations: { () -> Void in
-//            
-//            self.qrCodeDisplayView.alpha = 1
-//            self.qrCodeImageView.alpha = 1
-//            }, completion: { (Bool) -> Void in
-//                
-//                self.presentViewController(self.alertViewController, animated: true, completion: nil)
-//        })
-//    }
-//    
-//    
-//    private func hideCodeView() {
-//        
-//        UIView.animateWithDuration(0.3, animations: { () -> Void in
-//            
-//            self.qrCodeDisplayView.alpha = 0
-//            self.qrCodeImageView.alpha = 0
-//            }, completion: { (Bool) -> Void in
-//                
-//                self.qrCodeDisplayView.hidden = true
-//        })
-//    }
-
     
     @IBAction func handleExportAction(sender: AnyObject) {
         
         performSegueWithIdentifier(segueToExportIdentifier, sender: self)
-//        
-//        qrCodeImage = ScanTransformer.sharedInstance.imageForObject(myTopic!)
-//        qrCodeImageView.image = qrCodeImage
-//        showCodeViewAndPresentAlert()
+    }
+    
+    
+    private func goodbye() {
+        
+        abortFetches()
+        performSegueWithIdentifier("unwindToTopicMasterView", sender: self)
     }
     
     
@@ -502,16 +493,19 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             displayMode = .AllData
         }
         else {
-            dismissViewControllerAnimated(true) { () -> Void in }
+            goodbye()
         }
     }
     
     
     @IBAction func handleDoneAction(sender: AnyObject) {
         
-        dismissViewControllerAnimated(true) { () -> Void in }
+        goodbye()
     }
     
+    
+    
+    //MARK: - Navigation
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
@@ -519,7 +513,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             destinationController.myTopic = myTopic
         }
     }
-    
+
     
     
     //MARK: - TableView

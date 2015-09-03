@@ -160,7 +160,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Title" id="xsj-vc-ee9">
-                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="FVi-SV-7wG"/>
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="FVi-SV-7wG">
+                            <connections>
+                                <action selector="handleDoneAction:" destination="JRp-B9-rK5" id="Xvv-tn-gXQ"/>
+                            </connections>
+                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" image="paperMap" id="UdC-wy-iyi">
                             <connections>
                                 <action selector="handleToggleViewAction:" destination="JRp-B9-rK5" id="AWo-0W-NB7"/>
@@ -171,14 +175,15 @@
                         <outlet property="mapView" destination="6Ch-ty-LY7" id="ODM-Yv-QYD"/>
                         <outlet property="postInputView" destination="N7I-Dk-brQ" id="CL8-nq-AyE"/>
                         <outlet property="postInputViewBottomConstraint" destination="Aah-Oo-Wt2" id="lvj-pF-fvv"/>
-                        <outlet property="qrCodeImageView" destination="FUJ-mg-lny" id="4eQ-GN-YtJ"/>
                         <outlet property="tableView" destination="Y5K-j4-5dG" id="fyV-8u-CwC"/>
                         <outlet property="toolbar" destination="fhB-VS-06h" id="GrT-kY-bdg"/>
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>
                         <segue destination="0ZF-g2-KQT" kind="showDetail" identifier="segueToExport" id="JjF-Sc-TLg"/>
+                        <segue destination="h4G-C7-IFZ" kind="unwind" identifier="unwindToTopicMasterView" unwindAction="unwindForSegue:towardsViewController:" id="aB8-9h-1WY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="h4G-C7-IFZ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1789" y="-83"/>
         </scene>
@@ -251,6 +256,9 @@
                     <nil key="simulatedStatusBarMetrics"/>
                     <connections>
                         <outlet property="codeImageView" destination="FUJ-mg-lny" id="MHt-rB-tco"/>
+                        <outlet property="emailButtonItem" destination="FAj-EY-9rh" id="jjK-ld-m9L"/>
+                        <outlet property="printButtonItem" destination="Sdm-6S-Rcq" id="SUc-MA-QoQ"/>
+                        <outlet property="saveToPhotosButtonItem" destination="fhc-XU-IU4" id="zpD-7j-QNk"/>
                         <outlet property="topicLabel" destination="T7Z-BP-bKn" id="sck-m8-wRC"/>
                     </connections>
                 </viewController>

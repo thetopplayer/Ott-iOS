@@ -24,7 +24,7 @@ class TopicMasterViewController: TableViewController {
         super.viewDidLoad()
         
         setupTableView()
-        self.view.addSubview(statusLabel)
+        view.addSubview(statusLabel)
         startObservations()
     }
 
@@ -326,6 +326,11 @@ class TopicMasterViewController: TableViewController {
         if let destinationController = segue.destinationViewController as? NavigationController {
             destinationController.topic = selection
         }
+    }
+    
+    
+    @IBAction override func unwindForSegue(unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+        
     }
 
 }

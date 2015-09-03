@@ -8,12 +8,38 @@
 
 import UIKit
 
+
+class SegueToScanViewController: UIStoryboardSegue {
+    
+    static let identifier = "segueToScan"
+    
+    init(source: UIViewController) {
+        
+        let scanViewController: UIViewController = {
+            
+            let storyboard = UIStoryboard(name: "Scan", bundle: nil)
+            return storyboard.instantiateViewControllerWithIdentifier("scanViewController")
+        }()
+
+        super.init(identifier: SegueToScanViewController.identifier, source: source, destination: scanViewController)
+    }
+    
+    override func perform() {
+        
+        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
+    }
+}
+
+
+
 class NavigationController: UINavigationController {
     
     var topic: Topic?
     var post: Post?
     var author: User?
     
+    
+
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
         
@@ -54,8 +80,11 @@ class NavigationController: UINavigationController {
     func presentTopicScanViewController() {
         
         //todo - request camera permission before presenting
+
+        let segue = SegueToScanViewController(source: self)
+        segue.perform()
         
-        presentViewController(storyboard: "TopicScan", identifier: "topicScanViewController", completion: nil)
+//        presentViewController(storyboard: "TopicScan", identifier: "topicScanViewController", completion: nil)
     }
     
     

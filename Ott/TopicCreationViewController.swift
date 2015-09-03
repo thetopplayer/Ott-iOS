@@ -70,7 +70,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
-        topic.saveInBackgroundWithBlock() { (succeeded, error) in
+        topic.saveEventually() { (succeeded, error) in
             
             if succeeded {
                 
@@ -97,7 +97,6 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             }
         }
     }
-    
     
     private func discardChanges() {
         

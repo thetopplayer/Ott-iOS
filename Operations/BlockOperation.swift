@@ -32,15 +32,15 @@ class BlockOperation: Operation {
     /**
         A convenience initializer to execute a block on the main queue.
         
-        - parameter mainQueueBlock: The block to execute on the main queue. Note
+        - parameter queueBlock: The block to execute on the global default queue. Note
             that this block does not have a "continuation" block to execute (unlike
             the designated initializer). The operation will be automatically ended 
-            after the `mainQueueBlock` is executed.
+            after the `queueBlock` is executed.
     */
-    convenience init(mainQueueBlock: dispatch_block_t) {
+    convenience init(queueBlock: dispatch_block_t) {
         self.init(block: { continuation in
-            dispatch_async(dispatch_get_main_queue()) {
-                mainQueueBlock()
+            dispatch_async(dispatch_get_global_queue(QOS_CLASS_USER_INITIATED, 0)) {
+                queueBlock()
                 continuation()
             }
         })

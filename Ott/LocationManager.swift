@@ -36,7 +36,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         
         super.init()
         delegate = self
-        desiredAccuracy = accuracy
+//        desiredAccuracy = accuracy
         
         if permissionGranted {
             startUpdatingLocation()
