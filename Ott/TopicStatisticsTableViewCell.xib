@@ -10,17 +10,17 @@
         <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" reuseIdentifier="topicStats" rowHeight="101" id="RK1-wy-oDi" customClass="TopicStatisticsTableViewCell" customModule="Ott" customModuleProvider="target">
             <rect key="frame" x="0.0" y="0.0" width="600" height="101"/>
             <autoresizingMask key="autoresizingMask"/>
-            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="RK1-wy-oDi" id="Ylb-t7-4Ju">
+            <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" ambiguous="YES" tableViewCell="RK1-wy-oDi" id="Ylb-t7-4Ju">
                 <rect key="frame" x="0.0" y="0.0" width="600" height="100"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-dO-SWQ">
-                        <rect key="frame" x="-1" y="8" width="602" height="84"/>
+                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jfY-dO-SWQ">
+                        <rect key="frame" x="-1" y="4" width="602" height="84"/>
                         <subviews>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="Myi-ha-Qiw">
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Myi-ha-Qiw">
                                 <rect key="frame" x="40" y="8" width="130" height="68"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="1000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QSD-g0-7fZ">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="1000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QSD-g0-7fZ">
                                         <rect key="frame" x="8" y="0.0" width="114" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="SzD-nT-UZ3"/>
@@ -34,7 +34,7 @@
                                             </mask>
                                         </variation>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Posts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MSj-JU-nFS">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Posts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MSj-JU-nFS">
                                         <rect key="frame" x="8" y="51" width="114" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="S2K-vf-8Oy"/>
@@ -60,10 +60,10 @@
                                     <constraint firstAttribute="trailing" secondItem="QSD-g0-7fZ" secondAttribute="trailing" constant="8" id="fCa-jX-CLX"/>
                                 </constraints>
                             </view>
-                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="AgR-xs-cAx">
+                            <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="AgR-xs-cAx">
                                 <rect key="frame" x="432" y="8" width="130" height="68"/>
                                 <subviews>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hiw-Zd-ViF">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hiw-Zd-ViF">
                                         <rect key="frame" x="8" y="0.0" width="114" height="48"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="dex-EN-uEd"/>
@@ -77,7 +77,7 @@
                                             </mask>
                                         </variation>
                                     </label>
-                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Rating" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jpr-Yp-1Vy">
+                                    <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Rating" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jpr-Yp-1Vy">
                                         <rect key="frame" x="8" y="51" width="114" height="17"/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="N0a-HJ-XPq"/>
@@ -124,7 +124,7 @@
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="jfY-dO-SWQ" secondAttribute="trailing" constant="-1" id="EK1-BS-LME"/>
                     <constraint firstAttribute="bottom" secondItem="jfY-dO-SWQ" secondAttribute="bottom" constant="8" id="YIt-4Z-GcO"/>
-                    <constraint firstItem="jfY-dO-SWQ" firstAttribute="top" secondItem="Ylb-t7-4Ju" secondAttribute="top" constant="8" id="YOS-gx-NqJ"/>
+                    <constraint firstItem="jfY-dO-SWQ" firstAttribute="top" secondItem="Ylb-t7-4Ju" secondAttribute="top" constant="4" id="YOS-gx-NqJ"/>
                     <constraint firstItem="jfY-dO-SWQ" firstAttribute="leading" secondItem="Ylb-t7-4Ju" secondAttribute="leading" constant="-1" id="eGh-za-QFL"/>
                 </constraints>
             </tableViewCellContentView>

@@ -26,6 +26,7 @@ class TopicStatisticsTableViewCell: TableViewCell {
         contentView.backgroundColor = UIColor.background()
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
         innerContentContainer?.addBorder()
+        innerContentContainer?.addDownShadow()
         countLabel.text = ""
         ratingLabel.text = ""
     }

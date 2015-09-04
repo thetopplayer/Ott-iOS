@@ -1,5 +1,5 @@
 //
-//  TopicExportViewController.swift
+//  ExportViewController.swift
 //  Ott
 //
 //  Created by Max on 9/1/15.
@@ -10,17 +10,31 @@ import UIKit
 import MessageUI
 
 
-class TopicExportViewController: ViewController, UIPrintInteractionControllerDelegate, MFMailComposeViewControllerDelegate {
+class ExportViewController: ViewController, UIPrintInteractionControllerDelegate, MFMailComposeViewControllerDelegate {
 
+    @IBOutlet weak var captionContainer: UIView!
     @IBOutlet weak var topicLabel: UILabel!
     @IBOutlet weak var codeImageView: UIImageView!
     @IBOutlet weak var printButtonItem: UIBarButtonItem!
     @IBOutlet weak var emailButtonItem: UIBarButtonItem!
     @IBOutlet weak var saveToPhotosButtonItem: UIBarButtonItem!
+    @IBOutlet weak var addNameSwith: UISwitch!
+    @IBOutlet weak var addNameLabel: UILabel!
    
     
     override func prefersStatusBarHidden() -> Bool {
         return true;
+    }
+    
+    
+    var didLoadView = false
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        captionContainer.backgroundColor = UIColor.background().colorWithAlphaComponent(0.4)
+        captionContainer.addBorder()
+        
+        didLoadView = true
     }
     
     
@@ -32,12 +46,24 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
     }
 
     
-    var myTopic: Topic?
+    var myTopic: Topic? {
+        
+        didSet {
+            
+            if didLoadView {
+                setupDisplay()
+                generateImage()
+            }
+        }
+    }
     
+    
+    private var codeText: String?
     private var codeImage: UIImage?
     var imageBackgroundColor = UIColor.colorWithHex(0xDEEEFF)
     var imageColor = UIColor.blackColor()
     var imageScale = CGFloat(5)
+    var includeTopicName = true
     
     private func generateImage() {
         
@@ -47,7 +73,13 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
         
         let generateImageOperation = NSBlockOperation { () -> Void in
             
-            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, scale: self.imageScale) {
+            self.codeText = ScanTransformer.sharedInstance.codeForObject(topic)
+            var textForImage: String?
+            if self.includeTopicName {
+                textForImage = "#" + topic.name!
+            }
+            
+            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, scale: self.imageScale, withText: textForImage) {
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -74,6 +106,14 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
             self.emailButtonItem.enabled = false
             self.saveToPhotosButtonItem.enabled = false
         }
+    }
+    
+    
+    @IBAction func handleSwitchAction(sender: UISwitch?) {
+        
+        includeTopicName = sender!.on
+        addNameLabel.textColor = includeTopicName ? UIColor.blackColor() : UIColor.grayColor()
+        generateImage()
     }
     
     
@@ -118,12 +158,19 @@ class TopicExportViewController: ViewController, UIPrintInteractionControllerDel
         let emailVC = MFMailComposeViewController()
         emailVC.mailComposeDelegate = self
         
-        let subject = "Ott image for #" + myTopic!.name!
+        let subject = "Ott #" + myTopic!.name!
         emailVC.setSubject(subject)
         
         if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
             
-            emailVC.setMessageBody("Users will be sent directly to your topic when they scan this image from within the Ott app.", isHTML: true)
+            var message = "Click on the link or scan the code from within the Ott app to give your take on \(myTopic!.name!)"
+            if let link = self.codeText {
+                
+                let url = "<br></br><center><a href='\(link)'>#\(myTopic!.name!)</a></center>"
+                message += url
+            }
+            
+            emailVC.setMessageBody(message, isHTML: true)
             
             let filename = myTopic!.name! + ".jpeg"
             emailVC.addAttachmentData(jpegData, mimeType:"image/jpeg", fileName:filename)

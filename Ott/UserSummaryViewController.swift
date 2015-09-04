@@ -1,5 +1,5 @@
 //
-//  HomeViewController.swift
+//  UserSummaryViewController.swift
 //  Ott
 //
 //  Created by Max on 6/24/15.
@@ -10,22 +10,17 @@ import UIKit
 
 
 
-class HomeViewController: ViewController {
+class UserSummaryViewController: ViewController {
 
     @IBOutlet weak var userContainerView: UIView!
     @IBOutlet weak var avatarImageView: UIImageView!
     @IBOutlet weak var nameTextLabel: UILabel!
     @IBOutlet weak var handleTextLabel: UILabel!
+    @IBOutlet weak var bioTextLabel: UILabel!
     @IBOutlet weak var summaryContainerView: UIView!
-    @IBOutlet weak var summaryTextLabel: UILabel!
-    
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableContainerView: UIView!
     
     private var topicTableViewController: TopicMasterViewController
-    private let tableHeaderNibName = "HomeTableHeaderView"
-    private let headerReuseName = "headerView"
-    private let headerViewHeight = CGFloat(50)
-    
 
 
     //MARK: - Lifecycle
@@ -55,11 +50,6 @@ class HomeViewController: ViewController {
 
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
-        
-//        topicTableViewController.fetchPredicate = NSPredicate(format: "author = %@", currentUser())
-        topicTableViewController.tableView = tableView
-        topicTableViewController.setHeaderView(nibName: tableHeaderNibName, reuseIdentifier: headerReuseName, height: headerViewHeight)
-        topicTableViewController.viewDidLoad()
         
         let scanButton = UIBarButtonItem(image: UIImage(named: "QRCode"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
@@ -100,8 +90,13 @@ class HomeViewController: ViewController {
     
     private func updateDisplayedInformation() {
         
-        self.nameTextLabel.text = currentUser().name
-        self.handleTextLabel.text = currentUser().username
+        nameTextLabel.text = currentUser().name
+        handleTextLabel.text = currentUser().username
+        
+        if let bio = currentUser().bio {
+            bioTextLabel.text = bio
+        }
+        
         if currentUser().hasImage {
             
             currentUser().getImage {
@@ -121,39 +116,7 @@ class HomeViewController: ViewController {
             avatarImageView.image = User.defaultAvatar
         }
         
-//        summaryTextLabel.attributedText = self.attributedUserDetails(user)
     }
-    
-    /*
-    private func attributedUserDetails(user: User) -> NSAttributedString {
-        
-        var numberAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor()]
-        numberAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Bold", size: 15)
-        
-        let s1 = NSMutableAttributedString(string: "\(user.numberOfTopics)", attributes: numberAttributes)
-        
-        var textAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor()]
-        textAttributes[NSFontAttributeName] = UIFont(name: "HelveticaNeue-Regular", size: 12)
-        
-        let dateFormatter = NSDateFormatter()
-        dateFormatter.dateStyle = .MediumStyle
-        
-        var s2: NSAttributedString
-        let t = user.numberOfTopics == 1 ? " TOPIC  -  " : " TOPICS  -  "
-        s2 = NSAttributedString(string: t, attributes: textAttributes)
-        
-        let s3 = NSMutableAttributedString(string: "\(user.numberOfPosts)", attributes: numberAttributes)
-        
-        var s4: NSAttributedString
-        let p = user.numberOfPosts == 1 ? " POSTS" : " POSTS"
-        s4 = NSAttributedString(string: p, attributes: textAttributes)
-        s3.appendAttributedString(s4)
-        
-        s1.appendAttributedString(s2)
-        s1.appendAttributedString(s3)
-        return s1
-    }
-*/
 
     
     

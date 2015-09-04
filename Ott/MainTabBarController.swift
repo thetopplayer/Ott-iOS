@@ -13,43 +13,87 @@ class MainTabBarController: UITabBarController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
+        loadViewControllers()
         updateViewControllers()
         startObservations()
     }
 
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
+    
+    enum ViewControllerPositions: Int {
+        
+        case LocalTopics = 0
+        case Trending = 1
+        case Following = 2
+        case User = 3
+    }
+    
+    
+    private lazy var noPermissionViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "LocationNoPermissionViewController", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    private lazy var localTopicsViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "LocalTopics", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    private lazy var trendingViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "Trending", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    private lazy var followingViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "Following", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    private lazy var userSummaryViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "UserSummary", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    
+    var didLoadViewControllers = false
+    private func loadViewControllers() {
+        
+        if didLoadViewControllers {
+            return
+        }
+        
+        viewControllers = [trendingViewController, followingViewController, userSummaryViewController]
+        didLoadViewControllers = true
     }
     
     
     var didInsertLocalTopicsViewController = false
-    
     private func updateViewControllers() {
         
-        let localTopicsViewControllerIndex = 0
-        
-        func noPermissionViewController() -> UIViewController {
+        func updateLocalTopicsVC() {
             
-            let storyboard = UIStoryboard(name: "LocationNoPermissionViewController", bundle: nil)
-            return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
-        }
-        
-        func localTopicsViewController() -> UIViewController {
+            if didInsertLocalTopicsViewController {
+                viewControllers?.removeAtIndex(ViewControllerPositions.LocalTopics.rawValue)
+            }
             
-            let storyboard = UIStoryboard(name: "LocalTopics", bundle: nil)
-            return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+            let viewController = LocationManager.sharedInstance.permissionGranted ? localTopicsViewController : noPermissionViewController
+            
+            viewControllers?.insert(viewController, atIndex: ViewControllerPositions.LocalTopics.rawValue)
+            didInsertLocalTopicsViewController = true
         }
         
-        if didInsertLocalTopicsViewController {
-            viewControllers?.removeAtIndex(localTopicsViewControllerIndex)
-        }
+        updateLocalTopicsVC()
         
-        let viewController = LocationManager.sharedInstance.permissionGranted ? localTopicsViewController() : noPermissionViewController()
-        
-        viewControllers?.insert(viewController, atIndex: localTopicsViewControllerIndex)
-        didInsertLocalTopicsViewController = true
-        
-        selectedViewController = viewController
+        selectedViewController = viewControllers?.first
     }
     
     

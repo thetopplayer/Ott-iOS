@@ -128,9 +128,14 @@ class ScanTransformer {
         }()
     
     
-    private let codePrefixLength = 4
-    private let queryCodePosition = 3
-    let codePrefix = "ott"
+    static let codePrefix = "ott://"
+    private let codePrefixLength: Int = {
+        return codePrefix.length
+    }()
+    
+    private let queryCodePosition: Int = {
+        return codePrefix.length - 1
+    }()
     
     enum QueryType: Character {
         case User = "0"
@@ -173,7 +178,7 @@ class ScanTransformer {
     
     func codeAppearsValid(code: String) -> Bool {
         
-        if code.hasPrefix(codePrefix) {
+        if code.hasPrefix(ScanTransformer.codePrefix) {
             return queryTypeForCode(code) != nil
         }
         return false
@@ -215,7 +220,7 @@ class ScanTransformer {
     
     //MARK: - Code and Image Generation
     
-    private func codeForObject(object: PFObject) -> String? {
+    func codeForObject(object: PFObject) -> String? {
         
         guard let objectID = object.objectId else {
             print ("Error:  object has no Id")
@@ -223,7 +228,7 @@ class ScanTransformer {
         }
         
         if let theType = queryTypeForObject(object) {
-            var result = codePrefix
+            var result = ScanTransformer.codePrefix
             result.append(theType.rawValue)
             return result + objectID
         }
@@ -232,7 +237,7 @@ class ScanTransformer {
     }
     
     
-    private func image(fromCode code: String?, backgroundColor: UIColor, color: UIColor, scale: CGFloat) -> UIImage? {
+    private func image(fromCode code: String?, backgroundColor: UIColor, color: UIColor, scale: CGFloat, withText text: String?) -> UIImage? {
         
         if code == nil {
             return nil
@@ -259,12 +264,46 @@ class ScanTransformer {
         }()
         
         let imageFrame = CGRectMake(0, 0, maskedCodeImage.size.width + 2 * innerDotBorder, maskedCodeImage.size.height + 2 * innerDotBorder)
+        
+        let textFrame: CGRect = {
+            
+            let vertOffset = CGFloat(8)
+            let height = CGFloat(20)
+            return CGRectMake(0,
+                imageFrame.size.height + vertOffset,
+                imageFrame.size.width,
+                height)
+        }()
+        
+        let totalOutputFrame: CGRect = {
+            
+            if text != nil {
+                return CGRectUnion(imageFrame, textFrame)
+            }
+            else {
+                return imageFrame
+            }
+        }()
+        
         let dotView = DotView(frame: imageFrame, fillColor: backgroundColor, borderColor: color, borderWidth: dotBorderWidth)
         let dotImage = dotView.image()
         
-        UIGraphicsBeginImageContextWithOptions(imageFrame.size, false, 0.0)
+        UIGraphicsBeginImageContextWithOptions(totalOutputFrame.size, false, 0.0)
         dotImage.drawInRect(imageFrame)
-        maskedCodeImage.drawInRect(CGRectMake(innerDotBorder, innerDotBorder, maskedCodeImage.size.width, maskedCodeImage.size.height))
+        let codeImageRect = CGRectMake(innerDotBorder, innerDotBorder, maskedCodeImage.size.width, maskedCodeImage.size.height)
+        maskedCodeImage.drawInRect(codeImageRect)
+        
+        if let text = text {
+
+            let font = UIFont.systemFontOfSize(14)
+            let paragraphStyle = NSMutableParagraphStyle()
+            paragraphStyle.alignment = .Center
+            let attributes : [String : AnyObject] = [NSForegroundColorAttributeName : color, NSFontAttributeName: font, NSParagraphStyleAttributeName: paragraphStyle]
+            
+            let string = NSAttributedString(string: text, attributes: attributes)
+            string.drawInRect(textFrame)
+        }
+        
         let combinedImage = UIGraphicsGetImageFromCurrentImageContext();
         UIGraphicsEndImageContext();
 
@@ -272,9 +311,9 @@ class ScanTransformer {
     }
     
     
-    func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, scale: CGFloat) -> UIImage? {
+    func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, scale: CGFloat, withText text: String?) -> UIImage? {
         
         let code = codeForObject(object)
-        return image(fromCode: code, backgroundColor: backgroundColor, color: color, scale: scale)
+        return image(fromCode: code, backgroundColor: backgroundColor, color: color, scale: scale, withText: text)
     }
 }

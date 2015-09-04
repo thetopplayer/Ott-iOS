@@ -115,6 +115,10 @@ class User: PFUser {
         static var NumberOfPosts: String {
             return "numberOfPosts"
         }
+        
+        static var Bio: String {
+            return "bio"
+        }
     }
     
     
@@ -133,6 +137,7 @@ class User: PFUser {
     @NSManaged var name: String? // user's non-unique name
     @NSManaged var numberOfTopics: Int
     @NSManaged var numberOfPosts: Int
+    @NSManaged var bio: String?
     
     
     // the user's handle is stored as his username

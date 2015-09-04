@@ -509,7 +509,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if let destinationController = segue.destinationViewController as? TopicExportViewController {
+        if let destinationController = segue.destinationViewController as? ExportViewController {
             destinationController.myTopic = myTopic
         }
     }
