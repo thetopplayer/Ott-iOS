@@ -212,8 +212,14 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
                                 self.displayDetailsForTopic(theObject as! Topic)
                                 
                             default:
-                                self.handleCodeIsNotRecognized()
+                                
+                                // need to pause a bit to make sure this alert has really been dismissed
+                                
+                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), self.handleCodeIsNotRecognized)
                             }
+                        }
+                        else {
+                            self.handleCodeIsNotRecognized()
                         }
                     })
                 }
@@ -266,14 +272,17 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     
     private func handleRecognition(ofCode code: String) {
         
-        presentViewController(fetchingAlertViewController, animated: true) { action in
+        if ScanTransformer.sharedInstance.codeAppearsValid(code) {
             
-            if ScanTransformer.sharedInstance.codeAppearsValid(code) {
+            presentViewController(fetchingAlertViewController, animated: true) { action in
                 self.fetchObject(forCode: code)
             }
-            else {
-                self.handleCodeIsNotRecognized()
-            }
+        }
+        else {
+
+            print("code not recognized = " + code)
+
+            self.handleCodeIsNotRecognized()
         }
     }
     

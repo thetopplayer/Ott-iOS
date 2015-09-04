@@ -130,11 +130,11 @@ class ScanTransformer {
     
     static let codePrefix = "ott://"
     private let codePrefixLength: Int = {
-        return codePrefix.length
+        return codePrefix.length + 1  // prefix plus query code
     }()
     
     private let queryCodePosition: Int = {
-        return codePrefix.length - 1
+        return codePrefix.length
     }()
     
     enum QueryType: Character {
@@ -237,17 +237,70 @@ class ScanTransformer {
     }
     
     
-    private func image(fromCode code: String?, backgroundColor: UIColor, color: UIColor, scale: CGFloat, withText text: String?) -> UIImage? {
+    enum ImageSize: Int {
+        
+        case Small = 0
+        case Medium = 1
+        case Large = 2
+        case XLarge = 3
+        
+        func imageScale() -> CGFloat {
+            
+            var value: CGFloat
+            
+            switch self {
+                
+            case .Small:
+                value = 2
+                
+            case .Medium:
+                value = 4
+                
+            case .Large:
+                value = 6
+                
+            case .XLarge:
+                value = 8
+                
+            }
+            return value
+        }
+    }
+    
+    
+    private func image(fromCode code: String?, backgroundColor: UIColor, color: UIColor, size: ImageSize, withCaption text: String?) -> UIImage? {
         
         if code == nil {
             return nil
         }
         
         let azCode = AztecCode(code!)
+        let scale = size.imageScale()
         guard let codeImage = azCode.image(backgroundColor: backgroundColor, color: color, scale: scale) else {
             print("ERROR - unable to generate code image")
             return nil
         }
+
+        let captionFont: UIFont = {
+            
+            var captionFontSize: CGFloat
+            switch size {
+                
+            case .Small:
+                captionFontSize = 11
+                
+            case .Medium:
+                captionFontSize = 14
+                
+            case .Large:
+                captionFontSize = 17
+                
+            case .XLarge:
+                captionFontSize = 20
+            }
+            
+            return UIFont.systemFontOfSize(captionFontSize)
+        }()
         
         // mask edges (corners) of code image
         let codePadding = (AztecCode.defaultPadding * scale) + 4
@@ -268,7 +321,7 @@ class ScanTransformer {
         let textFrame: CGRect = {
             
             let vertOffset = CGFloat(8)
-            let height = CGFloat(20)
+            let height = CGFloat(ceilf(Float(captionFont.lineHeight)))
             return CGRectMake(0,
                 imageFrame.size.height + vertOffset,
                 imageFrame.size.width,
@@ -295,13 +348,13 @@ class ScanTransformer {
         
         if let text = text {
 
-            let font = UIFont.systemFontOfSize(14)
             let paragraphStyle = NSMutableParagraphStyle()
             paragraphStyle.alignment = .Center
-            let attributes : [String : AnyObject] = [NSForegroundColorAttributeName : color, NSFontAttributeName: font, NSParagraphStyleAttributeName: paragraphStyle]
+            let attributes : [String : AnyObject] = [NSForegroundColorAttributeName : color, NSFontAttributeName: captionFont, NSParagraphStyleAttributeName: paragraphStyle]
             
             let string = NSAttributedString(string: text, attributes: attributes)
-            string.drawInRect(textFrame)
+            let drawingOptions = NSStringDrawingOptions(rawValue: NSStringDrawingOptions.UsesLineFragmentOrigin.rawValue | NSStringDrawingOptions.TruncatesLastVisibleLine.rawValue)
+            string.drawWithRect(textFrame, options: drawingOptions, context: nil)
         }
         
         let combinedImage = UIGraphicsGetImageFromCurrentImageContext();
@@ -311,9 +364,9 @@ class ScanTransformer {
     }
     
     
-    func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, scale: CGFloat, withText text: String?) -> UIImage? {
+    func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, size: ImageSize, withCaption text: String?) -> UIImage? {
         
         let code = codeForObject(object)
-        return image(fromCode: code, backgroundColor: backgroundColor, color: color, scale: scale, withText: text)
+        return image(fromCode: code, backgroundColor: backgroundColor, color: color, size: size, withCaption: text)
     }
 }

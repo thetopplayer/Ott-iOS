@@ -18,8 +18,8 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     @IBOutlet weak var printButtonItem: UIBarButtonItem!
     @IBOutlet weak var emailButtonItem: UIBarButtonItem!
     @IBOutlet weak var saveToPhotosButtonItem: UIBarButtonItem!
-    @IBOutlet weak var addNameSwith: UISwitch!
-    @IBOutlet weak var addNameLabel: UILabel!
+    @IBOutlet weak var captionSwitch: UISwitch!
+    @IBOutlet weak var imageSizeSegmentedControl: UISegmentedControl!
    
     
     override func prefersStatusBarHidden() -> Bool {
@@ -62,7 +62,8 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     private var codeImage: UIImage?
     var imageBackgroundColor = UIColor.colorWithHex(0xDEEEFF)
     var imageColor = UIColor.blackColor()
-    var imageScale = CGFloat(5)
+    static let defaultImageSize = ScanTransformer.ImageSize.Large
+    var imageSize = ExportViewController.defaultImageSize
     var includeTopicName = true
     
     private func generateImage() {
@@ -79,7 +80,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
                 textForImage = "#" + topic.name!
             }
             
-            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, scale: self.imageScale, withText: textForImage) {
+            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, size: self.imageSize, withCaption: textForImage) {
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -105,6 +106,9 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
             self.printButtonItem.enabled = false
             self.emailButtonItem.enabled = false
             self.saveToPhotosButtonItem.enabled = false
+            
+            self.captionSwitch.on = true
+            self.imageSizeSegmentedControl.selectedSegmentIndex = ExportViewController.defaultImageSize.rawValue
         }
     }
     
@@ -112,7 +116,13 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     @IBAction func handleSwitchAction(sender: UISwitch?) {
         
         includeTopicName = sender!.on
-        addNameLabel.textColor = includeTopicName ? UIColor.blackColor() : UIColor.grayColor()
+        generateImage()
+    }
+    
+    
+    @IBAction func handleSizeSelectionAction(sender: UISegmentedControl?) {
+        
+        imageSize = ScanTransformer.ImageSize(rawValue: (sender?.selectedSegmentIndex)!)!
         generateImage()
     }
     
@@ -163,12 +173,8 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         
         if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
             
-            var message = "Click on the link or scan the code from within the Ott app to give your take on \(myTopic!.name!)"
-            if let link = self.codeText {
-                
-                let url = "<br></br><center><a href='\(link)'>#\(myTopic!.name!)</a></center>"
-                message += url
-            }
+            let link = "<a href='\(self.codeText!)'>#\(myTopic!.name!)</a>"
+            let message = "Click on the link or scan the code from within the Ott app to give your take on " + link
             
             emailVC.setMessageBody(message, isHTML: true)
             
