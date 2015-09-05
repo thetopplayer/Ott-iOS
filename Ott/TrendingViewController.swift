@@ -18,7 +18,7 @@ class TrendingViewController: TopicMasterViewController {
         
         super.viewDidLoad()
         
-        let scanButton = UIBarButtonItem(image: UIImage(named: "QRCode"), style: .Plain, target: self, action: "presentTopicScanViewController:")
+        let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton

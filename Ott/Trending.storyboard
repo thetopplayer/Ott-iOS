@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
     </dependencies>
     <scenes>
@@ -19,7 +18,7 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Trending Topics" id="Sz0-Fu-SDM">
-                        <barButtonItem key="leftBarButtonItem" image="QRCode" id="Hwc-lC-Cbb"/>
+                        <barButtonItem key="leftBarButtonItem" image="scan" id="Hwc-lC-Cbb"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Jgr-5h-3JS"/>
                     </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
@@ -47,7 +46,7 @@
         </scene>
     </scenes>
     <resources>
-        <image name="QRCode" width="30" height="30"/>
+        <image name="scan" width="30" height="30"/>
         <image name="trending" width="30" height="30"/>
     </resources>
 </document>

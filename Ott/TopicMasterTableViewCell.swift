@@ -20,28 +20,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var responseStatusImageView: UIImageView!
     @IBOutlet var topicImageView: UIImageView?
     
-    
-    private var _displayedTopic: Topic?
-    var displayedTopic: Topic? {
-        
-        set {
-            
-            let oldTopic = _displayedTopic
-            _displayedTopic = newValue
-            
-            if oldTopic != nil {
-                updateContents(ignoringImage: oldTopic!.isEqual(newValue))
-            }
-            else {
-                updateContents(ignoringImage: false)
-            }
-        }
-        
-        get {
-            return _displayedTopic
-        }
-    }
-    
+
     
     override func awakeFromNib() {
         
@@ -73,6 +52,14 @@ class TopicMasterTableViewCell: TableViewCell {
         }()
     
     
+    var displayedTopic: Topic? {
+        
+        didSet {
+            updateContents(ignoringImage: false)
+        }
+    }
+    
+    
     private func updateContents(ignoringImage ignoringImage: Bool) {
         
         if let topic = displayedTopic {
@@ -92,21 +79,17 @@ class TopicMasterTableViewCell: TableViewCell {
             
             if topic.hasImage {
                 
-                // don't reload image if we already have one
-                if self.topicImageView!.image == nil || ignoringImage == false {
+                topic.getImage() {(success, image) in
                     
-                    topic.getImage() {(success, image) in
-                        
-                        if success {
-                            self.topicImageView!.setImageWithFade(image)
-                        }
+                    if success {
+                        self.topicImageView!.setImageWithFade(image)
                     }
                 }
             }
         }
     }
-    
-    
+
+
     private func attributedContent() -> NSAttributedString {
         
         if let topic = displayedTopic {

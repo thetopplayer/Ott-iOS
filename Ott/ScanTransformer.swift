@@ -129,7 +129,7 @@ class ScanTransformer {
     
     
     static let codePrefix = "ott://"
-    private let codePrefixLength: Int = {
+    private let fullPrefixLength: Int = {
         return codePrefix.length + 1  // prefix plus query code
     }()
     
@@ -190,7 +190,7 @@ class ScanTransformer {
     
     private func objectID(fromCode code: String) -> String? {
         
-        return code.substringToEnd(startingAt: codePrefixLength)
+        return code.substringToEnd(startingAt: fullPrefixLength)
     }
     
     

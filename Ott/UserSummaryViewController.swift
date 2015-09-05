@@ -51,7 +51,7 @@ class UserSummaryViewController: ViewController {
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         
-        let scanButton = UIBarButtonItem(image: UIImage(named: "QRCode"), style: .Plain, target: self, action: "presentTopicScanViewController:")
+        let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
@@ -93,9 +93,8 @@ class UserSummaryViewController: ViewController {
         nameTextLabel.text = currentUser().name
         handleTextLabel.text = currentUser().username
         
-        if let bio = currentUser().bio {
-            bioTextLabel.text = bio
-        }
+        let bioText = currentUser().bio != nil ? currentUser().bio : ""
+        bioTextLabel.text = bioText
         
         if currentUser().hasImage {
             

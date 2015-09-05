@@ -128,7 +128,7 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Me" id="mdq-Rk-vcT">
-                        <barButtonItem key="leftBarButtonItem" image="QRCode" id="MBk-1a-sxj"/>
+                        <barButtonItem key="leftBarButtonItem" image="scan" id="MBk-1a-sxj"/>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="AAb-vu-qZg"/>
                     </navigationItem>
                     <nil key="simulatedBottomBarMetrics"/>
@@ -148,8 +148,8 @@
         </scene>
     </scenes>
     <resources>
-        <image name="QRCode" width="30" height="30"/>
         <image name="gears" width="30" height="30"/>
         <image name="home" width="30" height="30"/>
+        <image name="scan" width="32" height="32"/>
     </resources>
 </document>
