@@ -283,7 +283,7 @@ class TopicMasterViewController: TableViewController {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: TopicCreationViewController.Notifications.DidUploadTopic, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
         
         didStartObservations = true
     }

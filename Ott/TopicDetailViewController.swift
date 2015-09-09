@@ -29,12 +29,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     let segueToExportIdentifier = "segueToExport"
     
-    struct Notifications {
-        
-        static let DidRefreshTopic = "didRefreshTopic"
-        static let TopicKey = "topic"
-    }
-    
     
     //MARK: - Lifecycle
     
@@ -88,13 +82,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if didInitializeViewForTopic == false {
             
-            displayMode = currentUser().didPostToTopic(topic) ? .AllData : .RequirePostEntry
+            let onlyDisplayTopic = displayedData == .Topic
+            displayMode = onlyDisplayTopic ? .Edit : .View
             
             let title = "#" + topic.name!
             self.navigationItem.title = title
             displayType = .List
             
-            if displayMode == .AllData {
+            if onlyDisplayTopic {
                 fetchPosts()
             }
             
@@ -102,16 +97,27 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
        }
     }
     
-    
-    private enum DisplayMode {
-        case RequirePostEntry, AllData
+
+    private enum DisplayedData {
+        case Topic, TopicAndPosts
     }
     
     
-    private var displayMode: DisplayMode? {
+    private var displayedData: DisplayedData {
+        
+        return currentUser().didPostToTopic(myTopic!) ? .Topic : .TopicAndPosts
+    }
+    
+    
+    private enum DisplayMode {
+        case View, Edit
+    }
+    
+    
+    private var displayMode: DisplayMode = .View {
         
         didSet {
-            _setDisplayMode(displayMode!)
+            _setDisplayMode(displayMode)
         }
     }
     
@@ -167,21 +173,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         
         let mapToggleButton = navigationItem.rightBarButtonItem
+        mapToggleButton?.enabled = displayedData == .TopicAndPosts
         
         switch mode {
             
-        case .RequirePostEntry:
+        case .Edit:
             
             showCancelButton()
             postInputView.reset()
             showPostInputView()
-            mapToggleButton?.enabled = false
             
-        case .AllData:
+        case .View:
             
             showDoneButton()
             showToolbar()
-            mapToggleButton?.enabled = currentUser().didPostToTopic(myTopic!)
         }
     }
     
@@ -296,114 +301,80 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     var myTopic: Topic?
     private var posts = [Post]()
-    
-    private var _dateOfMostRecentPost: NSDate?
+    private var fetchPostsOperation: FetchPostsOperation?
+    private var reloadTopicOperation: FetchTopicOperation?
+    private var dateOfMostRecentPost: NSDate?
     
     private func fetchPosts(reloadingTopic reloadingTopic: Bool = false) {
         
-        func reloadTopic() {
+        func updateDisplayWithPostsFromCache() {
             
-            self.myTopic?.fetch()
+            let cachedPosts = cachedPostsForTopic(myTopic!)
+            dateOfMostRecentPost = cachedPosts.first?.createdAt
+            
             dispatch_async(dispatch_get_main_queue()) {
-                
-                let userInfo: [NSObject: AnyObject] = [TopicDetailViewController.Notifications.TopicKey: self.myTopic!]
-                NSNotificationCenter.defaultCenter().postNotificationName(TopicDetailViewController.Notifications.DidRefreshTopic, object: self, userInfo: userInfo)
+                self.displayStatus(type: .Normal)
+                self.refreshTableView(withUpdatedPosts: cachedPosts)
+                self.refreshMapView(withUpdatedPosts: cachedPosts)
             }
         }
-        
-        func fetchPosts() {
-            
-            let query = Post.query()!
-            query.orderByDescending(DataKeys.CreatedAt)
-            query.whereKey(DataKeys.Topic, equalTo: self.myTopic!)
-            if let minDate = self._dateOfMostRecentPost {
-                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: minDate)
-            }
-            
-            var error: NSError?
-            let objects = query.findObjects(&error)
-            
-            self.displayStatus(type: .Normal)
-            
-            if let fetchedPosts = objects as? [Post] {
-                
-                if fetchedPosts.count > 0 {
-                    
-                    self._dateOfMostRecentPost = fetchedPosts.first?.createdAt
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        
-                        self.refreshTableView(withUpdatedPosts: fetchedPosts)
-                        self.refreshMapView(withUpdatedPosts: fetchedPosts)
-                    }
-                }
-            }
-        }
-        
+
         
         /*****/
         
         displayStatus(type: .Fetching)
 
-        let reachabilityCondition: ReachabilityCondition = {
+        fetchPostsOperation = {
             
-            let host = NSURL(string: "http://api.parse.com")
-            return ReachabilityCondition(host: host!)
-            }()
-        
-        if reloadingTopic {
-            
-            let reloadOperation: BlockOperation = {
-                
-                let operation = BlockOperation {
-                    reloadTopic()
-                }
-                
-                operation.addCondition(reachabilityCondition)
-                let timeoutObserver = TimeoutObserver(timeout: 3600)
-                operation.addObserver(timeoutObserver)
-                return operation
-                }()
-            
-            operationQueue().addOperation(reloadOperation)
-        }
-        
-        let fetchPostsOperation: BlockOperation = {
-            
-            let operation = BlockOperation {
-                fetchPosts()
+            var operation: FetchPostsOperation
+            if let minDate = dateOfMostRecentPost {
+                operation = FetchPostsOperation(topic: myTopic!, postedSince: minDate)
+            }
+            else {
+                operation = FetchPostsOperation(topic: myTopic!)
             }
             
-            operation.addCondition(reachabilityCondition)
-            let timeoutObserver = TimeoutObserver(timeout: 3600)
-            operation.addObserver(timeoutObserver)
+            operation.addCompletionBlock({
+                updateDisplayWithPostsFromCache()
+            })
+            
             return operation
             }()
         
-        operationQueue().addOperation(fetchPostsOperation)
-    }
-    
-    
-    private func abortFetches() {
         
-        for operation in operationQueue().operations {
-            operation.cancel()
+        if reloadingTopic {
+            
+            reloadTopicOperation = {
+                
+                let operation = FetchTopicOperation(topic: myTopic!)
+                operation.addDependency(fetchPostsOperation!)
+                
+                operation.addCompletionBlock({
+                    updateDisplayWithPostsFromCache()
+                })
+                
+                return operation
+            }()
+            
+            FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
+            FetchQueue.sharedInstance.addOperation(fetchPostsOperation!)
+        }
+        else {
+            
+            fetchPostsOperation!.addCompletionBlock({
+                updateDisplayWithPostsFromCache()
+            })
+            
+            FetchQueue.sharedInstance.addOperation(fetchPostsOperation!)
         }
     }
     
     
     private func saveChanges() {
         
-        guard let topicID = self.myTopic!.objectId else {
-            
-            print("ERROR:  in posting post -> no topic id for topic with name = \(self.myTopic!.name)")
-            return
-        }
-        
-        if self.displayMode == .RequirePostEntry {
-            currentUser().archivePostedTopicID(topicID)
-            self.displayMode = .AllData
-        }
+//        if self.displayMode == .RequirePostEntry {
+//            self.displayMode = .AllData
+//        }
         
         displayStatus(type: .Posting)
         
@@ -414,28 +385,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.locationName
-        myPost.saveEventually() { (succeeded, error) in
-            
-            self.displayStatus(type: .Normal)
-            
-            if succeeded {
-                
-                self.fetchPosts(reloadingTopic: true) // update data for topic
-            }
-            else {
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    if let error = error {
-                        (self as UIViewController).presentOKAlertWithError(error)
-                    }
-                    else {
-                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.", completion: nil)
-                        
-                    }
-                }
-            }
-        }
+        
+        let postOperation = UploadPostOperation(post: myPost)
+        PostQueue.sharedInstance.addOperation(postOperation)
     }
     
     
@@ -467,7 +419,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBAction func handleEnterEditModeAction(sender: AnyObject) {
         
-        displayMode = .RequirePostEntry
+        displayMode = .Edit
     }
     
     
@@ -479,7 +431,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func goodbye() {
         
-        abortFetches()
+        fetchPostsOperation?.cancel()
         performSegueWithIdentifier("unwindToTopicMasterView", sender: self)
     }
     
@@ -489,12 +441,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         postInputView?.resignFirstResponder()
         discardChanges()
         
-        if currentUser().didPostToTopic(myTopic!) {
-            displayMode = .AllData
-        }
-        else {
+        if displayMode == .View {
             goodbye()
         }
+        else {
+            displayMode = .Edit
+        }
+        
+//        
+//        if currentUser().didPostToTopic(myTopic!) {
+//            displayMode = .AllData
+//        }
+//        else {
+//            goodbye()
+//        }
     }
     
     
@@ -585,7 +545,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return firstTime.laterDate(secondTime) == firstTime
         }
         
-        guard displayMode == .AllData else {
+        guard displayedData == .TopicAndPosts else {
             print("ERROR - trying to update table view but posts are not allowed")
             return
         }
@@ -625,7 +585,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
-        if displayMode == .AllData {
+        if displayedData == .TopicAndPosts {
             return TableViewSections.maximumNumberOfSections()
         }
         return 1
@@ -875,6 +835,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadPost:", name: UploadPostOperation.Notifications.DidUpload, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFail:", name: UploadPostOperation.Notifications.UploadDidFail, object: nil)
+        
         didStartObservations = true
     }
     
@@ -943,7 +907,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             if keyboardIsCoveringContent() == false {
                 // only animate if not covering content to avoid drawing artifacts
-                let bottom = self.displayMode == .RequirePostEntry ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
+                let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                 self.adjustTableViewInsets(withBottom: bottom)
             }
             
@@ -953,8 +917,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
                 if keyboardIsCoveringContent() {
                     
-                    let bottom = self.displayMode == .RequirePostEntry ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
+                    let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
                     self.adjustTableViewInsets(withBottom: bottom)
                 }}
     }
+    
+    
+    func handleDidUploadPost(notification: NSNotification) {
+        
+        fetchPosts(reloadingTopic: true)
+    }
+    
+    
+    func handleUploadDidFail(notification: NSNotification) {
+        
+        displayMode = .Edit
+        displayStatus(type: .Normal)
+    }
+
 }

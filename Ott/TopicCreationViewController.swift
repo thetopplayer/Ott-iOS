@@ -12,12 +12,6 @@ import UIKit
 class TopicCreationViewController: TableViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate, TopicCreationTitleTableViewCellDelegate, TopicCreationButtonTableViewCellDelegate {
 
     
-    struct Notifications {
-        
-        static let DidUploadTopic = "didUploadTopic"
-        static let TopicKey = "topic"
-    }
-
     private var titleCellView: TopicCreationTitleTableViewCell?
     private var didPresentImagePicker = false
     
@@ -70,32 +64,36 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.locationName
-        topic.saveEventually() { (succeeded, error) in
-            
-            if succeeded {
-                
-                currentUser().archiveAuthoredTopicName(topic.name!)
-                dispatch_async(dispatch_get_main_queue()) {
-                    NSNotificationCenter.defaultCenter().postNotificationName(TopicCreationViewController.Notifications.DidUploadTopic,
-                        object: self)
-                }
-            }
-            else {
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.postingLabel.abortDisplay()
-                    
-                    if let error = error {
-                        (self as UIViewController).presentOKAlertWithError(error)
-                    }
-                    else {
-                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.", completion: nil)
-                        
-                    }
-                }
-            }
-        }
+        
+        let uploadOperation = UploadTopicOperation(topic: topic)
+        PostQueue.sharedInstance.addOperation(uploadOperation)
+        
+//        topic.saveInBackgroundWithBlock() { (succeeded, error) in
+//            
+//            if succeeded {
+//                
+//                currentUser().archiveAuthoredTopicName(topic.name!)
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    NSNotificationCenter.defaultCenter().postNotificationName(TopicCreationViewController.Notifications.DidUploadTopic,
+//                        object: self)
+//                }
+//            }
+//            else {
+//                
+//                dispatch_async(dispatch_get_main_queue()) {
+//                    
+//                    self.postingLabel.abortDisplay()
+//                    
+//                    if let error = error {
+//                        (self as UIViewController).presentOKAlertWithError(error)
+//                    }
+//                    else {
+//                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.", completion: nil)
+//                        
+//                    }
+//                }
+//            }
+//        }
     }
     
     private func discardChanges() {
@@ -260,13 +258,13 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             
             titleCellView?.resignFirstResponder()
             didPresentImagePicker = true
-            operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
         }
         else {
             
             titleCellView?.resignFirstResponder()
             didPresentImagePicker = true
-            operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
         }
     }
     

@@ -93,7 +93,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
             }
         }
         
-        operationQueue().addOperation(generateImageOperation)
+        operationQueue.addOperation(generateImageOperation)
     }
     
     

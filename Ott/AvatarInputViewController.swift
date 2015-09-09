@@ -17,7 +17,6 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     @IBOutlet weak var doneButton: UIButton!
     
     
-    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -43,9 +42,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
         self.imageView.image = UIImage(named: "addAvatar")
     }
     
-    
-    
-    
+        
     
     //MARK: - Actions
     
@@ -57,12 +54,12 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
             
             let libraryAction = UIAlertAction(title: "Photo Library", style: UIAlertActionStyle.Default, handler: { action in
                 
-                self.operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+                self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
             })
             
             let cameraAction = UIAlertAction(title: "Take Photo", style: UIAlertActionStyle.Default, handler: { action in
                 
-                self.operationQueue().addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+                self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
             })
             
             let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in

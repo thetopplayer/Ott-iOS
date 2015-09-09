@@ -9,17 +9,13 @@
 import UIKit
 
 class ViewController: UIViewController {
+    
+    lazy var operationQueue: OperationQueue = {
+        let queue = OperationQueue()
+        return queue
+        }()
+    
 
-    static var _operationQueue: OperationQueue = {
-        return OperationQueue()
-    }()
-    
-    
-    func operationQueue() -> OperationQueue {
-        return ViewController._operationQueue
-    }
-    
-    
     private var _isVisible = false
     func isVisible() -> Bool {
         return _isVisible

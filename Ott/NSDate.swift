@@ -49,7 +49,7 @@ extension NSDate {
     func daysFrom(days: Int) -> NSDate {
         
         let calendar = NSCalendar.currentCalendar()
-        let date = calendar.dateByAddingUnit(NSCalendarUnit.Day, value: days, toDate: self, options: .WrapComponents)
+        let date = calendar.dateByAddingUnit(NSCalendarUnit.Day, value: days, toDate: self, options:[])
         return date!
     }
     

@@ -10,15 +10,7 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
-    
-    lazy var operationQueue: OperationQueue = {
-        let queue = OperationQueue()
-        queue.maxConcurrentOperationCount = 1
-        return queue
-    }()
-    
-    
-    
+
     //MARK: - Lifecycle
     
     override init(style: UITableViewStyle) {

@@ -58,4 +58,10 @@ class Post: Creation, PFSubclassing {
         topicName = topic.name
     }
     
+    
+    var topic: Topic? {
+        
+        return self[DataKeys.Topic] as? Topic
+    }
+    
 }

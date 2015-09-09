@@ -252,7 +252,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             }()
         
         self.fetchOperation = fetchOperation // save in case we need to cancel
-        operationQueue().addOperation(fetchOperation)
+        operationQueue.addOperation(fetchOperation)
     }
     
     
