@@ -37,16 +37,10 @@ class UploadTopicOperation: ParseOperation {
         topic.save(&error)
         
         if let error = error {
-            
             finishWithError(error)
         }
         else {
-            
             currentUser().archiveAuthoredTopicName(topic.name!)
-            dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.DidUpload,
-                    object: self)
-            }
         }
         
         finishWithError(nil)
@@ -58,7 +52,14 @@ class UploadTopicOperation: ParseOperation {
         super.finished(errors)
         clearBackgroundTask()
         
-        if errors.count > 0 && UIApplication.sharedApplication().applicationState == .Active {
+        if errors.count == 0 {
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.DidUpload,
+                    object: self)
+            }
+        }
+        else if UIApplication.sharedApplication().applicationState == .Active {
             
             dispatch_async(dispatch_get_main_queue()) {
                 

@@ -31,6 +31,9 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         if didPresentImagePicker == false {
             
+            // start fetching name for current location now
+            LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
+            
             myTopic = Topic.createWithAuthor(currentUser())
             image = nil
             navigationItem.rightBarButtonItem?.enabled = false
@@ -38,11 +41,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         
         tableView.reloadData()
     }
-    
-    
-    private var postingLabel: TransientLabel = {
-        return TransientLabel(message: "Posting...", animationStyle: .Fade)
-    }()
+
     
     
     //MARK: - Data
@@ -63,37 +62,10 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         }
         topic.setImage(image, quality: imageQuality)
         topic.location = LocationManager.sharedInstance.location
-        topic.locationName = LocationManager.sharedInstance.locationName
+        topic.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
         
         let uploadOperation = UploadTopicOperation(topic: topic)
         PostQueue.sharedInstance.addOperation(uploadOperation)
-        
-//        topic.saveInBackgroundWithBlock() { (succeeded, error) in
-//            
-//            if succeeded {
-//                
-//                currentUser().archiveAuthoredTopicName(topic.name!)
-//                dispatch_async(dispatch_get_main_queue()) {
-//                    NSNotificationCenter.defaultCenter().postNotificationName(TopicCreationViewController.Notifications.DidUploadTopic,
-//                        object: self)
-//                }
-//            }
-//            else {
-//                
-//                dispatch_async(dispatch_get_main_queue()) {
-//                    
-//                    self.postingLabel.abortDisplay()
-//                    
-//                    if let error = error {
-//                        (self as UIViewController).presentOKAlertWithError(error)
-//                    }
-//                    else {
-//                        (self as UIViewController).presentOKAlert(title: "Error", message: "An unknown error occurred while trying to post.  Please check your internet connection and try again.", completion: nil)
-//                        
-//                    }
-//                }
-//            }
-//        }
     }
     
     private func discardChanges() {
@@ -225,15 +197,15 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     @IBAction func handleDoneAction(sender: AnyObject) {
       
+        navigationItem.title = "Posting..."
+        
         if let titleCellView = titleCellView {
             
             titleCellView.resignFirstResponder()
             saveChanges()
         }
         
-        postingLabel.display(inView: view) { () -> Void in
-            self.dismissViewControllerAnimated(true) { () -> Void in }
-        }
+        dismissViewControllerAnimated(true) { () -> Void in }
     }
     
     

@@ -34,7 +34,7 @@ class ParseOperation: Operation {
         }()
     
     
-    let timeoutObserver = TimeoutObserver(timeout: 3600)
+    let timeoutObserver = TimeoutObserver(timeout: 15)
     
     
     

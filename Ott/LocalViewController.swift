@@ -26,7 +26,6 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.rightBarButtonItem = createButton
         
         fetchTopics(.Cached)
-        fetchTopics(.NewLocation)
     }
 
     
@@ -157,7 +156,7 @@ class LocalViewController: TopicMasterViewController {
         
         super.startObservations()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.SignificantLocationChangeDidOccur, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidChange, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidFetchTopicNotification:", name: FetchTopicOperation.Notifications.DidFetch, object: nil)
     }

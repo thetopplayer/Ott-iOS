@@ -123,9 +123,7 @@ class DotView: UIView {
 
 class ScanTransformer {
     
-    static var sharedInstance: ScanTransformer = {
-        return ScanTransformer()
-        }()
+    static let sharedInstance = ScanTransformer()
     
     
     static let codePrefix = "ott://"

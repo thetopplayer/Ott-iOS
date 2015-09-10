@@ -26,10 +26,7 @@ class SMS {
     private let twilioAuthToken = "84376d6d7ee0a8ec508b5edc9b26d53f"
     private let twilioAccountPhoneNumber = "+14086101736"
     
-    static var sharedInstance: SMS = {
-        return SMS()
-        }()
-    
+    static let sharedInstance = SMS()    
     
     private init() {
     

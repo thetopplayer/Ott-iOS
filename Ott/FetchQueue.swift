@@ -10,9 +10,5 @@ import UIKit
 
 class FetchQueue: OperationQueue {
 
-    static var sharedInstance: FetchQueue = {
-        return FetchQueue()
-        }()
-    
-
+    static let sharedInstance = FetchQueue()
 }

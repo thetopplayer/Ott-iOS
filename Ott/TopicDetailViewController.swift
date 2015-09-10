@@ -89,7 +89,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             self.navigationItem.title = title
             displayType = .List
             
-            if onlyDisplayTopic {
+            if onlyDisplayTopic == false {
                 fetchPosts()
             }
             
@@ -105,7 +105,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private var displayedData: DisplayedData {
         
-        return currentUser().didPostToTopic(myTopic!) ? .Topic : .TopicAndPosts
+        return currentUser().didPostToTopic(myTopic!) ? .TopicAndPosts : .Topic
     }
     
     
@@ -117,6 +117,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var displayMode: DisplayMode = .View {
         
         didSet {
+            
+            if displayMode == .Edit {
+                
+                // prepare in case we are going to post
+                LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
+            }
+            
             _setDisplayMode(displayMode)
         }
     }
@@ -299,7 +306,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Data
     
-    var myTopic: Topic?
+    var myTopic: Topic? {
+        
+        didSet {
+            didInitializeViewForTopic = false
+        }
+    }
+    
     private var posts = [Post]()
     private var fetchPostsOperation: FetchPostsOperation?
     private var reloadTopicOperation: FetchTopicOperation?
@@ -372,10 +385,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func saveChanges() {
         
-//        if self.displayMode == .RequirePostEntry {
-//            self.displayMode = .AllData
-//        }
-        
+        displayMode = .View
         displayStatus(type: .Posting)
         
         let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
@@ -384,7 +394,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             myPost.comment = comment
         }
         myPost.location = LocationManager.sharedInstance.location
-        myPost.locationName = LocationManager.sharedInstance.locationName
+        myPost.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
         
         let postOperation = UploadPostOperation(post: myPost)
         PostQueue.sharedInstance.addOperation(postOperation)
@@ -445,16 +455,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             goodbye()
         }
         else {
-            displayMode = .Edit
+            
+            if displayedData == .Topic {
+                goodbye()
+            }
+            else {
+                displayMode = .View
+            }
         }
-        
-//        
-//        if currentUser().didPostToTopic(myTopic!) {
-//            displayMode = .AllData
-//        }
-//        else {
-//            goodbye()
-//        }
     }
     
     

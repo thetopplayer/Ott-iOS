@@ -10,9 +10,6 @@ import UIKit
 
 class PostQueue: OperationQueue {
 
-    static var sharedInstance: PostQueue = {
-        return PostQueue()
-        }()
-    
+    static let sharedInstance = PostQueue()
     
 }
