@@ -11,39 +11,58 @@ import UIKit
 
 extension DataKeys {
     
+    // default name
     static var Image: String {
         return "image"
     }
     
-    static var HasImage: String {
-        return "hasImage"
+    
+    static func hasImage(forKey imageKey: String) -> String {
+        
+        return "has_" + imageKey
     }
 }
 
 
 extension PFObject {
     
-    func setImage(image: UIImage?, var quality: CGFloat = 0.8) {
+    private func defaultImageQuality() -> CGFloat {
+        return CGFloat(0.8)
+    }
+    
+    
+    func setImage(image: UIImage?) {
+        
+        setImage(image, quality: defaultImageQuality(), forKey: DataKeys.Image)
+    }
+    
+    
+    func setImage(image: UIImage?, forKey imageKey: String) {
+        
+        setImage(image, quality: defaultImageQuality(), forKey: imageKey)
+    }
+    
+    
+    func setImage(image: UIImage?, quality: CGFloat, forKey imageKey: String) {
         
         func archive(image: UIImage, quality: CGFloat) {
             
             if let imageRep = UIImageJPEGRepresentation(image, quality) {
                 
-                let filename = "image.jpeg"
-                let imageFile = PFFile(name: filename, data:imageRep)
-                self[DataKeys.Image] = imageFile
-                self[DataKeys.HasImage] = true
+                let imageFile = PFFile(name: "image.jpg", data:imageRep)
+                self[imageKey] = imageFile
+                self[DataKeys.hasImage(forKey: imageKey)] = true
             }
             else {
-                self[DataKeys.Image] = NSNull()
-                self[DataKeys.HasImage] = false
+                self[imageKey] = NSNull()
+                self[DataKeys.hasImage(forKey: imageKey)] = false
             }
         }
         
         if image == nil {
             
-            self[DataKeys.Image] = NSNull()
-            self[DataKeys.HasImage] = false
+            self[imageKey] = NSNull()
+            self[DataKeys.hasImage(forKey: imageKey)] = false
             return
         }
         
@@ -51,14 +70,14 @@ extension PFObject {
     }
     
     
-    func getImage(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+    func getImage(forKey imageKey: String = DataKeys.Image, completion: ((success: Bool, image: UIImage?) -> Void)?) {
         
-        if hasImage == false {
+        if hasImage(forKey: imageKey) == false {
             completion?(success: false, image: nil)
             return
         }
         
-        if let imageFile = self[DataKeys.Image] as? PFFile {
+        if let imageFile = self[imageKey] as? PFFile {
             
             imageFile.getDataInBackgroundWithBlock {
                 
@@ -83,9 +102,15 @@ extension PFObject {
     }
     
     
-    var hasImage: Bool {
+    func hasImage() -> Bool {
         
-        if let value = self[DataKeys.HasImage] as? Bool {
+        return hasImage(forKey: DataKeys.Image)
+    }
+    
+    
+    func hasImage(forKey forKey: String) -> Bool {
+        
+        if let value = self[DataKeys.hasImage(forKey: forKey)] as? Bool {
             return value
         }
         

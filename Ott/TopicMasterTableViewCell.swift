@@ -77,7 +77,7 @@ class TopicMasterTableViewCell: TableViewCell {
                 responseStatusImageView.image = TopicMasterTableViewCell.didNotRespondImage
             }
             
-            if topic.hasImage {
+            if topic.hasImage() {
                 
                 topic.getImage() {(success, image) in
                     

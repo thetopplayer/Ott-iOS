@@ -48,7 +48,6 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     private var image: UIImage?
     private let imageSize = CGSizeMake(800, 800)
-    private let imageQuality = CGFloat(0.8)
     
     var myTopic: Topic?
     
@@ -60,7 +59,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         if let comment = titleCellView!.comment {
             topic.comment = comment
         }
-        topic.setImage(image, quality: imageQuality)
+        topic.setImage(image)
         topic.location = LocationManager.sharedInstance.location
         topic.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
         

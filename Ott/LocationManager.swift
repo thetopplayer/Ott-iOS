@@ -174,11 +174,13 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
+        print("locationManager did update")
+        
         // prevent multiple notifications sent at startup
         if fabs(timeOfLastUpdateNotification.timeIntervalSinceNow) > 60 {
             
             timeOfLastUpdateNotification = NSDate()
-            NSNotificationCenter.defaultCenter().postNotificationName(Notifications.LocationDidChange, object: self)
+            NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
         }
     }
     

@@ -1,46 +1,50 @@
 //
-//  UploadTopicOperation.swift
+//  UpdateUserOperation.swift
 //  Ott
 //
-//  Created by Max on 9/9/15.
+//  Created by Max on 9/10/15.
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
 import UIKit
 
-class UploadTopicOperation: ParseOperation {
+class UpdateUserOperation: ParseOperation {
 
-    let topic: Topic
+    let user: User
     
-    init(topic: Topic) {
+    init(user: User) {
         
-        self.topic = topic
+        self.user = user
         super.init()
     }
     
     struct Notifications {
         
-        static let DidUpload = "didUploadTopic"
-        static let UploadDidFail = "topicUploadDidFail"
-        static let TopicKey = "topic"
+        static let DidUpdate = "didUpdateUser"
+        static let UpdateDidFail = "userUpdateDidFail"
         static let ErrorKey = "error"
     }
+    
+    
     
     
     //MARK: - Execution
     
     override func execute() {
-
+        
         logBackgroundTask()
         
         var error: NSError?
-        topic.save(&error)
+        user.save(&error)
         
         if let error = error {
             finishWithError(error)
         }
-        else {
-            currentUser().archiveAuthoredTopicName(topic.name!)
+            
+        // need to refresh for things to work correctly
+        user.fetch(&error)
+        if let error = error {
+            finishWithError(error)
         }
         
         finishWithError(nil)
@@ -55,7 +59,7 @@ class UploadTopicOperation: ParseOperation {
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.DidUpload,
+                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.DidUpdate,
                     object: self)
             }
         }
@@ -64,21 +68,20 @@ class UploadTopicOperation: ParseOperation {
             dispatch_async(dispatch_get_main_queue()) {
                 
                 guard let controller = topmostViewController() else {
-                    print("ERROR uploading topic \(self.topic)")
+                    print("ERROR updating user \(self.user)")
                     return
                 }
                 
-                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not upload topic:")
+                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not update user:")
             }
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UploadTopicOperation.Notifications.ErrorKey: errors]
-                NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.UploadDidFail,
+                let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors]
+                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.UpdateDidFail,
                     object: self,
                     userInfo: userinfo)
             }
         }
     }
-    
 }

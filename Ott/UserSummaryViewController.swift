@@ -10,7 +10,7 @@ import UIKit
 
 
 
-class UserSummaryViewController: ViewController {
+class UserSummaryViewController: ViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
     @IBOutlet weak var userContainerView: UIView!
     @IBOutlet weak var avatarImageView: UIImageView!
@@ -20,18 +20,13 @@ class UserSummaryViewController: ViewController {
     @IBOutlet weak var summaryContainerView: UIView!
     @IBOutlet weak var tableContainerView: UIView!
     
-    private var topicTableViewController: TopicMasterViewController
-
-
+    
     //MARK: - Lifecycle
     
     required init?(coder aDecoder: NSCoder) {
         
-        topicTableViewController = TopicMasterViewController()
-        
         super.init(coder: aDecoder)
-        addChildViewController(topicTableViewController)
-    }
+     }
     
     
     override func viewDidLoad() {
@@ -47,7 +42,14 @@ class UserSummaryViewController: ViewController {
         avatarImageView.addRoundedBorder()
         avatarImageView.contentMode = .ScaleAspectFill
         avatarImageView.layer.masksToBounds = true
-
+        avatarImageView.userInteractionEnabled = true
+        let tapGR = UITapGestureRecognizer()
+        tapGR.addTarget(self, action: "addAvatar:")
+        avatarImageView.addGestureRecognizer(tapGR)
+        
+        
+        handleTextLabel.textColor = UIColor.tint()
+        
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         
@@ -96,7 +98,7 @@ class UserSummaryViewController: ViewController {
         let bioText = currentUser().bio != nil ? currentUser().bio : ""
         bioTextLabel.text = bioText
         
-        if currentUser().hasImage {
+        if currentUser().hasImage() {
             
             currentUser().getImage {
                 
@@ -128,8 +130,6 @@ class UserSummaryViewController: ViewController {
             return
         }
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSelectionDidChangeNotification:", name: TopicMasterViewController.Notification.selectionDidChange, object: topicTableViewController)
-        
         didStartObservations = true
     }
     
@@ -145,24 +145,100 @@ class UserSummaryViewController: ViewController {
     }
     
     
-    func handleSelectionDidChangeNotification(notification: NSNotification) {
-        
-        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: topicTableViewController.selection)
-    }
+//    func handleSelectionDidChangeNotification(notification: NSNotification) {
+//        
+//        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: topicTableViewController.selection)
+//    }
     
     
     
     //MARK: - Actions
     
-    @IBAction func presentTopicCreationAction(sender: AnyObject) {
+    @IBAction func addAvatar(sender: AnyObject) {
         
-        (navigationController as! NavigationController).presentTopicCreationViewController()
+        func presentOptionsSheet() {
+            
+            let alertViewController = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+            
+            let libraryAction = UIAlertAction(title: "Photo Library", style: UIAlertActionStyle.Default, handler: { action in
+                
+                self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+            })
+            
+            let cameraAction = UIAlertAction(title: "Take Photo", style: UIAlertActionStyle.Default, handler: { action in
+                
+                self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+            })
+            
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
+                
+            })
+            
+            alertViewController.addAction(libraryAction)
+            alertViewController.addAction(cameraAction)
+            alertViewController.addAction(cancelAction)
+            
+            presentViewController(alertViewController, animated: true, completion: nil)
+        }
+        
+        presentOptionsSheet()
     }
-    
+
     
     @IBAction func presentTopicScanViewController(sender: AnyObject) {
         
         (navigationController as! NavigationController).presentTopicScanViewController()
+    }
+
+    @IBAction func avatarTapAction(sender: AnyObject) {
+        
+        (navigationController as! NavigationController).presentTopicScanViewController()
+    }
+    
+
+    /*
+    //MARK: - TopicCreationButtonTableViewCellDelegate
+    
+    func buttonViewButtonDidPress(action: TopicCreationButtonTableViewCell.ButtonAction) {
+        
+        myTopic!.name = titleCellView?.title
+        myTopic!.comment = titleCellView?.comment
+        
+        if action == .Camera {
+            
+            titleCellView?.resignFirstResponder()
+            didPresentImagePicker = true
+            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+        }
+        else {
+            
+            titleCellView?.resignFirstResponder()
+            didPresentImagePicker = true
+            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+        }
+    }
+    */
+    
+    
+    
+    //MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
+        
+        let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
+        self.avatarImageView.image = resizedImage
+        
+        currentUser().setImage(resizedImage)
+        let updateOperation = UpdateUserOperation(user: currentUser())
+        PostQueue.sharedInstance.addOperation(updateOperation)
+        
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        
+        picker.dismissViewControllerAnimated(true, completion: nil)
     }
 
 }

@@ -621,7 +621,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             switch section {
                 
             case TableViewSections.Topic.rawValue:
-                number = topic.hasImage ? 3 : 2
+                number = topic.hasImage() ? 3 : 2
                 
             case TableViewSections.Statistics.rawValue:
                 number = 1
@@ -653,7 +653,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case TableViewSections.Topic.rawValue:
             
-            let displayingImage = myTopic!.hasImage
+            let displayingImage = myTopic!.hasImage()
             switch indexPath.row {
                 
             case 0:

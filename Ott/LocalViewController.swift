@@ -25,7 +25,7 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        fetchTopics(.Cached)
+        fetchTopics(.CachedThenFull)
     }
 
     
@@ -47,8 +47,10 @@ class LocalViewController: TopicMasterViewController {
     //MARK: - Data
     
     private enum FetchType {
-        case Cached, NewLocation, UpdateCurrentLocation
+        case CachedThenFull, Full, Update
     }
+    
+    private var isFetching = false
     
     private func fetchTopics(type: FetchType) {
 
@@ -71,19 +73,21 @@ class LocalViewController: TopicMasterViewController {
         
         /********/
         
-        displayStatus(.Fetching)
+         displayStatus(.Fetching)
         
         switch type {
             
-        case .Cached:
+        case .CachedThenFull:
 
             let retrieveFromCacheOperation = BlockOperation {
                 retrieveFromCache(replacingDatasourceData: true)
+                self.fetchTopics(.Full)
             }
+            
             FetchQueue.sharedInstance.addOperation(retrieveFromCacheOperation)
             
             
-        case .NewLocation:
+        case .Full:
             
             guard let location = LocationManager.sharedInstance.location else {
                 print("call to fetch for new location but have no location")
@@ -100,10 +104,10 @@ class LocalViewController: TopicMasterViewController {
             FetchQueue.sharedInstance.addOperation(fetchForNewLocationOperation)
 
             
-        case .UpdateCurrentLocation:
+        case .Update:
             
             guard let location = LocationManager.sharedInstance.location else {
-                print("call to fetch for new location but have no location")
+                print("call to fetch update but have no location")
                 return
             }
             
@@ -120,7 +124,7 @@ class LocalViewController: TopicMasterViewController {
     
     
     override func update() {
-        fetchTopics(.UpdateCurrentLocation)
+        fetchTopics(.Update)
     }
     
     
@@ -164,7 +168,7 @@ class LocalViewController: TopicMasterViewController {
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
-        update()
+        fetchTopics(.Full)
     }
     
     

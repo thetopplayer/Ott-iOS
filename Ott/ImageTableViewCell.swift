@@ -38,7 +38,7 @@ class ImageTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            if topic.hasImage {
+            if topic.hasImage() {
                 
                 topic.getImage() {(success, image) in
                     

@@ -77,7 +77,7 @@ class UploadPostOperation: ParseOperation {
                     return
                 }
                 
-                controller.presentOKAlertWithError(errors.first!)
+                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not upload post:")
             }
             
             dispatch_async(dispatch_get_main_queue()) {

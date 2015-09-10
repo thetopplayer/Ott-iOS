@@ -60,11 +60,19 @@ extension UIViewController {
     
     
     
-    func presentOKAlertWithError(error: NSError) {
+    func presentOKAlertWithError(error: NSError, messagePreamble: String? = nil) {
         
         let title = "Error"
-        let message = error.localizedDescription
-        presentOKAlert(title: title, message: message,  completion: nil)
+        
+        var message: String
+        if let messagePreamble = messagePreamble {
+            message = messagePreamble + "  " + error.localizedDescription
+        }
+        else {
+            message = error.localizedDescription
+        }
+        
+        presentOKAlert(title: title, message: message, completion: nil)
     }
     
 }

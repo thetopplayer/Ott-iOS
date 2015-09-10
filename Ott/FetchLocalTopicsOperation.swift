@@ -21,6 +21,8 @@ func cachedLocalTopics() -> [Topic] {
     
     var error: NSError?
     if let topics = query.findObjects(&error) as? [Topic] {
+        
+        print("returning \(topics.count) cached local topics")
         return topics
     }
     

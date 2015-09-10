@@ -27,6 +27,7 @@ func currentUser() -> User {
         return user
     }
     
+    print("returning temp user")
     return _tmpUser
 }
 
@@ -243,12 +244,13 @@ class User: PFUser {
     
     func didAuthorTopic(topic: Topic) -> Bool {
         
-        return authoredTopicNames().contains(topic.name!)
+        let topicAuthorHandle = topic.authorHandle?.capitalizedString
+        return handle?.capitalizedString == topicAuthorHandle
     }
     
     
     
-    //MARK: - Posted Topics
+    //MARK: - Quick Tracking of Topics and Posts
     
     private var postedTopicArchivePath: String {
         
@@ -284,7 +286,6 @@ class User: PFUser {
     func didPostToTopic(topic: Topic) -> Bool {
         
         if let topicID = topic.objectId {
-            
             return postedTopicIDs().contains(topicID)
         }
         

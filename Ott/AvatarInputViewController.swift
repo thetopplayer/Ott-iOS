@@ -96,21 +96,16 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
         let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
         currentUser().setImage(resizedImage)
         
-        // setting avatar will shrink and compress the image, so use for what is displayed
-        // rather than the raw image itself
-        currentUser().getImage() { (success: Bool, image: UIImage?) -> Void in
-            
-            self.imageView.image = image
-            self.doneButton.setTitle("Next", forState: .Normal)
-        }
-        
+        imageView.image = image
+        doneButton.setTitle("Next", forState: .Normal)
+
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
     
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         
-        if currentUser().hasImage {
+        if currentUser().hasImage() {
             doneButton.setTitle("Next", forState: .Normal)
         }
         else {

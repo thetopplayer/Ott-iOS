@@ -31,6 +31,10 @@ extension DataKeys {
         return "authorHandle"
     }
     
+    static var AuthorAvatar: String {
+        return "authorAvatar"
+    }
+    
     static var Rating: String {
         return "rating"
     }
@@ -42,7 +46,6 @@ class Creation: BaseObject, MKAnnotation {
     
     //MARK: - Attributes
 
-    @NSManaged var authorID: String?
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
     
@@ -51,6 +54,14 @@ class Creation: BaseObject, MKAnnotation {
         self[DataKeys.Author] = author
         authorName = author.name
         authorHandle = author.handle
+        
+        if author.hasImage() {
+            author.getImage(completion: { (success, image) -> Void in
+                if success && image != nil {
+                    self.setImage(image, forKey: DataKeys.AuthorAvatar)
+                }
+            })
+        }
     }
     
     
@@ -63,6 +74,18 @@ class Creation: BaseObject, MKAnnotation {
         set {
             self[DataKeys.Rating] = newValue?.value
         }
+    }
+    
+    
+    func hasAuthorAvatar() -> Bool {
+        
+        return hasImage(forKey: DataKeys.AuthorAvatar)
+    }
+    
+    
+    func getAuthorAvatarImage(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+        
+        getImage(forKey: DataKeys.AuthorAvatar, completion: completion)
     }
     
     

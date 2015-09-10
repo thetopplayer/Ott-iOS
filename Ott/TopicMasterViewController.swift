@@ -221,7 +221,7 @@ class TopicMasterViewController: TableViewController {
     override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         let theTopic = displayedTopics[indexPath.row]
-        if theTopic.hasImage {
+        if theTopic.hasImage() {
             return imageCellHeight
         }
         
@@ -233,7 +233,7 @@ class TopicMasterViewController: TableViewController {
         
         let theTopic = displayedTopics[indexPath.row]
         
-        let identifier = theTopic.hasImage ? imageCellIdentifier: cellIdentifier
+        let identifier = theTopic.hasImage() ? imageCellIdentifier: cellIdentifier
         let cell = tableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
         
         cell.displayedTopic = theTopic
