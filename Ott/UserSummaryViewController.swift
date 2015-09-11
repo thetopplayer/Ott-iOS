@@ -18,7 +18,11 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     @IBOutlet weak var handleTextLabel: UILabel!
     @IBOutlet weak var bioTextLabel: UILabel!
     @IBOutlet weak var summaryContainerView: UIView!
-    @IBOutlet weak var tableContainerView: UIView!
+    @IBOutlet weak var viewSelectionSegmentedControl: UISegmentedControl!
+    @IBOutlet weak var authoredTopicsContainerView: UIView!
+    @IBOutlet weak var authoredPostsContainerView: UIView!
+    @IBOutlet weak var followingContainerView: UIView!
+    @IBOutlet weak var followersContainerView: UIView!
     
     
     //MARK: - Lifecycle
@@ -47,11 +51,14 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         tapGR.addTarget(self, action: "addAvatar:")
         avatarImageView.addGestureRecognizer(tapGR)
         
-        
         handleTextLabel.textColor = UIColor.tint()
         
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
+        
+        // start in tab 1
+        viewSelectionSegmentedControl.selectedSegmentIndex = 0
+        viewSwitchAction(viewSelectionSegmentedControl)
         
         let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
@@ -120,6 +127,45 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     }
 
     
+    @IBAction func viewSwitchAction(sender: UISegmentedControl) {
+    
+        let view0 = authoredTopicsContainerView
+        let view1 = authoredPostsContainerView
+        let view2 = followingContainerView
+        let view3 = followersContainerView
+        
+        switch sender.selectedSegmentIndex {
+            
+        case 0:
+            view0.hidden = false
+            view1.hidden = true
+            view2.hidden = true
+            view3.hidden = true
+            
+        case 1:
+            view0.hidden = true
+            view1.hidden = false
+            view2.hidden = true
+            view3.hidden = true
+            
+        case 2:
+            view0.hidden = true
+            view1.hidden = true
+            view2.hidden = false
+            view3.hidden = true
+            
+        case 3:
+            view0.hidden = true
+            view1.hidden = true
+            view2.hidden = true
+            view3.hidden = false
+            
+        default:
+            assert(false)
+        }
+    }
+    
+    
     
     //MARK: -  Observations {
     
@@ -143,12 +189,6 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         NSNotificationCenter.defaultCenter().removeObserver(self)
         didStartObservations = false
     }
-    
-    
-//    func handleSelectionDidChangeNotification(notification: NSNotification) {
-//        
-//        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: topicTableViewController.selection)
-//    }
     
     
     
@@ -185,40 +225,24 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     }
 
     
-    @IBAction func presentTopicScanViewController(sender: AnyObject) {
-        
-        (navigationController as! NavigationController).presentTopicScanViewController()
-    }
-
     @IBAction func avatarTapAction(sender: AnyObject) {
         
         (navigationController as! NavigationController).presentTopicScanViewController()
     }
     
-
-    /*
-    //MARK: - TopicCreationButtonTableViewCellDelegate
     
-    func buttonViewButtonDidPress(action: TopicCreationButtonTableViewCell.ButtonAction) {
+    @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        myTopic!.name = titleCellView?.title
-        myTopic!.comment = titleCellView?.comment
-        
-        if action == .Camera {
-            
-            titleCellView?.resignFirstResponder()
-            didPresentImagePicker = true
-            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
-        }
-        else {
-            
-            titleCellView?.resignFirstResponder()
-            didPresentImagePicker = true
-            PostQueue.sharedInstance.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
-        }
+        (navigationController as! NavigationController).presentTopicCreationViewController()
     }
-    */
     
+    
+    @IBAction func presentTopicScanViewController(sender: AnyObject) {
+        
+        (navigationController as! NavigationController).presentTopicScanViewController()
+    }
+    
+
     
     
     //MARK: - UIImagePickerControllerDelegate
@@ -241,4 +265,11 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         picker.dismissViewControllerAnimated(true, completion: nil)
     }
 
+    
+    // MARK: - Navigation
+    
+    @IBAction override func unwindForSegue(unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
+        
+    }
+    
 }

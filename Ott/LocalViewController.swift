@@ -11,9 +11,6 @@ import UIKit
 class LocalViewController: TopicMasterViewController {
 
     
-    @IBOutlet var statusToolbarItem: UIBarButtonItem!
-    
-    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -50,37 +47,24 @@ class LocalViewController: TopicMasterViewController {
         case CachedThenFull, Full, Update
     }
     
-    private var isFetching = false
-    
     private func fetchTopics(type: FetchType) {
 
-        func retrieveFromCache(replacingDatasourceData replacingData: Bool) {
-            
-            let cachedTopics = cachedLocalTopics()
-            dispatch_async(dispatch_get_main_queue()) {
-                self.refreshTableView(withTopics: cachedTopics, replacingDatasourceData: replacingData)
-            }
-        }
-        
-        func updateDisplayForFetchCompletion() {
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                self.hideRefreshControl()
-                self.displayStatus()
-            }
-        }
-        
-        
-        /********/
-        
-         displayStatus(.Fetching)
+        displayStatus(.Fetching)
         
         switch type {
             
         case .CachedThenFull:
 
             let retrieveFromCacheOperation = BlockOperation {
-                retrieveFromCache(replacingDatasourceData: true)
+                
+                let cachedTopics = cachedLocalTopics()
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.reloadTableView(withTopics: cachedTopics)
+                    self.hideRefreshControl()
+                    self.displayStatus()
+                }
+                
                 self.fetchTopics(.Full)
             }
             
@@ -97,9 +81,15 @@ class LocalViewController: TopicMasterViewController {
             let fetchForNewLocationOperation = FetchLocalTopicsOperation(location: location)
             
             fetchForNewLocationOperation.addCompletionBlock({
-                retrieveFromCache(replacingDatasourceData: true)
-                updateDisplayForFetchCompletion()
-                })
+                
+                let cachedTopics = cachedLocalTopics()
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.refreshTableView(withTopics: cachedTopics, replacingDatasourceData: true)
+                    self.hideRefreshControl()
+                    self.displayStatus()
+                }
+            })
             
             FetchQueue.sharedInstance.addOperation(fetchForNewLocationOperation)
 
@@ -114,8 +104,14 @@ class LocalViewController: TopicMasterViewController {
             let fetchToUpdateLocationOperation = FetchLocalTopicsOperation(location: location, updateOnly: true)
            
             fetchToUpdateLocationOperation.addCompletionBlock({
-                retrieveFromCache(replacingDatasourceData: false)
-                updateDisplayForFetchCompletion()
+                
+                let cachedTopics = cachedLocalTopics()
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.refreshTableView(withTopics: cachedTopics, replacingDatasourceData: false)
+                    self.hideRefreshControl()
+                    self.displayStatus()
+                }
             })
             
             FetchQueue.sharedInstance.addOperation(fetchToUpdateLocationOperation)

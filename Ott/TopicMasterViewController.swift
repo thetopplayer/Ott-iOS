@@ -200,12 +200,23 @@ class TopicMasterViewController: TableViewController {
             
             tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
-        
-        dispatch_async(dispatch_get_main_queue(), {
-            self.displayStatus()
-        })
+//        
+//        dispatch_async(dispatch_get_main_queue(), {
+//            self.displayStatus()
+//        })
     }
     
+    
+    func reloadTableView(withTopics updatedTopics: [Topic]? = nil) {
+        
+        if let updatedTopics = updatedTopics {
+            topics.removeAll()
+            topics += updatedTopics
+        }
+        
+        tableView.reloadData()
+    }
+
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1

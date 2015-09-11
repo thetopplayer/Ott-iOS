@@ -204,7 +204,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             saveChanges()
         }
         
-        dismissViewControllerAnimated(true) { () -> Void in }
+        performSegueWithIdentifier("unwindToTopicMasterView", sender: self)
     }
     
     

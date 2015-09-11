@@ -86,5 +86,4 @@ extension UITableView {
         self.endUpdates()
     }
     
-
 }

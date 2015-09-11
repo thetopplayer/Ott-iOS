@@ -13,7 +13,7 @@ extension UIColor {
     //MARK: - Colors
     
     static func background() -> UIColor {
-        return UIColor(hex: 0xF6D87D)
+        return UIColor(hex: 0xFFE082)
     }
     
     static func tint() -> UIColor {

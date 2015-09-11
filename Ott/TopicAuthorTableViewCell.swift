@@ -21,7 +21,8 @@ class TopicAuthorTableViewCell: TableViewCell {
         super.awakeFromNib()
         contentView.backgroundColor = UIColor(white: 0.98, alpha: 1.0)
         innerContentContainer?.addBorder()
-        authorImageView.clipsToBounds = true
+        authorImageView.addRoundedBorder()
+        authorHandleLabel.textColor = UIColor.tint()
     }
     
     

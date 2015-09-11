@@ -42,10 +42,6 @@ func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) ->
 
 class FetchPostsOperation: ParseOperation {
     
-    static func cacheNameForTopic(topic: Topic) -> String? {
-        return topic.objectId
-    }
-    
     let topic: Topic
     let postedSince: NSDate?
     
@@ -58,6 +54,10 @@ class FetchPostsOperation: ParseOperation {
     
     
     //MARK: - Caching
+    
+    static func cacheNameForTopic(topic: Topic) -> String? {
+        return topic.objectId
+    }
     
     private func replaceCachedPosts(withPosts posts: [Post]) {
         
