@@ -41,8 +41,12 @@
                             </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <connections>
+                        <segue destination="sUZ-Aa-4Hj" kind="unwind" identifier="unwindToMasterView" unwindAction="unwindForSegue:towardsViewController:" id="mI7-el-SKH"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="T25-bY-UJK" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <exit id="sUZ-Aa-4Hj" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="-1413" y="4289"/>
         </scene>

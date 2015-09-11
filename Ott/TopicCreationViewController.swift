@@ -204,7 +204,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             saveChanges()
         }
         
-        performSegueWithIdentifier("unwindToTopicMasterView", sender: self)
+        performSegueWithIdentifier("unwindToMasterView", sender: self)
     }
     
     

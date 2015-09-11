@@ -179,7 +179,7 @@
                         <outlet property="toolbar" destination="fhB-VS-06h" id="GrT-kY-bdg"/>
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>
                         <segue destination="0ZF-g2-KQT" kind="showDetail" identifier="segueToExport" id="JjF-Sc-TLg"/>
-                        <segue destination="h4G-C7-IFZ" kind="unwind" identifier="unwindToTopicMasterView" unwindAction="unwindForSegue:towardsViewController:" id="aB8-9h-1WY"/>
+                        <segue destination="h4G-C7-IFZ" kind="unwind" identifier="unwindToMasterView" unwindAction="unwindForSegue:towardsViewController:" id="aB8-9h-1WY"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>

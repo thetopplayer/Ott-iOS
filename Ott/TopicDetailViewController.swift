@@ -442,7 +442,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func goodbye() {
         
         fetchPostsOperation?.cancel()
-        performSegueWithIdentifier("unwindToTopicMasterView", sender: self)
+        performSegueWithIdentifier("unwindToMasterView", sender: self)
     }
     
     
