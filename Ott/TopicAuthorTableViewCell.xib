@@ -22,7 +22,7 @@
                             </constraints>
                         </imageView>
                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
-                            <rect key="frame" x="74" y="8" width="429" height="18"/>
+                            <rect key="frame" x="74" y="7" width="429" height="18"/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="18" id="9YA-fW-X9V"/>
                             </constraints>
@@ -57,14 +57,14 @@
                         <constraint firstItem="GpH-nQ-Jok" firstAttribute="centerY" secondItem="wVt-mt-xss" secondAttribute="centerY" id="ATQ-CN-cf4"/>
                         <constraint firstAttribute="trailing" secondItem="GpH-nQ-Jok" secondAttribute="trailing" constant="15" id="CaL-EY-DU6"/>
                         <constraint firstItem="IZQ-U4-WaG" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="Gls-ao-2G0"/>
-                        <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" id="JVq-2N-jo6"/>
+                        <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="1" id="JVq-2N-jo6"/>
                         <constraint firstItem="GpH-nQ-Jok" firstAttribute="leading" secondItem="LOS-bD-3Bi" secondAttribute="trailing" constant="8" id="LsA-da-GVO"/>
                         <constraint firstItem="GpH-nQ-Jok" firstAttribute="leading" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="8" id="Nni-vr-bxP"/>
                         <constraint firstItem="yu5-IZ-XAd" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="10" id="ThC-b1-gl7"/>
                         <constraint firstItem="Avr-ze-dIT" firstAttribute="leading" secondItem="LOS-bD-3Bi" secondAttribute="leading" id="b5h-8G-0Wa"/>
                         <constraint firstItem="Avr-ze-dIT" firstAttribute="trailing" secondItem="LOS-bD-3Bi" secondAttribute="trailing" id="eVC-N5-T4B"/>
                         <constraint firstItem="yu5-IZ-XAd" firstAttribute="centerY" secondItem="wVt-mt-xss" secondAttribute="centerY" id="g7K-Hi-7Is"/>
-                        <constraint firstItem="IZQ-U4-WaG" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="8" id="gvO-3P-q0V"/>
+                        <constraint firstItem="IZQ-U4-WaG" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="7" id="gvO-3P-q0V"/>
                         <constraint firstItem="yu5-IZ-XAd" firstAttribute="leading" secondItem="wVt-mt-xss" secondAttribute="leading" constant="16" id="hr8-pQ-P3P"/>
                         <constraint firstItem="Avr-ze-dIT" firstAttribute="top" secondItem="LOS-bD-3Bi" secondAttribute="bottom" constant="4" id="lD4-Oa-gki"/>
                         <constraint firstAttribute="height" constant="68" id="wn0-p5-XFJ"/>
@@ -85,6 +85,7 @@
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
             <connections>
+                <outlet property="authorBioLabel" destination="Avr-ze-dIT" id="XhQ-cc-uZk"/>
                 <outlet property="authorHandleLabel" destination="LOS-bD-3Bi" id="Gci-DL-9x4"/>
                 <outlet property="authorImageView" destination="yu5-IZ-XAd" id="vNl-px-7kn"/>
                 <outlet property="authorNameLabel" destination="IZQ-U4-WaG" id="wIY-kX-XQN"/>

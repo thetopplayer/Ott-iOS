@@ -79,6 +79,11 @@ func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool,
 
 class User: PFUser {
 
+    static let minimumHandleLength = 4
+    static let minimumUserNameLength = 3
+
+    /****/
+    
     override class func initialize() {
         struct Static {
             static var onceToken : dispatch_once_t = 0;

@@ -1,27 +1,66 @@
 //
-//  AccountSetupViewController.swift
+//  SettingsViewController.swift
 //  Ott
 //
-//  Created by Max on 7/27/15.
+//  Created by Max on 9/11/15.
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
 import UIKit
 
-class AccountSetupViewController: ViewController, UITextFieldDelegate {
 
-    @IBOutlet weak var contentContainer: UIView!
-    @IBOutlet weak var topLabel: UILabel!
+// note that a lot of this is copied from AccountSetupViewController
+
+
+class SettingsViewController: TableViewController, UITextFieldDelegate, UITextViewDelegate {
+
     @IBOutlet weak var handleTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var handleExistsLabel: UILabel!
     @IBOutlet weak var handleEntryStatusImageView: UIImageView!
     @IBOutlet weak var nameEntryStatusImageView: UIImageView!
-    @IBOutlet weak var doneButton: UIButton!
-    @IBOutlet weak var createAccountActivityIndicator: UIActivityIndicatorView!
+    @IBOutlet weak var bioTextView: UITextView!
     @IBOutlet weak var validatingHandleActivityIndicator: UIActivityIndicatorView!
-  
-    private var handleIsUnique = false
+
+    
+    override func viewDidLoad() {
+        
+        super.viewDidLoad()
+        
+        tableView.backgroundColor = UIColor.background()
+        
+        bioTextView.backgroundColor = UIColor.clearColor()
+        bioTextView.addRoundedBorder()
+        
+        handleTextField.delegate = self
+        nameTextField.delegate = self
+        bioTextView.delegate = self
+        saveButton.enabled = false
+        
+        nameTextField.text = currentUser().name
+        handleTextField.text = currentUser().handle
+        bioTextView.text = currentUser().bio
+        
+        handleExistsLabel.hidden = true
+        isDirty = false
+        startObservations()
+    }
+
+    
+    deinit {
+        
+        endObservations()
+    }
+    
+    
+    
+    //MARK: - Display
+
+    var saveButton: UIBarButtonItem {
+        return navigationItem.rightBarButtonItem!
+    }
+    
+    
     private let okImage = UIImage(named: "tick")
     private let errImage = UIImage(named: "multiply")
     
@@ -55,77 +94,73 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        
-        navigationItem.title = "One To Ten"
-        navigationItem.hidesBackButton = true
-        
-        contentContainer.addRoundedBorder()
-
-        handleTextField.delegate = self
-        nameTextField.delegate = self
-        
-        topLabel.text = "Setup your account with a unique handle and a user name."
-        handleTextField.text = "@"
-        doneButton.setTitle("Sign Up", forState: .Normal)
-        doneButton.setTitle("Sign Up", forState: .Disabled)
-
-        // need to start off with nil to get the tint to behave correctly when the images are set
-        handleEntryStatusImageView.image = nil
-        nameEntryStatusImageView.image = nil
-        
-        handleExistsLabel.hidden = true
-        
-        handleTextField.becomeFirstResponder()
-        startObservations()
-    }
-
     
-    deinit {
+    //MARK: - Data
+
+    private var isDirty: Bool = false {
         
-        endObservations()
+        didSet {
+            saveButton.enabled = isDirty && handleIsUnique && nameIsValid
+        }
     }
     
     
-    //MARK: - Actions
+    private var handleIsUnique = true {
+        
+        didSet {
+            saveButton.enabled = isDirty && handleIsUnique && nameIsValid
+        }
+    }
     
-    @IBAction func doneAction(sender: AnyObject) {
+    private var nameIsValid = true {
+        
+        didSet {
+            saveButton.enabled = isDirty && handleIsUnique && nameIsValid
+        }
+    }
+
+    
+    private func saveChanges() {
+        
+        guard handleIsUnique && nameIsValid else {
+            return
+        }
         
         currentUser().name = nameTextField.text
         currentUser().handle = handleTextField.text
+        currentUser().bio = bioTextView.text
         
-        doneButton.setTitle("Creating Account...", forState: .Disabled)
-        doneButton.enabled = false
-        createAccountActivityIndicator.startAnimating()
-        
-        currentUser().signUpInBackgroundWithBlock { (succeeded, error) in
-            
-            self.createAccountActivityIndicator.stopAnimating()
-            
-            if error == nil {
-                
-                setUserSignedUp(true)
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.performSegueWithIdentifier("segueToAvatarCreation", sender: self)
-                }
-            }
-            else {
-                
-                setUserSignedUp(false)
-                
-               // todo handle error
-                print("error signing up: \(error)")
-            }
-        }
-        
+        let updateOperation = UpdateUserOperation(user: currentUser())
+        PostQueue.sharedInstance.addOperation(updateOperation)
     }
     
     
     
-    //MARK: - Observations and TextField Delegate
+    //MARK: - Actions
+
+    @IBAction func handleSaveAction(sender: AnyObject) {
+        
+        saveChanges()
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    @IBAction func handleCancelAction(sender: AnyObject) {
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    
+    //MARK: - TableView Delegate
+    
+    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return 0.1
+    }
+    
+    
+    
+    //MARK: - Observations and Delegate Methods
     
     private var didStartObservations = false
     private func startObservations() {
@@ -174,16 +209,15 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             return string.isSuitableForUserName()
         }
         
-        
         return true
     }
     
-
+    
     func handleTextFieldDidChange(notification: NSNotification) {
         
         func handleIsLongEnough() -> Bool {
             return handleTextField.text!.length >= User.minimumHandleLength
-         }
+        }
         
         
         func nameIsLongEnough() -> Bool {
@@ -208,7 +242,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                         
                         self.handleExistsLabel.hidden = self.handleIsUnique
                         self.validatingHandleActivityIndicator.stopAnimating()
-                       
+                        
                         self.indicateHandleOK(self.handleIsUnique)
                         self.handleEntryStatusImageView.hidden = false
                     }
@@ -232,7 +266,7 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         }
         
         indicateNameOK(nameIsLongEnough())
-        doneButton.enabled = handleIsLongEnough() && nameIsLongEnough() && handleIsUnique
+        saveButton.enabled = handleIsLongEnough() && nameIsLongEnough() && handleIsUnique
     }
     
     
@@ -242,4 +276,11 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             nameTextField.becomeFirstResponder()
         }
     }
+    
+    
+    func textViewDidChange(textView: UITextView) {
+        
+        isDirty = true
+    }
+
 }

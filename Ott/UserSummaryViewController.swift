@@ -17,6 +17,7 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     @IBOutlet weak var nameTextLabel: UILabel!
     @IBOutlet weak var handleTextLabel: UILabel!
     @IBOutlet weak var bioTextLabel: UILabel!
+    @IBOutlet weak var settingsButton: UIButton!
     @IBOutlet weak var summaryContainerView: UIView!
     @IBOutlet weak var viewSelectionSegmentedControl: UISegmentedControl!
     @IBOutlet weak var authoredTopicsContainerView: UIView!
@@ -55,6 +56,8 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         
         summaryContainerView.backgroundColor = UIColor.whiteColor()
         summaryContainerView.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
+        
+        settingsButton.addRoundedBorder(withColor: UIColor.tint())
         
         // start in tab 1
         viewSelectionSegmentedControl.selectedSegmentIndex = 0
@@ -102,7 +105,7 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         nameTextLabel.text = currentUser().name
         handleTextLabel.text = currentUser().username
         
-        let bioText = currentUser().bio != nil ? currentUser().bio : ""
+        let bioText = currentUser().bio != nil ? currentUser().bio : "(no bio)"
         bioTextLabel.text = bioText
         
         if currentUser().hasImage() {
@@ -176,6 +179,8 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
             return
         }
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUserDidChangeNotification:", name: UpdateUserOperation.Notifications.DidUpdate, object: nil)
+        
         didStartObservations = true
     }
     
@@ -188,6 +193,12 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
         didStartObservations = false
+    }
+    
+    
+    func handleUserDidChangeNotification(notification: NSNotification) {
+        
+        updateDisplayedInformation()
     }
     
     
@@ -242,7 +253,14 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         (navigationController as! NavigationController).presentTopicScanViewController()
     }
     
-
+    
+    @IBAction func presentSettingsView(sender: AnyObject) {
+        
+        let segueIdentifier = "segueToSettingsView"
+        performSegueWithIdentifier(segueIdentifier, sender: self)
+    }
+    
+    
     
     
     //MARK: - UIImagePickerControllerDelegate

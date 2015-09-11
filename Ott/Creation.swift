@@ -31,6 +31,10 @@ extension DataKeys {
         return "authorHandle"
     }
     
+    static var AuthorBio: String {
+        return "authorBio"
+    }
+    
     static var AuthorAvatar: String {
         return "authorAvatar"
     }
@@ -48,12 +52,14 @@ class Creation: BaseObject, MKAnnotation {
 
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
+    @NSManaged var authorBio: String?
     
     func setAuthor(author: User) {
         
         self[DataKeys.Author] = author
         authorName = author.name
         authorHandle = author.handle
+        authorBio = author.bio
         
         if author.hasImage() {
             author.getImage(completion: { (success, image) -> Void in
