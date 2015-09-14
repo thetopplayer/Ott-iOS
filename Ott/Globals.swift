@@ -16,6 +16,34 @@ func openSettings() {
 }
 
 
+func documentsDirectory() -> String {
+    
+    do {
+        
+        let documentURL = try NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
+        return documentURL.path!
+    }
+    catch {
+        print("error getting document directory")
+        return ""
+    }
+}
+
+
+func documentsDirectory(withSubpath subpath: String) -> String? {
+    
+    do {
+        
+        let documentURL = try NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
+        return documentURL.path! + subpath
+    }
+    catch {
+        print("error getting document directory")
+        return nil
+    }
+}
+
+
 
 //MARK: - User Defaults
 

@@ -200,10 +200,6 @@ class TopicMasterViewController: TableViewController {
             
             tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
-//        
-//        dispatch_async(dispatch_get_main_queue(), {
-//            self.displayStatus()
-//        })
     }
     
     

@@ -127,14 +127,18 @@ class TopicMasterTableViewCell: TableViewCell {
             
             let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
             
-            let s1 = NSMutableAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
-            
-            let p = topic.numberOfPosts == 1 ? " post | " : " posts | "
-            let s2 = NSAttributedString(string: p + "by ", attributes: normalAttributes)
+            let s1 = NSMutableAttributedString(string: "by ", attributes: normalAttributes)
             let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
-            let s3 = NSAttributedString(string: authorName, attributes: boldAttributes)
-            
+            let s2 = NSAttributedString(string: authorName, attributes: boldAttributes)
             s1.appendAttributedString(s2)
+            
+            let s3 = NSMutableAttributedString(string: " |  ", attributes: normalAttributes)
+            let s4 = NSAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
+            let p = topic.numberOfPosts == 1 ? " post" : " posts"
+            let s5 = NSAttributedString(string: p, attributes: normalAttributes)
+            s3.appendAttributedString(s4)
+            s3.appendAttributedString(s5)
+            
             s1.appendAttributedString(s3)
             return s1
         }

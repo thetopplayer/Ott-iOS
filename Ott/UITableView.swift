@@ -77,12 +77,19 @@ extension UITableView {
         }
         
         self.beginUpdates()
-        if replacingdatasourceData {
+        
+        if replacingdatasourceData && indexPathsForRemoval.count > 0 {
             self.deleteRowsAtIndexPaths(indexPathsForRemoval, withRowAnimation: .Automatic)
         }
         
-        self.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
-        self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
+        if indexPathsForUpdate.count > 0 {
+            self.reloadRowsAtIndexPaths(indexPathsForUpdate, withRowAnimation: .None)
+        }
+        
+        if indexPathsForInsert.count > 0 {
+            self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
+        }
+        
         self.endUpdates()
     }
     

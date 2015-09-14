@@ -19,17 +19,16 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     static let sharedInstance = LocationManager()
     
-    private let geoCoder: CLGeocoder
+    lazy private var geoCoder: CLGeocoder = {
+        return CLGeocoder()
+    }()
+    
     private let notificationFilterDistance = CLLocationDistance(500)
-    private var timeOfLastUpdateNotification: NSDate
 
     
     //MARK: - Lifecycle
     
     private override init() {
-        
-        geoCoder = CLGeocoder()
-        timeOfLastUpdateNotification = NSDate.distantPast()
         
         super.init()
         delegate = self
@@ -171,17 +170,30 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         }
     }
     
+    private let priorLocationArchive = documentsDirectory() + "/priorLocation"
+    private var priorLocation: CLLocation? {
+        
+        set {
+            NSKeyedArchiver.archiveRootObject(newValue!, toFile: priorLocationArchive)
+        }
+        
+        get {
+            return NSKeyedUnarchiver.unarchiveObjectWithFile(priorLocationArchive) as? CLLocation
+        }
+    }
+    
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        print("locationManager did update")
-        
-        // prevent multiple notifications sent at startup
-        if fabs(timeOfLastUpdateNotification.timeIntervalSinceNow) > 60 {
+        if let lastLocation = priorLocation {
             
-            timeOfLastUpdateNotification = NSDate()
-            NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
+            if distanceFromCurrentLocation(lastLocation) < notificationFilterDistance {
+                return
+           }
         }
+        
+        priorLocation = locations.first
+        NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
     }
     
     

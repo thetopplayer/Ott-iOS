@@ -102,7 +102,7 @@ class FetchLocalTopicsOperation: ParseOperation {
         query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
         
         let updateDate = updateOnly ? lastUpdated : defaultFetchSinceDate
-        query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: updateDate)
+        query.whereKey(DataKeys.UpdatedAt, greaterThan: updateDate)
         
         var error: NSError?
         let objects = query.findObjects(&error)

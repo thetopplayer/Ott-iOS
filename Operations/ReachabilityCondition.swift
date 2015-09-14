@@ -38,7 +38,8 @@ struct ReachabilityCondition: OperationCondition {
             else {
                 let error = NSError(code: .ConditionFailed, userInfo: [
                     OperationConditionKey: self.dynamicType.name,
-                    self.dynamicType.hostKey: self.host
+                    self.dynamicType.hostKey: self.host,
+                    NSLocalizedDescriptionKey: "Unable to reach server."
                 ])
                 
                 completion(.Failed(error))

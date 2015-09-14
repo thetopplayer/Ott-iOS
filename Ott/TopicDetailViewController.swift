@@ -328,7 +328,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             dispatch_async(dispatch_get_main_queue()) {
                 self.displayStatus(type: .Normal)
                 self.refreshTableView(withUpdatedPosts: cachedPosts)
-                self.refreshMapView(withUpdatedPosts: cachedPosts)
+                self.reloadMapView()
             }
         }
 
@@ -477,8 +477,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
-        if let destinationController = segue.destinationViewController as? ExportViewController {
-            destinationController.myTopic = myTopic
+        if let destinationController = segue.destinationViewController as? NavigationController {
+            destinationController.topic = myTopic
         }
     }
 
@@ -793,10 +793,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private func refreshMapView(withUpdatedPosts updatedPosts: [Post]) {
+    private func reloadMapView() {
         
-        let allObjects: [Creation] = [myTopic!] + updatedPosts
-        
+        let allObjects: [Creation] = [myTopic!] + posts
+
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(allObjects)
         mapView.showAnnotations(allObjects, animated: true)

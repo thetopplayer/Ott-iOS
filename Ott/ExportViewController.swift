@@ -12,8 +12,6 @@ import MessageUI
 
 class ExportViewController: ViewController, UIPrintInteractionControllerDelegate, MFMailComposeViewControllerDelegate {
 
-    @IBOutlet weak var captionContainer: UIView!
-    @IBOutlet weak var topicLabel: UILabel!
     @IBOutlet weak var codeImageView: UIImageView!
     @IBOutlet weak var printButtonItem: UIBarButtonItem!
     @IBOutlet weak var emailButtonItem: UIBarButtonItem!
@@ -22,18 +20,10 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     @IBOutlet weak var imageSizeSegmentedControl: UISegmentedControl!
    
     
-    override func prefersStatusBarHidden() -> Bool {
-        return true;
-    }
-    
-    
     var didLoadView = false
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        captionContainer.backgroundColor = UIColor.background().colorWithAlphaComponent(0.4)
-        captionContainer.addBorder()
-        
         didLoadView = true
     }
     
@@ -41,6 +31,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        myTopic = (navigationController as! NavigationController).topic
         setupDisplay()
         generateImage()
     }
@@ -101,7 +92,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         
         if let topic = myTopic {
             
-            topicLabel.text = "#" + topic.name!
+            navigationItem.title = "#" + topic.name!
 
             self.printButtonItem.enabled = false
             self.emailButtonItem.enabled = false

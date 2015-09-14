@@ -202,23 +202,9 @@ class User: PFUser {
 
     //MARK: - Authored Topics
     
-    private var documentsDirectory: String = {
-        
-        do {
-            
-            let documentURL = try NSFileManager.defaultManager().URLForDirectory(.DocumentDirectory, inDomain: NSSearchPathDomainMask.UserDomainMask, appropriateForURL: nil, create: false)
-            return documentURL.path!
-        }
-        catch {
-            print("error getting document directory")
-            return ""
-        }
-    }()
-    
-    
     private var authoredTopicArchivePath: String {
         
-        return documentsDirectory + "/authoredTopics.ott"
+        return documentsDirectory() + "/authoredTopics.ott"
     }
     
     
@@ -259,7 +245,7 @@ class User: PFUser {
     
     private var postedTopicArchivePath: String {
         
-        return documentsDirectory + "/postedTopics.ott"
+        return documentsDirectory(withSubpath: "/postedTopics.ott")!
     }
     
     
@@ -303,7 +289,7 @@ class User: PFUser {
     
     private var followedUsersArchivePath: String {
         
-        return documentsDirectory + "/followedUsers.ott"
+        return documentsDirectory(withSubpath: "/followedUsers.ott")!
     }
     
     

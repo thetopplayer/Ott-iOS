@@ -29,7 +29,7 @@ class ParseOperation: Operation {
     
     let reachabilityCondition: ReachabilityCondition = {
         
-        let host = NSURL(string: "http://api.parse.com")
+        let host = NSURL(string: "https://api.parse.com")
         return ReachabilityCondition(host: host!)
         }()
     

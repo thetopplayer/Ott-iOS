@@ -22,7 +22,7 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        fetchTopics(.CachedThenFull)
+        fetchTopics(.CachedThenUpdate)
     }
 
     
@@ -44,7 +44,7 @@ class LocalViewController: TopicMasterViewController {
     //MARK: - Data
     
     private enum FetchType {
-        case CachedThenFull, Full, Update
+        case CachedThenUpdate, Full, Update
     }
     
     private func fetchTopics(type: FetchType) {
@@ -53,7 +53,7 @@ class LocalViewController: TopicMasterViewController {
         
         switch type {
             
-        case .CachedThenFull:
+        case .CachedThenUpdate:
 
             let retrieveFromCacheOperation = BlockOperation {
                 
@@ -65,7 +65,7 @@ class LocalViewController: TopicMasterViewController {
                     self.displayStatus()
                 }
                 
-                self.fetchTopics(.Full)
+                self.fetchTopics(.Update)
             }
             
             FetchQueue.sharedInstance.addOperation(retrieveFromCacheOperation)

@@ -157,7 +157,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return 0.1
     }
-    
+        
     
     
     //MARK: - Observations and Delegate Methods
