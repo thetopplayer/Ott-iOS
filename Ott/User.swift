@@ -324,7 +324,7 @@ class User: PFUser {
     }
     
     
-    func removeFollowingUserWithHandleFromArchive(handle: String) {
+    func removeHandleFromFollowedUsersArchive(handle: String) {
         
         let userHandles = NSMutableSet()
         userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)

@@ -32,24 +32,19 @@ class RemoveFollowOperation: ParseOperation {
         
         logBackgroundTask()
         
-        var error: NSError?
-        let follow = Follow()
-//        follow.follower = follower
-//        follow.followeeHandle = followeeHandle
-//        
-//        follow.save(&error)
-//        
-//        if let error = error {
-//            finishWithError(error)
-//        }
-//        
-//        // refresh user data
-//        follower.fetch(&error)
-//        if let error = error {
-//            finishWithError(error)
-//        }
+        currentUser().removeHandleFromFollowedUsersArchive(followeeHandle)
         
-        finishWithError(nil)
+        let query = Follow.query()!
+        query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
+        
+        var error: NSError? = nil
+        if let object = query.getFirstObject(&error) {
+            
+            var error: NSError? = nil
+            object.delete(&error)
+            finishWithError(error)
+        }
+        finishWithError(error)
     }
     
     

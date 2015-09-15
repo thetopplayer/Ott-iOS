@@ -71,56 +71,13 @@ class Follow: BaseObject, PFSubclassing {
     }
     
     
-//    /** Use this to create */
-//    class func createRelationBetween(follower follower: User, following followee: User) -> Follow {
-//        
-//        let follow = Follow()
-//        follow.setFollower(follower)
-//        follow.setFollowee(followee)
-//        
-//        return follow
-//    }
-    
-    
     //MARK: - Attributes
     
     @NSManaged var followerName: String?
     @NSManaged var followerHandle: String?
     @NSManaged var followerBio: String?
     
-    func setFollower(follower: User) {
-        
-        self[DataKeys.Follower] = follower
-        followerName = follower.name
-        followerHandle = follower.handle
-        followerBio = follower.bio
-        
-        if follower.hasImage() {
-            follower.getImage(completion: { (success, image) -> Void in
-                if success && image != nil {
-                    self.setImage(image, forKey: DataKeys.FollowerAvatar)
-                }
-            })
-        }
-    }
-    
     @NSManaged var followeeName: String?
     @NSManaged var followeeHandle: String?
     @NSManaged var followeeBio: String?
-    
-    func setFollowee(followee: User) {
-        
-        self[DataKeys.Followee] = followee
-        followeeName = followee.name
-        followeeHandle = followee.handle
-        followeeBio = followee.bio
-        
-        if followee.hasImage() {
-            followee.getImage(completion: { (success, image) -> Void in
-                if success && image != nil {
-                    self.setImage(image, forKey: DataKeys.FolloweeAvatar)
-                }
-            })
-        }
-    }
 }
