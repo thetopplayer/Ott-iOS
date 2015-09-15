@@ -1,5 +1,5 @@
 //
-//  Creation.swift
+//  AuthoredObject.swift
 //  Ott
 //
 //  Created by Max on 7/22/15.
@@ -39,13 +39,25 @@ extension DataKeys {
         return "authorAvatar"
     }
     
+    static var Comment: String {
+        return "comment"
+    }
+    
+    static var Location: String {
+        return "location"
+    }
+    
+    static var LocationName: String {
+        return "locationName"
+    }
+    
     static var Rating: String {
         return "rating"
     }
 }
 
 
-class Creation: BaseObject, MKAnnotation {
+class AuthoredObject: BaseObject, MKAnnotation {
 
     
     //MARK: - Attributes
@@ -53,6 +65,7 @@ class Creation: BaseObject, MKAnnotation {
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
     @NSManaged var authorBio: String?
+    @NSManaged var comment: String?
     
     func setAuthor(author: User) {
         
@@ -70,7 +83,24 @@ class Creation: BaseObject, MKAnnotation {
         }
     }
     
+    @NSManaged var locationName: String?
     
+    var location: CLLocation? {
+        
+        get {
+            var clvalue: CLLocation?
+            if let geoPoint = self[DataKeys.Location] {
+                clvalue = CLLocation(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
+            }
+            return clvalue
+        }
+        
+        set {
+            self[DataKeys.Location] = PFGeoPoint(location: newValue)
+        }
+    }
+    
+
     var rating: Rating? {
         
         get {

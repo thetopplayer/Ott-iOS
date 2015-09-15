@@ -21,7 +21,7 @@ extension DataKeys {
 }
 
 
-class Post: Creation, PFSubclassing {
+class Post: AuthoredObject, PFSubclassing {
     
     override class func initialize() {
         struct Static {

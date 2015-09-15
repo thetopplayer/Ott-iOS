@@ -309,17 +309,12 @@ class User: PFUser {
     }
     
     
-    func followUserWithHandle(handle: String) {
-        
-        // TODO send background request to follow
-
-        
-        // if successfull..
+    func archiveFollowedUserWithHandle(handle: String) {
         
         let userHandles = NSMutableSet()
         userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
         userHandles.addObject(handle)
-        archivePostedTopicIDs(userHandles.allObjects)
+        archiveFollowedUserHandles(userHandles.allObjects)
     }
     
     
@@ -329,16 +324,12 @@ class User: PFUser {
     }
     
     
-    func stopFollowingUserWithHandle(handle: String) {
-        
-        // TODO send background request to unfollow
-        
-        // if successful...
+    func removeFollowingUserWithHandleFromArchive(handle: String) {
         
         let userHandles = NSMutableSet()
         userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
         userHandles.removeObject(handle)
-        archivePostedTopicIDs(userHandles.allObjects)
+        archiveFollowedUserHandles(userHandles.allObjects)
     }
     
 }

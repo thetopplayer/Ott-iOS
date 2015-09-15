@@ -79,7 +79,7 @@ class TopicMasterViewController: TableViewController {
             statusLabel.text = "Fetching Topics..."
             
         default:
-            statusLabel.text = "No Topics..."
+            statusLabel.text = "No Topics"
         }
     }
     

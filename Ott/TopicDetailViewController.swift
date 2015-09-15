@@ -795,7 +795,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func reloadMapView() {
         
-        let allObjects: [Creation] = [myTopic!] + posts
+        let allObjects: [AuthoredObject] = [myTopic!] + posts
 
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(allObjects)
@@ -812,7 +812,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         let topicIdentifier = "topicAnnotation"
         let postIdentifier = "postAnnotation"
         
-        let isTopic = (annotation as! Creation) is Topic
+        let isTopic = (annotation as! AuthoredObject) is Topic
         let identifier = isTopic ? topicIdentifier : postIdentifier
         
         var annotationView: MKPinAnnotationView

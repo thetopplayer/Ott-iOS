@@ -14,8 +14,6 @@ Abstract class at root of all data
 */
 
 import UIKit
-import MapKit
-
 
 class DataKeys {
     
@@ -27,48 +25,10 @@ class DataKeys {
         return "updatedAt"
     }
     
-    static var Comment: String {
-        return "comment"
-    }
-    
-    static var Location: String {
-        return "location"
-    }
-    
-    static var LocationName: String {
-        return "locationName"
-    }
 }
 
 
 class BaseObject: PFObject {
-    
-    
-    //MARK: - Attributes
-    
-    @NSManaged var comment: String?
-        
-    var identifier: String? {
-        return objectId
-    }
-    
-    
-    @NSManaged var locationName: String?
-    
-    var location: CLLocation? {
-        
-        get {
-            var clvalue: CLLocation?
-            if let geoPoint = self[DataKeys.Location] {
-                clvalue = CLLocation(latitude: geoPoint.latitude, longitude: geoPoint.longitude)
-            }
-            return clvalue
-        }
-        
-        set {
-            self[DataKeys.Location] = PFGeoPoint(location: newValue)
-        }
-    }
     
     
     //MARK: - NSObject Protocol

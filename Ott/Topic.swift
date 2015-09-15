@@ -34,7 +34,7 @@ extension DataKeys {
 }
 
 
-class Topic: Creation, PFSubclassing {
+class Topic: AuthoredObject, PFSubclassing {
     
     override class func initialize() {
         struct Static {
@@ -50,6 +50,7 @@ class Topic: Creation, PFSubclassing {
     class func parseClassName() -> String {
         return "Topic"
     }
+    
     
     /** Use this to create */
     class func createWithAuthor(author: User) -> Topic {
@@ -116,12 +117,5 @@ class Topic: Creation, PFSubclassing {
         }
     }
 
-    
-    //MARK: - Queries
-    
-    class func fetchTopicWithIdentifier(identifier: String, completion: PFObjectResultBlock) {
-        
-        Topic.query()!.getObjectInBackgroundWithId(identifier, block: completion)
-    }
 }
 

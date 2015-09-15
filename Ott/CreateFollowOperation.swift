@@ -1,31 +1,30 @@
 //
-//  UpdateUserOperation.swift
+//  CreateFollowOperation.swift
 //  Ott
 //
-//  Created by Max on 9/10/15.
+//  Created by Max on 9/14/15.
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
 import UIKit
 
-class UpdateUserOperation: ParseOperation {
+class CreateFollowOperation: ParseOperation {
 
-    let user: User
+    let followeeHandle: String
     
-    init(user: User) {
+    init(followeeHandle: String) {
         
-        self.user = user
+        self.followeeHandle = followeeHandle
         super.init()
     }
     
     struct Notifications {
         
-        static let DidUpdate = "didUpdateUser"
-        static let UpdateDidFail = "userUpdateDidFail"
+        static let DidCreate = "didCreateFollow"
+        static let CreationDidFail = "followCreationDidFail"
         static let ErrorKey = "error"
     }
-    
-    
+
     
     //MARK: - Execution
     
@@ -34,14 +33,20 @@ class UpdateUserOperation: ParseOperation {
         logBackgroundTask()
         
         var error: NSError?
-        user.save(&error)
+        let follow = Follow()
+        follow.followerHandle = currentUser().handle
+        follow.followeeHandle = followeeHandle
+        
+        follow.save(&error)
         
         if let error = error {
             finishWithError(error)
         }
-            
-        // need to refresh for things to work correctly
-        user.fetch(&error)
+        
+        currentUser().archiveFollowedUserWithHandle(followeeHandle)
+        
+        // refresh user data
+        currentUser().fetch(&error)
         if let error = error {
             finishWithError(error)
         }
@@ -58,7 +63,7 @@ class UpdateUserOperation: ParseOperation {
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.DidUpdate,
+                NSNotificationCenter.defaultCenter().postNotificationName(CreateFollowOperation.Notifications.DidCreate,
                     object: self)
             }
         }
@@ -67,20 +72,22 @@ class UpdateUserOperation: ParseOperation {
             dispatch_async(dispatch_get_main_queue()) {
                 
                 guard let controller = topmostViewController() else {
-                    print("ERROR updating user \(self.user)")
+                    print("ERROR creating follow relationship")
                     return
                 }
                 
-                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not update user:")
+                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not create follow relationship:")
             }
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors]
-                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.UpdateDidFail,
+                let userinfo: [NSObject: AnyObject] = [CreateFollowOperation.Notifications.ErrorKey: errors]
+                NSNotificationCenter.defaultCenter().postNotificationName(CreateFollowOperation.Notifications.CreationDidFail,
                     object: self,
                     userInfo: userinfo)
             }
         }
     }
+    
+
 }

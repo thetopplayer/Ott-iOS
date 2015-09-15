@@ -80,7 +80,7 @@ class PostDetailTableViewCell: TableViewCell {
         let dateFormatter = NSDateFormatter()
         dateFormatter.dateStyle = .MediumStyle
         
-        let s1 = NSMutableAttributedString(string: "Posted by ", attributes: normalAttributes)
+        let s1 = NSMutableAttributedString(string: "by ", attributes: normalAttributes)
         let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
         let s2 = NSAttributedString(string: authorName, attributes: boldAttributes)
         

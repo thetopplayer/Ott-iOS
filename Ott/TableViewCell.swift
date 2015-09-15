@@ -100,12 +100,12 @@ class TableViewCell: UITableViewCell {
         }()
     
     
-    func timeAndLocationAttributedString(baseObject: BaseObject) -> NSAttributedString {
+    func timeAndLocationAttributedString(authoredObject: AuthoredObject) -> NSAttributedString {
         
-        let s1 = NSMutableAttributedString(string: dateToString(baseObject.createdAt), attributes: darkAttributes)
+        let s1 = NSMutableAttributedString(string: dateToString(authoredObject.createdAt), attributes: darkAttributes)
         
         var locationText = String()
-        if let objectLocation = baseObject.location {
+        if let objectLocation = authoredObject.location {
             
             locationText += "  |  "
             
@@ -121,7 +121,7 @@ class TableViewCell: UITableViewCell {
                 }
                 else {
                     
-                    if let locationName = baseObject.locationName {
+                    if let locationName = authoredObject.locationName {
                         locationText += locationName
                     }
                     else {

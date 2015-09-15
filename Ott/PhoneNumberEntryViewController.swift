@@ -6,8 +6,10 @@
 //  Copyright (c) 2015 Senisa. All rights reserved.
 //
 
-import UIKit
+let DEBUG_DO_NOT_CONFIRM_PHONE = true
 
+
+import UIKit
 
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
@@ -93,16 +95,27 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         currentUser().phoneNumber = textField.text
         currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
         let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
-        SMS.sharedInstance.sendMessage(message: message, phoneNumber: currentUser().phoneNumber!) {(success: Bool, message: String?) -> Void in
+        
+        if DEBUG_DO_NOT_CONFIRM_PHONE {
             
-            if success {
+            print(message)
+            self.tasksCompleted = true
+            (self.parentViewController as! PageCollectionViewController).next(self)
+
+        }
+        else {
+            
+            SMS.sharedInstance.sendMessage(message: message, phoneNumber: currentUser().phoneNumber!) {(success: Bool, message: String?) -> Void in
                 
-                self.tasksCompleted = true
-                (self.parentViewController as! PageCollectionViewController).next(self)
-            }
-            else {
-                
-                presentErrorAlert(message)
+                if success {
+                    
+                    self.tasksCompleted = true
+                    (self.parentViewController as! PageCollectionViewController).next(self)
+                }
+                else {
+                    
+                    presentErrorAlert(message)
+                }
             }
         }
     }
