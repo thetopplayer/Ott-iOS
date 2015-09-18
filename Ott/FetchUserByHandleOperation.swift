@@ -56,7 +56,7 @@ class FetchUserByHandleOperation: ParseOperation {
         super.finished(errors)
         
         dispatch_async(dispatch_get_main_queue()) {
-            fetchCompletionBlock?(user: user, error: errors.first)
+            fetchCompletionBlock?(user: user, error: errors.first!)
         }
     }
 }

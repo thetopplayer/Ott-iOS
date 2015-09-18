@@ -39,16 +39,8 @@ class UploadPostOperation: ParseOperation {
         if let error = error {
             finishWithError(error)
         }
-        else {
             
-            guard let topicID = post.topic!.objectId else {
-                assert(false)
-                return
-            }
-            
-            currentUser().archivePostedTopicID(topicID)
-        }
-        
+        currentUser().archivePostedTopicID(post.topic!.objectId!)
         finishWithError(nil)
     }
     
@@ -82,7 +74,7 @@ class UploadPostOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UploadPostOperation.Notifications.ErrorKey: errors]
+                let userinfo: [NSObject: AnyObject] = [UploadPostOperation.Notifications.ErrorKey: errors.first!]
                 NSNotificationCenter.defaultCenter().postNotificationName(UploadPostOperation.Notifications.UploadDidFail,
                     object: self,
                     userInfo: userinfo)

@@ -74,7 +74,7 @@ class RemoveFollowOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [RemoveFollowOperation.Notifications.ErrorKey: errors]
+                let userinfo: [NSObject: AnyObject] = [RemoveFollowOperation.Notifications.ErrorKey: errors.first!]
                 NSNotificationCenter.defaultCenter().postNotificationName(RemoveFollowOperation.Notifications.RemovalDidFail,
                     object: self,
                     userInfo: userinfo)

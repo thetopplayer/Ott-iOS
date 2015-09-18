@@ -33,6 +33,7 @@ class PageViewController: UIViewController {
     func didShow () {
     }
     
+    
     // called by PagingViewController when the view is about to hide
     func willHide () {
     }
@@ -50,5 +51,12 @@ class PageViewController: UIViewController {
             button.enabled = false
             button.backgroundColor = UIColor.background().colorWithAlphaComponent(0.5)
         }
+    }
+    
+    
+    func gotoNextPage() {
+        
+        let parent = self.parentViewController as! PageCollectionViewController
+        parent.next(self)
     }
 }

@@ -33,12 +33,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
 
     
-    deinit {
-        
-        endObservations()
-    }
-
-    
     
     //MARK: - Display
     
@@ -52,19 +46,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     //MARK: - Data
     
-//    private var _phoneNumber:String?
-//    private var phoneNumber: String? {
-//        
-//        set {
-//            _phoneNumber = E164FormattedPhoneNumber(newValue!)
-//        }
-//        
-//        get {
-//            return _phoneNumber
-//        }
-//    }
-//    
-//    
     func isValidPhoneNumber(phoneNumber: String?) -> Bool {
         
         if let phoneNumber = phoneNumber {
@@ -88,6 +69,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     override func didShow() {
         
         super.didShow()
+        startObservations()
         tasksCompleted = false
         textField.becomeFirstResponder()
     }
@@ -96,6 +78,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     override func willHide() {
 
         super.willHide()
+        endObservations()
         textField.resignFirstResponder()
     }
 
@@ -103,7 +86,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     private func sendVerificationCode(toPhoneNumber phoneNumber: String) {
         
         let formattedNumber = E164FormattedPhoneNumber(phoneNumber)
-        phoneNumberUsedToLogin = formattedNumber
+        AccountCreationViewController.phoneNumberUsedToLogin = formattedNumber
         
         PFCloud.callFunctionInBackground("sendVerificationCode", withParameters: ["phoneNumber": formattedNumber]) {(response: AnyObject?, error: NSError?) -> Void in
             
@@ -119,7 +102,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
                 }
                 else {
                     self.tasksCompleted = true
-                    (self.parentViewController as! PageCollectionViewController).next(self)
+                    self.gotoNextPage()
                 }
             }
         }

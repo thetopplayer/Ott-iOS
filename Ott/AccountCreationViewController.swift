@@ -9,10 +9,11 @@
 import UIKit
 
 
-var phoneNumberUsedToLogin: String?
-
-
 class AccountCreationViewController: PageCollectionViewController {
+
+    static var handleUsedToLogin = ""
+    static var nameUsedToLogin = ""
+    static var phoneNumberUsedToLogin = ""
     
     override func viewDidLoad() {
         

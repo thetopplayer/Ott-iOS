@@ -33,20 +33,16 @@ class UpdateUserOperation: ParseOperation {
         
         logBackgroundTask()
         
-        var error: NSError?
+        var error: NSError? = nil
         user.save(&error)
         
         if let error = error {
             finishWithError(error)
         }
             
-        // need to refresh for things to work correctly
+        // refresh locally cached user
         user.fetch(&error)
-        if let error = error {
-            finishWithError(error)
-        }
-        
-        finishWithError(nil)
+        finishWithError(error)
     }
     
     
@@ -76,7 +72,7 @@ class UpdateUserOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors]
+                let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors.first!]
                 NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.UpdateDidFail,
                     object: self,
                     userInfo: userinfo)

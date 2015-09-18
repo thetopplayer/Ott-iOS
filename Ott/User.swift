@@ -92,12 +92,6 @@ class User: PFUser {
         let user = User()
         user.numberOfTopics = 0
         user.numberOfPosts = 0
-//        user.ACL = PFACL(user: user)
-        
-//        let privateData = PrivateUserData()
-//        privateData.ACL = PFACL(user: user)
-//        user.privateData = privateData
-        
         return user
     }
     
@@ -115,13 +109,18 @@ class User: PFUser {
     
     var privateData: PrivateUserData {
         
-        set {
-            self[DataKeys.PrivateData] = newValue
-        }
-        
         get {
-            let data = self[DataKeys.PrivateData]!.fetchIfNeeded()
-            return (data as? PrivateUserData)!
+            if let data = self[DataKeys.PrivateData]?.fetchIfNeeded() {
+                return data as! PrivateUserData
+            }
+            else {
+                
+                let data = PrivateUserData()
+                data.ACL = PFACL(user: self)
+                self[DataKeys.PrivateData] = data
+
+                return data
+           }
         }
     }
     

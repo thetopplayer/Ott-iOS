@@ -78,39 +78,10 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     
     @IBAction func handleButtonClick(sender: AnyObject) {
         
-        currentUser().name = nameTextField.text
-        currentUser().handle = handleTextField.text
+        AccountCreationViewController.nameUsedToLogin = nameTextField.text!
+        AccountCreationViewController.handleUsedToLogin = handleTextField.text!
         
-        let parent = self.parentViewController as! PageCollectionViewController
-        parent.next(self)
-        
-        /*
-        doneButton.setTitle("Creating Account...", forState: .Disabled)
-        doneButton.enabled = false
-        createAccountActivityIndicator.startAnimating()
-        
-        currentUser().signUpInBackgroundWithBlock { (succeeded, error) in
-            
-            self.createAccountActivityIndicator.stopAnimating()
-            
-            if error == nil {
-                
-                setUserSignedUp(true)
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.performSegueWithIdentifier("segueToAvatarCreation", sender: self)
-                }
-            }
-            else {
-                
-                setUserSignedUp(false)
-                
-               // todo handle error
-                print("error signing up: \(error)")
-            }
-        }
-        */
-        
+        gotoNextPage()
     }
     
     

@@ -27,15 +27,9 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         button.setTitle("Enter Code", forState: UIControlState.Disabled)
         button.setTitle("Next", forState: UIControlState.Normal)
         button.enabled = false
-        startObservations()
     }
 
     
-    deinit {
-        
-        endObservations()
-    }
-
     
     //MARK: - Display
     
@@ -54,6 +48,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     override func didShow() {
         
         super.didShow()
+        startObservations()
         tasksCompleted = false
         textField.becomeFirstResponder()
     }
@@ -62,14 +57,15 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     override func willHide() {
         
         super.willHide()
+        endObservations()
         textField.resignFirstResponder()
         resetDisplay()
     }
     
     
-    private func verifyPhoneNumberAndSignIn(phoneNumber phoneNumber: String, verificationCode: String) {
+    private func verifyPhoneNumberAndSignIn(verificationCode: String) {
         
-        let params: [String: String] = ["phoneNumber": phoneNumber, "verificationCode": verificationCode]
+        let params: [String: String] = ["phoneNumber": AccountCreationViewController.phoneNumberUsedToLogin, "verificationCode": verificationCode]
         PFCloud.callFunctionInBackground("verifyPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -85,26 +81,13 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
                 }
                 else {
                     
-                    currentUser().setRandomPassword()
-                    currentUser().signUpInBackgroundWithBlock({ (user, error) -> Void in
-                        
-                        self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
-                        
-                        if let error = error {
-
-                            self.presentOKAlertWithError(error, messagePreamble: "Error signing up.  Please try again. ", actionHandler: { self.resetDisplay() })
-                        }
-                        else {
-                            
-                            self.activityIndicator.stopAnimating()
-                            self.tasksCompleted = true
-                            (self.parentViewController as! PageCollectionViewController).next(self)
-                        }
-                    })
-                }
+                    self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
+                    
+                    let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, userName: AccountCreationViewController.nameUsedToLogin)
+                    MaintenanceQueue.sharedInstance.addOperation(signupOperation)
+                 }
             }
         }
-        
     }
     
     
@@ -128,7 +111,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         button.setTitle("Validating...", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         
-        verifyPhoneNumberAndSignIn(phoneNumber: phoneNumberUsedToLogin!, verificationCode: textField.text!)
+        verifyPhoneNumberAndSignIn(textField.text!)
     }
 
     
@@ -138,6 +121,9 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     func startObservations() {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: self.textField)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidSignUpNotification:", name: SignUpOperation.Notifications.DidSignUp, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSignUpFailedNotification:", name: SignUpOperation.Notifications.SignUpDidFail, object: nil)
     }
     
     
@@ -147,10 +133,26 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    func handleTextFieldDidChange (notification: NSNotification) {
+    func handleTextFieldDidChange(notification: NSNotification) {
         
         button.enabled = textField.text!.length == validationCodeLength
     }
-    
 
+    
+    func handleDidSignUpNotification(notification: NSNotification) {
+        
+        self.activityIndicator.stopAnimating()
+        self.tasksCompleted = true
+        gotoNextPage()
+    }
+    
+    
+    func handleSignUpFailedNotification(notification: NSNotification) {
+        
+        let userinfo: [NSObject: AnyObject] = notification.userInfo!
+        let error = userinfo[SignUpOperation.Notifications.ErrorKey] as! NSError
+        
+        presentOKAlertWithError(error, messagePreamble: "Error signing up.  Please try again. ", actionHandler: { self.resetDisplay() })
+    }
+    
 }

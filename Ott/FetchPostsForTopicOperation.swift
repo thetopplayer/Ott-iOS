@@ -85,14 +85,13 @@ class FetchPostsForTopicOperation: ParseOperation {
         var error: NSError?
         let objects = query.findObjects(&error)
         
-        if error != nil {
-            finishWithError(error)
+        if error == nil {
+            if let fetchedPosts = objects as? [Post] {
+                self.replaceCachedPosts(withPosts: fetchedPosts)
+            }
         }
-        else if let fetchedPosts = objects as? [Post] {
-            self.replaceCachedPosts(withPosts: fetchedPosts)
-        }
-        
-        finishWithError(nil)
+
+        finishWithError(error)
     }
     
 

@@ -39,10 +39,8 @@ class UploadTopicOperation: ParseOperation {
         if let error = error {
             finishWithError(error)
         }
-        else {
-            currentUser().archiveAuthoredTopicName(topic.name!)
-        }
-        
+            
+        currentUser().archiveAuthoredTopicName(topic.name!)
         finishWithError(nil)
     }
     
@@ -73,7 +71,7 @@ class UploadTopicOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UploadTopicOperation.Notifications.ErrorKey: errors]
+                let userinfo: [NSObject: AnyObject] = [UploadTopicOperation.Notifications.ErrorKey: errors.first!]
                 NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.UploadDidFail,
                     object: self,
                     userInfo: userinfo)

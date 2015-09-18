@@ -81,7 +81,7 @@ class CreateFollowOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [CreateFollowOperation.Notifications.ErrorKey: errors]
+                let userinfo: [NSObject: AnyObject] = [CreateFollowOperation.Notifications.ErrorKey: errors.first!]
                 NSNotificationCenter.defaultCenter().postNotificationName(CreateFollowOperation.Notifications.CreationDidFail,
                     object: self,
                     userInfo: userinfo)
