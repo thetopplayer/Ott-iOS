@@ -18,4 +18,22 @@ extension UIImageView {
             animations: { self.image = image },
             completion: nil)
     }
+    
+    
+    func indicateOK(ok: Bool) {
+        
+        let okImage = UIImage(named: "tick")
+        let errImage = UIImage(named: "multiply")
+        
+        self.hidden = false
+        
+        if ok {
+            self.tintColor = UIColor.fern()
+            self.image = okImage
+        }
+        else {
+            self.tintColor = UIColor.redColor()
+            self.image = errImage
+        }
+    }
 }

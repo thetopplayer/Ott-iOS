@@ -41,6 +41,10 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         handleTextField.text = currentUser().handle
         bioTextView.text = currentUser().bio
         
+        // need to start off with nil to get the tint to behave correctly when the images are set
+        handleEntryStatusImageView.image = nil
+        nameEntryStatusImageView.image = nil
+
         handleExistsLabel.hidden = true
         isDirty = false
         startObservations()
@@ -61,36 +65,13 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     }
     
     
-    private let okImage = UIImage(named: "tick")
-    private let errImage = UIImage(named: "multiply")
-    
     private func indicateHandleOK(ok: Bool) {
-        
-        handleEntryStatusImageView.hidden = false
-        
-        if ok {
-            handleEntryStatusImageView.tintColor = UIColor.tint()
-            handleEntryStatusImageView.image = self.okImage
-        }
-        else {
-            handleEntryStatusImageView.tintColor = UIColor.redColor()
-            handleEntryStatusImageView.image = errImage
-        }
+        handleEntryStatusImageView.indicateOK(ok)
     }
     
     
     private func indicateNameOK(ok: Bool) {
-        
-        nameEntryStatusImageView.hidden = false
-        
-        if ok {
-            nameEntryStatusImageView.tintColor = UIColor.tint()
-            nameEntryStatusImageView.image = self.okImage
-        }
-        else {
-            nameEntryStatusImageView.tintColor = UIColor.redColor()
-            nameEntryStatusImageView.image = errImage
-        }
+        nameEntryStatusImageView.indicateOK(ok)
     }
     
     
@@ -108,6 +89,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     private var handleIsUnique = true {
         
         didSet {
+            indicateHandleOK(handleIsUnique)
             saveButton.enabled = isDirty && handleIsUnique && nameIsValid
         }
     }
@@ -115,6 +97,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     private var nameIsValid = true {
         
         didSet {
+            indicateNameOK(nameIsValid)
             saveButton.enabled = isDirty && handleIsUnique && nameIsValid
         }
     }
@@ -224,49 +207,39 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
             return nameTextField.text!.length >= User.minimumUserNameLength
         }
         
-        func confirmUniqueHandle() {
+        func confirmUniqueHandle(handle: String) {
             
-            handleIsUnique = false
-            
-            // query parse
-            handleEntryStatusImageView.hidden = true
-            validatingHandleActivityIndicator.startAnimating()
-            confirmUniqueUserHandle(handle: handleTextField.text!) {
+            func handleFetchCompletion(user: User?, error: NSError?) {
                 
-                (isUnique: Bool, error: NSError?) -> Void in
+                handleIsUnique = user == nil
+                self.handleExistsLabel.hidden = handleIsUnique
+                self.validatingHandleActivityIndicator.stopAnimating()
+                self.handleEntryStatusImageView.hidden = false
                 
-                if error == nil {
-                    
-                    self.handleIsUnique = isUnique
-                    dispatch_async(dispatch_get_main_queue()) {
-                        
-                        self.handleExistsLabel.hidden = self.handleIsUnique
-                        self.validatingHandleActivityIndicator.stopAnimating()
-                        
-                        self.indicateHandleOK(self.handleIsUnique)
-                        self.handleEntryStatusImageView.hidden = false
-                    }
-                }
-                else {
-                    print("error confirming unique user handle")
+                if let error = error {
+                    presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
                 }
             }
+            
+            handleIsUnique = false
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, completion: handleFetchCompletion)
+            FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
-        
+
         
         if (notification.object as! UITextField) == handleTextField {
             
             if handleIsLongEnough() {
-                confirmUniqueHandle()
+                confirmUniqueHandle(handleTextField.text!)
             }
             else {
                 indicateHandleOK(false)
                 handleExistsLabel.hidden = true
             }
         }
-        
-        indicateNameOK(nameIsLongEnough())
-        saveButton.enabled = handleIsLongEnough() && nameIsLongEnough() && handleIsUnique
+        else if (notification.object as! UITextField) == nameTextField {
+            nameIsValid = nameIsLongEnough()
+        }
     }
     
     

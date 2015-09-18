@@ -1,5 +1,5 @@
 //
-//  FetchPostsOperation.swift
+//  FetchPostsForTopicOperation.swift
 //  Ott
 //
 //  Created by Max on 9/6/15.
@@ -14,7 +14,7 @@ import Foundation
 // todo:  handle error
 func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) -> [Post] {
     
-    guard let cacheName = FetchPostsOperation.cacheNameForTopic(topic) else {
+    guard let cacheName = FetchPostsForTopicOperation.cacheNameForTopic(topic) else {
         return []
     }
     
@@ -38,9 +38,9 @@ func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) ->
 
 
 
-//MARK: - FetchPostsOperation
+//MARK: - FetchPostsForTopicOperation
 
-class FetchPostsOperation: ParseOperation {
+class FetchPostsForTopicOperation: ParseOperation {
     
     let topic: Topic
     let postedSince: NSDate?
@@ -61,7 +61,7 @@ class FetchPostsOperation: ParseOperation {
     
     private func replaceCachedPosts(withPosts posts: [Post]) {
         
-        guard let cacheName = FetchPostsOperation.cacheNameForTopic(topic) else {
+        guard let cacheName = FetchPostsForTopicOperation.cacheNameForTopic(topic) else {
             return
         }
         

@@ -16,6 +16,7 @@ func topmostViewController() -> UIViewController? {
 }
 
 
+typealias AlertPresentionHandler = () -> Void
 
 extension UIViewController {
     
@@ -48,19 +49,19 @@ extension UIViewController {
     }
     
     
-    func presentOKAlert(title title: String?, message: String?, completion: (() -> Void)?) {
+    func presentOKAlert(title title: String?, message: String?, actionHandler: AlertPresentionHandler?) {
         
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         
-        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: nil)
+        let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
+            action in actionHandler?() })
         alertViewController.addAction(okAction)
         
-        presentViewController(alertViewController, animated: true, completion: completion)
+        presentViewController(alertViewController, animated: true, completion: nil)
     }
     
     
-    
-    func presentOKAlertWithError(error: NSError, messagePreamble: String? = nil) {
+    func presentOKAlertWithError(error: NSError, messagePreamble: String? = nil, actionHandler: AlertPresentionHandler? = nil) {
         
         let title = "Error"
         
@@ -72,7 +73,7 @@ extension UIViewController {
             message = error.localizedDescription
         }
         
-        presentOKAlert(title: title, message: message, completion: nil)
+        presentOKAlert(title: title, message: message, actionHandler: actionHandler)
     }
     
 }

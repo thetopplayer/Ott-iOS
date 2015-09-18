@@ -17,7 +17,7 @@ func userWasArchived() -> Bool {
 
 
 var _tmpUser: User = {
-    return User()
+    return User.create()
 }()
 
 
@@ -30,48 +30,6 @@ func currentUser() -> User {
     print("returning temp user")
     return _tmpUser
 }
-
-
-func fetchUserInBackground(phoneNumber phoneNumber: String, completion: (object: PFObject?, error: NSError?) -> Void) {
-    
-    let query = User.query()!
-    query.whereKey(User.DataKeys.PhoneNumber, equalTo:phoneNumber)
-    query.getFirstObjectInBackgroundWithBlock(completion)
-}
-
-
-func fetchUserInBackground(handle handle: String, completion: (object: PFObject?, error: NSError?) -> Void) {
-    
-    let query = User.query()!
-    query.whereKey(User.DataKeys.Handle, equalTo:handle)
-    query.getFirstObjectInBackgroundWithBlock(completion)
-}
-
-
-func confirmUniquePhoneNumber(phoneNumber phoneNumber: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
-    
-    let query = User.query()!
-    query.whereKey(User.DataKeys.PhoneNumber, equalTo:phoneNumber)
-    query.countObjectsInBackgroundWithBlock {
-        
-        (count: Int32, error: NSError?) -> Void in
-        completion(isUnique: count == 0, error: error)
-    }
-}
-
-
-func confirmUniqueUserHandle(handle handle: String, completion: (isUnique: Bool, error: NSError?) -> Void) {
-    
-    let query = User.query()!
-    query.whereKey(User.DataKeys.Handle, equalTo:handle)
-    query.countObjectsInBackgroundWithBlock {
-        
-        (count: Int32, error: NSError?) -> Void in
-        completion(isUnique: count == 0, error: error)
-    }
-}
-
-
 
 
 
@@ -106,8 +64,8 @@ class User: PFUser {
     
     struct DataKeys {
         
-        static var PhoneNumber: String {
-            return "phoneNumber"
+        static var PrivateData: String {
+            return "privateData"
         }
         
         static var Handle: String {
@@ -134,24 +92,57 @@ class User: PFUser {
         let user = User()
         user.numberOfTopics = 0
         user.numberOfPosts = 0
+//        user.ACL = PFACL(user: user)
+        
+//        let privateData = PrivateUserData()
+//        privateData.ACL = PFACL(user: user)
+//        user.privateData = privateData
         
         return user
     }
     
     
-    @NSManaged var phoneNumber: String?
     @NSManaged var name: String? // user's non-unique name
     @NSManaged var numberOfTopics: Int
     @NSManaged var numberOfPosts: Int
     @NSManaged var bio: String?
     
+    static var defaultAvatar: UIImage = {
+        
+        return UIImage(named:"avatar")!
+        }()
+    
+    
+    var privateData: PrivateUserData {
+        
+        set {
+            self[DataKeys.PrivateData] = newValue
+        }
+        
+        get {
+            let data = self[DataKeys.PrivateData]!.fetchIfNeeded()
+            return (data as? PrivateUserData)!
+        }
+    }
+    
+    
+    var phoneNumber: String? {
+        
+        get {
+            return privateData.phoneNumber
+        }
+        
+        set {
+            privateData.phoneNumber = newValue
+        }
+    }
+    
+    
     
     // the user's handle is stored as his username
-    // password is created by setting the handle
     var handle: String? {
         set {
             username = newValue
-            password = generatedPassword()
         }
         
         get {
@@ -160,17 +151,11 @@ class User: PFUser {
     }
     
     
-    private func generatedPassword() -> String {
-        return phoneNumber! + username!
+    func setRandomPassword() {
+    
+        password = String.randomOfLength(12)
     }
     
-    
-    // used during signUp
-    var phoneNumberValidationCode: String?
-    static var defaultAvatar: UIImage = {
-        
-        return UIImage(named:"avatar")!
-    }()
     
     
     
@@ -191,15 +176,12 @@ class User: PFUser {
 
     func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
         
-        if password == nil {
-            password = generatedPassword()
-        }
-        
         User.logInWithUsernameInBackground(handle!, password: password!, block: completion)
     }
     
 
 
+    
     //MARK: - Authored Topics
     
     private var authoredTopicArchivePath: String {

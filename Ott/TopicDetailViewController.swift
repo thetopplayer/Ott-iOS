@@ -314,7 +314,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     private var posts = [Post]()
-    private var fetchPostsOperation: FetchPostsOperation?
+    private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
     private var reloadTopicOperation: FetchTopicOperation?
     private var dateOfMostRecentPost: NSDate?
     
@@ -337,14 +337,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         displayStatus(type: .Fetching)
 
-        fetchPostsOperation = {
+        fetchPostsForTopicOperation = {
             
-            var operation: FetchPostsOperation
+            var operation: FetchPostsForTopicOperation
             if let minDate = dateOfMostRecentPost {
-                operation = FetchPostsOperation(topic: myTopic!, postedSince: minDate)
+                operation = FetchPostsForTopicOperation(topic: myTopic!, postedSince: minDate)
             }
             else {
-                operation = FetchPostsOperation(topic: myTopic!)
+                operation = FetchPostsForTopicOperation(topic: myTopic!)
             }
             
             operation.addCompletionBlock({
@@ -360,7 +360,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             reloadTopicOperation = {
                 
                 let operation = FetchTopicOperation(topic: myTopic!)
-                operation.addDependency(fetchPostsOperation!)
+                operation.addDependency(fetchPostsForTopicOperation!)
                 
                 operation.addCompletionBlock({
                     updateDisplayWithPostsFromCache()
@@ -370,15 +370,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }()
             
             FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
-            FetchQueue.sharedInstance.addOperation(fetchPostsOperation!)
+            FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
         }
         else {
             
-            fetchPostsOperation!.addCompletionBlock({
+            fetchPostsForTopicOperation!.addCompletionBlock({
                 updateDisplayWithPostsFromCache()
             })
             
-            FetchQueue.sharedInstance.addOperation(fetchPostsOperation!)
+            FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
         }
     }
     
@@ -441,7 +441,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func goodbye() {
         
-        fetchPostsOperation?.cancel()
+        fetchPostsForTopicOperation?.cancel()
         performSegueWithIdentifier("unwindToMasterView", sender: self)
     }
     

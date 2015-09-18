@@ -102,4 +102,19 @@ extension String {
         
         return containsCharacter(inCharacterSet: _unnacceptableNameCharacters) == false
     }
+    
+    
+    static func randomOfLength(length: Int) -> String {
+        
+        let characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789-"
+        let possibleIndicies = UInt32(characters.length)
+        
+        var result = ""
+        for _ in 0...(length - 1) {
+            let i = Int(arc4random_uniform(possibleIndicies))
+            result += String(characters.characterAtIndex(i)!)
+        }
+        
+        return result
+    }
 }

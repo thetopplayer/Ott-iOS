@@ -1,31 +1,25 @@
 //
 //  PhoneNumberEntryViewController.swift
-//  mailr
+//  Ott
 //
 //  Created by Max on 4/26/15.
 //  Copyright (c) 2015 Senisa. All rights reserved.
 //
-
-let DEBUG_DO_NOT_CONFIRM_PHONE = true
 
 
 import UIKit
 
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
-    static let validationCodeLength = 4
-
     
     //MARK: - Lifecycle
-    
     
     private func setupView() {
         
         button.setTitle("Authorize", forState: .Normal)
         button.setTitle("Authorize", forState: .Disabled)
         
-        textField.text = "+1"
-        button.enabled = false
+        resetTextField()
     }
     
     
@@ -46,6 +40,49 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     
     
+    //MARK: - Display
+    
+    private func resetTextField() {
+        
+        textField.text = "+1"
+        button.enabled = false
+    }
+    
+    
+    
+    //MARK: - Data
+    
+//    private var _phoneNumber:String?
+//    private var phoneNumber: String? {
+//        
+//        set {
+//            _phoneNumber = E164FormattedPhoneNumber(newValue!)
+//        }
+//        
+//        get {
+//            return _phoneNumber
+//        }
+//    }
+//    
+//    
+    func isValidPhoneNumber(phoneNumber: String?) -> Bool {
+        
+        if let phoneNumber = phoneNumber {
+            return phoneNumber.stringByRemovingNonDecimalDigits().length == 11
+        }
+        else {
+            return false
+        }
+    }
+    
+    
+    func E164FormattedPhoneNumber(phoneNumber: String) -> String {
+        
+        return "+1" + phoneNumber.stringByRemovingNonDecimalDigits()
+    }
+    
+    
+    
     //MARK: - Main
     
     override func didShow() {
@@ -63,6 +100,32 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
 
     
+    private func sendVerificationCode(toPhoneNumber phoneNumber: String) {
+        
+        let formattedNumber = E164FormattedPhoneNumber(phoneNumber)
+        phoneNumberUsedToLogin = formattedNumber
+        
+        PFCloud.callFunctionInBackground("sendVerificationCode", withParameters: ["phoneNumber": formattedNumber]) {(response: AnyObject?, error: NSError?) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                if let error = error {
+                    
+                    self.presentOKAlertWithError(error, messagePreamble: "Error requesting verification code: ", actionHandler: {
+                        
+                        self.resetTextField()
+                        self.textField.becomeFirstResponder()
+                    })
+                    
+                }
+                else {
+                    self.tasksCompleted = true
+                    (self.parentViewController as! PageCollectionViewController).next(self)
+                }
+            }
+        }
+    }
+    
+    
     @IBAction func handleButtonClick(sender: AnyObject) {
         
         func presentErrorAlert(message: String?) {
@@ -70,7 +133,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
             var fullMessage: String
             if let message = message {
                 
-                fullMessage = "Error:  \(message)  Please try again."
+                fullMessage = "Error:  \(message)  Please tryp again."
             }
             else {
                 
@@ -90,34 +153,9 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         button.setTitle("Sending Text...", forState: .Disabled)
         button.enabled = false
-        
         textField.resignFirstResponder()
-        currentUser().phoneNumber = textField.text
-        currentUser().phoneNumberValidationCode = randomNumericCode(length: PhoneNumberEntryViewController.validationCodeLength)
-        let message = "Your Ott validation code is: \(currentUser().phoneNumberValidationCode!)"
         
-        if DEBUG_DO_NOT_CONFIRM_PHONE {
-            
-            print(message)
-            self.tasksCompleted = true
-            (self.parentViewController as! PageCollectionViewController).next(self)
-
-        }
-        else {
-            
-            SMS.sharedInstance.sendMessage(message: message, phoneNumber: currentUser().phoneNumber!) {(success: Bool, message: String?) -> Void in
-                
-                if success {
-                    
-                    self.tasksCompleted = true
-                    (self.parentViewController as! PageCollectionViewController).next(self)
-                }
-                else {
-                    
-                    presentErrorAlert(message)
-                }
-            }
-        }
+        sendVerificationCode(toPhoneNumber: textField.text!)
     }
     
     
@@ -138,23 +176,6 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         
         return range.location > 1
-    }
-    
-    
-    func isValidPhoneNumber(phoneNumber: String?) -> Bool {
-        
-        if let phoneNumber = phoneNumber {
-            return phoneNumber.stringByRemovingNonDecimalDigits().length == 11
-        }
-        else {
-            return false
-        }
-    }
-    
-    
-    func E164FormattedPhoneNumber(phoneNumber: String) -> String {
-        
-        return "+1" + phoneNumber.stringByRemovingNonDecimalDigits()
     }
     
     
@@ -193,18 +214,10 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    func handleTextFieldDidChange (notification: NSNotification) {
+    func handleTextFieldDidChange(notification: NSNotification) {
         
         let inputText = textField.text!
         textField.text = prettyPhoneNumber(inputText)
-        
-        if isValidPhoneNumber(inputText) {
-            
-            currentUser().phoneNumber = E164FormattedPhoneNumber(inputText)
-            button.enabled = true
-        }
-        else {
-            button.enabled = false
-        }
+        button.enabled = isValidPhoneNumber(inputText)
     }
 }

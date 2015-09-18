@@ -8,50 +8,23 @@
 
 import UIKit
 
-class AccountSetupViewController: ViewController, UITextFieldDelegate {
+class AccountSetupViewController: PageViewController, UITextFieldDelegate {
 
-    @IBOutlet weak var contentContainer: UIView!
     @IBOutlet weak var topLabel: UILabel!
     @IBOutlet weak var handleTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
     @IBOutlet weak var handleExistsLabel: UILabel!
     @IBOutlet weak var handleEntryStatusImageView: UIImageView!
     @IBOutlet weak var nameEntryStatusImageView: UIImageView!
-    @IBOutlet weak var doneButton: UIButton!
-    @IBOutlet weak var createAccountActivityIndicator: UIActivityIndicatorView!
     @IBOutlet weak var validatingHandleActivityIndicator: UIActivityIndicatorView!
   
-    private var handleIsUnique = false
-    private let okImage = UIImage(named: "tick")
-    private let errImage = UIImage(named: "multiply")
-    
     private func indicateHandleOK(ok: Bool) {
-        
-        handleEntryStatusImageView.hidden = false
-        
-        if ok {
-            handleEntryStatusImageView.tintColor = UIColor.tint()
-            handleEntryStatusImageView.image = self.okImage
-        }
-        else {
-            handleEntryStatusImageView.tintColor = UIColor.redColor()
-            handleEntryStatusImageView.image = errImage
-        }
+        handleEntryStatusImageView.indicateOK(ok)
     }
     
     
     private func indicateNameOK(ok: Bool) {
-        
-        nameEntryStatusImageView.hidden = false
-        
-        if ok {
-            nameEntryStatusImageView.tintColor = UIColor.tint()
-            nameEntryStatusImageView.image = self.okImage
-        }
-        else {
-            nameEntryStatusImageView.tintColor = UIColor.redColor()
-            nameEntryStatusImageView.image = errImage
-        }
+        nameEntryStatusImageView.indicateOK(ok)
     }
     
     
@@ -59,27 +32,20 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
         
         super.viewDidLoad()
         
-        navigationItem.title = "One To Ten"
-        navigationItem.hidesBackButton = true
-        
-        contentContainer.addRoundedBorder()
-
         handleTextField.delegate = self
         nameTextField.delegate = self
         
-        topLabel.text = "Setup your account with a unique handle and a user name."
+        topLabel.text = "Enter a handle and your name.  Both can be changed later in the app settings."
         handleTextField.text = "@"
-        doneButton.setTitle("Sign Up", forState: .Normal)
-        doneButton.setTitle("Sign Up", forState: .Disabled)
-
+        button.setTitle("Next", forState: .Normal)
+        button.setTitle("Next", forState: .Disabled)
+        
         // need to start off with nil to get the tint to behave correctly when the images are set
         handleEntryStatusImageView.image = nil
         nameEntryStatusImageView.image = nil
         
         handleExistsLabel.hidden = true
-        
-        handleTextField.becomeFirstResponder()
-        startObservations()
+        button.enabled = false
     }
 
     
@@ -89,13 +55,36 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
     }
     
     
+    //MARK: - Main
+    
+    override func didShow() {
+        
+        super.didShow()
+        tasksCompleted = false
+        
+        handleTextField.becomeFirstResponder()
+        startObservations()
+    }
+    
+    
+    override func willHide() {
+        
+        super.willHide()
+        endObservations()
+    }
+
+    
     //MARK: - Actions
     
-    @IBAction func doneAction(sender: AnyObject) {
+    @IBAction func handleButtonClick(sender: AnyObject) {
         
         currentUser().name = nameTextField.text
         currentUser().handle = handleTextField.text
         
+        let parent = self.parentViewController as! PageCollectionViewController
+        parent.next(self)
+        
+        /*
         doneButton.setTitle("Creating Account...", forState: .Disabled)
         doneButton.enabled = false
         createAccountActivityIndicator.startAnimating()
@@ -120,11 +109,40 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
                 print("error signing up: \(error)")
             }
         }
+        */
         
     }
     
     
+    //MARK: - Data
     
+    private var okToContinue: Bool = false {
+        
+        didSet {
+            button.enabled = okToContinue
+            tasksCompleted = okToContinue
+        }
+    }
+    
+    
+    private var handleIsUnique = false {
+        
+        didSet {
+            indicateHandleOK(handleIsUnique)
+            okToContinue = handleIsUnique && nameIsValid
+        }
+    }
+    
+    private var nameIsValid = false {
+        
+        didSet {
+            indicateNameOK(nameIsValid)
+            okToContinue = handleIsUnique && nameIsValid
+        }
+    }
+    
+    
+
     //MARK: - Observations and TextField Delegate
     
     private var didStartObservations = false
@@ -190,49 +208,39 @@ class AccountSetupViewController: ViewController, UITextFieldDelegate {
             return nameTextField.text!.length >= User.minimumUserNameLength
         }
         
-        func confirmUniqueHandle() {
+        func confirmUniqueHandle(handle: String) {
+            
+            func handleFetchCompletion(user: User?, error: NSError?) {
+                
+                handleIsUnique = user == nil
+                handleExistsLabel.hidden = handleIsUnique
+                validatingHandleActivityIndicator.stopAnimating()
+                handleEntryStatusImageView.hidden = false
+                
+                if let error = error {
+                    presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
+                }
+           }
             
             handleIsUnique = false
-            
-            // query parse
-            handleEntryStatusImageView.hidden = true
-            validatingHandleActivityIndicator.startAnimating()
-            confirmUniqueUserHandle(handle: handleTextField.text!) {
-                
-                (isUnique: Bool, error: NSError?) -> Void in
-                
-                if error == nil {
-                    
-                    self.handleIsUnique = isUnique
-                    dispatch_async(dispatch_get_main_queue()) {
-                        
-                        self.handleExistsLabel.hidden = self.handleIsUnique
-                        self.validatingHandleActivityIndicator.stopAnimating()
-                       
-                        self.indicateHandleOK(self.handleIsUnique)
-                        self.handleEntryStatusImageView.hidden = false
-                    }
-                }
-                else {
-                    print("error confirming unique user handle")
-                }
-            }
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, completion: handleFetchCompletion)
+            FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
         
         
         if (notification.object as! UITextField) == handleTextField {
             
             if handleIsLongEnough() {
-                confirmUniqueHandle()
+                confirmUniqueHandle(handleTextField.text!)
             }
             else {
                 indicateHandleOK(false)
                 handleExistsLabel.hidden = true
             }
         }
-        
-        indicateNameOK(nameIsLongEnough())
-        doneButton.enabled = handleIsLongEnough() && nameIsLongEnough() && handleIsUnique
+        else if (notification.object as! UITextField) == nameTextField {
+            nameIsValid = nameIsLongEnough()
+        }
     }
     
     

@@ -51,4 +51,7 @@ class BaseObject: PFObject {
         
         return super.hash
     }
+    
+    
+    @NSManaged var phoneNumber: String?
 }

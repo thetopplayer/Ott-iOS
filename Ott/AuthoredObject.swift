@@ -70,17 +70,6 @@ class AuthoredObject: BaseObject, MKAnnotation {
     func setAuthor(author: User) {
         
         self[DataKeys.Author] = author
-        authorName = author.name
-        authorHandle = author.handle
-        authorBio = author.bio
-        
-        if author.hasImage() {
-            author.getImage(completion: { (success, image) -> Void in
-                if success && image != nil {
-                    self.setImage(image, forKey: DataKeys.AuthorAvatar)
-                }
-            })
-        }
     }
     
     @NSManaged var locationName: String?
