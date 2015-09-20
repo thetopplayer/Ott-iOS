@@ -19,14 +19,12 @@ func cachedLocalTopics() -> [Topic] {
     query.orderByDescending(DataKeys.UpdatedAt)
     query.fromPinWithName(FetchLocalTopicsOperation.cacheName)
     
-    var error: NSError?
-    if let topics = query.findObjects(&error) as? [Topic] {
+    let topics = try? query.findObjects() as? [Topic]
         
-        print("returning \(topics.count) cached local topics")
-        return topics
-    }
-    
-    return []
+    if topics == nil {
+        return []
+    }    
+    return topics!!
 }
 
 
@@ -55,18 +53,30 @@ class FetchLocalTopicsOperation: ParseOperation {
     
     private func replaceCachedTopics(withTopics newTopics: [Topic]) {
         
-        PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
-        PFObject.pinAll(newTopics, withName: FetchLocalTopicsOperation.cacheName)
+        do {
+           
+            try PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
+            try PFObject.pinAll(newTopics, withName: FetchLocalTopicsOperation.cacheName)
+        }
+        catch let error as NSError {
+            NSLog("error = %@", error)
+        }
     }
     
     
     private func updateCachedTopics(withTopics newTopics: [Topic]) {
         
         let existingObjects = cachedLocalTopics()
-        PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
         
-        let allTopics = Set(newTopics).union(Set(existingObjects))
-        PFObject.pinAll(Array(allTopics), withName: FetchLocalTopicsOperation.cacheName)
+        do {
+            
+            try PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
+            let allTopics = Set(newTopics).union(Set(existingObjects))
+            try PFObject.pinAll(Array(allTopics), withName: FetchLocalTopicsOperation.cacheName)
+        }
+        catch let error as NSError {
+            NSLog("error = %@", error)
+        }
     }
     
     
@@ -104,29 +114,29 @@ class FetchLocalTopicsOperation: ParseOperation {
         let updateDate = updateOnly ? lastUpdated : defaultFetchSinceDate
         query.whereKey(DataKeys.UpdatedAt, greaterThan: updateDate)
         
-        var error: NSError?
-        let objects = query.findObjects(&error)
-        
-        if error != nil {
+        do {
             
-            finishWithError(error)
-        }
-        else if let topics = objects as? [Topic] {
-            
-            if let mostRecentTopicUpdate = topics.first?.updatedAt {
+            let objects = try query.findObjects()
+            if let topics = objects as? [Topic] {
                 
-                self.lastUpdated = mostRecentTopicUpdate
-                
-                if updateOnly {
-                    self.updateCachedTopics(withTopics: topics)
-                }
-                else {
-                    self.replaceCachedTopics(withTopics: topics)
+                if let mostRecentTopicUpdate = topics.first?.updatedAt {
+                    
+                    self.lastUpdated = mostRecentTopicUpdate
+                    
+                    if updateOnly {
+                        self.updateCachedTopics(withTopics: topics)
+                    }
+                    else {
+                        self.replaceCachedTopics(withTopics: topics)
+                    }
                 }
             }
+            
+            finishWithError(nil)
         }
-        
-        finishWithError(nil)
+        catch let error as NSError {
+            finishWithError(error)
+        }
     }
     
     

@@ -194,15 +194,22 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             
             if let query = ScanTransformer.sharedInstance.queryForCode(code) {
                 
-                var error: NSError?
-                let objects = query.findObjects(&error)
-                
-                dispatch_async(dispatch_get_main_queue()) {
+                do {
                     
-                    self.fetchingAlertViewController.dismissViewControllerAnimated(true, completion: { () -> Void in
+                    let objects = try query.findObjects()
+                    if objects.count == 0 {
                         
-                        if let theObject = objects!.first as? PFObject {
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.handleCodeIsNotRecognized()
+                        }
+                        return
+                    }
+                    
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        self.fetchingAlertViewController.dismissViewControllerAnimated(true, completion: { () -> Void in
                             
+                            let theObject = objects.first!
                             switch theObject {
                                 
                             case is User:
@@ -212,25 +219,16 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
                                 self.displayDetailsForTopic(theObject as! Topic)
                                 
                             default:
-                                
-                                // need to pause a bit to make sure this alert has really been dismissed
-                                
-                               dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(0.3 * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), self.handleCodeIsNotRecognized)
+                                self.handleCodeIsNotRecognized()
                             }
-                        }
-                        else {
-                            self.handleCodeIsNotRecognized()
-                        }
-                    })
+                        })
+                    }
+                }
+                catch let error as NSError {
+                    presentOKAlertWithError(error, messagePreamble: "Unable to fetch object.", actionHandler: nil)
                 }
             }
-            else {
-                
-                assert(false)
-                // no query
-            }
         }
-        
 
         let fetchOperation: BlockOperation = {
             
@@ -279,9 +277,6 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             }
         }
         else {
-
-            print("code not recognized = " + code)
-
             self.handleCodeIsNotRecognized()
         }
     }
@@ -298,7 +293,10 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
         
         alertViewController.addAction(okAction)
         alertViewController.addAction(cancelAction)
-        presentViewController(alertViewController, animated: true) { () -> Void in }
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.presentViewController(alertViewController, animated: true) { () -> Void in }
+        }
     }
     
     
@@ -371,6 +369,5 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
 
         performSegueWithIdentifier("unwindToMasterView", sender: self)
     }
-    
 
 }

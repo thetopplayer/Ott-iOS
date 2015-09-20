@@ -12,14 +12,14 @@ typealias UserCompletionBlock = (user: User?, error: NSError?) -> Void
 
 class FetchUserByHandleOperation: ParseOperation {
 
-    let handle: String
+    let username: String
     let fetchCompletionBlock: UserCompletionBlock?
-    var user: User?
+    var user: User? = nil
     
     
     init(handle: String, completion: UserCompletionBlock? = nil) {
         
-        self.handle = handle
+        username = User.usernameFromHandle(handle)
         fetchCompletionBlock = completion
         super.init()
     }
@@ -37,17 +37,23 @@ class FetchUserByHandleOperation: ParseOperation {
     //MARK: - Execution
     
     override func execute() {
-        
-        var error: NSError? = nil
-        
-        let query = User.query()!
-        query.whereKey(User.DataKeys.Handle, equalTo: handle)
-        query.limit = 1
-        if let results = query.findObjects(&error) as? [User] {
-            user = results.first
+
+        do {
+            
+            let query = User.query()!
+            query.whereKey("username", equalTo: username)
+            query.limit = 1
+            
+            let results = try query.findObjects()
+            if results.count > 0 {
+                user = results.first! as? User
+            }
+            
+            finishWithError(nil)
         }
-        
-        finishWithError(error)
+        catch let error as NSError {
+            finishWithError(error)
+        }
     }
     
     
@@ -56,7 +62,7 @@ class FetchUserByHandleOperation: ParseOperation {
         super.finished(errors)
         
         dispatch_async(dispatch_get_main_queue()) {
-            fetchCompletionBlock?(user: user, error: errors.first!)
+            fetchCompletionBlock?(user: user, error: errors.first)
         }
     }
 }

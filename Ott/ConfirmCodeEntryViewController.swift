@@ -13,8 +13,6 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
 
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
-    let validationCodeLength = 4
-    
     
     //MARK: - Lifecycle
     
@@ -83,7 +81,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
                     
                     self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
                     
-                    let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, userName: AccountCreationViewController.nameUsedToLogin)
+                    let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, nickname: AccountCreationViewController.nameUsedToLogin)
                     MaintenanceQueue.sharedInstance.addOperation(signupOperation)
                  }
             }
@@ -135,7 +133,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     func handleTextFieldDidChange(notification: NSNotification) {
         
-        button.enabled = textField.text!.length == validationCodeLength
+        button.enabled = textField.text!.length > 0
     }
 
     

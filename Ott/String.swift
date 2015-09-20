@@ -84,6 +84,13 @@ extension String {
     }
     
     
+    func stringByRemovingCharactersInString(string: String) -> String {
+        
+        let characterSet = NSCharacterSet(charactersInString: string)
+        return self.componentsSeparatedByCharactersInSet(characterSet).joinWithSeparator("")
+    }
+    
+    
     func isSuitableForHandle() -> Bool {
         
         if length > _maximumHandleLength {

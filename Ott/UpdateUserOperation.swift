@@ -33,16 +33,16 @@ class UpdateUserOperation: ParseOperation {
         
         logBackgroundTask()
         
-        var error: NSError? = nil
-        user.save(&error)
-        
-        if let error = error {
+        do {
+            
+            try user.save()
+            try user.fetch() // refresh locally cached user
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-            
-        // refresh locally cached user
-        user.fetch(&error)
-        finishWithError(error)
+
     }
     
     

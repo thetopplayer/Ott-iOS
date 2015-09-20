@@ -8,35 +8,6 @@
 
 import Foundation
 
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) -> [Post] {
-    
-    guard let cacheName = FetchPostsForTopicOperation.cacheNameForTopic(topic) else {
-        return []
-    }
-    
-    let query = Post.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(cacheName)
-    
-    var error: NSError?
-    if let posts = query.findObjects(&error) as? [Post] {
-        
-        if clearCacheAfterReturning {
-            PFObject.unpinAll(posts, withName: cacheName)
-        }
-        
-        return posts
-    }
-    
-    return []
-}
-
-
-
 
 //MARK: - FetchPostsForTopicOperation
 
@@ -65,8 +36,15 @@ class FetchPostsForTopicOperation: ParseOperation {
             return
         }
         
-        PFObject.unpinAllObjectsWithName(cacheName)
-        PFObject.pinAll(posts, withName: cacheName)
+        do {
+            
+            try PFObject.unpinAllObjectsWithName(cacheName)
+            try PFObject.pinAll(posts, withName: cacheName)
+        }
+        catch let error as NSError {
+            
+            NSLog("error in replaceCachedPosts = %@", error)
+        }
     }
     
     
@@ -82,16 +60,18 @@ class FetchPostsForTopicOperation: ParseOperation {
             query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: minDate)
         }
         
-        var error: NSError?
-        let objects = query.findObjects(&error)
-        
-        if error == nil {
+        do {
+            
+            let objects = try query.findObjects()
             if let fetchedPosts = objects as? [Post] {
                 self.replaceCachedPosts(withPosts: fetchedPosts)
             }
+            
+            finishWithError(nil)
         }
-
-        finishWithError(error)
+        catch let error as NSError {
+            finishWithError(error)
+        }
     }
     
 
@@ -100,3 +80,35 @@ class FetchPostsForTopicOperation: ParseOperation {
         super.finished(errors)
     }
 }
+
+
+//MARK: - Utility Methods
+
+// note that this query is synchronous
+// todo:  handle error
+func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) -> [Post] {
+    
+    guard let cacheName = FetchPostsForTopicOperation.cacheNameForTopic(topic) else {
+        return []
+    }
+    
+    let query = Post.query()!
+    query.orderByDescending(DataKeys.UpdatedAt)
+    query.fromPinWithName(cacheName)
+    
+    do {
+        
+        let posts = try query.findObjects()
+        if clearCacheAfterReturning {
+            try PFObject.unpinAll(posts, withName: cacheName)
+        }
+        
+        return posts as! [Post]
+    }
+    catch let error as NSError {
+        NSLog("error in cachedPostsForTopic = %@", error)
+        return []
+    }
+}
+
+

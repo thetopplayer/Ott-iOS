@@ -8,35 +8,6 @@
 
 import Foundation
 
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedTopicsAuthoredByUser(user: User, clearCacheAfterReturning: Bool = true) -> [Topic] {
-    
-    guard let cacheName = FetchAuthoredTopicsOperation.cacheNameForTopicsAuthoredByUser(user) else {
-        return []
-    }
-    
-    let query = Topic.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(cacheName)
-    
-    var error: NSError?
-    if let topics = query.findObjects(&error) as? [Topic] {
-        
-        if clearCacheAfterReturning {
-            PFObject.unpinAll(topics, withName: cacheName)
-        }
-        
-        return topics
-    }
-    
-    return []
-}
-
-
-
 
 //MARK: - FetchAuthoredTopicsOperation
 
@@ -63,8 +34,14 @@ class FetchAuthoredTopicsOperation: ParseOperation {
             return
         }
         
-        PFObject.unpinAllObjectsWithName(cacheName)
-        PFObject.pinAll(topics, withName: cacheName)
+        do {
+            
+            try PFObject.unpinAllObjectsWithName(cacheName)
+            try PFObject.pinAll(topics, withName: cacheName)
+        }
+        catch let error as NSError {
+            finishWithError(error)
+        }
     }
     
 
@@ -77,17 +54,18 @@ class FetchAuthoredTopicsOperation: ParseOperation {
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Author, equalTo: user)
         
-        var error: NSError?
-        let objects = query.findObjects(&error)
-        
-        if error != nil {
+        do {
+            
+            let objects = try query.findObjects()
+            if let topics = objects as? [Topic] {
+                replaceCachedTopics(withTopics: topics)
+            }
+            
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-        else if let topics = objects as? [Topic] {
-            replaceCachedTopics(withTopics: topics)
-        }
-        
-        finishWithError(nil)
     }
     
     
@@ -96,3 +74,35 @@ class FetchAuthoredTopicsOperation: ParseOperation {
         super.finished(errors)
     }
 }
+
+
+//MARK: - Utility Methods
+
+// note that this query is synchronous
+// todo:  handle error
+func cachedTopicsAuthoredByUser(user: User, clearCacheAfterReturning: Bool = true) -> [Topic] {
+    
+    guard let cacheName = FetchAuthoredTopicsOperation.cacheNameForTopicsAuthoredByUser(user) else {
+        return []
+    }
+    
+    let query = Topic.query()!
+    query.orderByDescending(DataKeys.UpdatedAt)
+    query.fromPinWithName(cacheName)
+    
+    do {
+        
+        let topics = try query.findObjects()
+        
+        if clearCacheAfterReturning {
+            try PFObject.unpinAll(topics, withName: cacheName)
+        }
+        return topics as! [Topic]
+    }
+    catch let error as NSError {
+        
+        NSLog("Error getting cached topics %@", error.localizedDescription)
+        return []
+    }
+}
+

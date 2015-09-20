@@ -36,9 +36,17 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         nameTextField.delegate = self
         
         topLabel.text = "Enter a handle and your name.  Both can be changed later in the app settings."
-        handleTextField.text = "@"
         button.setTitle("Next", forState: .Normal)
         button.setTitle("Next", forState: .Disabled)
+        
+        resetDisplay()
+    }
+    
+    
+    private func resetDisplay() {
+        
+        handleTextField.text = "@"
+        nameTextField.text = ""
         
         // need to start off with nil to get the tint to behave correctly when the images are set
         handleEntryStatusImageView.image = nil
@@ -46,13 +54,10 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         
         handleExistsLabel.hidden = true
         button.enabled = false
-    }
-
-    
-    deinit {
         
-        endObservations()
+        handleTextField.becomeFirstResponder()
     }
+    
     
     
     //MARK: - Main
@@ -62,7 +67,7 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         super.didShow()
         tasksCompleted = false
         
-        handleTextField.becomeFirstResponder()
+        resetDisplay()
         startObservations()
     }
     
@@ -74,15 +79,22 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     }
 
     
+    
     //MARK: - Actions
     
     @IBAction func handleButtonClick(sender: AnyObject) {
         
+        tasksCompleted = true  // set here to prevent scrolling to next view
+        
+        handleTextField.resignFirstResponder()
+        nameTextField.resignFirstResponder()
+
         AccountCreationViewController.nameUsedToLogin = nameTextField.text!
         AccountCreationViewController.handleUsedToLogin = handleTextField.text!
         
         gotoNextPage()
     }
+    
     
     
     //MARK: - Data
@@ -91,7 +103,6 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         
         didSet {
             button.enabled = okToContinue
-            tasksCompleted = okToContinue
         }
     }
     
@@ -183,17 +194,22 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
             
             func handleFetchCompletion(user: User?, error: NSError?) {
                 
-                handleIsUnique = user == nil
-                handleExistsLabel.hidden = handleIsUnique
-                validatingHandleActivityIndicator.stopAnimating()
-                handleEntryStatusImageView.hidden = false
+                print("user = \(user)")
                 
                 if let error = error {
                     presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
                 }
+                else {
+                    handleIsUnique = user == nil
+                    handleExistsLabel.hidden = handleIsUnique
+                    validatingHandleActivityIndicator.stopAnimating()
+                    handleEntryStatusImageView.hidden = false
+              }
            }
             
-            handleIsUnique = false
+            handleEntryStatusImageView.hidden = true
+            validatingHandleActivityIndicator.startAnimating()
+            
             let fetchUserOperation = FetchUserByHandleOperation(handle: handle, completion: handleFetchCompletion)
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }

@@ -36,9 +36,13 @@ class FetchTopicOperation: ParseOperation {
     
     override func execute() {
         
-        var error: NSError? = nil
-        topic.fetch(&error)
-        finishWithError(error)
+        do {
+            try topic.fetch()
+            finishWithError(nil)
+        }
+        catch let error as NSError {
+            finishWithError(error)
+        }
     }
     
     

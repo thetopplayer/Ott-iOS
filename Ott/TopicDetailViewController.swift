@@ -822,7 +822,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         else {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView.pinColor = isTopic ? .Purple : .Red
+            annotationView.pinTintColor = isTopic ? UIColor.purpleColor() : UIColor.redColor()
         }
         
         return annotationView

@@ -205,6 +205,8 @@ class ScanTransformer {
             
         }
         
+        query!.limit = 1
+        
         if let objectID = objectID(fromCode: code) {
             
             query?.whereKey("objectId", equalTo: objectID)

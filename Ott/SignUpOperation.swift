@@ -12,13 +12,13 @@ class SignUpOperation: ParseOperation {
 
     let phoneNumber: String
     let handle: String
-    let userName: String
+    let nickname: String
     
-    init(phoneNumber: String, handle: String, userName: String) {
+    init(phoneNumber: String, handle: String, nickname: String) {
         
         self.phoneNumber = phoneNumber
         self.handle = handle
-        self.userName = userName
+        self.nickname = nickname
         super.init()
     }
     
@@ -38,29 +38,30 @@ class SignUpOperation: ParseOperation {
         
         let theUser = User.create()
         theUser.handle = handle
-        theUser.name = userName
+        theUser.name = nickname
         theUser.password = String.randomOfLength(12)
         
-        var error: NSError? = nil
-        theUser.signUp(&error)
-        
-        if let error = error {
+        do {
+            
+            try theUser.signUp()
+            
+            // now that the user is created, we can set the access control
+            let publicReadACL = PFACL(user: theUser)
+            publicReadACL.setPublicReadAccess(true)
+            theUser.ACL = publicReadACL
+            
+            // create private data record for personal information
+            let privateData = theUser.createPrivateData()
+            privateData.phoneNumber = phoneNumber
+            
+            try theUser.save()
+            try theUser.fetch() // refresh locally cached user
+            
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-        
-        // now that the user is created, we can set the access control and personal information
-        
-        theUser.ACL = PFACL(user: theUser)
-        theUser.phoneNumber = phoneNumber
-        theUser.save(&error)
-        
-        if let error = error {
-            finishWithError(error)
-        }
-        
-        // refresh locally cached user
-        theUser.fetch(&error)
-        finishWithError(error)
     }
     
     

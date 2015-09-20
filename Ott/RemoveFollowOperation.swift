@@ -37,14 +37,14 @@ class RemoveFollowOperation: ParseOperation {
         let query = Follow.query()!
         query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
         
-        var error: NSError? = nil
-        if let object = query.getFirstObject(&error) {
-            
-            var error: NSError? = nil
-            object.delete(&error)
+        do {
+            let object = try query.getFirstObject()
+            try object.delete()
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-        finishWithError(error)
     }
     
     

@@ -68,12 +68,17 @@ class User: PFUser {
             return "privateData"
         }
         
+        // the handle is the prettier version of "username" as created by the user
         static var Handle: String {
-            return "username"
+            return "handle"
         }
         
         static var NumberOfTopics: String {
             return "numberOfTopics"
+        }
+        
+        static var PhoneNumber: String {
+            return "phoneNumber"
         }
         
         static var NumberOfPosts: String {
@@ -107,20 +112,24 @@ class User: PFUser {
         }()
     
     
+    func createPrivateData() -> PrivateUserData {
+        
+        // create private data and set so that only the user can read & write
+        let data = PrivateUserData()
+        data.ACL = PFACL(user: self)
+        self[DataKeys.PrivateData] = data
+        
+        return data
+    }
+    
+    
+    // synchronous fetch
     var privateData: PrivateUserData {
         
         get {
-            if let data = self[DataKeys.PrivateData]?.fetchIfNeeded() {
-                return data as! PrivateUserData
-            }
-            else {
-                
-                let data = PrivateUserData()
-                data.ACL = PFACL(user: self)
-                self[DataKeys.PrivateData] = data
-
-                return data
-           }
+            let pd = self[DataKeys.PrivateData] as! PrivateUserData
+            try! pd.fetchIfNeeded()
+            return pd
         }
     }
     
@@ -132,29 +141,30 @@ class User: PFUser {
         }
         
         set {
-            privateData.phoneNumber = newValue
+            // server side code will move this to the privateData
+            self[DataKeys.PhoneNumber] = newValue
         }
     }
     
     
+    // strip off "@" sign and convert to uppercase
+    // this is to allow accurate searching and case-insensitive uniqueness
+    static func usernameFromHandle(handle: String) -> String {
+        return handle.stringByRemovingCharactersInString("@").uppercaseString
+    }
     
-    // the user's handle is stored as his username
+    
+    // the user's handle is a prettier version of the username
     var handle: String? {
         set {
-            username = newValue
+            self[DataKeys.Handle] = newValue
+            username = User.usernameFromHandle(newValue!)
         }
         
         get {
-            return username
+            return self[DataKeys.Handle] as? String
         }
     }
-    
-    
-    func setRandomPassword() {
-    
-        password = String.randomOfLength(12)
-    }
-    
     
     
     

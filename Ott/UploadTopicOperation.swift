@@ -33,15 +33,15 @@ class UploadTopicOperation: ParseOperation {
 
         logBackgroundTask()
         
-        var error: NSError?
-        topic.save(&error)
-        
-        if let error = error {
+        do {
+            
+            try topic.save()
+            currentUser().archiveAuthoredTopicName(topic.name!)
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-            
-        currentUser().archiveAuthoredTopicName(topic.name!)
-        finishWithError(nil)
     }
     
     

@@ -18,9 +18,14 @@ func cachedFolowedUsers() -> [User] {
     query.orderByDescending(DataKeys.UpdatedAt)
     query.fromPinWithName(FetchFollowedUsersOperation.cacheName)
     
-    var error: NSError?
-    if let users = query.findObjects(&error) as? [User] {
-        return users
+    do {
+        
+        if let users = try query.findObjects() as? [User] {
+            return users
+        }
+    }
+    catch let error as NSError {
+        NSLog("error = %@", error)
     }
     
     return []
@@ -45,8 +50,14 @@ class FetchFollowedUsersOperation: ParseOperation {
     
     private func replaceCachedFollowedUsers(withUsers users: [User]) {
         
-        PFObject.unpinAllObjectsWithName(FetchFollowedUsersOperation.cacheName)
-        PFObject.pinAll(users, withName: FetchFollowedUsersOperation.cacheName)
+        do {
+            
+            try PFObject.unpinAllObjectsWithName(FetchFollowedUsersOperation.cacheName)
+            try PFObject.pinAll(users, withName: FetchFollowedUsersOperation.cacheName)
+        }
+        catch let error as NSError {
+            NSLog("error = %@", error)
+        }
     }
     
     
@@ -59,17 +70,17 @@ class FetchFollowedUsersOperation: ParseOperation {
         query.orderByDescending(DataKeys.UpdatedAt)
         query.whereKey(DataKeys.Follower, equalTo: currentUser())
         
-        var error: NSError?
-        let objects = query.findObjects(&error)
-        
-        if error != nil {
+        do {
+            
+            let objects = try query.findObjects()
+            if let fetchedUsers = objects as? [User] {
+                self.replaceCachedFollowedUsers(withUsers: fetchedUsers)
+            }
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-        else if let fetchedUsers = objects as? [User] {
-            self.replaceCachedFollowedUsers(withUsers: fetchedUsers)
-        }
-        
-        finishWithError(nil)
     }
     
 

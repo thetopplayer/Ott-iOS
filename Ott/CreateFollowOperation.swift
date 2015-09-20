@@ -32,26 +32,20 @@ class CreateFollowOperation: ParseOperation {
         
         logBackgroundTask()
         
-        var error: NSError?
         let follow = Follow()
         follow.followerHandle = currentUser().handle
         follow.followeeHandle = followeeHandle
         
-        follow.save(&error)
-        
-        if let error = error {
+        do {
+            
+            try follow.save()
+            currentUser().archiveFollowedUserWithHandle(followeeHandle)
+            try currentUser().fetch()  // refresh user data
+            finishWithError(nil)
+        }
+        catch let error as NSError {
             finishWithError(error)
         }
-        
-        currentUser().archiveFollowedUserWithHandle(followeeHandle)
-        
-        // refresh user data
-        currentUser().fetch(&error)
-        if let error = error {
-            finishWithError(error)
-        }
-        
-        finishWithError(nil)
     }
     
     
