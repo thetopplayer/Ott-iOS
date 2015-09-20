@@ -103,7 +103,7 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     private func updateDisplayedInformation() {
         
         nameTextLabel.text = currentUser().name
-        handleTextLabel.text = currentUser().username
+        handleTextLabel.text = currentUser().handle
         
         let bioText = currentUser().bio != nil ? currentUser().bio : "(no bio)"
         bioTextLabel.text = bioText

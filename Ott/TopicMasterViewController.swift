@@ -337,7 +337,7 @@ class TopicMasterViewController: TableViewController {
     
     
     @IBAction override func unwindForSegue(unwindSegue: UIStoryboardSegue, towardsViewController subsequentVC: UIViewController) {
-        
+        print("unwind in topic master view controller")
     }
 
 }
