@@ -36,7 +36,7 @@ class FetchAuthoredTopicsOperation: ParseOperation {
         
         do {
             
-            try PFObject.unpinAllObjectsWithName(cacheName)
+            let _ = try? PFObject.unpinAllObjectsWithName(cacheName)
             try PFObject.pinAll(topics, withName: cacheName)
         }
         catch let error as NSError {
@@ -95,7 +95,7 @@ func cachedTopicsAuthoredByUser(user: User, clearCacheAfterReturning: Bool = tru
         let topics = try query.findObjects()
         
         if clearCacheAfterReturning {
-            try PFObject.unpinAll(topics, withName: cacheName)
+            let _ = try? PFObject.unpinAll(topics, withName: cacheName)
         }
         return topics as! [Topic]
     }

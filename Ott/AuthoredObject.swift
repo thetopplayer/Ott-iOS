@@ -66,12 +66,6 @@ class AuthoredObject: BaseObject, MKAnnotation {
     @NSManaged var authorHandle: String?
     @NSManaged var authorBio: String?
     @NSManaged var comment: String?
-    
-    func setAuthor(author: User) {
-        
-        self[DataKeys.Author] = author
-    }
-    
     @NSManaged var locationName: String?
     
     var location: CLLocation? {

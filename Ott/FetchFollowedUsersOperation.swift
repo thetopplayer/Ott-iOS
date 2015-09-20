@@ -8,31 +8,6 @@
 
 import Foundation
 
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedFolowedUsers() -> [User] {
-    
-    let query = User.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(FetchFollowedUsersOperation.cacheName)
-    
-    do {
-        
-        if let users = try query.findObjects() as? [User] {
-            return users
-        }
-    }
-    catch let error as NSError {
-        NSLog("error = %@", error)
-    }
-    
-    return []
-}
-
-
-
 
 //MARK: - FetchFollowedUsersOperation
 
@@ -52,7 +27,7 @@ class FetchFollowedUsersOperation: ParseOperation {
         
         do {
             
-            try PFObject.unpinAllObjectsWithName(FetchFollowedUsersOperation.cacheName)
+            let _ = try? PFObject.unpinAllObjectsWithName(FetchFollowedUsersOperation.cacheName)
             try PFObject.pinAll(users, withName: FetchFollowedUsersOperation.cacheName)
         }
         catch let error as NSError {
@@ -89,3 +64,29 @@ class FetchFollowedUsersOperation: ParseOperation {
         super.finished(errors)
     }
 }
+
+
+//MARK: - Utility Methods
+
+// note that this query is synchronous
+// todo:  handle error
+func cachedFolowedUsers() -> [User] {
+    
+    let query = User.query()!
+    query.orderByDescending(DataKeys.UpdatedAt)
+    query.fromPinWithName(FetchFollowedUsersOperation.cacheName)
+    
+    do {
+        
+        if let users = try query.findObjects() as? [User] {
+            return users
+        }
+    }
+    catch let error as NSError {
+        NSLog("error = %@", error)
+    }
+    
+    return []
+}
+
+

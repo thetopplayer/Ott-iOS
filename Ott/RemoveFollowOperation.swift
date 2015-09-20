@@ -32,7 +32,7 @@ class RemoveFollowOperation: ParseOperation {
         
         logBackgroundTask()
         
-        currentUser().removeHandleFromFollowedUsersArchive(followeeHandle)
+        currentUser().removeHandleFromFollowedUserHandlesArchive(followeeHandle)
         
         let query = Follow.query()!
         query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)

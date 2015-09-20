@@ -9,26 +9,6 @@
 import Foundation
 
 
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedLocalTopics() -> [Topic] {
-    
-    let query = Topic.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(FetchLocalTopicsOperation.cacheName)
-    
-    let topics = try? query.findObjects() as? [Topic]
-        
-    if topics == nil {
-        return []
-    }    
-    return topics!!
-}
-
-
-
 //MARK: - FetchLocalTopicsOperation
 
 class FetchLocalTopicsOperation: ParseOperation {
@@ -55,11 +35,11 @@ class FetchLocalTopicsOperation: ParseOperation {
         
         do {
            
-            try PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
+            let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
             try PFObject.pinAll(newTopics, withName: FetchLocalTopicsOperation.cacheName)
         }
         catch let error as NSError {
-            NSLog("error = %@", error)
+            NSLog("error in replaceCachedTopics = %@", error)
         }
     }
     
@@ -70,12 +50,12 @@ class FetchLocalTopicsOperation: ParseOperation {
         
         do {
             
-            try PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
+            let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
             let allTopics = Set(newTopics).union(Set(existingObjects))
             try PFObject.pinAll(Array(allTopics), withName: FetchLocalTopicsOperation.cacheName)
         }
         catch let error as NSError {
-            NSLog("error = %@", error)
+            NSLog("error in updateCachedTopics = %@", error)
         }
     }
     
@@ -124,10 +104,10 @@ class FetchLocalTopicsOperation: ParseOperation {
                     self.lastUpdated = mostRecentTopicUpdate
                     
                     if updateOnly {
-                        self.updateCachedTopics(withTopics: topics)
+                        updateCachedTopics(withTopics: topics)
                     }
                     else {
-                        self.replaceCachedTopics(withTopics: topics)
+                        replaceCachedTopics(withTopics: topics)
                     }
                 }
             }
@@ -145,3 +125,25 @@ class FetchLocalTopicsOperation: ParseOperation {
         super.finished(errors)
     }
 }
+
+
+//MARK: - Utility Methods
+
+// note that this query is synchronous
+// todo:  handle error
+func cachedLocalTopics() -> [Topic] {
+    
+    let query = Topic.query()!
+    query.orderByDescending(DataKeys.UpdatedAt)
+    query.fromPinWithName(FetchLocalTopicsOperation.cacheName)
+    
+    let topics = try? query.findObjects() as? [Topic]
+    
+    if topics == nil {
+        return []
+    }
+    return topics!!
+}
+
+
+

@@ -6,6 +6,13 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
+/*
+
+Searches for a user with a handle, but is more inclusive by actually searching
+by username (case insensitive version of handle, without the '@')
+
+*/
+
 import UIKit
 
 typealias UserCompletionBlock = (user: User?, error: NSError?) -> Void
@@ -60,7 +67,6 @@ class FetchUserByHandleOperation: ParseOperation {
     override func finished(errors: [NSError]) {
         
         super.finished(errors)
-        
         dispatch_async(dispatch_get_main_queue()) {
             fetchCompletionBlock?(user: user, error: errors.first)
         }

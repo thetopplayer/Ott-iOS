@@ -34,14 +34,31 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             // start fetching name for current location now
             LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
             
-            myTopic = Topic.createWithAuthor(currentUser())
+            myTopic = Topic.create()
             image = nil
-            navigationItem.rightBarButtonItem?.enabled = false
+            doneButton.enabled = false
         }
         
         tableView.reloadData()
+        startObservations()
     }
 
+    
+    override func viewWillDisappear(animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        endObservations()
+    }
+    
+    
+    
+    //MARK: - Display
+    
+    private var doneButton: UIBarButtonItem {
+        
+        return navigationItem.rightBarButtonItem!
+    }
+    
     
     
     //MARK: - Data
@@ -52,6 +69,8 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     var myTopic: Topic?
     
     private func saveChanges() {
+        
+        doneButton.enabled = false
         
         let topic = myTopic!
         
@@ -180,6 +199,46 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     }
     
 
+    //MARK: - Observations
+    
+    private var didStartObservations = false
+    func startObservations() {
+        
+        if didStartObservations {
+            return
+        }
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFailNotification:", name: UploadTopicOperation.Notifications.UploadDidFail, object: nil)
+        
+        didStartObservations = true
+    }
+    
+    
+    private func endObservations() {
+        
+        if didStartObservations == false {
+            return
+        }
+        
+        NSNotificationCenter.defaultCenter().removeObserver(self)
+        didStartObservations = false
+    }
+    
+    
+    func handleDidUploadTopicNotification(notification: NSNotification) {
+        
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    
+    func handleUploadDidFailNotification(notification: NSNotification) {
+        
+        
+    }
+
+    
     
     //MARK: - Navigation
     
@@ -204,7 +263,8 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
             saveChanges()
         }
         
-        performSegueWithIdentifier("unwindToMasterView", sender: self)
+//        performSegueWithIdentifier("unwindToMasterView", sender: self)
+//        dismissViewControllerAnimated(true, completion: nil)
     }
     
     
@@ -213,7 +273,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
     
     func validNameWasEntered(isValid: Bool) {
         
-        navigationItem.rightBarButtonItem?.enabled = isValid
+        doneButton.enabled = isValid
     }
     
     

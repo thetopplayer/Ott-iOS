@@ -33,13 +33,12 @@ class CreateFollowOperation: ParseOperation {
         logBackgroundTask()
         
         let follow = Follow()
-        follow.followerHandle = currentUser().handle
         follow.followeeHandle = followeeHandle
         
         do {
             
             try follow.save()
-            currentUser().archiveFollowedUserWithHandle(followeeHandle)
+            currentUser().archiveFollowedUserHandle(followeeHandle)
             try currentUser().fetch()  // refresh user data
             finishWithError(nil)
         }
@@ -82,6 +81,5 @@ class CreateFollowOperation: ParseOperation {
             }
         }
     }
-    
 
 }

@@ -38,7 +38,7 @@ class FetchPostsForTopicOperation: ParseOperation {
         
         do {
             
-            try PFObject.unpinAllObjectsWithName(cacheName)
+            let _ = try? PFObject.unpinAllObjectsWithName(cacheName)
             try PFObject.pinAll(posts, withName: cacheName)
         }
         catch let error as NSError {
@@ -100,7 +100,7 @@ func cachedPostsForTopic(topic: Topic, clearCacheAfterReturning: Bool = true) ->
         
         let posts = try query.findObjects()
         if clearCacheAfterReturning {
-            try PFObject.unpinAll(posts, withName: cacheName)
+            let _ = try? PFObject.unpinAll(posts, withName: cacheName)
         }
         
         return posts as! [Post]

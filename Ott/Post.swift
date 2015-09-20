@@ -39,10 +39,9 @@ class Post: AuthoredObject, PFSubclassing {
     
     
     /** Use this to create */
-    class func createWithAuthor(author: User, topic: Topic) -> Post {
+    class func createForTopic(topic: Topic) -> Post {
         
         let post = Post()
-        post.setAuthor(author)
         post.setTopic(topic)
         return post
     }

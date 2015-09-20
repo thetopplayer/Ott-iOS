@@ -20,7 +20,7 @@ class TopicAuthorTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        innerContentContainer?.backgroundColor = UIColor(white: 1.0, alpha: 0.9)
+//        innerContentContainer?.backgroundColor = UIColor(white: 1.0, alpha: 0.9)
         innerContentContainer?.addBorder()
         authorImageView.addRoundedBorder()
         authorHandleLabel.textColor = UIColor.tint()

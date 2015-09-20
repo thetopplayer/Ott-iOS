@@ -101,7 +101,15 @@ class User: PFUser {
     }
     
     
+    // strip off "@" sign and convert to uppercase
+    // this is to allow accurate searching and case-insensitive uniqueness
+    static func usernameFromHandle(handle: String) -> String {
+        return handle.stringByRemovingCharactersInString("@").uppercaseString
+    }
+    
+
     @NSManaged var name: String? // user's non-unique name
+    @NSManaged var handle: String?
     @NSManaged var numberOfTopics: Int
     @NSManaged var numberOfPosts: Int
     @NSManaged var bio: String?
@@ -145,27 +153,7 @@ class User: PFUser {
             self[DataKeys.PhoneNumber] = newValue
         }
     }
-    
-    
-    // strip off "@" sign and convert to uppercase
-    // this is to allow accurate searching and case-insensitive uniqueness
-    static func usernameFromHandle(handle: String) -> String {
-        return handle.stringByRemovingCharactersInString("@").uppercaseString
-    }
-    
-    
-    // the user's handle is a prettier version of the username
-    var handle: String? {
-        set {
-            self[DataKeys.Handle] = newValue
-            username = User.usernameFromHandle(newValue!)
-        }
-        
-        get {
-            return self[DataKeys.Handle] as? String
-        }
-    }
-    
+
     
     
     //MARK: - SignUp and Login
@@ -278,7 +266,7 @@ class User: PFUser {
     
     //MARK: - Followed Users
     
-    private var followedUsersArchivePath: String {
+    private var followedUserHandlesArchivePath: String {
         
         return documentsDirectory(withSubpath: "/followedUsers.ott")!
     }
@@ -286,7 +274,7 @@ class User: PFUser {
     
     private func followedUserHandles() -> [String] {
         
-        if let archive = NSArray(contentsOfFile: followedUsersArchivePath) {
+        if let archive = NSArray(contentsOfFile: followedUserHandlesArchivePath) {
             return archive as! [String]
         }
         
@@ -294,18 +282,18 @@ class User: PFUser {
     }
     
     
-    private func archiveFollowedUserHandles(userHandles: NSArray) {
+    private func archiveFollowedUserHandles(handles: NSArray) {
         
-        userHandles.writeToFile(followedUsersArchivePath, atomically: true)
+        handles.writeToFile(followedUserHandlesArchivePath, atomically: true)
     }
     
     
-    func archiveFollowedUserWithHandle(handle: String) {
+    func archiveFollowedUserHandle(handle: String) {
         
-        let userHandles = NSMutableSet()
-        userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-        userHandles.addObject(handle)
-        archiveFollowedUserHandles(userHandles.allObjects)
+        let allHandles = NSMutableSet()
+        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+        allHandles.addObject(handle)
+        archiveFollowedUserHandles(allHandles.allObjects)
     }
     
     
@@ -315,12 +303,12 @@ class User: PFUser {
     }
     
     
-    func removeHandleFromFollowedUsersArchive(handle: String) {
+    func removeHandleFromFollowedUserHandlesArchive(handle: String) {
         
-        let userHandles = NSMutableSet()
-        userHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-        userHandles.removeObject(handle)
-        archiveFollowedUserHandles(userHandles.allObjects)
+        let allHandles = NSMutableSet()
+        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+        allHandles.removeObject(handle)
+        archiveFollowedUserHandles(allHandles.allObjects)
     }
     
 }

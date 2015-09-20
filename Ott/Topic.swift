@@ -53,10 +53,9 @@ class Topic: AuthoredObject, PFSubclassing {
     
     
     /** Use this to create */
-    class func createWithAuthor(author: User) -> Topic {
+    class func create() -> Topic {
         
         let topic = Topic()
-        topic.setAuthor(author)
         topic.numberOfPosts = 0
         topic.averageRating = 0
         topic.lastPostLocationName = ""

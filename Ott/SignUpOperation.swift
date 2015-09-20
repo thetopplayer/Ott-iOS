@@ -38,6 +38,7 @@ class SignUpOperation: ParseOperation {
         
         let theUser = User.create()
         theUser.handle = handle
+        theUser.username = User.usernameFromHandle(handle)
         theUser.name = nickname
         theUser.password = String.randomOfLength(12)
         

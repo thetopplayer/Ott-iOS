@@ -87,7 +87,7 @@ extension UITableView {
         }
         
         if indexPathsForInsert.count > 0 {
-            self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Top)
+            self.insertRowsAtIndexPaths(indexPathsForInsert, withRowAnimation: .Automatic)
         }
         
         self.endUpdates()

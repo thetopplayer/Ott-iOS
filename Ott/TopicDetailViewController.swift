@@ -388,7 +388,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayMode = .View
         displayStatus(type: .Posting)
         
-        let myPost = Post.createWithAuthor(currentUser(), topic: myTopic!)
+        let myPost = Post.createForTopic(myTopic!)
         myPost.rating = postInputView.rating
         if let comment = postInputView.comment {
             myPost.comment = comment
