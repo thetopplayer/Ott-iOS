@@ -95,11 +95,6 @@ class User: PFUser {
         return handle.stringByRemovingCharactersInString("@").uppercaseString
     }
     
-    
-    static func passwordFromPhoneNumber(phoneNumber: String) -> String {
-        return phoneNumber + "x4Pq9"
-    }
-    
 
     @NSManaged var name: String? // user's non-unique name
     @NSManaged var handle: String?

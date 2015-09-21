@@ -208,7 +208,7 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
             handleEntryStatusImageView.hidden = true
             validatingHandleActivityIndicator.startAnimating()
             
-            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, completion: handleFetchCompletion)
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true, completion: handleFetchCompletion)
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
         

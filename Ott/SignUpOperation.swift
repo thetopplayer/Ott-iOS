@@ -13,12 +13,14 @@ class SignUpOperation: ParseOperation {
     let phoneNumber: String
     let handle: String
     let nickname: String
+    let password: String
     
-    init(phoneNumber: String, handle: String, nickname: String) {
+    init(phoneNumber: String, handle: String, nickname: String, password: String) {
         
         self.phoneNumber = phoneNumber
         self.handle = handle
         self.nickname = nickname
+        self.password = password
         super.init()
     }
     
@@ -40,7 +42,7 @@ class SignUpOperation: ParseOperation {
         theUser.handle = handle
         theUser.username = User.usernameFromHandle(handle)
         theUser.name = nickname
-        theUser.password = User.passwordFromPhoneNumber(phoneNumber)
+        theUser.password = password
         
         do {
             

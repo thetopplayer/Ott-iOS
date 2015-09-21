@@ -8,8 +8,8 @@
 
 /*
 
-Searches for a user with a handle, but is more inclusive by actually searching
-by username (case insensitive version of handle, without the '@')
+Searches for a user with a handle, allowing a case-insensitve search (i.e., by 
+username)
 
 */
 
@@ -19,14 +19,16 @@ typealias UserCompletionBlock = (user: User?, error: NSError?) -> Void
 
 class FetchUserByHandleOperation: ParseOperation {
 
-    let username: String
+    let searchByUsername: Bool
+    let handle: String
     let fetchCompletionBlock: UserCompletionBlock?
     var user: User? = nil
     
     
-    init(handle: String, completion: UserCompletionBlock? = nil) {
+    init(handle: String, caseInsensitive: Bool, completion: UserCompletionBlock? = nil) {
         
-        username = User.usernameFromHandle(handle)
+        self.handle = handle
+        searchByUsername = caseInsensitive
         fetchCompletionBlock = completion
         super.init()
     }
@@ -48,8 +50,14 @@ class FetchUserByHandleOperation: ParseOperation {
         do {
             
             let query = User.query()!
-            query.whereKey("username", equalTo: username)
             query.limit = 1
+            if searchByUsername {
+                let username = User.usernameFromHandle(handle)
+                query.whereKey("username", equalTo: username)
+            }
+            else {
+                query.whereKey("handle", equalTo: handle)
+            }
             
             let results = try query.findObjects()
             if results.count > 0 {

@@ -4,10 +4,10 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
     <scenes>
-        <!--Intro-->
+        <!--Sign Up-->
         <scene sceneID="26b-sF-Mfr">
             <objects>
-                <viewController title="Intro" automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mFU-se-BdL" customClass="AccountCreationViewController" customModule="Ott" sceneMemberID="viewController">
+                <viewController title="Sign Up" automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" useStoryboardIdentifierAsRestorationIdentifier="YES" id="mFU-se-BdL" customClass="AccountCreationViewController" customModule="Ott" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="TFW-yb-sN5"/>
                         <viewControllerLayoutGuide type="bottom" id="Pfz-5j-CO9"/>
@@ -101,6 +101,9 @@
                                 </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
                                 <state key="normal" title="Sign into existing account"/>
+                                <connections>
+                                    <segue destination="1xR-My-HQY" kind="show" id="Ime-nM-ZUm"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" red="1" green="0.93725490196078431" blue="0.69019607843137254" alpha="1" colorSpace="calibratedRGB"/>
@@ -220,6 +223,70 @@
                 <placeholder placeholderIdentifier="IBFirstResponder" id="wzp-h7-IP8" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1126" y="-466"/>
+        </scene>
+        <!--Login-->
+        <scene sceneID="adz-pX-qfP">
+            <objects>
+                <viewController title="Login" automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" useStoryboardIdentifierAsRestorationIdentifier="YES" id="1xR-My-HQY" customClass="LoginViewController" customModule="Ott" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="3Lz-ph-CE0"/>
+                        <viewControllerLayoutGuide type="bottom" id="IUd-OA-nVT"/>
+                    </layoutGuides>
+                    <view key="view" multipleTouchEnabled="YES" contentMode="scaleToFill" id="8vU-Q8-gM9">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" scrollEnabled="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="obc-WA-daB">
+                                <rect key="frame" x="150" y="84" width="300" height="300"/>
+                                <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="300" id="GIq-aG-006"/>
+                                    <constraint firstAttribute="width" constant="300" id="msm-c9-rL2"/>
+                                </constraints>
+                            </scrollView>
+                            <pageControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="IYv-cr-svH">
+                                <rect key="frame" x="273" y="379" width="55" height="37"/>
+                                <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="currentPageIndicatorTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
+                            </pageControl>
+                        </subviews>
+                        <color key="backgroundColor" red="1" green="0.93693236739999997" blue="0.69106233630000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <constraints>
+                            <constraint firstItem="obc-WA-daB" firstAttribute="top" secondItem="3Lz-ph-CE0" secondAttribute="bottom" constant="20" id="7Z1-M8-Fad"/>
+                            <constraint firstAttribute="centerX" secondItem="obc-WA-daB" secondAttribute="centerX" id="Sbv-8o-vNo"/>
+                            <constraint firstItem="IYv-cr-svH" firstAttribute="centerX" secondItem="obc-WA-daB" secondAttribute="centerX" id="jDQ-3p-XJo"/>
+                            <constraint firstItem="IYv-cr-svH" firstAttribute="top" secondItem="obc-WA-daB" secondAttribute="bottom" constant="-5" id="kVU-jC-9ko"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="One To Ten" id="HRi-rc-FVh">
+                        <barButtonItem key="leftBarButtonItem" id="DjM-yh-TNq">
+                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="B8o-cq-OPA">
+                                <rect key="frame" x="20" y="6" width="75" height="32"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="height" constant="32" id="JYK-gi-NJb"/>
+                                    <constraint firstAttribute="width" constant="75" id="XN7-P2-fgP"/>
+                                </constraints>
+                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
+                                <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="4"/>
+                                <state key="normal" title="Back" image="halfArrowLeft">
+                                    <color key="titleColor" red="1" green="0.57647058819999997" blue="0.066666666669999999" alpha="1" colorSpace="calibratedRGB"/>
+                                </state>
+                                <connections>
+                                    <action selector="previous:" destination="1xR-My-HQY" eventType="touchUpInside" id="m3k-za-LJa"/>
+                                </connections>
+                            </button>
+                        </barButtonItem>
+                    </navigationItem>
+                    <connections>
+                        <outlet property="backButton" destination="B8o-cq-OPA" id="Sfj-3X-0QG"/>
+                        <outlet property="pageControl" destination="IYv-cr-svH" id="5Mv-FG-86d"/>
+                        <outlet property="scrollView" destination="obc-WA-daB" id="1hD-fl-oHn"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="hcb-mf-gN2" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="208" y="360"/>
         </scene>
     </scenes>
     <resources>

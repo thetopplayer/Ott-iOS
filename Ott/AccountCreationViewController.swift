@@ -30,7 +30,7 @@ class AccountCreationViewController: PageCollectionViewController {
         }
         
         super.viewDidLoad()
-        setNeedsStatusBarAppearanceUpdate()
+//        setNeedsStatusBarAppearanceUpdate()
         backButton!.tintColor = UIColor.tint()
         backButton!.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
         

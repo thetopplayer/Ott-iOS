@@ -113,8 +113,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         currentUser().handle = handleTextField.text
         currentUser().bio = bioTextView.text
         
-        let updateOperation = UpdateUserOperation(user: currentUser())
-        MaintenanceQueue.sharedInstance.addOperation(updateOperation)
+        MaintenanceQueue.sharedInstance.addOperation(UpdateUserOperation())
     }
     
     
@@ -136,7 +135,25 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     
     private func logout() {
 
-        MaintenanceQueue.sharedInstance.addOperation(LogoutOperation())
+        let alertViewController: UIAlertController = {
+            
+            let controller = UIAlertController(title: "Logout", message: "Are you sure you want to logout?", preferredStyle: .Alert)
+            let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
+                action in
+                MaintenanceQueue.sharedInstance.addOperation(LogoutOperation())
+                self.presentViewController(introViewController(), animated: true, completion: nil)
+            })
+            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: nil)
+            
+            controller.addAction(okAction)
+            controller.addAction(cancelAction)
+            
+            return controller
+        }()
+        
+        presentViewController(alertViewController, animated: true, completion: {
+            
+        })
     }
     
     
@@ -154,8 +171,8 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
             return
         }
         
+        tableView.deselectRowAtIndexPath(indexPath, animated: true)
         logout()
-        presentViewController(introViewController(), animated: true, completion: nil)
     }
     
     
@@ -238,7 +255,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
             }
             
             handleIsUnique = false
-            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, completion: handleFetchCompletion)
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true, completion: handleFetchCompletion)
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
 

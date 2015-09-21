@@ -271,8 +271,7 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         self.avatarImageView.image = resizedImage
         
         currentUser().setImage(resizedImage)
-        let updateOperation = UpdateUserOperation(user: currentUser())
-        PostQueue.sharedInstance.addOperation(updateOperation)
+        PostQueue.sharedInstance.addOperation(UpdateUserOperation())
         
         picker.dismissViewControllerAnimated(true, completion: nil)
     }

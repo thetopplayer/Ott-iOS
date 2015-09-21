@@ -8,28 +8,36 @@
 
 import UIKit
 
-class LoginViewController: ViewController {
 
+class LoginViewController: PageCollectionViewController {
+    
+    static var handleUsedToLogin = ""
+    static var phoneNumberUsedToLogin = ""
+    
     override func viewDidLoad() {
+        
+        func setupDialogView() {
+            
+            scrollView.addRoundedBorder()
+            
+            let vc0 = HandleEntryViewController(nibName: "HandleEntryViewController", bundle: nil)
+            let vc1 = PhoneNumberEntryViewController(nibName: "PhoneNumberEntryViewController", bundle: nil)
+            let vc2 = ConfirmCodeEntryViewController(nibName: "ConfirmCodeEntryViewController", bundle: nil)
+            vc2.successAction = .LogIn
+            
+            pageViewControllers = [vc0, vc1, vc2]
+        }
+        
         super.viewDidLoad()
-
-        // Do any additional setup after loading the view.
-    }
-
-    override func didReceiveMemoryWarning() {
-        super.didReceiveMemoryWarning()
-        // Dispose of any resources that can be recreated.
+        backButton!.tintColor = UIColor.tint()
+        backButton!.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
+        
+        setupDialogView()
     }
     
-
-    /*
-    // MARK: - Navigation
-
-    // In a storyboard-based application, you will often want to do a little preparation before navigation
-    override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        // Get the new view controller using segue.destinationViewController.
-        // Pass the selected object to the new view controller.
+    
+    override func handleCompletion() {
+        
+        presentViewController(mainViewController(), animated: true, completion: nil)
     }
-    */
-
 }

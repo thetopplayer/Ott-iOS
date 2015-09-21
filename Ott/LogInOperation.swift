@@ -1,28 +1,32 @@
 //
-//  UpdateUserOperation.swift
+//  LogInOperation.swift
 //  Ott
 //
-//  Created by Max on 9/10/15.
+//  Created by Max on 9/14/15.
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
 import UIKit
 
-class UpdateUserOperation: ParseOperation {
+class LogInOperation: ParseOperation {
 
-    override init() {
+    let handle: String
+    let password: String
+    
+    init(handle: String, password: String) {
         
+        self.handle = handle
+        self.password = password
         super.init()
     }
     
     struct Notifications {
         
-        static let DidUpdate = "didUpdateUser"
-        static let UpdateDidFail = "userUpdateDidFail"
+        static let DidLogIn = "didLogIn"
+        static let LogInDidFail = "logInDidFail"
         static let ErrorKey = "error"
     }
-    
-    
+
     
     //MARK: - Execution
     
@@ -30,16 +34,16 @@ class UpdateUserOperation: ParseOperation {
         
         logBackgroundTask()
         
+        let username = User.usernameFromHandle(handle)
+        
         do {
             
-            try currentUser().save()
-            try currentUser().fetch() // refresh locally cached user
+            try User.logInWithUsername(username, password: password)
             finishWithError(nil)
         }
         catch let error as NSError {
             finishWithError(error)
         }
-
     }
     
     
@@ -51,7 +55,7 @@ class UpdateUserOperation: ParseOperation {
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {
-                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.DidUpdate,
+                NSNotificationCenter.defaultCenter().postNotificationName(LogInOperation.Notifications.DidLogIn,
                     object: self)
             }
         }
@@ -59,20 +63,12 @@ class UpdateUserOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                guard let controller = topmostViewController() else {
-                    return
-                }
-                
-                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not update user:")
-            }
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors.first!]
-                NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.UpdateDidFail,
+                let userinfo: [NSObject: AnyObject] = [LogInOperation.Notifications.ErrorKey: errors.first!]
+                NSNotificationCenter.defaultCenter().postNotificationName(LogInOperation.Notifications.LogInDidFail,
                     object: self,
                     userInfo: userinfo)
             }
         }
     }
+    
 }

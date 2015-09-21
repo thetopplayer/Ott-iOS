@@ -54,7 +54,10 @@ extension UIViewController {
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
-            action in actionHandler?() })
+            action in
+            dispatch_async(dispatch_get_main_queue()) {
+                actionHandler?()
+            }})
         alertViewController.addAction(okAction)
         
         presentViewController(alertViewController, animated: true, completion: nil)
@@ -74,6 +77,6 @@ extension UIViewController {
         }
         
         presentOKAlert(title: title, message: message, actionHandler: actionHandler)
-    }
-    
+    }    
+
 }

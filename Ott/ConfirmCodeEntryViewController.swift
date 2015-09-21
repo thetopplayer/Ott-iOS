@@ -13,6 +13,12 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
 
     @IBOutlet weak var activityIndicator: UIActivityIndicatorView!
     
+    enum SuccessAction {
+        case SignUp, LogIn
+    }
+    var successAction: SuccessAction = .SignUp
+    
+    
     
     //MARK: - Lifecycle
     
@@ -61,7 +67,25 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    private func verifyPhoneNumberAndSignIn(verificationCode: String) {
+    private func signUpWithPassword(password: String) {
+        
+        self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
+        
+        let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, nickname: AccountCreationViewController.nameUsedToLogin, password: password)
+        MaintenanceQueue.sharedInstance.addOperation(signupOperation)
+    }
+    
+    
+    private func loginWithPassword(password: String) {
+        
+        self.button.setTitle("Logging in...", forState: UIControlState.Disabled)
+        
+        let logInOperation = LogInOperation(handle: LoginViewController.handleUsedToLogin, password: password)
+        MaintenanceQueue.sharedInstance.addOperation(logInOperation)
+    }
+    
+    
+    private func verifyPhoneNumber(verificationCode: String) {
         
         let params: [String: String] = ["phoneNumber": AccountCreationViewController.phoneNumberUsedToLogin, "verificationCode": verificationCode]
         PFCloud.callFunctionInBackground("verifyPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
@@ -75,15 +99,30 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
                         self.resetDisplay()
                         self.textField.becomeFirstResponder()
                     })
-                    
                 }
                 else {
                     
-                    self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
+                    if let password = response as? String {
+                        
+                        switch self.successAction {
+                            
+                        case .SignUp:
+                            self.signUpWithPassword(password)
+                            
+                        case .LogIn:
+                            self.loginWithPassword(password)
+                        }
+                    }
+                    else {
+                        
+                        self.presentOKAlert(title: "Error", message: "There was an error signing in.  Please try again", actionHandler: {
+                            
+                            self.resetDisplay()
+                            self.textField.becomeFirstResponder()
+                        })
+                    }
                     
-                    let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, nickname: AccountCreationViewController.nameUsedToLogin)
-                    MaintenanceQueue.sharedInstance.addOperation(signupOperation)
-                 }
+                }
             }
         }
     }
@@ -109,7 +148,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         button.setTitle("Validating...", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
         
-        verifyPhoneNumberAndSignIn(textField.text!)
+        verifyPhoneNumber(textField.text!)
     }
 
     
@@ -121,7 +160,10 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: self.textField)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidSignUpNotification:", name: SignUpOperation.Notifications.DidSignUp, object: nil)
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSignUpFailedNotification:", name: SignUpOperation.Notifications.SignUpDidFail, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSignUpDidFailNotification:", name: SignUpOperation.Notifications.SignUpDidFail, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidLogInNotification:", name: LogInOperation.Notifications.DidLogIn, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLoginDidFailNotification:", name: LogInOperation.Notifications.LogInDidFail, object: nil)
     }
     
     
@@ -145,7 +187,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    func handleSignUpFailedNotification(notification: NSNotification) {
+    func handleSignUpDidFailNotification(notification: NSNotification) {
         
         let userinfo: [NSObject: AnyObject] = notification.userInfo!
         let error = userinfo[SignUpOperation.Notifications.ErrorKey] as! NSError
@@ -153,4 +195,20 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         presentOKAlertWithError(error, messagePreamble: "Error signing up.  Please try again. ", actionHandler: { self.resetDisplay() })
     }
     
+    
+    func handleDidLogInNotification(notification: NSNotification) {
+        
+        self.activityIndicator.stopAnimating()
+        self.tasksCompleted = true
+        gotoNextPage()
+    }
+    
+    
+    func handleLoginDidFailNotification(notification: NSNotification) {
+        
+        let userinfo: [NSObject: AnyObject] = notification.userInfo!
+        let error = userinfo[LogInOperation.Notifications.ErrorKey] as! NSError
+        
+        presentOKAlertWithError(error, messagePreamble: "Error logging in.  Please try again. ", actionHandler: { self.resetDisplay() })
+    }
 }
