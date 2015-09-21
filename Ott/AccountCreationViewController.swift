@@ -40,6 +40,6 @@ class AccountCreationViewController: PageCollectionViewController {
     
     override func handleCompletion() {
         
-        self.presentViewController(mainViewController(), animated: true, completion: nil)        
+        performSegueWithIdentifier("segueToAvatarCreation", sender: self)
     }
 }

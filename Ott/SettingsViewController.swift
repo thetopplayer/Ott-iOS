@@ -134,6 +134,12 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     }
     
     
+    private func logout() {
+
+        MaintenanceQueue.sharedInstance.addOperation(LogoutOperation())
+    }
+    
+    
     
     //MARK: - TableView Delegate
     
@@ -141,6 +147,16 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         return 0.1
     }
         
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if indexPath.section == 0 {
+            return
+        }
+        
+        logout()
+        presentViewController(introViewController(), animated: true, completion: nil)
+    }
     
     
     //MARK: - Observations and Delegate Methods

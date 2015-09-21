@@ -52,10 +52,29 @@ class TopicMasterTableViewCell: TableViewCell {
         }()
     
     
+    private var _displayedTopic: Topic?
     var displayedTopic: Topic? {
         
-        didSet {
-            updateContents(ignoringImage: false)
+        set {
+            
+            if _displayedTopic == nil {
+                _displayedTopic = newValue
+                updateContents(ignoringImage: false)
+            }
+            else {
+                
+                if newValue!.isEqual(_displayedTopic) {
+                    updateContents(ignoringImage: true)
+                }
+                else {
+                    _displayedTopic = newValue
+                    updateContents(ignoringImage: false)
+                }
+           }
+        }
+        
+        get {
+            return _displayedTopic
         }
     }
     
@@ -77,7 +96,7 @@ class TopicMasterTableViewCell: TableViewCell {
                 responseStatusImageView.image = TopicMasterTableViewCell.didNotRespondImage
             }
             
-            if topic.hasImage() {
+            if topic.hasImage() && (ignoringImage == false) {
                 
                 topic.getImage() {(success, image) in
                     

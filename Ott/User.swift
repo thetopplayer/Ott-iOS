@@ -11,24 +11,13 @@ import UIKit
 
 //MARK: - Static Functions
 
-func userWasArchived() -> Bool {
+func userIsLoggedIn() -> Bool {
     return User.currentUser() != nil
 }
 
 
-var _tmpUser: User = {
-    return User.create()
-}()
-
-
 func currentUser() -> User {
-    
-    if let user = User.currentUser() {
-        return user
-    }
-    
-    print("returning temp user")
-    return _tmpUser
+    return User.currentUser()!
 }
 
 
@@ -56,7 +45,6 @@ class User: PFUser {
    
         return super.currentUser() as? User
     }
-    
 
     
     
@@ -107,6 +95,11 @@ class User: PFUser {
         return handle.stringByRemovingCharactersInString("@").uppercaseString
     }
     
+    
+    static func passwordFromPhoneNumber(phoneNumber: String) -> String {
+        return phoneNumber + "x4Pq9"
+    }
+    
 
     @NSManaged var name: String? // user's non-unique name
     @NSManaged var handle: String?
@@ -154,29 +147,6 @@ class User: PFUser {
         }
     }
 
-    
-    
-    //MARK: - SignUp and Login
-    
-    override func signUpInBackgroundWithBlock(block: PFBooleanResultBlock?) {
-        
-        if (username == nil) || (password == nil) {
-            let userInfo = [NSLocalizedDescriptionKey : "Username or password not set."]
-            let error = NSError(domain: "User", code: 1, userInfo: userInfo)
-            block?(false, error)
-        }
-        else {
-            super.signUpInBackgroundWithBlock(block)
-        }
-    }
-    
-
-    func loginInBackground(completion: (user: PFUser?, error: NSError?) -> Void) {
-        
-        User.logInWithUsernameInBackground(handle!, password: password!, block: completion)
-    }
-    
-
 
     
     //MARK: - Authored Topics
@@ -219,6 +189,12 @@ class User: PFUser {
     }
     
     
+    func purgeAuthoredTopicsArchive() {
+        
+        archiveAuthoredTopicNames([])
+    }
+    
+
     
     //MARK: - Quick Tracking of Topics and Posts
     
@@ -260,6 +236,12 @@ class User: PFUser {
         }
         
         return false
+    }
+    
+
+    func purgePostedTopicArchive() {
+        
+        archivePostedTopicIDs([])
     }
     
     
@@ -311,5 +293,11 @@ class User: PFUser {
         archiveFollowedUserHandles(allHandles.allObjects)
     }
     
+    
+    func purgeFollowedUsersArchive() {
+        
+        archiveFollowedUserHandles([])
+    }
+
 }
 

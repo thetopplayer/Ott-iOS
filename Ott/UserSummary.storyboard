@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
@@ -275,7 +274,7 @@
                         <sections>
                             <tableViewSection id="Dao-hf-Qa3">
                                 <cells>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="60" id="pUy-nb-ZNL">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="60" id="pUy-nb-ZNL">
                                         <rect key="frame" x="0.0" y="99" width="600" height="60"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="pUy-nb-ZNL" id="SXz-6P-I3D">
@@ -383,7 +382,7 @@
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>
-                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="blue" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="96" id="UGJ-ts-jbi">
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="none" hidesAccessoryWhenEditing="NO" indentationLevel="1" indentationWidth="0.0" rowHeight="96" id="UGJ-ts-jbi">
                                         <rect key="frame" x="0.0" y="227" width="600" height="96"/>
                                         <autoresizingMask key="autoresizingMask"/>
                                         <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="UGJ-ts-jbi" id="xaB-4H-ITC">
@@ -413,6 +412,33 @@
                                                 <constraint firstItem="df9-ZS-FqX" firstAttribute="top" secondItem="xaB-4H-ITC" secondAttribute="topMargin" constant="5" id="dDc-xU-f01"/>
                                                 <constraint firstItem="df9-ZS-FqX" firstAttribute="leading" secondItem="8Sc-KE-LgI" secondAttribute="trailing" constant="8" id="e6q-U2-cxW"/>
                                                 <constraint firstAttribute="bottomMargin" secondItem="df9-ZS-FqX" secondAttribute="bottom" constant="5" id="tho-XI-oei"/>
+                                            </constraints>
+                                        </tableViewCellContentView>
+                                    </tableViewCell>
+                                </cells>
+                            </tableViewSection>
+                            <tableViewSection id="2ME-0k-JfX">
+                                <cells>
+                                    <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" selectionStyle="default" indentationWidth="10" id="mkH-EH-Yge">
+                                        <rect key="frame" x="0.0" y="342" width="600" height="44"/>
+                                        <autoresizingMask key="autoresizingMask"/>
+                                        <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" tableViewCell="mkH-EH-Yge" id="Web-l9-UrG">
+                                            <rect key="frame" x="0.0" y="0.0" width="600" height="43"/>
+                                            <autoresizingMask key="autoresizingMask"/>
+                                            <subviews>
+                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Log Out" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="CBU-bg-Ona">
+                                                    <rect key="frame" x="270" y="11" width="61" height="21"/>
+                                                    <constraints>
+                                                        <constraint firstAttribute="width" constant="61" id="x0O-k7-Llt"/>
+                                                    </constraints>
+                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                                    <color key="textColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                                                    <nil key="highlightedColor"/>
+                                                </label>
+                                            </subviews>
+                                            <constraints>
+                                                <constraint firstItem="CBU-bg-Ona" firstAttribute="centerY" secondItem="Web-l9-UrG" secondAttribute="centerY" id="d6Y-Et-Qd4"/>
+                                                <constraint firstItem="CBU-bg-Ona" firstAttribute="centerX" secondItem="Web-l9-UrG" secondAttribute="centerX" id="oRv-4f-0EG"/>
                                             </constraints>
                                         </tableViewCellContentView>
                                     </tableViewCell>

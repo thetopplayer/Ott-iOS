@@ -40,7 +40,7 @@ class SignUpOperation: ParseOperation {
         theUser.handle = handle
         theUser.username = User.usernameFromHandle(handle)
         theUser.name = nickname
-        theUser.password = String.randomOfLength(12)
+        theUser.password = User.passwordFromPhoneNumber(phoneNumber)
         
         do {
             

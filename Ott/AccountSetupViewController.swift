@@ -194,8 +194,6 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
             
             func handleFetchCompletion(user: User?, error: NSError?) {
                 
-                print("user = \(user)")
-                
                 if let error = error {
                     presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
                 }

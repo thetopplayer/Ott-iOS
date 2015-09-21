@@ -83,7 +83,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
         
         doneButton.enabled = false
         currentUser().saveInBackground()
-        self.presentViewController(mainViewController(), animated: true, completion: nil)
+        presentViewController(mainViewController(), animated: true, completion: nil)
     }
     
     
