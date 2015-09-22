@@ -194,22 +194,22 @@ class ScanTransformer {
     
     func queryForCode(code: String) -> PFQuery? {
         
-        var query: PFQuery?
-        switch queryTypeForCode(code)! {
+        let query: PFQuery = {
             
-        case .User:
-            query = User.query()
-            
-        case .Topic:
-            query = Topic.query()
-            
-        }
+            switch queryTypeForCode(code)! {
+                
+            case .User:
+                return User.query()!
+                
+            case .Topic:
+                return Topic.query()!
+             }
+        }()
         
-        query!.limit = 1
+        query.limit = 1
         
         if let objectID = objectID(fromCode: code) {
-            
-            query?.whereKey("objectId", equalTo: objectID)
+            query.whereKey("objectId", equalTo: objectID)
             return query
         }
         

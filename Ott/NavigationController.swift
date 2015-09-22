@@ -56,6 +56,22 @@ class SegueToExportViewController: UIStoryboardSegue {
 }
 
 
+class SegueToTopViewController: UIStoryboardSegue {
+    
+    static let identifier = "segueToTop"
+    
+    init(source: UIViewController) {
+        
+        super.init(identifier: SegueToTopViewController.identifier, source: source, destination: MainTabBarController.activeController!)
+    }
+    
+    override func perform() {
+        
+        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
+    }
+}
+
+
 
 
 class NavigationController: UINavigationController {
@@ -64,6 +80,7 @@ class NavigationController: UINavigationController {
     var post: Post?
     var user: User?
     var payload: PFObject?
+    var exitDestination: UIViewController?
     
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
@@ -137,5 +154,12 @@ class NavigationController: UINavigationController {
                 }
             })
         }
+    }
+    
+    
+    func popToTopViewController() {
+        
+        let segue = SegueToTopViewController(source: self)
+        segue.perform()
     }
 }

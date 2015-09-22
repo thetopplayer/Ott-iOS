@@ -10,6 +10,13 @@ import UIKit
 
 class MainTabBarController: UITabBarController {
 
+    static var activeController: MainTabBarController?
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        MainTabBarController.activeController = self
+    }
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
@@ -95,6 +102,7 @@ class MainTabBarController: UITabBarController {
         
         selectedViewController = viewControllers?.first
     }
+    
     
     
     //MARK: - Observations

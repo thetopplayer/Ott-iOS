@@ -19,7 +19,6 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     @IBOutlet weak var captionSwitch: UISwitch!
     @IBOutlet weak var imageSizeSegmentedControl: UISegmentedControl!
    
-    
     var didLoadView = false
     override func viewDidLoad() {
         
@@ -166,7 +165,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         
         if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
             
-            let link = "<a href='\(self.codeText!)'>#\(textForObject())</a>"
+            let link = "<a href='\(self.codeText!)'>#\(textForObject()!)</a>"
             let message = "Click on the link or scan the code from within the Ott app to give your take on " + link
             
             emailVC.setMessageBody(message, isHTML: true)
@@ -191,8 +190,6 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo:UnsafePointer<Void>) {
         
-        
-        
         dispatch_async(dispatch_get_main_queue()) {
             self.handleCancelAction(self)
         }
@@ -200,11 +197,8 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     
     @IBAction func handleCancelAction(sender: AnyObject) {
-        
-        let alert = TimedAlertController(title: "Image Saved", message: "The image was saved to your camera roll.", preferredStyle: .Alert)
-        alert.completion = {self.dismissViewControllerAnimated(true, completion: nil)}
-        
-        presentViewController(alert, animated: true, completion: nil)
+    
+        dismissViewControllerAnimated(true, completion: nil)
     }
     
     
@@ -222,6 +216,9 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         
-        controller.dismissViewControllerAnimated(true, completion: { self.handleCancelAction(self) })
+        let alert = TimedAlertController(title: "Image Saved", message: "The image was saved to your camera roll.", preferredStyle: .Alert)
+        alert.completion = {self.dismissViewControllerAnimated(true, completion: nil)}
+        
+        presentViewController(alert, animated: true, completion: nil)
     }
 }

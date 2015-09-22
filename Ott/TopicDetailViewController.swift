@@ -439,6 +439,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func goodbye() {
         
         fetchPostsForTopicOperation?.cancel()
+        
+//        
+//        
+//        
+//        if let navController = navigationController as? NavigationController {
+//            navController.popToTopViewController()
+//        }
+        
         dismissViewControllerAnimated(true, completion: nil)
     }
     
