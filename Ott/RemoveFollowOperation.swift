@@ -35,6 +35,7 @@ class RemoveFollowOperation: ParseOperation {
         currentUser().removeHandleFromFollowedUserHandlesArchive(followeeHandle)
         
         let query = Follow.query()!
+        query.limit = 1
         query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
         
         do {

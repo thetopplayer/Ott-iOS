@@ -11,10 +11,6 @@ import UIKit
 
 class AccountCreationViewController: PageCollectionViewController {
 
-    static var handleUsedToLogin = ""
-    static var nameUsedToLogin = ""
-    static var phoneNumberUsedToLogin = ""
-    
     override func viewDidLoad() {
         
         func setupDialogView() {
@@ -30,7 +26,6 @@ class AccountCreationViewController: PageCollectionViewController {
         }
         
         super.viewDidLoad()
-//        setNeedsStatusBarAppearanceUpdate()
         backButton!.tintColor = UIColor.tint()
         backButton!.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
         

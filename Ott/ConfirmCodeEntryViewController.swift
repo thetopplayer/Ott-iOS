@@ -71,7 +71,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         
         self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
         
-        let signupOperation = SignUpOperation(phoneNumber: AccountCreationViewController.phoneNumberUsedToLogin, handle: AccountCreationViewController.handleUsedToLogin, nickname: AccountCreationViewController.nameUsedToLogin, password: password)
+        let signupOperation = SignUpOperation(phoneNumber: globals.phoneNumberUsedToLogin, handle: globals.handleUsedToLogin, nickname: globals.nameUsedToLogin, password: password)
         MaintenanceQueue.sharedInstance.addOperation(signupOperation)
     }
     
@@ -80,14 +80,14 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         
         self.button.setTitle("Logging in...", forState: UIControlState.Disabled)
         
-        let logInOperation = LogInOperation(handle: LoginViewController.handleUsedToLogin, password: password)
+        let logInOperation = LogInOperation(handle: globals.handleUsedToLogin, password: password)
         MaintenanceQueue.sharedInstance.addOperation(logInOperation)
     }
     
     
     private func verifyPhoneNumber(verificationCode: String) {
         
-        let params: [String: String] = ["phoneNumber": AccountCreationViewController.phoneNumberUsedToLogin, "verificationCode": verificationCode]
+        let params: [String: String] = ["phoneNumber": globals.phoneNumberUsedToLogin, "verificationCode": verificationCode]
         PFCloud.callFunctionInBackground("verifyPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {

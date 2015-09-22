@@ -11,9 +11,6 @@ import UIKit
 
 class LoginViewController: PageCollectionViewController {
     
-    static var handleUsedToLogin = ""
-    static var phoneNumberUsedToLogin = ""
-    
     override func viewDidLoad() {
         
         func setupDialogView() {
@@ -21,7 +18,10 @@ class LoginViewController: PageCollectionViewController {
             scrollView.addRoundedBorder()
             
             let vc0 = HandleEntryViewController(nibName: "HandleEntryViewController", bundle: nil)
+            
             let vc1 = PhoneNumberEntryViewController(nibName: "PhoneNumberEntryViewController", bundle: nil)
+            vc1.verificationType = .PhoneAndHandle
+            
             let vc2 = ConfirmCodeEntryViewController(nibName: "ConfirmCodeEntryViewController", bundle: nil)
             vc2.successAction = .LogIn
             

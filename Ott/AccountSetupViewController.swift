@@ -89,8 +89,8 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         handleTextField.resignFirstResponder()
         nameTextField.resignFirstResponder()
 
-        AccountCreationViewController.nameUsedToLogin = nameTextField.text!
-        AccountCreationViewController.handleUsedToLogin = handleTextField.text!
+        globals.nameUsedToLogin = nameTextField.text!
+        globals.handleUsedToLogin = handleTextField.text!
         
         gotoNextPage()
     }

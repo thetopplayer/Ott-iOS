@@ -12,6 +12,13 @@ import UIKit
 class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
 
     
+    enum VerificationType {
+        case Phone, PhoneAndHandle
+    }
+    
+    var verificationType = VerificationType.Phone
+    
+    
     //MARK: - Lifecycle
     
     private func setupView() {
@@ -40,6 +47,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         textField.text = "+1"
         button.enabled = false
+        button.setTitle("Authorize", forState: .Disabled)
     }
     
     
@@ -83,12 +91,58 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     }
 
     
-    private func sendVerificationCode(toPhoneNumber phoneNumber: String) {
+    private func validateHandleIsAssociatedWithPhoneNumber() {
         
-        let formattedNumber = E164FormattedPhoneNumber(phoneNumber)
-        AccountCreationViewController.phoneNumberUsedToLogin = formattedNumber
+        let params = ["phoneNumber": globals.phoneNumberUsedToLogin, "handle": globals.handleUsedToLogin]
+        PFCloud.callFunctionInBackground("verifyMatchingUsernameAndPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                if let error = error {
+                    
+                    self.presentOKAlertWithError(error, messagePreamble: "Error confirming account.", actionHandler: {
+                        
+                        self.resetTextField()
+                        self.textField.becomeFirstResponder()
+                    })
+                }
+                else {
+                    
+                    if let matchConfirmed = response as? Bool {
+                        
+                        if matchConfirmed {
+                            self.button.setTitle("Sending Text...", forState: .Disabled)
+                            self.sendVerificationCode()
+                        }
+                        else {
+                            
+                            let message = "The handle \(globals.handleUsedToLogin) is not associated with the phone number you entered.  Please make sure to enter the correct phone number and try again."
+                            self.presentOKAlert(title: "Incorrect Data", message: message, actionHandler: {
+                                
+                                self.resetTextField()
+                                self.textField.becomeFirstResponder()
+                            })
+                        }
+                    }
+                    else {
+                        
+                        self.presentOKAlert(title: "Error", message: "Error confirming account.  Please try again", actionHandler: {
+                            
+                            self.resetTextField()
+                            self.textField.becomeFirstResponder()
+                        })
+                    }
+                }
+            }
+        }
         
-        PFCloud.callFunctionInBackground("sendVerificationCode", withParameters: ["phoneNumber": formattedNumber]) {(response: AnyObject?, error: NSError?) -> Void in
+    }
+    
+    
+    private func sendVerificationCode() {
+        
+        let params = ["phoneNumber": globals.phoneNumberUsedToLogin]
+        PFCloud.callFunctionInBackground("sendVerificationCode", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {
                 if let error = error {
@@ -110,35 +164,21 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     
     @IBAction func handleButtonClick(sender: AnyObject) {
-        
-        func presentErrorAlert(message: String?) {
-            
-            var fullMessage: String
-            if let message = message {
-                
-                fullMessage = "Error:  \(message)  Please tryp again."
-            }
-            else {
-                
-                fullMessage = "We were unable to send a text message to \(currentUser().phoneNumber!).  Please check the number and try again."
-            }
-            
-            let alertViewController = UIAlertController(title: "Unable to Send Text", message: fullMessage, preferredStyle: .Alert)
-            
-            let tryAgainAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: { action in
-                self.setupView()
-                self.textField.becomeFirstResponder()
-            })
-            
-            alertViewController.addAction(tryAgainAction)
-            presentViewController(alertViewController, animated: true, completion: nil)
-        }
-        
-        button.setTitle("Sending Text...", forState: .Disabled)
-        button.enabled = false
+
         textField.resignFirstResponder()
+        button.enabled = false
         
-        sendVerificationCode(toPhoneNumber: textField.text!)
+        let formattedNumber = E164FormattedPhoneNumber(textField.text!)
+        globals.phoneNumberUsedToLogin = formattedNumber
+        
+        if verificationType == .Phone {
+            button.setTitle("Sending Text...", forState: .Disabled)
+            sendVerificationCode()
+        }
+        else {
+            button.setTitle("Verifying Account...", forState: .Disabled)
+            validateHandleIsAssociatedWithPhoneNumber()
+        }
     }
     
     

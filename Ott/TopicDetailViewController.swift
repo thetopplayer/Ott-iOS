@@ -82,14 +82,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if didInitializeViewForTopic == false {
             
-            let onlyDisplayTopic = displayedData == .Topic
-            displayMode = onlyDisplayTopic ? .Edit : .View
+            let didPost = currentUser().didPostToTopic(myTopic!)
+            displayedData = didPost ? .TopicAndPosts : .Topic
+            displayMode = didPost ? .View : .Edit
             
             let title = "#" + topic.name!
-            self.navigationItem.title = title
+            navigationItem.title = title
             displayType = .List
             
-            if onlyDisplayTopic == false {
+            if didPost {
                 fetchPosts()
             }
             
@@ -103,10 +104,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private var displayedData: DisplayedData {
-        
-        return currentUser().didPostToTopic(myTopic!) ? .TopicAndPosts : .Topic
-    }
+    private var displayedData: DisplayedData = .Topic
     
     
     private enum DisplayMode {
@@ -119,7 +117,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         didSet {
             
             if displayMode == .Edit {
-                
                 // prepare in case we are going to post
                 LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
             }
@@ -603,7 +600,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-            return 0.01
+        return 0.01
     }
     
     
@@ -933,6 +930,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     func handleDidUploadPost(notification: NSNotification) {
+        
+        let didPost = currentUser().didPostToTopic(myTopic!)
+        displayedData = didPost ? .TopicAndPosts : .Topic
+        displayMode = didPost ? .Edit : .View
         
         fetchPosts(reloadingTopic: true)
     }

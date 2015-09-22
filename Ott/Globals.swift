@@ -8,6 +8,21 @@
 
 import UIKit
 
+
+//MARK: - Vars
+
+struct Globals {
+    
+    var handleUsedToLogin = ""
+    var nameUsedToLogin = ""
+    var phoneNumberUsedToLogin = ""
+}
+
+var globals = Globals()
+
+
+//MARK: - Utilities
+
 func openSettings() {
     
     if let url = NSURL(string: UIApplicationOpenSettingsURLString) {
@@ -15,6 +30,9 @@ func openSettings() {
     }
 }
 
+
+
+//MARK: - Directories
 
 func documentsDirectory() -> String {
     
