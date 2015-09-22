@@ -72,7 +72,7 @@
         <!--Welcome to OTT-->
         <scene sceneID="eZC-Av-0Ek">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" id="ijI-Bg-yGD" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" id="ijI-Bg-yGD" customClass="FirstScreenViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="u0U-mj-YJb"/>
                         <viewControllerLayoutGuide type="bottom" id="ke2-tQ-R0N"/>
@@ -82,19 +82,19 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="FVz-8g-9bE">
-                                <rect key="frame" x="253" y="164" width="95" height="30"/>
+                                <rect key="frame" x="250" y="164" width="100" height="34"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="30" id="HjV-mL-FL4"/>
-                                    <constraint firstAttribute="width" constant="95" id="uUK-yN-2lD"/>
+                                    <constraint firstAttribute="height" constant="34" id="HjV-mL-FL4"/>
+                                    <constraint firstAttribute="width" constant="100" id="uUK-yN-2lD"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="20"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="22"/>
                                 <state key="normal" title="Sign Up"/>
                                 <connections>
                                     <segue destination="mFU-se-BdL" kind="show" id="yb3-Is-cR0"/>
                                 </connections>
                             </button>
                             <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="y1o-pa-w3a">
-                                <rect key="frame" x="210" y="259" width="180" height="30"/>
+                                <rect key="frame" x="210" y="263" width="180" height="30"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="180" id="2CG-0o-S50"/>
                                     <constraint firstAttribute="height" constant="30" id="qeh-EM-alV"/>
@@ -115,6 +115,9 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Welcome to OTT" id="hQF-BX-SYd"/>
+                    <connections>
+                        <outlet property="signUpButton" destination="FVz-8g-9bE" id="d2l-Yn-APV"/>
+                    </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="03C-fW-mhK" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>

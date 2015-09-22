@@ -67,7 +67,9 @@ class AuthoredTopicsViewController: TopicMasterViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: selection)
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicDetailViewController(withTopic: selection)
+        }
     }
     
     

@@ -31,21 +31,25 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
-        myTopic = (navigationController as! NavigationController).topic
+        
+        objectToExport = (navigationController as! NavigationController).payload
         setupDisplay()
         generateImage()
     }
 
+    var objectToExport: PFObject?
     
-    var myTopic: Topic? {
+    private func textForObject() -> String? {
         
-        didSet {
-            
-            if didLoadView {
-                setupDisplay()
-                generateImage()
-            }
+        var result: String? = nil
+        if let topic = objectToExport as? Topic {
+            result = "#" + topic.name!
         }
+        else if let user = objectToExport as? User {
+            result = user.handle
+        }
+        
+        return result
     }
     
     
@@ -55,23 +59,20 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     var imageColor = UIColor.blackColor()
     static let defaultImageSize = ScanTransformer.ImageSize.Large
     var imageSize = ExportViewController.defaultImageSize
-    var includeTopicName = true
+    var includeCaption = true
     
     private func generateImage() {
         
-        guard let topic = myTopic else {
+        guard let theObject = objectToExport else {
             return
         }
         
         let generateImageOperation = NSBlockOperation { () -> Void in
             
-            self.codeText = ScanTransformer.sharedInstance.codeForObject(topic)
-            var textForImage: String?
-            if self.includeTopicName {
-                textForImage = "#" + topic.name!
-            }
+            self.codeText = ScanTransformer.sharedInstance.codeForObject(theObject)
+            let textForImage = self.includeCaption ? self.textForObject() : nil
             
-            if let image = ScanTransformer.sharedInstance.imageForObject(topic, backgroundColor: self.imageBackgroundColor, color: self.imageColor, size: self.imageSize, withCaption: textForImage) {
+            if let image = ScanTransformer.sharedInstance.imageForObject(theObject, backgroundColor: self.imageBackgroundColor, color: self.imageColor, size: self.imageSize, withCaption: textForImage) {
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -90,23 +91,24 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     private func setupDisplay() {
         
-        if let topic = myTopic {
-            
-            navigationItem.title = "#" + topic.name!
-
-            self.printButtonItem.enabled = false
-            self.emailButtonItem.enabled = false
-            self.saveToPhotosButtonItem.enabled = false
-            
-            self.captionSwitch.on = true
-            self.imageSizeSegmentedControl.selectedSegmentIndex = ExportViewController.defaultImageSize.rawValue
+        if objectToExport == nil {
+            return
         }
+        
+        navigationItem.title = textForObject()
+        
+        self.printButtonItem.enabled = false
+        self.emailButtonItem.enabled = false
+        self.saveToPhotosButtonItem.enabled = false
+        
+        self.captionSwitch.on = true
+        self.imageSizeSegmentedControl.selectedSegmentIndex = ExportViewController.defaultImageSize.rawValue
     }
     
     
     @IBAction func handleSwitchAction(sender: UISwitch?) {
         
-        includeTopicName = sender!.on
+        includeCaption = sender!.on
         generateImage()
     }
     
@@ -159,17 +161,17 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         let emailVC = MFMailComposeViewController()
         emailVC.mailComposeDelegate = self
         
-        let subject = "Ott #" + myTopic!.name!
+        let subject = "Ott " + textForObject()!
         emailVC.setSubject(subject)
         
         if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
             
-            let link = "<a href='\(self.codeText!)'>#\(myTopic!.name!)</a>"
+            let link = "<a href='\(self.codeText!)'>#\(textForObject())</a>"
             let message = "Click on the link or scan the code from within the Ott app to give your take on " + link
             
             emailVC.setMessageBody(message, isHTML: true)
             
-            let filename = myTopic!.name! + ".jpeg"
+            let filename = textForObject()! + ".jpeg"
             emailVC.addAttachmentData(jpegData, mimeType:"image/jpeg", fileName:filename)
         }
         else {
@@ -189,6 +191,8 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo:UnsafePointer<Void>) {
         
+        
+        
         dispatch_async(dispatch_get_main_queue()) {
             self.handleCancelAction(self)
         }
@@ -197,7 +201,10 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     @IBAction func handleCancelAction(sender: AnyObject) {
         
-        dismissViewControllerAnimated(true, completion: nil)
+        let alert = TimedAlertController(title: "Image Saved", message: "The image was saved to your camera roll.", preferredStyle: .Alert)
+        alert.completion = {self.dismissViewControllerAnimated(true, completion: nil)}
+        
+        presentViewController(alert, animated: true, completion: nil)
     }
     
     

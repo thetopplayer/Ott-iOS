@@ -31,15 +31,40 @@ class SegueToScanViewController: UIStoryboardSegue {
 }
 
 
+class SegueToExportViewController: UIStoryboardSegue {
+    
+    static let identifier = "segueToExport"
+    
+    init(source: UIViewController, object: PFObject) {
+        
+        let destinationViewController: NavigationController = {
+            
+            let storyboard = UIStoryboard(name: "Export", bundle: nil)
+            let controller = storyboard.instantiateViewControllerWithIdentifier("exportViewController") as! NavigationController
+            
+            controller.payload = object
+            return controller
+            }()
+        
+        super.init(identifier: SegueToExportViewController.identifier, source: source, destination: destinationViewController)
+    }
+    
+    override func perform() {
+        
+        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
+    }
+}
+
+
+
 
 class NavigationController: UINavigationController {
     
     var topic: Topic?
     var post: Post?
-    var author: User?
+    var user: User?
+    var payload: PFObject?
     
-    
-
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
         
@@ -80,11 +105,23 @@ class NavigationController: UINavigationController {
     func presentTopicScanViewController() {
         
         //todo - request camera permission before presenting
-
+        
         let segue = SegueToScanViewController(source: self)
         segue.perform()
+    }
+    
+    
+    func presentExportViewController(withTopic theTopic: Topic) {
         
-//        presentViewController(storyboard: "TopicScan", identifier: "topicScanViewController", completion: nil)
+        let segue = SegueToExportViewController(source: self, object: theTopic)
+        segue.perform()
+    }
+    
+    
+    func presentExportViewController(withUser theUser: User) {
+        
+        let segue = SegueToExportViewController(source: self, object: theUser)
+        segue.perform()
     }
     
     

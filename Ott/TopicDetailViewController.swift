@@ -27,8 +27,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     
-    let segueToExportIdentifier = "segueToExport"
-    
     
     //MARK: - Lifecycle
     
@@ -432,7 +430,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBAction func handleExportAction(sender: AnyObject) {
         
-        performSegueWithIdentifier(segueToExportIdentifier, sender: self)
+        if let navController = navigationController as? NavigationController {
+            navController.presentExportViewController(withTopic: myTopic!)
+        }
     }
     
     

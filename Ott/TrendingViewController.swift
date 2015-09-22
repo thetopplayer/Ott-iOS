@@ -40,7 +40,9 @@ class TrendingViewController: TopicMasterViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        (navigationController as! NavigationController).presentTopicDetailViewController(withTopic: selection)
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicDetailViewController(withTopic: selection)
+        }
     }
     
     
@@ -49,13 +51,17 @@ class TrendingViewController: TopicMasterViewController {
     
     @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        (navigationController as! NavigationController).presentTopicCreationViewController()
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicCreationViewController()
+        }
     }
     
     
     @IBAction func presentTopicScanViewController(sender: AnyObject) {
         
-        (navigationController as! NavigationController).presentTopicScanViewController()
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicScanViewController()
+        }
     }
     
     

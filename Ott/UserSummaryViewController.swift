@@ -40,6 +40,16 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         
         view.backgroundColor = UIColor.background()
 
+        navigationItem.titleView = {
+           
+            let button = UIButton(frame: CGRectMake(0, 0, 40, 32))
+            let image = UIImage(named: "action")
+            button.setImage(image, forState: UIControlState.Normal)
+            button.addTarget(self, action: "handleExportAction:", forControlEvents: UIControlEvents.TouchUpInside)
+            
+            return button
+        }()
+        
         userContainerView.backgroundColor = UIColor.whiteColor()
         userContainerView.addBorder()
         userContainerView.addDownShadow()
@@ -236,21 +246,19 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     }
 
     
-    @IBAction func avatarTapAction(sender: AnyObject) {
-        
-        (navigationController as! NavigationController).presentTopicScanViewController()
-    }
-    
-    
     @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        (navigationController as! NavigationController).presentTopicCreationViewController()
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicCreationViewController()
+        }
     }
     
     
     @IBAction func presentTopicScanViewController(sender: AnyObject) {
         
-        (navigationController as! NavigationController).presentTopicScanViewController()
+        if let navController = navigationController as? NavigationController {
+            navController.presentTopicScanViewController()
+        }
     }
     
     
@@ -260,6 +268,13 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         performSegueWithIdentifier(segueIdentifier, sender: self)
     }
     
+    
+    @IBAction func handleExportAction(sender: AnyObject) {
+        
+        if let navController = navigationController as? NavigationController {
+            navController.presentExportViewController(withUser: currentUser())
+        }
+    }
     
     
     
