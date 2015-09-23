@@ -8,7 +8,6 @@
         <!--Topic Detail-->
         <scene sceneID="QCB-yv-4Wc">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController storyboardIdentifier="topicDetailViewController" title="Topic Detail" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JRp-B9-rK5" customClass="TopicDetailViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="94k-Zt-80q"/>
@@ -164,6 +163,7 @@
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="1789" y="-83"/>
         </scene>
