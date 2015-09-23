@@ -56,20 +56,22 @@ class SegueToExportViewController: UIStoryboardSegue {
 }
 
 
-class SegueToTopViewController: UIStoryboardSegue {
-    
-    static let identifier = "segueToTop"
-    
-    init(source: UIViewController) {
-        
-        super.init(identifier: SegueToTopViewController.identifier, source: source, destination: MainTabBarController.activeController!)
-    }
-    
-    override func perform() {
-        
-        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
-    }
-}
+//class SegueToTopicDetailViewController: UIStoryboardSegue {
+//    
+//    static let identifier = "segueToTopicDetail"
+//    
+//    init(source: UIViewController) {
+//        
+//        let destinationController = TopicDetailViewController(nibName: "TopicDetailViewController", bundle: nil)
+//        
+//        super.init(identifier: SegueToTopicDetailViewController.identifier, source: source, destination: destinationController)
+//    }
+//    
+//    override func perform() {
+//        
+//        sourceViewController.presentViewController(destinationViewController, animated: true, completion: nil)
+//    }
+//}
 
 
 
@@ -142,24 +144,27 @@ class NavigationController: UINavigationController {
     }
     
     
-    func presentTopicDetailViewController(withTopic topic: Topic?) {
+    func presentTopicDetailViewController(withTopic topic: Topic?, exitMethod: TopicDetailViewController.ExitMethod = .Back) {
+        
+        func presentController() {
+            
+            let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
+            let detailViewController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as! TopicDetailViewController
+            
+            detailViewController.exitMethod = exitMethod
+            detailViewController.topic = topic
+            pushViewController(detailViewController, animated: true)
+        }
         
         if LocationManager.sharedInstance.permissionGranted {
-            presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)
+            presentController()
         }
         else {
             LocationManager.sharedInstance.requestPermission({ (granted) -> Void in
                 if granted {
-                    self.presentViewController(storyboard: "TopicDetail", identifier: "topicDetailViewController", topic: topic, completion: nil)
+                    presentController()
                 }
             })
         }
-    }
-    
-    
-    func popToTopViewController() {
-        
-        let segue = SegueToTopViewController(source: self)
-        segue.perform()
     }
 }

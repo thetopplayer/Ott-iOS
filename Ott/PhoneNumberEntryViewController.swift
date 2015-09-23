@@ -36,9 +36,22 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         
         textField.delegate = self
         setupView()
-        startObservations()
     }
 
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        startObservations()
+    }
+    
+    
+    override func viewWillDisappear(animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        endObservations()
+    }
+    
     
     
     //MARK: - Display

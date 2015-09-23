@@ -47,23 +47,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         setupTableView()
         setupMapView()
         displayType = .List  // affirmatively set in order to setup display
-        
-        startObservations()
     }
     
     
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        tabBarController?.tabBar.hidden = true
+        initializeViewForTopic()
         
-        if let navController = navigationController as? NavigationController {
-            myTopic = navController.topic
-            initializeViewForTopic()
-        }
+        startObservations()
     }
     
     
-    deinit {
+    override func viewWillDisappear(animated: Bool) {
+        
+        super.viewWillDisappear(animated)
         endObservations()
     }
     
@@ -71,16 +70,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Display
     
+    enum ExitMethod {
+        case Back, Dismiss
+    }
+    var exitMethod = ExitMethod.Back
+    
+    
     private var didInitializeViewForTopic = false
     private func initializeViewForTopic() {
                 
-        guard let topic = myTopic else {
+        guard let topic = topic else {
             return
         }
         
         if didInitializeViewForTopic == false {
             
-            let didPost = currentUser().didPostToTopic(myTopic!)
+            let didPost = currentUser().didPostToTopic(topic)
             displayedData = didPost ? .TopicAndPosts : .Topic
             displayMode = didPost ? .View : .Edit
             
@@ -142,6 +147,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         
+        func showBackButton() {
+            
+            let button = UIButton(frame: CGRectMake(0, 0, 80, 32))
+            let backImage = UIImage(named: "halfArrowLeft")
+            button.setImage(backImage, forState: UIControlState.Normal)
+            button.contentHorizontalAlignment = .Left
+            
+            let title = presentingViewController?.title
+            button.setTitle(title, forState: UIControlState.Normal)
+            button.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
+            button.addTarget(self, action: "handleDoneAction:", forControlEvents: UIControlEvents.TouchUpInside)
+            
+            let backButton = UIBarButtonItem(customView: button)
+            navigationItem.leftBarButtonItem = backButton
+        }
+        
+        
         func showPostInputView() {
             
             func animations() {
@@ -187,7 +209,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .View:
             
-            showDoneButton()
+            if exitMethod == .Back {
+                showBackButton()
+            }
+            else {
+                showDoneButton()
+            }
+            
             showToolbar()
         }
     }
@@ -297,11 +325,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-    
+
     
     //MARK: - Data
     
-    var myTopic: Topic? {
+    var topic: Topic? {
         
         didSet {
             didInitializeViewForTopic = false
@@ -317,7 +345,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func updateDisplayWithPostsFromCache() {
             
-            let cachedPosts = cachedPostsForTopic(myTopic!)
+            let cachedPosts = cachedPostsForTopic(topic!)
             dateOfMostRecentPost = cachedPosts.first?.createdAt
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -336,10 +364,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             var operation: FetchPostsForTopicOperation
             if let minDate = dateOfMostRecentPost {
-                operation = FetchPostsForTopicOperation(topic: myTopic!, postedSince: minDate)
+                operation = FetchPostsForTopicOperation(topic: topic!, postedSince: minDate)
             }
             else {
-                operation = FetchPostsForTopicOperation(topic: myTopic!)
+                operation = FetchPostsForTopicOperation(topic: topic!)
             }
             
             operation.addCompletionBlock({
@@ -354,7 +382,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             reloadTopicOperation = {
                 
-                let operation = FetchTopicOperation(topic: myTopic!)
+                let operation = FetchTopicOperation(topic: topic!)
                 operation.addDependency(fetchPostsForTopicOperation!)
                 
                 operation.addCompletionBlock({
@@ -383,7 +411,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayMode = .View
         displayStatus(type: .Posting)
         
-        let myPost = Post.createForTopic(myTopic!)
+        let myPost = Post.createForTopic(topic!)
         myPost.rating = postInputView.rating
         if let comment = postInputView.comment {
             myPost.comment = comment
@@ -431,7 +459,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBAction func handleExportAction(sender: AnyObject) {
         
         if let navController = navigationController as? NavigationController {
-            navController.presentExportViewController(withTopic: myTopic!)
+            navController.presentExportViewController(withTopic: topic!)
         }
     }
     
@@ -440,14 +468,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         fetchPostsForTopicOperation?.cancel()
         
-//        
-//        
-//        
-//        if let navController = navigationController as? NavigationController {
-//            navController.popToTopViewController()
-//        }
-        
-        dismissViewControllerAnimated(true, completion: nil)
+        if exitMethod == .Back {
+            navigationController?.popViewControllerAnimated(true)
+        }
+        else if exitMethod == .Dismiss {
+            dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     
@@ -483,7 +509,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
         
         if let destinationController = segue.destinationViewController as? NavigationController {
-            destinationController.topic = myTopic
+            destinationController.topic = topic
         }
     }
     
@@ -620,7 +646,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let topic = myTopic {
+        if let topic = topic {
             
             var number = 0
             
@@ -659,7 +685,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case TableViewSections.Topic.rawValue:
             
-            let displayingImage = myTopic!.hasImage()
+            let displayingImage = topic!.hasImage()
             switch indexPath.row {
                 
             case 0:
@@ -731,28 +757,28 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializeTextCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(textCellViewIdentifier) as! TopicTextTableViewCell
-            cell.displayedTopic = myTopic
+            cell.displayedTopic = topic
             return cell
         }
         
         func initializeImageCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
-            cell.displayedTopic = myTopic
+            cell.displayedTopic = topic
             return cell
         }
         
         func initializeAuthorCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(authorCellViewIdentifer) as! TopicAuthorTableViewCell
-            cell.displayedTopic = myTopic
+            cell.displayedTopic = topic
             return cell
         }
         
         func initializeStatsCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(topicStatsCellViewIdentifer) as! TopicStatisticsTableViewCell
-            cell.displayedTopic = myTopic
+            cell.displayedTopic = topic
             return cell
         }
         
@@ -801,7 +827,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func reloadMapView() {
         
-        let allObjects: [AuthoredObject] = [myTopic!] + posts
+        let allObjects: [AuthoredObject] = [topic!] + posts
 
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(allObjects)
@@ -939,9 +965,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func handleDidUploadPost(notification: NSNotification) {
         
-        let didPost = currentUser().didPostToTopic(myTopic!)
+        let didPost = currentUser().didPostToTopic(topic!)
         displayedData = didPost ? .TopicAndPosts : .Topic
-        displayMode = didPost ? .Edit : .View
+        displayMode = didPost ? .View : .Edit
         
         fetchPosts(reloadingTopic: true)
     }

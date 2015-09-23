@@ -47,7 +47,6 @@ class UploadPostOperation: ParseOperation {
     
     override func finished(errors: [NSError]) {
         
-        super.finished(errors)
         clearBackgroundTask()
         
         if errors.count == 0 {

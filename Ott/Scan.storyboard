@@ -20,7 +20,7 @@
             </objects>
             <point key="canvasLocation" x="-2293" y="4289"/>
         </scene>
-        <!--Scanning For Topic-->
+        <!--Scanning...-->
         <scene sceneID="Y3X-Ms-0DQ">
             <objects>
                 <viewController useStoryboardIdentifierAsRestorationIdentifier="YES" id="vbE-Ps-sUH" customClass="ScanViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
@@ -33,7 +33,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Scanning For Topic" id="cJy-F1-OnC">
+                    <navigationItem key="navigationItem" title="Scanning..." id="cJy-F1-OnC">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Jgh-iB-svE">
                             <connections>
                                 <action selector="handleCancelScanAction:" destination="vbE-Ps-sUH" id="Jwy-Jt-w22"/>

@@ -5,26 +5,11 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
-        <!--Post AuthoredObject Nav Controller-->
-        <scene sceneID="7Wk-2D-6cj">
-            <objects>
-                <navigationController storyboardIdentifier="topicDetailViewController" title="Post AuthoredObject Nav Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="yD3-Xw-B5g" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="Wot-ep-MMB">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <connections>
-                        <segue destination="JRp-B9-rK5" kind="relationship" relationship="rootViewController" id="CZ8-QI-IeF"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="niA-WF-UZR" userLabel="First Responder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="969" y="-84"/>
-        </scene>
         <!--Topic Detail-->
         <scene sceneID="QCB-yv-4Wc">
             <objects>
-                <viewController title="Topic Detail" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JRp-B9-rK5" customClass="TopicDetailViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <viewController storyboardIdentifier="topicDetailViewController" title="Topic Detail" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="JRp-B9-rK5" customClass="TopicDetailViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="94k-Zt-80q"/>
                         <viewControllerLayoutGuide type="bottom" id="x3V-j2-dd8"/>
@@ -177,11 +162,8 @@
                         <outlet property="tableView" destination="Y5K-j4-5dG" id="fyV-8u-CwC"/>
                         <outlet property="toolbar" destination="fhB-VS-06h" id="GrT-kY-bdg"/>
                         <outlet property="toolbarBottomConstraint" destination="QdD-ch-eWJ" id="H2C-cx-ge4"/>
-                        <segue destination="h4G-C7-IFZ" kind="unwind" identifier="unwindToMasterView" unwindAction="unwindForSegue:towardsViewController:" id="aB8-9h-1WY"/>
                     </connections>
                 </viewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="eNR-eb-mdN" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="h4G-C7-IFZ" userLabel="Exit" sceneMemberID="exit"/>
             </objects>
             <point key="canvasLocation" x="1789" y="-83"/>
         </scene>

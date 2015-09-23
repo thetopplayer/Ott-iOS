@@ -48,8 +48,6 @@ class FetchTopicOperation: ParseOperation {
     
     override func finished(errors: [NSError]) {
         
-        super.finished(errors)
-        
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {

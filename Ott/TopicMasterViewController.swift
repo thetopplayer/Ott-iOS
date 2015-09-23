@@ -25,9 +25,16 @@ class TopicMasterViewController: TableViewController {
         
         setupTableView()
         view.addSubview(statusLabel)
-        startObservations()
     }
 
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        tabBarController!.tabBar.hidden = false
+        startObservations()
+    }
+    
     
     override func viewDidLayoutSubviews() {
         
@@ -36,6 +43,13 @@ class TopicMasterViewController: TableViewController {
     }
     
 
+    override func viewWillDisappear(animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+        endObservations()
+    }
+    
+    
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
@@ -43,11 +57,6 @@ class TopicMasterViewController: TableViewController {
         if isVisible() == false {
             topics.removeAll()
         }
-    }
-    
-    
-    deinit {
-        endObservations()
     }
 
     
@@ -105,8 +114,8 @@ class TopicMasterViewController: TableViewController {
     var selection: Topic? {
         
         didSet {
-            let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)
-            NSNotificationCenter.defaultCenter().postNotification(notification)
+//            let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)
+//            NSNotificationCenter.defaultCenter().postNotification(notification)
         }
     }
     

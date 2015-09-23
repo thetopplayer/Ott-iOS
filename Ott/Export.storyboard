@@ -8,7 +8,6 @@
         <!--Export-->
         <scene sceneID="Voj-cK-UxV">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="vae-3p-Sk9" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <viewController title="Export" id="D0B-gK-s3d" customClass="ExportViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="XHq-zv-Cdy"/>
@@ -133,13 +132,13 @@
                         <outlet property="saveToPhotosButtonItem" destination="rCO-sL-pba" id="QcB-bM-FHu"/>
                     </connections>
                 </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="vae-3p-Sk9" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="3425" y="-83"/>
         </scene>
         <!--Navigation Controller-->
         <scene sceneID="McB-8L-0GI">
             <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="Ask-Tr-dFW" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <navigationController storyboardIdentifier="exportViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="iGH-zb-Ibk" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="JD0-vm-kjw">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
@@ -149,6 +148,7 @@
                         <segue destination="D0B-gK-s3d" kind="relationship" relationship="rootViewController" id="TPv-3a-mRB"/>
                     </connections>
                 </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Ask-Tr-dFW" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="2586" y="-83"/>
         </scene>

@@ -16,7 +16,7 @@ class LocalViewController: TopicMasterViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
+
         let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.leftBarButtonItem = scanButton

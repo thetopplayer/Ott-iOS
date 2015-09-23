@@ -17,7 +17,7 @@
                             <outlet property="delegate" destination="iv5-LA-iIu" id="0Zf-kL-cKw"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="Local Topics" id="Tx2-na-enK">
+                    <navigationItem key="navigationItem" title="Local" id="Tx2-na-enK">
                         <barButtonItem key="leftBarButtonItem" image="scan" id="JJo-Se-nsW">
                             <connections>
                                 <action selector="presentTopicScanViewController:" destination="iv5-LA-iIu" id="59I-uG-t4B"/>
