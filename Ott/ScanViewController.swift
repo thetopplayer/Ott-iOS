@@ -367,12 +367,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     @IBAction func handleCancelScanAction(sender: AnyObject) {
         
         stopScanning()
-        performSegueWithIdentifier("unwindToMasterView", sender: self)
-    }
-    
-    @IBAction func handleDoneAction(sender: AnyObject) {
-
-        performSegueWithIdentifier("unwindToMasterView", sender: self)
+        dismissViewControllerAnimated(true, completion: nil)
     }
 
 }
