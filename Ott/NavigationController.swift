@@ -82,7 +82,6 @@ class NavigationController: UINavigationController {
     var post: Post?
     var user: User?
     var payload: PFObject?
-    var exitDestination: UIViewController?
     
     
     func presentViewController(storyboard storyboard: String, identifier: String, completion: (() -> Void)?) -> UIViewController {
@@ -187,16 +186,33 @@ class NavigationController: UINavigationController {
     
     func presentUserDetailViewController(withUser user: User?, exitMethod: UserDetailViewController.ExitMethod = .Back) {
         
-        func presentController() {
+        let detailViewController: UserDetailViewController = {
+            
+            var theController: UserDetailViewController? = nil
+            for vc in viewControllers {
+                if vc is UserDetailViewController {
+                    theController = vc as? UserDetailViewController
+                }
+            }
+            
+            if let theController = theController {
+                return theController
+            }
             
             let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
-            let detailViewController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as! UserDetailViewController
+            theController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as?UserDetailViewController
+            
+            return theController!
+            }()
+        
+        func presentController() {
             
             detailViewController.exitMethod = exitMethod
             detailViewController.user = user
             pushViewController(detailViewController, animated: true)
         }
-
+        
+        
         presentController()
     }
     

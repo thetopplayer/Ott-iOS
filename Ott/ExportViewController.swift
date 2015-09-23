@@ -38,9 +38,29 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
 
     var objectToExport: PFObject?
     
+    enum ObjectType {
+        case Unknown, Topic, User
+    }
+    
+    var objectType: ObjectType {
+        
+        if let object = objectToExport {
+           
+            if object is Topic {
+                return .Topic
+            }
+            else if object is User {
+                return .User
+            }
+        }
+        
+        return .Unknown
+    }
+    
     private func textForObject() -> String? {
         
         var result: String? = nil
+        
         if let topic = objectToExport as? Topic {
             result = "#" + topic.name!
         }
@@ -165,8 +185,14 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         
         if let jpegData = UIImageJPEGRepresentation(codeImage!, 1) {
             
-            let link = "<a href='\(self.codeText!)'>#\(textForObject()!)</a>"
-            let message = "Click on the link or scan the code from within the Ott app to give your take on " + link
+            let link = "<a href='\(self.codeText!)'>\(textForObject()!)</a>"
+            var message = ""
+            if objectType == .User {
+                message = "Click on the link or scan the code from within the Ott app to view " + link
+            }
+            else if objectType == .Topic {
+                message = "Click on the link or scan the code from within the Ott app to give your take on " + link
+            }
             
             emailVC.setMessageBody(message, isHTML: true)
             
@@ -174,7 +200,6 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
             emailVC.addAttachmentData(jpegData, mimeType:"image/jpeg", fileName:filename)
         }
         else {
-            
             emailVC.setMessageBody("ERROR exporting image", isHTML: true)
         }
         
@@ -190,8 +215,20 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     func image(image: UIImage, didFinishSavingWithError error: NSError?, contextInfo:UnsafePointer<Void>) {
         
+        func presentAlert() {
+            
+            let alert = TimedAlertController(title: "Image Saved", message: "The image was saved to your camera roll.", preferredStyle: .Alert)
+            alert.completion = {self.dismissViewControllerAnimated(true, completion: nil)}
+            
+            self.presentViewController(alert, animated: true, completion: {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.handleCancelAction(self)
+                }
+            })
+        }
+        
         dispatch_async(dispatch_get_main_queue()) {
-            self.handleCancelAction(self)
+            presentAlert()
         }
     }
     
@@ -216,9 +253,6 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
     
     func mailComposeController(controller: MFMailComposeViewController, didFinishWithResult result: MFMailComposeResult, error: NSError?) {
         
-        let alert = TimedAlertController(title: "Image Saved", message: "The image was saved to your camera roll.", preferredStyle: .Alert)
-        alert.completion = {self.dismissViewControllerAnimated(true, completion: nil)}
-        
-        presentViewController(alert, animated: true, completion: nil)
+        handleCancelAction(self)
     }
 }

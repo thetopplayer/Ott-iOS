@@ -132,10 +132,15 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     private func setupChildren() {
         
         addChildViewController(authoredTopicsViewController)
-        authoredTopicsViewController.view.frame = authoredTopicsContainerView.bounds
+        
+        // do this to make the table look like the other.  i don't know why this needs to be done
+        let contentInset = UIEdgeInsetsMake(0, 4, 0, 4)
+        let frame = UIEdgeInsetsInsetRect(authoredTopicsContainerView.bounds, contentInset)
+        authoredTopicsViewController.tableView.frame = frame
+        authoredTopicsViewController.tableView.contentSize = frame.size
         
         let mask = UIViewAutoresizing.FlexibleWidth.rawValue | UIViewAutoresizing.FlexibleHeight.rawValue
-        authoredTopicsViewController.view.autoresizingMask = UIViewAutoresizing(rawValue: mask)
+        authoredTopicsViewController.tableView.autoresizingMask = UIViewAutoresizing(rawValue: mask)
         authoredTopicsContainerView.addSubview(authoredTopicsViewController.tableView)
 
     }
