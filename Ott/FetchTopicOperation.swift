@@ -52,6 +52,8 @@ class FetchTopicOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
+                print("posting")
+                
                 let userinfo: [NSObject: AnyObject] = [FetchTopicOperation.Notifications.TopicKey: self.topic]
                 NSNotificationCenter.defaultCenter().postNotificationName(FetchTopicOperation.Notifications.DidFetch,
                     object: self,

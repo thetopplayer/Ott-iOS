@@ -55,8 +55,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
         initializeViewForTopic()
-        
         startObservations()
+    }
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        super.viewDidAppear(animated)
+        
+        if userDidPostToTopic {
+            
+            if didFetchPosts == false {
+                fetchPosts()
+            }
+        }
+        else {
+            remindUserToPost()
+        }
     }
     
     
@@ -76,6 +91,30 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var exitMethod = ExitMethod.Back
     
     
+    private func remindUserToPost() {
+        
+        let maximumNumberOfPrompts = 2
+        let userDefaultsKey = "remindersToPost"
+        func userPrompts() -> Int {
+            
+            return NSUserDefaults.standardUserDefaults().integerForKey(userDefaultsKey)
+        }
+        
+        func setUserPrompts(value: Int) {
+            NSUserDefaults.standardUserDefaults().setInteger(value, forKey: userDefaultsKey)
+        }
+
+        let numberOfPrompts = userPrompts()
+        if numberOfPrompts >= maximumNumberOfPrompts {
+            return
+        }
+        
+        presentOKAlert(title: "Create a Post", message: "See what others have said about this topic by first posting your take on it.", actionHandler: nil)
+        
+        setUserPrompts(numberOfPrompts + 1)
+    }
+    
+    
     private var didInitializeViewForTopic = false
     private func initializeViewForTopic() {
                 
@@ -85,17 +124,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         if didInitializeViewForTopic == false {
             
-            let didPost = currentUser().didPostToTopic(topic)
-            displayedData = didPost ? .TopicAndPosts : .Topic
-            displayMode = didPost ? .View : .Edit
+            displayedData = userDidPostToTopic ? .TopicAndPosts : .Topic
+            displayMode = userDidPostToTopic ? .View : .Edit
             
             let title = "#" + topic.name!
             navigationItem.title = title
             displayType = .List
-            
-            if didPost {
-                fetchPosts()
-            }
             
             didInitializeViewForTopic = true
        }
@@ -150,9 +184,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func showBackButton() {
             
             let button = UIButton(frame: CGRectMake(0, 0, 80, 32))
+            button.contentEdgeInsets = UIEdgeInsetsMake(4, 0, 4, 0)
+            button.contentHorizontalAlignment = .Left
             let backImage = UIImage(named: "halfArrowLeft")
             button.setImage(backImage, forState: UIControlState.Normal)
-            button.contentHorizontalAlignment = .Left
             
             let title = presentingViewController?.title
             button.setTitle(title, forState: UIControlState.Normal)
@@ -317,7 +352,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.statusLabel.text = ""
                 
             case .Fetching:
-                self.statusLabel.text = "Updating..."
+                self.statusLabel.text = "Fetching Posts..."
                 
             case .Posting:
                 self.statusLabel.text = "Posting..."
@@ -332,11 +367,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var topic: Topic? {
         
         didSet {
+            userDidPostToTopic = currentUser().didPostToTopic(topic!)
             didInitializeViewForTopic = false
         }
     }
     
+    private var userDidPostToTopic: Bool = false
+    
     private var posts = [Post]()
+    private var didFetchPosts = false
     private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
     private var reloadTopicOperation: FetchTopicOperation?
     private var dateOfMostRecentPost: NSDate?
@@ -358,6 +397,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         /*****/
         
+        didFetchPosts = true
         displayStatus(type: .Fetching)
 
         fetchPostsForTopicOperation = {
@@ -408,6 +448,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func saveChanges() {
         
+        userDidPostToTopic = true
         displayMode = .View
         displayStatus(type: .Posting)
         
@@ -864,12 +905,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: -  Observations {
     
-    private var didStartObservations = false
     private func startObservations() {
-        
-        if didStartObservations {
-            return
-        }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         
@@ -878,19 +914,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadPost:", name: UploadPostOperation.Notifications.DidUpload, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFail:", name: UploadPostOperation.Notifications.UploadDidFail, object: nil)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     
@@ -965,9 +994,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func handleDidUploadPost(notification: NSNotification) {
         
-        let didPost = currentUser().didPostToTopic(topic!)
-        displayedData = didPost ? .TopicAndPosts : .Topic
-        displayMode = didPost ? .View : .Edit
+        displayedData = userDidPostToTopic ? .TopicAndPosts : .Topic
+        displayMode = userDidPostToTopic ? .View : .Edit
         
         fetchPosts(reloadingTopic: true)
     }

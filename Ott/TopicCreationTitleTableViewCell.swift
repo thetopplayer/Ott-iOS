@@ -195,27 +195,15 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
 
     //MARK: - Observations
     
-    private var didStartObservations = false
     private func startObservations() {
         
-        if didStartObservations {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: textField)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     

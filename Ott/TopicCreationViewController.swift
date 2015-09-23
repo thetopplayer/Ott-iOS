@@ -201,29 +201,17 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
 
     //MARK: - Observations
     
-    private var didStartObservations = false
     func startObservations() {
-        
-        if didStartObservations {
-            return
-        }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFailNotification:", name: UploadTopicOperation.Notifications.UploadDidFail, object: nil)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     

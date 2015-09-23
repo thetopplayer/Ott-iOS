@@ -107,27 +107,15 @@ class MainTabBarController: UITabBarController {
     
     //MARK: - Observations
     
-    private var didStartObservations = false
     func startObservations() {
         
-        if didStartObservations {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationPermissionDidChangeNotification:", name: LocationManager.Notifications.PermissionDidChange, object: nil)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     

@@ -25,6 +25,7 @@ class TopicMasterViewController: TableViewController {
         
         setupTableView()
         view.addSubview(statusLabel)
+        startObservations()
     }
 
     
@@ -32,7 +33,6 @@ class TopicMasterViewController: TableViewController {
         
         super.viewWillAppear(animated)
         tabBarController!.tabBar.hidden = false
-        startObservations()
     }
     
     
@@ -46,7 +46,6 @@ class TopicMasterViewController: TableViewController {
     override func viewWillDisappear(animated: Bool) {
         
         super.viewWillDisappear(animated)
-        endObservations()
     }
     
     
@@ -59,6 +58,10 @@ class TopicMasterViewController: TableViewController {
         }
     }
 
+    
+    deinit {
+        endObservations()
+    }
     
     
     //MARK: - Display
@@ -289,29 +292,17 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Observations
     
-    private var didStartObservations = false
     func startObservations() {
-        
-        if didStartObservations {
-            return
-        }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
-        
-        didStartObservations = true
     }
     
     
-    private func endObservations() {
-        
-        if didStartObservations == false {
-            return
-        }
+    // note:  call this AFTER subclass setup
+    func endObservations() {
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     
@@ -325,14 +316,7 @@ class TopicMasterViewController: TableViewController {
         }
     }
     
-    
-    func handleDidUploadTopicNotification(notification: NSNotification) {
-        
-        update()
-    }
-    
 
-    
 
     // MARK: - Navigation
 

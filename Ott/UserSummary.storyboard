@@ -248,6 +248,7 @@
         <!--Authored Topics View Controller-->
         <scene sceneID="jOq-0g-9Uu">
             <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="FYx-BQ-j6n" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <tableViewController id="Fm5-bs-KxI" customClass="AuthoredTopicsViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" id="car-Yf-QXZ">
                         <rect key="frame" x="0.0" y="0.0" width="601" height="406"/>
@@ -259,7 +260,6 @@
                         </connections>
                     </tableView>
                 </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="FYx-BQ-j6n" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-658.5" y="2810"/>
         </scene>

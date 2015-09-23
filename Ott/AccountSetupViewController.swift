@@ -127,29 +127,17 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
 
     //MARK: - Observations and TextField Delegate
     
-    private var didStartObservations = false
     private func startObservations() {
-        
-        if didStartObservations {
-            return
-        }
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: handleTextField)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: nameTextField)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     

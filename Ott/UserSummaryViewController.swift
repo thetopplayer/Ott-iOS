@@ -25,6 +25,8 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     @IBOutlet weak var followingContainerView: UIView!
     @IBOutlet weak var followersContainerView: UIView!
     
+  
+    
     
     //MARK: - Lifecycle
     
@@ -39,16 +41,60 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         super.viewDidLoad()
         
         view.backgroundColor = UIColor.background()
+        setupNavigationBar()
+        setupUserDetailView()
+        setupChildren()
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        updateDisplayedInformation()
+    }
+    
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        super.viewDidAppear(animated)
+    }
 
+    
+    override func viewWillDisappear(animated: Bool) {
+        
+        super.viewWillDisappear(animated)
+    }
+    
+    
+    override func didReceiveMemoryWarning() {
+ 
+        super.didReceiveMemoryWarning()
+     }
+
+    
+    
+    //MARK: - Display
+    
+    private func setupNavigationBar() {
+        
         navigationItem.titleView = {
-           
+            
             let button = UIButton(frame: CGRectMake(0, 0, 40, 32))
             let image = UIImage(named: "action")
             button.setImage(image, forState: UIControlState.Normal)
             button.addTarget(self, action: "handleExportAction:", forControlEvents: UIControlEvents.TouchUpInside)
             
             return button
-        }()
+            }()
+        
+        let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
+        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
+        navigationItem.leftBarButtonItem = scanButton
+        navigationItem.rightBarButtonItem = createButton
+    }
+    
+    
+    private func setupUserDetailView() {
         
         userContainerView.backgroundColor = UIColor.whiteColor()
         userContainerView.addBorder()
@@ -72,43 +118,28 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         // start in tab 1
         viewSelectionSegmentedControl.selectedSegmentIndex = 0
         viewSwitchAction(viewSelectionSegmentedControl)
+    }
+    
+    
+    let authoredTopicsViewController: AuthoredTopicsViewController = {
         
-        let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
-        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
-        navigationItem.leftBarButtonItem = scanButton
-        navigationItem.rightBarButtonItem = createButton
-
-        startObservations()
-    }
+        let controller = AuthoredTopicsViewController(nibName: "AuthoredTopicsViewController", bundle: nil)
+        controller.user = currentUser()
+        return controller
+        }()
     
     
-    override func viewWillAppear(animated: Bool) {
+    private func setupChildren() {
         
-        super.viewWillAppear(animated)
-        updateDisplayedInformation()
-//        topicTableViewController.update()
-    }
-    
-    
-    override func viewDidAppear(animated: Bool) {
+        addChildViewController(authoredTopicsViewController)
+        authoredTopicsViewController.view.frame = authoredTopicsContainerView.bounds
         
-        super.viewDidAppear(animated)
-    }
+        let mask = UIViewAutoresizing.FlexibleWidth.rawValue | UIViewAutoresizing.FlexibleHeight.rawValue
+        authoredTopicsViewController.view.autoresizingMask = UIViewAutoresizing(rawValue: mask)
+        authoredTopicsContainerView.addSubview(authoredTopicsViewController.tableView)
 
-    
-    override func didReceiveMemoryWarning() {
- 
-        super.didReceiveMemoryWarning()
-     }
-    
-    
-    deinit {
-        endObservations()
     }
-
     
-    
-    //MARK: - Display
     
     private func updateDisplayedInformation() {
         
@@ -140,69 +171,18 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
     }
 
     
-    @IBAction func viewSwitchAction(sender: UISegmentedControl) {
-    
-        let view0 = authoredTopicsContainerView
-        let view1 = authoredPostsContainerView
-        let view2 = followingContainerView
-        let view3 = followersContainerView
-        
-        switch sender.selectedSegmentIndex {
-            
-        case 0:
-            view0.hidden = false
-            view1.hidden = true
-            view2.hidden = true
-            view3.hidden = true
-            
-        case 1:
-            view0.hidden = true
-            view1.hidden = false
-            view2.hidden = true
-            view3.hidden = true
-            
-        case 2:
-            view0.hidden = true
-            view1.hidden = true
-            view2.hidden = false
-            view3.hidden = true
-            
-        case 3:
-            view0.hidden = true
-            view1.hidden = true
-            view2.hidden = true
-            view3.hidden = false
-            
-        default:
-            assert(false)
-        }
-    }
-    
-    
     
     //MARK: -  Observations {
     
-    private var didStartObservations = false
     private func startObservations() {
         
-        if didStartObservations {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUserDidChangeNotification:", name: UpdateUserOperation.Notifications.DidUpdate, object: nil)
-        
-        didStartObservations = true
     }
     
     
     private func endObservations() {
         
-        if didStartObservations == false {
-            return
-        }
-        
         NSNotificationCenter.defaultCenter().removeObserver(self)
-        didStartObservations = false
     }
     
     
@@ -245,6 +225,45 @@ class UserSummaryViewController: ViewController, UINavigationControllerDelegate,
         presentOptionsSheet()
     }
 
+    
+    @IBAction func viewSwitchAction(sender: UISegmentedControl) {
+        
+        let view0 = authoredTopicsContainerView
+        let view1 = authoredPostsContainerView
+        let view2 = followingContainerView
+        let view3 = followersContainerView
+        
+        switch sender.selectedSegmentIndex {
+            
+        case 0:
+            view0.hidden = false
+            view1.hidden = true
+            view2.hidden = true
+            view3.hidden = true
+            
+        case 1:
+            view0.hidden = true
+            view1.hidden = false
+            view2.hidden = true
+            view3.hidden = true
+            
+        case 2:
+            view0.hidden = true
+            view1.hidden = true
+            view2.hidden = false
+            view3.hidden = true
+            
+        case 3:
+            view0.hidden = true
+            view1.hidden = true
+            view2.hidden = true
+            view3.hidden = false
+            
+        default:
+            assert(false)
+        }
+    }
+    
     
     @IBAction func presentTopicCreationAction(sender: AnyObject) {
         

@@ -12,17 +12,13 @@ class AuthoredTopicsViewController: TopicMasterViewController {
 
     
     //MARK: - Lifecycle
-    
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        fetchTopics()
-    }
 
-    
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
+        if didFetchTopics == false {
+            fetchTopics()
+        }
     }
     
     
@@ -35,11 +31,19 @@ class AuthoredTopicsViewController: TopicMasterViewController {
     
     //MARK: - Data
     
+    var user: User?
+    
+    private var didFetchTopics = false
     private func fetchTopics() {
         
+        guard let user = user else {
+            return
+        }
+        
+        didFetchTopics = true
         displayStatus(.Fetching)
         
-        let fetchTopicsOperation = FetchAuthoredTopicsOperation(user: currentUser())
+        let fetchTopicsOperation = FetchAuthoredTopicsOperation(user: user)
         
         fetchTopicsOperation.addCompletionBlock({
             
@@ -82,6 +86,8 @@ class AuthoredTopicsViewController: TopicMasterViewController {
         super.startObservations()
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidFetchTopicNotification:", name: FetchTopicOperation.Notifications.DidFetch, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
     }
     
     
@@ -99,5 +105,12 @@ class AuthoredTopicsViewController: TopicMasterViewController {
             }
         }
     }
+    
+    
+    func handleDidUploadTopicNotification(notification: NSNotification) {
+        
+        update()
+    }
+
 
 }

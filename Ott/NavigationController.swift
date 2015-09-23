@@ -146,10 +146,26 @@ class NavigationController: UINavigationController {
     
     func presentTopicDetailViewController(withTopic topic: Topic?, exitMethod: TopicDetailViewController.ExitMethod = .Back) {
         
-        func presentController() {
+        let detailViewController: TopicDetailViewController = {
+           
+            var theController: TopicDetailViewController? = nil
+            for vc in viewControllers {
+                if vc is TopicDetailViewController {
+                    theController = vc as? TopicDetailViewController
+                }
+            }
+            
+            if let theController = theController {
+                return theController
+            }
             
             let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
-            let detailViewController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as! TopicDetailViewController
+            theController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as? TopicDetailViewController
+            
+            return theController!
+        }()
+        
+        func presentController() {
             
             detailViewController.exitMethod = exitMethod
             detailViewController.topic = topic
@@ -167,4 +183,21 @@ class NavigationController: UINavigationController {
             })
         }
     }
+    
+    
+    func presentUserDetailViewController(withUser user: User?, exitMethod: UserDetailViewController.ExitMethod = .Back) {
+        
+        func presentController() {
+            
+            let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
+            let detailViewController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as! UserDetailViewController
+            
+            detailViewController.exitMethod = exitMethod
+            detailViewController.user = user
+            pushViewController(detailViewController, animated: true)
+        }
+
+        presentController()
+    }
+    
 }
