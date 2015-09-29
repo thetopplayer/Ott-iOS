@@ -713,12 +713,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    enum TableCellType {
+    private enum TableCellType {
         case TopicText, TopicImage, TopicAuthor, TopicStats, Post
     }
     
     
-    func cellTypeForIndexPath(indexPath: NSIndexPath) -> TableCellType {
+    private func cellTypeForIndexPath(indexPath: NSIndexPath) -> TableCellType {
         
         var cellType: TableCellType?
         

@@ -85,7 +85,7 @@ class UserDetailViewController: TableViewController {
         
         if didInitializeView == false {
             
-            navigationItem.title = user.handle
+            navigationItem.title = user.name
             
             if exitMethod == .Back {
                 showBackButton()
@@ -124,40 +124,182 @@ class UserDetailViewController: TableViewController {
     
     //MARK: - TableView
     
+    private let userDetailCellViewNibName = "UserDetailTableViewCell"
+    private let userDetailCellViewIdentifer = "userDetail"
+    private let userDetailCellViewHeight = CGFloat(250) 
+    
+    private let userFollowCellViewNibName = "UserFollowTableViewCell"
+    private let userFollowCellViewIdentifer = "followCell"
+    private let userFollowCellViewHeight = CGFloat(38)
+    
+    private let topicTextCellViewNibName = "TopicMasterTableViewCell"
+    private let topicTextCellViewIdentifier = "topicCell"
+    private let topicTextCellViewHeight = CGFloat(125)
+    
+    private let topicImageCellViewNibName = "TopicWithImageMasterTableViewCell"
+    private let topicImageCellViewIdentifier = "topicImageCell"
+    private let topicImageCellViewHeight = CGFloat(285)
+    
+    private let headerViewHeight = CGFloat(0.1)
+    private let footerViewHeight = CGFloat(1.0)
+
+    
     private func setupTableView() {
         
         tableView.separatorStyle = .None
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
         
-//        let nib = UINib(nibName: cellNibName, bundle: nil)
-//        tableView.registerNib(nib, forCellReuseIdentifier: cellIdentifier)
-//        
-//        let nib1 = UINib(nibName: imageCellNibName, bundle: nil)
-//        tableView.registerNib(nib1, forCellReuseIdentifier: imageCellIdentifier)
+        let nib = UINib(nibName: userDetailCellViewNibName, bundle: nil)
+        tableView.registerNib(nib, forCellReuseIdentifier: userDetailCellViewIdentifer)
+        
+        let nib1 = UINib(nibName: userFollowCellViewNibName, bundle: nil)
+        tableView.registerNib(nib1, forCellReuseIdentifier: userFollowCellViewIdentifer)
+        
+        let nib2 = UINib(nibName: topicTextCellViewNibName, bundle: nil)
+        tableView.registerNib(nib2, forCellReuseIdentifier: topicTextCellViewIdentifier)
+        
+        let nib3 = UINib(nibName: topicImageCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: topicImageCellViewIdentifier)
+        
     }
 
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        
         return 1
     }
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        return 0
+        if section == 0 {
+            return 2
+        }
+        else {
+            assert(false)
+        }
     }
 
     
+    private enum TableCellType {
+        
+        case UserDetail, UserFollow, TopicText, TopicImage
+    }
+    
+    
+    private func cellTypeForIndexPath(indexPath: NSIndexPath) -> TableCellType {
+        
+        var type: TableCellType?
+        
+        if indexPath.section == 0 {
+            
+            if indexPath.row == 0 {
+                type = .UserDetail
+            }
+            else if indexPath.row == 1 {
+                type = .UserFollow
+            }
+        }
+        else if indexPath.section == 1 {
+            type = .TopicText
+        }
+        else {
+            assert(false)
+        }
+        
+        return type!
+    }
+    
+    
+    override func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        
+        return footerViewHeight
+    }
+    
+    
+    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        
+        return headerViewHeight
+    }
+    
+    
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var height: CGFloat = 0
+        
+        switch cellTypeForIndexPath(indexPath) {
+            
+        case .UserDetail:
+            height = userDetailCellViewHeight
+            
+        case .UserFollow:
+            height = userFollowCellViewHeight
+            
+        case .TopicText:
+            height = topicTextCellViewHeight
+            
+        case .TopicImage:
+            height = topicImageCellViewHeight
+            
+        }
+        
+        return height
+    }
+    
+
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
+        func initializeUserDetailCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(userDetailCellViewIdentifer) as! UserDetailTableViewCell
+            cell.displayedUser = user
+            return cell
+        }
         
-//        let theTopic = displayedTopics[indexPath.row]
-//        
-//        let identifier = theTopic.hasImage() ? imageCellIdentifier: cellIdentifier
-        let cell = tableView.dequeueReusableCellWithIdentifier("", forIndexPath: indexPath) as! TopicMasterTableViewCell
-//        
-//        cell.displayedTopic = theTopic
+        func initializeUserFollowCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
+            cell.displayedUser = user
+            return cell
+        }
+        
+        func initializeTopicTextCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicTextCellViewIdentifier) as! TopicMasterTableViewCell
+//            cell.displayedTopic = user
+            return cell
+        }
+        
+        func initializeTopicImageCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicImageCellViewIdentifier) as! TopicMasterTableViewCell
+//            cell.cell.displayedTopic = user
+            return cell
+        }
+        
+        
+        var cell: UITableViewCell
+        
+        switch cellTypeForIndexPath(indexPath) {
+            
+        case .UserDetail:
+            
+            cell = initializeUserDetailCell()
+            
+        case .UserFollow:
+            
+            cell = initializeUserFollowCell()
+            
+        case .TopicText:
+            
+            cell = initializeTopicTextCell()
+            
+        case .TopicImage:
+            
+            cell = initializeTopicImageCell()
+        }
+        
         return cell
     }
 

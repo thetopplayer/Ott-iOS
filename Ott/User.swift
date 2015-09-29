@@ -108,6 +108,18 @@ class User: PFUser {
         }()
     
     
+    func hasAvatar() -> Bool {
+        
+        return hasImage()
+    }
+    
+    
+    func getAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+        
+        getImage(completion: completion)
+    }
+    
+
     func createPrivateData() -> PrivateUserData {
         
         // create private data and set so that only the user can read & write

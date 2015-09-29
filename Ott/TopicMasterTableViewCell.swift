@@ -26,7 +26,7 @@ class TopicMasterTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
-        innerContentContainer?.addRoundedBorder()
+        innerContentContainer?.addBorder()
         topBar.backgroundColor = UIColor.whiteColor()
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()

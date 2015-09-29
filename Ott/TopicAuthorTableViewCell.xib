@@ -34,7 +34,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="@handle" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-bD-3Bi">
-                                <rect key="frame" x="73" y="26" width="429" height="17"/>
+                                <rect key="frame" x="73" y="27" width="429" height="17"/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
@@ -48,8 +48,8 @@
                                 <state key="normal" title="Follow"/>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="bio info" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Avr-ze-dIT">
-                                <rect key="frame" x="73" y="47" width="429" height="15"/>
-                                <fontDescription key="fontDescription" type="system" pointSize="12"/>
+                                <rect key="frame" x="73" y="48" width="429" height="14"/>
+                                <fontDescription key="fontDescription" type="system" pointSize="11"/>
                                 <color key="textColor" red="0.40000000596046448" green="0.40000000596046448" blue="0.40000000596046448" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
@@ -60,7 +60,7 @@
                             <constraint firstItem="GpH-nQ-Jok" firstAttribute="centerY" secondItem="wVt-mt-xss" secondAttribute="centerY" id="ATQ-CN-cf4"/>
                             <constraint firstAttribute="trailing" secondItem="GpH-nQ-Jok" secondAttribute="trailing" constant="15" id="CaL-EY-DU6"/>
                             <constraint firstItem="IZQ-U4-WaG" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="Gls-ao-2G0"/>
-                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="1" id="JVq-2N-jo6"/>
+                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="2" id="JVq-2N-jo6"/>
                             <constraint firstItem="GpH-nQ-Jok" firstAttribute="leading" secondItem="LOS-bD-3Bi" secondAttribute="trailing" constant="8" id="LsA-da-GVO"/>
                             <constraint firstItem="GpH-nQ-Jok" firstAttribute="leading" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="8" id="Nni-vr-bxP"/>
                             <constraint firstItem="Avr-ze-dIT" firstAttribute="leading" secondItem="LOS-bD-3Bi" secondAttribute="leading" id="b5h-8G-0Wa"/>
