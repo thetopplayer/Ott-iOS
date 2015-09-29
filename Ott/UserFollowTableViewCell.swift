@@ -67,34 +67,46 @@ class UserFollowTableViewCell: TableViewCell {
             setUnfollowButton()
         }
         
-//        authorNameLabel.text = topic.authorName
-//        authorHandleLabel.text = topic.authorHandle
-//        authorBioLabel.text = topic.authorBio
-//        
-//        if topic.hasAuthorAvatar() {
-//            topic.getAuthorAvatarImage({ (success, image) -> Void in
-//                
-//                if success {
-//                    self.authorImageView!.setImageWithFade(image)
-//                }
-//            })
-//        }
-//        
-//        if currentUser().didAuthorTopic(topic) {
-//            
-//            followButton.hidden = true
-//        }
-//        else {
-//            
-//            followButton.hidden = false
-//            
-//            if currentUser().isFollowingUserWithHandle(topic.authorHandle!) {
-//                setUnfollowButton()
-//            }
-//            else {
-//                setFollowButton()
-//            }
-//        }
+        followingInfoLabel.attributedText = {
+            
+            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)]
+            
+            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
+            
+            let s1 = NSMutableAttributedString(string: "FOLLOWERS: ", attributes: normalAttributes)
+            let followerCountString: String = {
+               
+                let number = user.followersCount
+                if number < 1000 {
+                    return "\(number)"
+                }
+                
+                let str = NSString(format: "%.1fk", Float(number) / 1000)
+                return str as String
+            }()
+            
+            let s2 = NSAttributedString(string: followerCountString, attributes: boldAttributes)
+            s1.appendAttributedString(s2)
+            
+            let s3 = NSMutableAttributedString(string: "   FOLLOWING: ", attributes: normalAttributes)
+            
+            let followingCountString: String = {
+                
+                let number = user.followingCount
+                if number < 1000 {
+                    return "\(number)"
+                }
+                
+                let str = NSString(format: "%.1fk", Float(number) / 1000)
+                return str as String
+                }()
+            
+            let s4 = NSAttributedString(string: followingCountString, attributes: boldAttributes)
+            s3.appendAttributedString(s4)
+            s1.appendAttributedString(s3)
+            return s1
+            }()
+        
     }
     
     

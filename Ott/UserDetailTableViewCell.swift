@@ -35,31 +35,70 @@ class UserDetailTableViewCell: TableViewCell {
     }
     
     
+    
+    //MARK: - Data
+    
+    private var displayingCurrentUser = false
+    
+    private var topic: Topic?
+    func fetchUserFromTopic(topic: Topic) {
+        
+        self.topic = topic
+        
+        displayingCurrentUser = topic.authorHandle == currentUser().handle!
+        updateDisplayForTopic()
+    }
+    
+    
     var displayedUser: User? {
         
         didSet {
-            updateDisplay()
+            
+            if let user = displayedUser {
+                displayingCurrentUser = user.isEqual(currentUser())
+                updateDisplayForUser()
+            }
+            else {
+                displayingCurrentUser = false
+            }
         }
     }
     
     
-    private func displayingCurrentUser() -> Bool {
+    
+    //MARK: - Display
+    
+    private func updateDisplayForTopic() {
         
-        guard let user = displayedUser else {
-            return false
+        guard let topic = topic else {
+            return
         }
         
-        return (user.isEqual(currentUser()))!
+        settingsButton.hidden = displayingCurrentUser == false
+        
+        handleTextLabel.text = topic.authorHandle
+        let bioText = topic.authorBio != nil ? topic.authorBio : "(no bio)"
+        bioTextLabel.text = bioText
+        
+        if topic.hasAuthorAvatar() {
+            topic.getAuthorAvatarImage({ (success, image) -> Void in
+                
+                if success {
+                    self.avatarImageView.setImageWithFade(image)
+                }
+            })
+        }
+        
     }
     
     
-    private func updateDisplay() {
-    
+    private func updateDisplayForUser() {
+        
         guard let user = displayedUser else {
             return
         }
         
-        settingsButton.hidden = displayingCurrentUser()
+        settingsButton.hidden = displayingCurrentUser == false
         
         handleTextLabel.text = user.handle
         let bioText = user.bio != nil ? user.bio : "(no bio)"

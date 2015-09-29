@@ -10,13 +10,13 @@ import UIKit
 
 class UserDetailViewController: TableViewController {
     
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
         
         super.viewDidLoad()
         view.backgroundColor = UIColor.whiteColor()
-        
         setupTableView()
     }
     
@@ -25,7 +25,6 @@ class UserDetailViewController: TableViewController {
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
-        initializeView()
         startObservations()
     }
     
@@ -43,49 +42,39 @@ class UserDetailViewController: TableViewController {
     }
     
     
+    
     //MARK: - Display
     
     enum ExitMethod {
         case Back, Dismiss
     }
-    var exitMethod = ExitMethod.Back
     
-
-    private var didInitializeView = false
-    private func initializeView() {
+    var exitMethod = ExitMethod.Back {
         
-        func showDoneButton() {
+        didSet {
             
-            let doneButton = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "handleDoneAction:")
-            navigationItem.leftBarButtonItem = doneButton
-        }
-        
-        
-        func showBackButton() {
+            func showDoneButton() {
+                
+                let doneButton = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "handleDoneAction:")
+                navigationItem.leftBarButtonItem = doneButton
+            }
             
-            let button = UIButton(frame: CGRectMake(0, 0, 80, 32))
-            button.contentEdgeInsets = UIEdgeInsetsMake(4, 0, 4, 0)
-            button.contentHorizontalAlignment = .Left
-            let backImage = UIImage(named: "halfArrowLeft")
-            button.setImage(backImage, forState: UIControlState.Normal)
-            
-            let title = presentingViewController?.title
-            button.setTitle(title, forState: UIControlState.Normal)
-            button.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
-            button.addTarget(self, action: "handleDoneAction:", forControlEvents: UIControlEvents.TouchUpInside)
-            
-            let backButton = UIBarButtonItem(customView: button)
-            navigationItem.leftBarButtonItem = backButton
-        }
-
-        
-        guard let user = user else {
-            return
-        }
-        
-        if didInitializeView == false {
-            
-            navigationItem.title = user.name
+            func showBackButton() {
+                
+                let button = UIButton(frame: CGRectMake(0, 0, 80, 32))
+                button.contentEdgeInsets = UIEdgeInsetsMake(4, 0, 4, 0)
+                button.contentHorizontalAlignment = .Left
+                let backImage = UIImage(named: "halfArrowLeft")
+                button.setImage(backImage, forState: UIControlState.Normal)
+                
+                let title = presentingViewController?.title
+                button.setTitle(title, forState: UIControlState.Normal)
+                button.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
+                button.addTarget(self, action: "handleDoneAction:", forControlEvents: UIControlEvents.TouchUpInside)
+                
+                let backButton = UIBarButtonItem(customView: button)
+                navigationItem.leftBarButtonItem = backButton
+            }
             
             if exitMethod == .Back {
                 showBackButton()
@@ -93,22 +82,67 @@ class UserDetailViewController: TableViewController {
             else if exitMethod == .Dismiss {
                 showDoneButton()
             }
-            
-            didInitializeView = true
         }
     }
-    
+
+
 
     //MARK: - Data
+
+    private var topic: Topic?
+    func fetchUserFromTopic(topic: Topic) {
+        
+        self.topic = topic
+        navigationItem.title = topic.authorName
+        fetchAndPresentUserInfo()
+    }
+    
     
     var user: User? {
         
         didSet {
-            didInitializeView = false
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.navigationItem.title = self.user?.name
+                self.tableView.reloadData()
+            }
         }
     }
     
     
+    private var fetchingUserInformation = false
+    private func fetchAndPresentUserInfo() {
+        
+        if fetchingUserInformation {
+            return
+        }
+        
+        guard let topic = topic else {
+            return
+        }
+        
+        fetchingUserInformation = true
+        
+        let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (user, error) in
+            
+            if user != nil {
+                
+                self.user = user
+            }
+            else if error != nil {
+                
+                self.presentOKAlertWithError(error!)
+            }
+            
+            self.fetchingUserInformation = false
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
+    }
+    
+    
+
     //MARK: - Actions
     
     @IBAction func handleDoneAction(sender: AnyObject) {
@@ -140,6 +174,10 @@ class UserDetailViewController: TableViewController {
     private let topicImageCellViewIdentifier = "topicImageCell"
     private let topicImageCellViewHeight = CGFloat(285)
     
+    private let loadingDataCellViewNibName = "LoadingTableViewCell"
+    private let loadingDataCellViewIdentifier = "loadingCell"
+    private let loadingDataCellViewHeight = CGFloat(38)
+    
     private let headerViewHeight = CGFloat(0.1)
     private let footerViewHeight = CGFloat(1.0)
 
@@ -162,6 +200,8 @@ class UserDetailViewController: TableViewController {
         let nib3 = UINib(nibName: topicImageCellViewNibName, bundle: nil)
         tableView.registerNib(nib3, forCellReuseIdentifier: topicImageCellViewIdentifier)
         
+        let nib4 = UINib(nibName: loadingDataCellViewNibName, bundle: nil)
+        tableView.registerNib(nib4, forCellReuseIdentifier: loadingDataCellViewIdentifier)
     }
 
     
@@ -174,6 +214,14 @@ class UserDetailViewController: TableViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if section == 0 {
+            
+            if user == nil {
+                
+                if fetchingUserInformation {
+                    return 2
+                }
+                return 1
+            }
             return 2
         }
         else {
@@ -184,7 +232,7 @@ class UserDetailViewController: TableViewController {
     
     private enum TableCellType {
         
-        case UserDetail, UserFollow, TopicText, TopicImage
+        case UserDetail, UserFollow, TopicText, TopicImage, Loading
     }
     
     
@@ -198,7 +246,8 @@ class UserDetailViewController: TableViewController {
                 type = .UserDetail
             }
             else if indexPath.row == 1 {
-                type = .UserFollow
+                
+                type = fetchingUserInformation ? .Loading : .UserFollow
             }
         }
         else if indexPath.section == 1 {
@@ -242,6 +291,9 @@ class UserDetailViewController: TableViewController {
         case .TopicImage:
             height = topicImageCellViewHeight
             
+        case .Loading:
+            height = loadingDataCellViewHeight
+            
         }
         
         return height
@@ -253,7 +305,13 @@ class UserDetailViewController: TableViewController {
         func initializeUserDetailCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(userDetailCellViewIdentifer) as! UserDetailTableViewCell
-            cell.displayedUser = user
+            
+            if user == nil {
+                cell.fetchUserFromTopic(topic!)
+            }
+            else {
+                cell.displayedUser = user
+            }
             return cell
         }
         
@@ -261,6 +319,12 @@ class UserDetailViewController: TableViewController {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
             cell.displayedUser = user
+            return cell
+        }
+        
+        func initializeLoadingDataCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(loadingDataCellViewIdentifier) as! LoadingTableViewCell
             return cell
         }
         
@@ -298,6 +362,10 @@ class UserDetailViewController: TableViewController {
         case .TopicImage:
             
             cell = initializeTopicImageCell()
+            
+        case .Loading:
+            
+            cell = initializeLoadingDataCell()
         }
         
         return cell

@@ -212,6 +212,37 @@ class NavigationController: UINavigationController {
             pushViewController(detailViewController, animated: true)
         }
         
+        presentController()
+    }
+    
+    
+    func presentUserDetailViewController(withTopic topic: Topic?, exitMethod: UserDetailViewController.ExitMethod = .Back) {
+        
+        let detailViewController: UserDetailViewController = {
+            
+            var theController: UserDetailViewController? = nil
+            for vc in viewControllers {
+                if vc is UserDetailViewController {
+                    theController = vc as? UserDetailViewController
+                }
+            }
+            
+            if let theController = theController {
+                return theController
+            }
+            
+            let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
+            theController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as?UserDetailViewController
+            
+            return theController!
+            }()
+        
+        func presentController() {
+            
+            detailViewController.exitMethod = exitMethod
+            detailViewController.fetchUserFromTopic(topic!)
+            pushViewController(detailViewController, animated: true)
+        }
         
         presentController()
     }

@@ -20,10 +20,19 @@ class TopicAuthorTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-//        innerContentContainer?.backgroundColor = UIColor(white: 1.0, alpha: 0.9)
+
         innerContentContainer?.addBorder()
         authorImageView.addRoundedBorder()
+        
         authorHandleLabel.textColor = UIColor.tint()
+        let tapGR: UIGestureRecognizer = {
+            
+            let gr = UITapGestureRecognizer()
+            gr.addTarget(self, action: "displayAuthorDetail:")
+            return gr
+        }()
+        authorHandleLabel.addGestureRecognizer(tapGR)
+        authorHandleLabel.userInteractionEnabled = true
     }
     
     
@@ -73,7 +82,7 @@ class TopicAuthorTableViewCell: TableViewCell {
             topic.getAuthorAvatarImage({ (success, image) -> Void in
                 
                 if success {
-                    self.authorImageView!.setImageWithFade(image)
+                    self.authorImageView.setImageWithFade(image)
                 }
             })
         }
@@ -117,6 +126,30 @@ class TopicAuthorTableViewCell: TableViewCell {
         let removeFollowOperation = RemoveFollowOperation(followeeHandle: topic.authorHandle!)
         MaintenanceQueue.sharedInstance.addOperation(removeFollowOperation)
         setFollowButton()
+    }
+
+    
+    private func presentAuthorInfo() {
+        
+        guard let viewController = topmostViewController() else {
+            return
+        }
+        
+        guard let topic = displayedTopic else {
+            return
+        }
+        
+        (viewController.navigationController as? NavigationController)!.presentUserDetailViewController(withTopic: topic, exitMethod: .Back)
+    }
+    
+    
+    @IBAction func displayAuthorDetail(sender: UIGestureRecognizer) {
+        
+        if sender.state != .Ended {
+            return
+        }
+        
+        presentAuthorInfo()
     }
     
 }

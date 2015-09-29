@@ -76,6 +76,14 @@ class User: PFUser {
         static var Bio: String {
             return "bio"
         }
+        
+        static var FollowingCount: String {
+            return "followingCount"
+        }
+        
+        static var FollowersCount: String {
+            return "followersCount"
+        }
     }
     
     
@@ -85,6 +93,9 @@ class User: PFUser {
         let user = User()
         user.numberOfTopics = 0
         user.numberOfPosts = 0
+        user.followingCount = 0
+        user.followersCount = 0
+        
         return user
     }
     
@@ -101,6 +112,8 @@ class User: PFUser {
     @NSManaged var numberOfTopics: Int
     @NSManaged var numberOfPosts: Int
     @NSManaged var bio: String?
+    @NSManaged var followingCount: Int
+    @NSManaged var followersCount: Int
     
     static var defaultAvatar: UIImage = {
         
