@@ -130,9 +130,7 @@ class LocalViewController: TopicMasterViewController {
     override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicDetailViewController(withTopic: selection)
-        }
+        presentTopicDetailViewController(withTopic: selection)
     }
     
     
@@ -141,9 +139,7 @@ class LocalViewController: TopicMasterViewController {
     
     @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicCreationViewController()
-        }
+        presentTopicCreationViewController()
     }
     
     

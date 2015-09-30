@@ -76,15 +76,13 @@ class TopicAuthorTableViewCell: TableViewCell {
     
     private func presentAuthorInfo() {
         
-        guard let viewController = topmostViewController() else {
-            return
-        }
-        
         guard let topic = displayedTopic else {
             return
         }
         
-        (viewController.navigationController as? NavigationController)!.presentUserDetailViewController(withTopic: topic, exitMethod: .Back)
+        if let viewController = topmostViewController() {
+            viewController.presentUserDetailViewController(withTopic: topic, exitMethod: .Back)
+        }
     }
     
     

@@ -348,17 +348,13 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     
     func displayDetailsForTopic(topic: Topic) {
         
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicDetailViewController(withTopic: topic, exitMethod: .Dismiss)
-        }
+        presentTopicDetailViewController(withTopic: topic, exitMethod: .Dismiss)
     }
     
     
     func displayDetailsForUser(user: User) {
 
-        if let navController = navigationController as? NavigationController {
-            navController.presentUserDetailViewController(withUser: user, exitMethod: .Dismiss)
-        }
+        presentUserDetailViewController(withUser: user, exitMethod: .Dismiss)
     }
     
     

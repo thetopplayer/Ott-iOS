@@ -26,9 +26,7 @@ class CurrentUserDetailViewController: UserDetailViewController {
     
     @IBAction func presentTopicCreationAction(sender: AnyObject) {
         
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicCreationViewController()
-        }
+        presentTopicCreationViewController()
     }
     
     
