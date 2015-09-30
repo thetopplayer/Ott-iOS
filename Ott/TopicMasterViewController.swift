@@ -53,6 +53,7 @@ class TopicMasterViewController: TableViewController {
         
         super.didReceiveMemoryWarning()
         
+        // todo:  this was being triggered in the middle of a table load
 //        if isVisible() == false {
 //            topics.removeAll()
 //        }

@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="V13-oe-476">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+    </dependencies>
+    <scenes>
+        <!--Me-->
+        <scene sceneID="BWn-9Q-v0z">
+            <objects>
+                <navigationController storyboardIdentifier="initialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="V13-oe-476" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Me" image="home" selectedImage="home" id="lBv-Db-UI3"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="N6T-3b-FXg">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="Ovb-7t-gQa" kind="relationship" relationship="rootViewController" id="wtG-5B-x6G"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="lJj-za-i4r" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="-199" y="366"/>
+        </scene>
+        <!--Current User Detail View Controller-->
+        <scene sceneID="Xdl-3e-a79">
+            <objects>
+                <tableViewController storyboardIdentifier="userDetailViewController" automaticallyAdjustsScrollViewInsets="NO" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ovb-7t-gQa" customClass="CurrentUserDetailViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" id="3mx-4N-eDY">
+                        <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <sections/>
+                        <connections>
+                            <outlet property="dataSource" destination="Ovb-7t-gQa" id="Rxm-tw-Rt1"/>
+                            <outlet property="delegate" destination="Ovb-7t-gQa" id="fj0-HV-cxm"/>
+                        </connections>
+                    </tableView>
+                    <navigationItem key="navigationItem" id="ZE5-as-wQt">
+                        <barButtonItem key="leftBarButtonItem" image="scan" id="OAW-Ix-vKd" userLabel="Scan">
+                            <connections>
+                                <action selector="presentTopicScanViewController:" destination="Ovb-7t-gQa" id="hWp-GZ-e7T"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="x5h-PZ-Y6Y">
+                            <connections>
+                                <action selector="presentTopicCreationAction:" destination="Ovb-7t-gQa" id="5DC-RP-EtL"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
+                </tableViewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="WYv-hv-sUh" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="591" y="366"/>
+        </scene>
+    </scenes>
+    <resources>
+        <image name="home" width="30" height="30"/>
+        <image name="scan" width="32" height="32"/>
+    </resources>
+</document>

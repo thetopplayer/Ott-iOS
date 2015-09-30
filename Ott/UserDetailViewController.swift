@@ -85,12 +85,14 @@ class UserDetailViewController: TableViewController {
         }
     }
 
-
-
+    
+    
     //MARK: - Data
 
     private var topic: Topic?
     func fetchUserFromTopic(topic: Topic) {
+        
+        voidData()
         
         self.topic = topic
         navigationItem.title = topic.authorName
@@ -105,7 +107,12 @@ class UserDetailViewController: TableViewController {
             dispatch_async(dispatch_get_main_queue()) {
                 
                 self.navigationItem.title = self.user?.name
-                self.tableView.reloadData()
+                
+                self.tableView.beginUpdates()
+                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
+                self.tableView.endUpdates()
+                
+                self.displayedData = .AuthoredTopics
             }
         }
     }
@@ -173,6 +180,140 @@ class UserDetailViewController: TableViewController {
     }
     
     
+    private enum DisplayedData {
+        case None, AuthoredTopics, AuthoredPosts, Following, Followers
+    }
+    
+    
+    private var displayedData = DisplayedData.None {
+        
+        didSet {
+            
+            switch displayedData {
+                
+            case .AuthoredTopics:
+                
+                if fetchStatus_AuthoredTopics == .DidFetch {
+                    updateDataSection()
+                }
+                else if fetchStatus_AuthoredTopics == .NotFetched {
+                    fetchAuthoredTopics()
+                }
+                
+            case .AuthoredPosts:
+                
+                if fetchStatus_AuthoredPosts == .DidFetch {
+                    updateDataSection()
+                }
+                else if fetchStatus_AuthoredPosts == .NotFetched {
+                    fetchAuthoredPosts()
+                }
+                
+            case .Following:
+                
+                if fetchStatus_UsersBeingFollowed == .DidFetch {
+                    updateDataSection()
+                }
+                else if fetchStatus_UsersBeingFollowed == .NotFetched {
+                    fetchUsersBeingFollowed()
+                }
+                
+            case .Followers:
+                
+                if fetchStatus_UsersFollowingMe == .DidFetch {
+                    updateDataSection()
+                }
+                else if fetchStatus_UsersFollowingMe == .NotFetched {
+                    fetchUsersUsersFollowingMe()
+                }
+                
+            case .None:
+                updateDataSection()
+            }
+        }
+    }
+    
+    
+    private var authoredTopics = [Topic]()
+    private var authoredPosts = [Post]()
+    private var usersBeingFollowed = [User]()
+    private var usersFollowingMe = [User]()
+
+    private enum FetchStatus {
+        case NotFetched, Fetching, DidFetch
+    }
+    
+    private var fetchStatus_AuthoredTopics = FetchStatus.NotFetched
+    private var fetchStatus_AuthoredPosts = FetchStatus.NotFetched
+    private var fetchStatus_UsersBeingFollowed = FetchStatus.NotFetched
+    private var fetchStatus_UsersFollowingMe = FetchStatus.NotFetched
+    
+    
+    private func voidData() {
+        
+        authoredTopics.removeAll()
+        authoredPosts.removeAll()
+        usersBeingFollowed.removeAll()
+        usersFollowingMe.removeAll()
+        
+        fetchStatus_AuthoredTopics = FetchStatus.NotFetched
+        fetchStatus_AuthoredPosts = FetchStatus.NotFetched
+        fetchStatus_UsersBeingFollowed = FetchStatus.NotFetched
+        fetchStatus_UsersFollowingMe = FetchStatus.NotFetched
+        
+        displayedData = .None
+    }
+    
+    private func fetchAuthoredTopics() {
+        
+//        displayStatus(.Fetching)
+        updateDataSection()
+        
+        if fetchStatus_AuthoredTopics == .Fetching {
+            return
+        }
+        
+        
+        fetchStatus_AuthoredTopics = .Fetching
+        
+        let fetchTopicsOperation = FetchAuthoredTopicsOperation(user: user!)
+        
+        fetchTopicsOperation.addCompletionBlock({
+            
+            self.fetchStatus_AuthoredTopics = .DidFetch
+
+            self.authoredTopics = cachedTopicsAuthoredByUser(self.user!)
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.updateDataSection()
+//                self.hideRefreshControl()
+//                self.displayStatus()
+            }
+        })
+        
+        FetchQueue.sharedInstance.addOperation(fetchTopicsOperation)
+    }
+    
+    
+    private func fetchAuthoredPosts() {
+        
+        updateDataSection()
+    }
+    
+    
+    private func fetchUsersBeingFollowed() {
+        
+        updateDataSection()
+    }
+    
+    
+    private func fetchUsersUsersFollowingMe() {
+        
+        updateDataSection()
+    }
+    
+    
+
 
     //MARK: - Actions
     
@@ -187,6 +328,7 @@ class UserDetailViewController: TableViewController {
     }
 
     
+
     //MARK: - TableView
     
     private let userDetailCellViewNibName = "UserDetailTableViewCell"
@@ -197,13 +339,13 @@ class UserDetailViewController: TableViewController {
     private let userFollowCellViewIdentifer = "followCell"
     private let userFollowCellViewHeight = CGFloat(44)
     
-    private let topicTextCellViewNibName = "TopicMasterTableViewCell"
-    private let topicTextCellViewIdentifier = "topicCell"
-    private let topicTextCellViewHeight = CGFloat(125)
+    private let topicWithOnlyTextCellViewNibName = "TopicMasterTableViewCell"
+    private let topicWithOnlyTextCellViewIdentifier = "topicCell"
+    private let topicWithOnlyTextCellViewHeight = CGFloat(125)
     
-    private let topicImageCellViewNibName = "TopicWithImageMasterTableViewCell"
-    private let topicImageCellViewIdentifier = "topicImageCell"
-    private let topicImageCellViewHeight = CGFloat(285)
+    private let topicWithImageCellViewNibName = "TopicWithImageMasterTableViewCell"
+    private let topicWithImageCellViewIdentifier = "topicImageCell"
+    private let topicWithImageCellViewHeight = CGFloat(285)
     
     private let loadingDataCellViewNibName = "LoadingTableViewCell"
     private let loadingDataCellViewIdentifier = "loadingCell"
@@ -229,11 +371,11 @@ class UserDetailViewController: TableViewController {
         let nib1 = UINib(nibName: userFollowCellViewNibName, bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: userFollowCellViewIdentifer)
         
-        let nib2 = UINib(nibName: topicTextCellViewNibName, bundle: nil)
-        tableView.registerNib(nib2, forCellReuseIdentifier: topicTextCellViewIdentifier)
+        let nib2 = UINib(nibName: topicWithOnlyTextCellViewNibName, bundle: nil)
+        tableView.registerNib(nib2, forCellReuseIdentifier: topicWithOnlyTextCellViewIdentifier)
         
-        let nib3 = UINib(nibName: topicImageCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: topicImageCellViewIdentifier)
+        let nib3 = UINib(nibName: topicWithImageCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: topicWithImageCellViewIdentifier)
         
         let nib4 = UINib(nibName: loadingDataCellViewNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: loadingDataCellViewIdentifier)
@@ -245,24 +387,57 @@ class UserDetailViewController: TableViewController {
     
     override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
-        return 1
+        return 2
     }
     
     
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if section == 0 {
-            return 2
+        func numberOfDataRows() -> Int {
+            
+            var number = 0
+            
+            switch displayedData {
+                
+            case .AuthoredTopics:
+                number = authoredTopics.count
+                
+            case .AuthoredPosts:
+                number = authoredPosts.count
+                
+            case .Following:
+                number = usersBeingFollowed.count
+                
+            case .Followers:
+                number = usersFollowingMe.count
+                
+            case .None:
+                number = 0
+            }
+            
+            return number
         }
-        else {
+        
+        var numberOfRows = 0
+        switch section {
+            
+        case 0:
+            numberOfRows = 2
+            
+        case 1:
+            numberOfRows = numberOfDataRows()
+            
+        default:
             assert(false)
         }
+        
+        return numberOfRows
     }
 
     
     private enum TableCellType {
         
-        case UserDetail, Loading, Following, DisplayOptions, TopicText, TopicImage, User
+        case UserDetail, Loading, FollowStats, DisplayOptions, TopicWithOnlyText, TopicWithImage, Post, FolloweeOrFollower
     }
     
     
@@ -270,7 +445,9 @@ class UserDetailViewController: TableViewController {
         
         var type: TableCellType?
         
-        if indexPath.section == 0 {
+        switch indexPath.section {
+            
+        case 0:
             
             if indexPath.row == 0 {
                 type = .UserDetail
@@ -278,19 +455,38 @@ class UserDetailViewController: TableViewController {
             else if indexPath.row == 1 {
                 
                 if fetchingUserInformation {
-                    return .Loading
+                    type = .Loading
                 }
                 else if displayingCurrentUser() {
-                    return .DisplayOptions
+                    type = .DisplayOptions
                 }
+                else {
+                    type = .FollowStats
+                }
+             }
+            
+        case 1:
+            
+            switch displayedData {
                 
-                return .Following
+            case .AuthoredTopics:
+                let theTopic = authoredTopics[indexPath.row]
+                type = theTopic.hasImage() ? .TopicWithImage : .TopicWithOnlyText
+                
+            case .AuthoredPosts:
+                type = .Post
+                
+            case .Following:
+                type = .FolloweeOrFollower
+                
+            case .Followers:
+                type = .FolloweeOrFollower
+                
+            case .None:
+                assert(false)
             }
-        }
-        else if indexPath.section == 1 {
-            type = .TopicText
-        }
-        else {
+            
+        default:
             assert(false)
         }
         
@@ -322,20 +518,23 @@ class UserDetailViewController: TableViewController {
         case .Loading:
             height = loadingDataCellViewHeight
             
-        case .Following:
+        case .FollowStats:
             height = userFollowCellViewHeight
             
         case .DisplayOptions:
             height = displayOptionsCellViewHeight
             
-        case .TopicText:
-            height = topicTextCellViewHeight
+        case .TopicWithOnlyText:
+            height = topicWithOnlyTextCellViewHeight
             
-        case .TopicImage:
-            height = topicImageCellViewHeight
+        case .TopicWithImage:
+            height = topicWithImageCellViewHeight
             
-        case .User:
-            height = topicImageCellViewHeight
+        case .Post:
+            height = 0
+            
+        case .FolloweeOrFollower:
+            height = 0
         }
         
         return height
@@ -357,7 +556,7 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
-        func initializeUserFollowCell() -> UITableViewCell {
+        func initializeFollowStatsCell(user: User) -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
             cell.displayedUser = user
@@ -376,17 +575,31 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
-        func initializeTopicTextCell() -> UITableViewCell {
+        func initializeTopicWithOnlyTextCell(topic: Topic) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(topicTextCellViewIdentifier) as! TopicMasterTableViewCell
-//            cell.displayedTopic = user
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithOnlyTextCellViewIdentifier) as! TopicMasterTableViewCell
+            cell.displayedTopic = topic
             return cell
         }
         
-        func initializeTopicImageCell() -> UITableViewCell {
+        func initializeTopicWithImageCell(topic: Topic) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(topicImageCellViewIdentifier) as! TopicMasterTableViewCell
-//            cell.cell.displayedTopic = user
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellViewIdentifier) as! TopicMasterTableViewCell
+            cell.displayedTopic = topic
+            return cell
+        }
+        
+        func initializePostCell(post: Post) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellViewIdentifier) as! TopicMasterTableViewCell
+//            cell.displayedTopic = topic
+            return cell
+        }
+        
+        func initializeFolloweeFollowerCell(user: User) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
+            cell.displayedUser = user
             return cell
         }
         
@@ -403,30 +616,47 @@ class UserDetailViewController: TableViewController {
             
             cell = initializeLoadingDataCell()
             
-        case .Following:
+        case .FollowStats:
             
-            cell = initializeUserFollowCell()
+            cell = initializeFollowStatsCell(user!)
             
         case .DisplayOptions:
             
             cell = initializeDisplayOptionsCell()
             
-        case .TopicText:
+        case .TopicWithOnlyText:
             
-            cell = initializeTopicTextCell()
+            let topic = authoredTopics[indexPath.row]
+            cell = initializeTopicWithOnlyTextCell(topic)
             
-        case .TopicImage:
+        case .TopicWithImage:
             
-            cell = initializeTopicImageCell()
+            let topic = authoredTopics[indexPath.row]
+            cell = initializeTopicWithImageCell(topic)
             
-        case .User:
+        case .Post:
             
-            cell = initializeTopicImageCell()
+            let post = authoredPosts[indexPath.row]
+            cell = initializePostCell(post)
             
+        case .FolloweeOrFollower:
+            
+            let theUser = displayedData == .Following ? usersBeingFollowed[indexPath.row] : usersFollowingMe[indexPath.row]
+            cell = initializeFolloweeFollowerCell(theUser)
         }
         
         return cell
     }
+
+    
+    private func updateDataSection() {
+        
+        tableView.beginUpdates()
+        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
+        tableView.endUpdates()
+    }
+    
+    
 
     
     
@@ -460,7 +690,21 @@ class UserDetailViewController: TableViewController {
     func handleDisplayOptionDidChange(notification: NSNotification) {
         
         let sender = notification.object as! DataDisplayOptionsTableViewCell
-        print("changed -> \(sender.selection)")
+        
+        switch sender.selection {
+            
+        case .AuthoredTopics:
+            displayedData = .AuthoredTopics
+            
+        case .AuthoredPosts:
+            displayedData = .AuthoredPosts
+            
+        case .Following:
+            displayedData = .Following
+            
+        case .Followers:
+            displayedData = .Followers
+        }
     }
     
     

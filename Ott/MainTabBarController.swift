@@ -65,7 +65,7 @@ class MainTabBarController: UITabBarController {
     
     private lazy var userSummaryViewController: UIViewController = {
         
-        let storyboard = UIStoryboard(name: "UserSummary", bundle: nil)
+        let storyboard = UIStoryboard(name: "User", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
