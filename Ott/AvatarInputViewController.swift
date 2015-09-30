@@ -82,7 +82,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     @IBAction func doneAction(sender: AnyObject) {
         
         doneButton.enabled = false
-        MaintenanceQueue.sharedInstance.addOperation(UpdateUserOperation())
+        MaintenanceQueue.sharedInstance.addOperation(UpdateUserOperation(completion: nil))
         presentViewController(mainViewController(), animated: true, completion: nil)
     }
     

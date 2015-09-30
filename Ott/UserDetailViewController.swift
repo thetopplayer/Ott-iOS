@@ -434,7 +434,11 @@ class UserDetailViewController: TableViewController {
     
     private func startObservations() {
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSettingsAction:", name: UserDetailTableViewCell.settingsButtonWasTappedNotification, object: nil)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDisplayOptionDidChange:", name: DataDisplayOptionsTableViewCell.selectionDidChangeNotification, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUserUpdateNotification:", name: UpdateUserOperation.Notifications.DidUpdate, object: nil)
     }
     
     
@@ -442,11 +446,32 @@ class UserDetailViewController: TableViewController {
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
-
+    
+    
+    func handleSettingsAction(notification: NSNotification) {
+        
+        let storyboard = UIStoryboard(name: "Settings", bundle: nil)
+        let viewController = storyboard.instantiateViewControllerWithIdentifier("settingsViewController")
+        
+        presentViewController(viewController, animated: true, completion: nil)
+    }
+    
     
     func handleDisplayOptionDidChange(notification: NSNotification) {
         
         let sender = notification.object as! DataDisplayOptionsTableViewCell
         print("changed -> \(sender.selection)")
+    }
+    
+    
+    func handleUserUpdateNotification(notification: NSNotification) {
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.tableView.beginUpdates()
+            let indexPath = NSIndexPath(forRow: 0, inSection: 0)
+            self.tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: UITableViewRowAnimation.None)
+            self.tableView.endUpdates()
+        }
     }
 }

@@ -113,7 +113,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         currentUser().handle = handleTextField.text
         currentUser().bio = bioTextView.text
         
-        MaintenanceQueue.sharedInstance.addOperation(UpdateUserOperation())
+        MaintenanceQueue.sharedInstance.addOperation(UpdateUserOperation(completion: nil))
     }
     
     

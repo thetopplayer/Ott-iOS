@@ -35,10 +35,12 @@ class TableViewController: UITableViewController {
         return _viewWasLoaded
     }
     
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         _viewWasLoaded = true
     }
+    
     
     private var _isVisible = false
     func isVisible() -> Bool {
@@ -46,8 +48,8 @@ class TableViewController: UITableViewController {
     }
     
     
-    override func viewWillAppear(animated: Bool) {
-        super.viewWillAppear(animated)
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
         _isVisible = true
     }
     

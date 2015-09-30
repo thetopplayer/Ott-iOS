@@ -114,7 +114,7 @@ class UserDetailTableViewCell: TableViewCell {
         
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = user.handle
-        bioTextLabel.attributedText = attributedTextForBio(topic!.authorBio)
+        bioTextLabel.attributedText = attributedTextForBio(user.bio)
         
         if user.hasAvatar() {
             user.getAvatar({ (success, image) -> Void in
@@ -124,5 +124,16 @@ class UserDetailTableViewCell: TableViewCell {
                 }
             })
         }
+    }
+    
+    
+    
+    //MARK: - Actions
+    
+    static let settingsButtonWasTappedNotification = "settingsButtonWasTappedNotification"
+    @IBAction func displaySettingsAction(sender: AnyObject) {
+        
+        let notification = NSNotification(name: UserDetailTableViewCell.settingsButtonWasTappedNotification, object: self)
+        NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostASAP)
     }
 }

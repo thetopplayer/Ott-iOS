@@ -74,6 +74,9 @@
                                 <inset key="contentEdgeInsets" minX="2" minY="2" maxX="2" maxY="2"/>
                                 <inset key="imageEdgeInsets" minX="4" minY="4" maxX="4" maxY="4"/>
                                 <state key="normal" title="Settings" image="gears"/>
+                                <connections>
+                                    <action selector="displaySettingsAction:" destination="b47-XV-U1m" eventType="touchUpInside" id="mwd-9a-hii"/>
+                                </connections>
                             </button>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>

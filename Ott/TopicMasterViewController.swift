@@ -53,9 +53,9 @@ class TopicMasterViewController: TableViewController {
         
         super.didReceiveMemoryWarning()
         
-        if isVisible() == false {
-            topics.removeAll()
-        }
+//        if isVisible() == false {
+//            topics.removeAll()
+//        }
     }
 
     
