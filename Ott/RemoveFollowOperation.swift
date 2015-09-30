@@ -10,10 +10,12 @@ import UIKit
 
 class RemoveFollowOperation: ParseOperation {
 
+    let followerHandle: String
     let followeeHandle: String
     
-    init(followeeHandle: String) {
+    init(followerHandle: String, followeeHandle: String) {
         
+        self.followerHandle = followerHandle
         self.followeeHandle = followeeHandle
         super.init()
     }
@@ -36,6 +38,7 @@ class RemoveFollowOperation: ParseOperation {
         
         let query = Follow.query()!
         query.limit = 1
+        query.whereKey(DataKeys.FollowerHandle, equalTo: followerHandle)
         query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
         
         do {
@@ -70,7 +73,7 @@ class RemoveFollowOperation: ParseOperation {
                     return
                 }
                 
-                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not create follow relationship:")
+                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not delete follow relationship:")
             }
             
             dispatch_async(dispatch_get_main_queue()) {

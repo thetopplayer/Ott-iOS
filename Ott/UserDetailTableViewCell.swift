@@ -68,6 +68,22 @@ class UserDetailTableViewCell: TableViewCell {
     
     //MARK: - Display
     
+    private func attributedTextForBio(bio: String?) -> NSAttributedString {
+        
+        if let bio = bio {
+            
+            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.blackColor(), NSFontAttributeName: UIFont.systemFontOfSize(14)]
+            return NSAttributedString(string: bio, attributes: normalAttributes)
+            
+        }
+        else {
+            
+            let inactiveAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.systemFontOfSize(14)]
+            return NSAttributedString(string: "(no bio)", attributes: inactiveAttributes)
+        }
+    }
+    
+    
     private func updateDisplayForTopic() {
         
         guard let topic = topic else {
@@ -75,10 +91,8 @@ class UserDetailTableViewCell: TableViewCell {
         }
         
         settingsButton.hidden = displayingCurrentUser == false
-        
         handleTextLabel.text = topic.authorHandle
-        let bioText = topic.authorBio != nil ? topic.authorBio : "(no bio)"
-        bioTextLabel.text = bioText
+        bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
         
         if topic.hasAuthorAvatar() {
             topic.getAuthorAvatarImage({ (success, image) -> Void in
@@ -99,10 +113,8 @@ class UserDetailTableViewCell: TableViewCell {
         }
         
         settingsButton.hidden = displayingCurrentUser == false
-        
         handleTextLabel.text = user.handle
-        let bioText = user.bio != nil ? user.bio : "(no bio)"
-        bioTextLabel.text = bioText
+        bioTextLabel.attributedText = attributedTextForBio(topic!.authorBio)
         
         if user.hasAvatar() {
             user.getAvatar({ (success, image) -> Void in

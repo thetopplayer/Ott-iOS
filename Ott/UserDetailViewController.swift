@@ -111,6 +111,20 @@ class UserDetailViewController: TableViewController {
     }
     
     
+    private func displayingCurrentUser() -> Bool {
+        
+        if let user = user {
+            return user.isEqual(currentUser())
+        }
+        
+        if let topic = topic {
+            return topic.authorHandle == currentUser().handle!
+        }
+        
+        return false
+    }
+    
+    
     private var fetchingUserInformation = false
     private func fetchAndPresentUserInfo() {
         
@@ -124,21 +138,38 @@ class UserDetailViewController: TableViewController {
         
         fetchingUserInformation = true
         
-        let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (user, error) in
+        if displayingCurrentUser() {
             
-            if user != nil {
+            let updateOperation = UpdateUserOperation() { (success, error) in
+             
+                if success {
+                    self.user = currentUser()
+                }
+                else if error != nil {
+                    self.presentOKAlertWithError(error!)
+                }
                 
-                self.user = user
-            }
-            else if error != nil {
-                
-                self.presentOKAlertWithError(error!)
+                self.fetchingUserInformation = false
             }
             
-            self.fetchingUserInformation = false
+            FetchQueue.sharedInstance.addOperation(updateOperation)
         }
-        
-        FetchQueue.sharedInstance.addOperation(fetchOperation)
+        else {
+            
+            let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (user, error) in
+                
+                if user != nil {
+                    self.user = user
+                }
+                else if error != nil {
+                    self.presentOKAlertWithError(error!)
+                }
+                
+                self.fetchingUserInformation = false
+            }
+            
+            FetchQueue.sharedInstance.addOperation(fetchOperation)
+        }
     }
     
     
@@ -164,7 +195,7 @@ class UserDetailViewController: TableViewController {
     
     private let userFollowCellViewNibName = "UserFollowTableViewCell"
     private let userFollowCellViewIdentifer = "followCell"
-    private let userFollowCellViewHeight = CGFloat(38)
+    private let userFollowCellViewHeight = CGFloat(44)
     
     private let topicTextCellViewNibName = "TopicMasterTableViewCell"
     private let topicTextCellViewIdentifier = "topicCell"
@@ -176,7 +207,11 @@ class UserDetailViewController: TableViewController {
     
     private let loadingDataCellViewNibName = "LoadingTableViewCell"
     private let loadingDataCellViewIdentifier = "loadingCell"
-    private let loadingDataCellViewHeight = CGFloat(38)
+    private let loadingDataCellViewHeight = CGFloat(44)
+    
+    private let displayOptionsCellViewNibName = "DataDisplayOptionsTableViewCell"
+    private let displayOptionsCellViewIdentifier = "dataOptionsCell"
+    private let displayOptionsCellViewHeight = CGFloat(44)
     
     private let headerViewHeight = CGFloat(0.1)
     private let footerViewHeight = CGFloat(1.0)
@@ -202,6 +237,9 @@ class UserDetailViewController: TableViewController {
         
         let nib4 = UINib(nibName: loadingDataCellViewNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: loadingDataCellViewIdentifier)
+        
+        let nib5 = UINib(nibName: displayOptionsCellViewNibName, bundle: nil)
+        tableView.registerNib(nib5, forCellReuseIdentifier: displayOptionsCellViewIdentifier)
     }
 
     
@@ -214,14 +252,6 @@ class UserDetailViewController: TableViewController {
     override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         if section == 0 {
-            
-            if user == nil {
-                
-                if fetchingUserInformation {
-                    return 2
-                }
-                return 1
-            }
             return 2
         }
         else {
@@ -232,7 +262,7 @@ class UserDetailViewController: TableViewController {
     
     private enum TableCellType {
         
-        case UserDetail, UserFollow, TopicText, TopicImage, Loading
+        case UserDetail, Loading, Following, DisplayOptions, TopicText, TopicImage, User
     }
     
     
@@ -247,7 +277,14 @@ class UserDetailViewController: TableViewController {
             }
             else if indexPath.row == 1 {
                 
-                type = fetchingUserInformation ? .Loading : .UserFollow
+                if fetchingUserInformation {
+                    return .Loading
+                }
+                else if displayingCurrentUser() {
+                    return .DisplayOptions
+                }
+                
+                return .Following
             }
         }
         else if indexPath.section == 1 {
@@ -282,8 +319,14 @@ class UserDetailViewController: TableViewController {
         case .UserDetail:
             height = userDetailCellViewHeight
             
-        case .UserFollow:
+        case .Loading:
+            height = loadingDataCellViewHeight
+            
+        case .Following:
             height = userFollowCellViewHeight
+            
+        case .DisplayOptions:
+            height = displayOptionsCellViewHeight
             
         case .TopicText:
             height = topicTextCellViewHeight
@@ -291,9 +334,8 @@ class UserDetailViewController: TableViewController {
         case .TopicImage:
             height = topicImageCellViewHeight
             
-        case .Loading:
-            height = loadingDataCellViewHeight
-            
+        case .User:
+            height = topicImageCellViewHeight
         }
         
         return height
@@ -328,6 +370,12 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
+        func initializeDisplayOptionsCell() -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(displayOptionsCellViewIdentifier) as! DataDisplayOptionsTableViewCell
+            return cell
+        }
+        
         func initializeTopicTextCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(topicTextCellViewIdentifier) as! TopicMasterTableViewCell
@@ -351,9 +399,17 @@ class UserDetailViewController: TableViewController {
             
             cell = initializeUserDetailCell()
             
-        case .UserFollow:
+        case .Loading:
+            
+            cell = initializeLoadingDataCell()
+            
+        case .Following:
             
             cell = initializeUserFollowCell()
+            
+        case .DisplayOptions:
+            
+            cell = initializeDisplayOptionsCell()
             
         case .TopicText:
             
@@ -363,9 +419,10 @@ class UserDetailViewController: TableViewController {
             
             cell = initializeTopicImageCell()
             
-        case .Loading:
+        case .User:
             
-            cell = initializeLoadingDataCell()
+            cell = initializeTopicImageCell()
+            
         }
         
         return cell
@@ -377,12 +434,19 @@ class UserDetailViewController: TableViewController {
     
     private func startObservations() {
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDisplayOptionDidChange:", name: DataDisplayOptionsTableViewCell.selectionDidChangeNotification, object: nil)
     }
     
     
     private func endObservations() {
         
-//        NSNotificationCenter.defaultCenter().removeObserver(self)
+        NSNotificationCenter.defaultCenter().removeObserver(self)
     }
 
+    
+    func handleDisplayOptionDidChange(notification: NSNotification) {
+        
+        let sender = notification.object as! DataDisplayOptionsTableViewCell
+        print("changed -> \(sender.selection)")
+    }
 }

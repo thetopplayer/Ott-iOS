@@ -10,8 +10,13 @@ import UIKit
 
 class UpdateUserOperation: ParseOperation {
 
-    override init() {
+    typealias CompletionBlock = (success: Bool, error: NSError?) -> Void
+    
+    var completionHandler: CompletionBlock?
+    
+    init(completion: CompletionBlock?) {
         
+        completionHandler = completion
         super.init()
     }
     
@@ -49,8 +54,13 @@ class UpdateUserOperation: ParseOperation {
         clearBackgroundTask()
         
         if errors.count == 0 {
-            
+
             dispatch_async(dispatch_get_main_queue()) {
+                
+                if let completion = self.completionHandler {
+                    completion(success: true, error: nil)
+                }
+                
                 NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.DidUpdate,
                     object: self)
             }
@@ -59,16 +69,21 @@ class UpdateUserOperation: ParseOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                guard let controller = topmostViewController() else {
-                    return
+                if let completion = self.completionHandler {
+                    completion(success: false, error: errors.first!)
                 }
-                
-                controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not update user:")
+                else {
+                    
+                    if let controller = topmostViewController() {
+                            controller.presentOKAlertWithError(errors.first!, messagePreamble: "Could not update user:")
+                    }
+                }
             }
             
             dispatch_async(dispatch_get_main_queue()) {
                 
                 let userinfo: [NSObject: AnyObject] = [UpdateUserOperation.Notifications.ErrorKey: errors.first!]
+                
                 NSNotificationCenter.defaultCenter().postNotificationName(UpdateUserOperation.Notifications.UpdateDidFail,
                     object: self,
                     userInfo: userinfo)

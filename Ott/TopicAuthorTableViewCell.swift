@@ -14,24 +14,33 @@ class TopicAuthorTableViewCell: TableViewCell {
     @IBOutlet var authorHandleLabel: UILabel!
     @IBOutlet var authorBioLabel: UILabel!
     @IBOutlet var authorImageView: UIImageView!
-    @IBOutlet var followButton: UIButton!
     
     
     override func awakeFromNib() {
         
         super.awakeFromNib()
-
         innerContentContainer?.addBorder()
-        authorImageView.addRoundedBorder()
         
-        authorHandleLabel.textColor = UIColor.tint()
         let tapGR: UIGestureRecognizer = {
             
             let gr = UITapGestureRecognizer()
             gr.addTarget(self, action: "displayAuthorDetail:")
             return gr
-        }()
-        authorHandleLabel.addGestureRecognizer(tapGR)
+            }()
+
+        authorImageView.addRoundedBorder()
+        authorImageView.addGestureRecognizer(tapGR)
+        authorImageView.userInteractionEnabled = true
+        
+        let tapGR1: UIGestureRecognizer = {
+            
+            let gr = UITapGestureRecognizer()
+            gr.addTarget(self, action: "displayAuthorDetail:")
+            return gr
+            }()
+        
+        authorHandleLabel.textColor = UIColor.tint()
+        authorHandleLabel.addGestureRecognizer(tapGR1)
         authorHandleLabel.userInteractionEnabled = true
     }
     
@@ -41,30 +50,6 @@ class TopicAuthorTableViewCell: TableViewCell {
         didSet {
             updateContents()
         }
-    }
-    
-    
-    private func setFollowButton() {
-    
-        followButton.setTitle("Follow", forState: UIControlState.Normal)
-        let color = UIColor.tint()
-        followButton.tintColor = color
-        followButton.addRoundedBorder(withColor: color)
-        
-        followButton.removeTarget(self, action: "handleUnfollowAction:", forControlEvents: .TouchUpInside)
-        followButton.addTarget(self, action: "handleFollowAction:", forControlEvents: .TouchUpInside)
-    }
-    
-    
-    private func setUnfollowButton() {
-        
-        followButton.setTitle("Unfollow", forState: UIControlState.Normal)
-        let color = UIColor.redColor()
-        followButton.tintColor = color
-        followButton.addRoundedBorder(withColor: color)
-        
-        followButton.removeTarget(self, action: "handleFollowAction:", forControlEvents: .TouchUpInside)
-        followButton.addTarget(self, action: "handleUnfollowAction:", forControlEvents: .TouchUpInside)
     }
     
     
@@ -86,48 +71,8 @@ class TopicAuthorTableViewCell: TableViewCell {
                 }
             })
         }
-        
-        if currentUser().didAuthorTopic(topic) {
-            
-            followButton.hidden = true
-        }
-        else {
-            
-            followButton.hidden = false
-            
-            if currentUser().isFollowingUserWithHandle(topic.authorHandle!) {
-                setUnfollowButton()
-            }
-            else {
-                setFollowButton()
-            }
-        }
     }
     
-    
-    @IBAction func handleFollowAction(sender: AnyObject) {
-        
-        guard let topic = displayedTopic else {
-            return
-        }
-        
-        let createFollowOperation = CreateFollowOperation(followeeHandle: topic.authorHandle!)
-        MaintenanceQueue.sharedInstance.addOperation(createFollowOperation)
-        setUnfollowButton()
-    }
-    
-    
-    @IBAction func handleUnfollowAction(sender: AnyObject) {
-        
-        guard let topic = displayedTopic else {
-            return
-        }
-        
-        let removeFollowOperation = RemoveFollowOperation(followeeHandle: topic.authorHandle!)
-        MaintenanceQueue.sharedInstance.addOperation(removeFollowOperation)
-        setFollowButton()
-    }
-
     
     private func presentAuthorInfo() {
         

@@ -61,17 +61,17 @@ class UserFollowTableViewCell: TableViewCell {
         }
         
         if currentUser().isFollowingUserWithHandle(user.handle!) {
-            setFollowButton()
+            setUnfollowButton()
         }
         else {
-            setUnfollowButton()
+            setFollowButton()
         }
         
         followingInfoLabel.attributedText = {
             
-            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(12)]
+            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(13)]
             
-            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(12)]
+            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(13)]
             
             let s1 = NSMutableAttributedString(string: "FOLLOWERS: ", attributes: normalAttributes)
             let followerCountString: String = {
@@ -128,7 +128,7 @@ class UserFollowTableViewCell: TableViewCell {
             return
         }
         
-        let removeFollowOperation = RemoveFollowOperation(followeeHandle: user.handle!)
+        let removeFollowOperation = RemoveFollowOperation(followerHandle: currentUser().handle!, followeeHandle: user.handle!)
         MaintenanceQueue.sharedInstance.addOperation(removeFollowOperation)
         setFollowButton()
     }
