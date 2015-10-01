@@ -130,7 +130,9 @@ class TopicMasterTableViewCell: TableViewCell {
             
             let hashColor = currentUser().didPostToTopic(topic) ? UIColor.grayColor() : UIColor.tint()
             
-            let titleColor = currentUser().didPostToTopic(topic) ? UIColor.blackColor() : UIColor.tint()
+//            let titleColor = currentUser().didPostToTopic(topic) ? UIColor.blackColor() : UIColor.tint()
+            
+            let titleColor = UIColor.blackColor()
             
             let titleFont = UIFont.boldSystemFontOfSize(20)
             let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
