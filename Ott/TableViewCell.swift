@@ -41,7 +41,7 @@ class TableViewCell: UITableViewCell {
     Used in Topic and Post cells
     */
     
-    private func dateToString(theDate: NSDate?) -> String {
+    func dateToString(theDate: NSDate?) -> String {
         
         var result = ""
         if let date = theDate {
@@ -57,7 +57,7 @@ class TableViewCell: UITableViewCell {
                 
             case 1:
                 dateFormatter.dateFormat = "h:mm a"
-                result = "YESTERDAY " + dateFormatter.stringFromDate(date)
+                result = "yesterday " + dateFormatter.stringFromDate(date)
                 
             case 2...6:
                 dateFormatter.dateFormat = "eeee h:mm a"
@@ -69,11 +69,11 @@ class TableViewCell: UITableViewCell {
             }
         }
         
-        return result.uppercaseString
+        return result
     }
 
     
-    private func relativeDistanceString(kilometers: CLLocationDistance) -> String {
+    func relativeDistanceString(kilometers: CLLocationDistance) -> String {
         
         if let usesMetric = NSLocale.currentLocale().objectForKey(NSLocaleUsesMetricSystem)?.boolValue {
             if usesMetric {
@@ -88,33 +88,41 @@ class TableViewCell: UITableViewCell {
     
     private let normalAttributes : [String : AnyObject] = {
         
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.75)
         let font = UIFont.systemFontOfSize(11)
-        return [NSForegroundColorAttributeName : UIColor.blackColor().colorWithAlphaComponent(0.75), NSFontAttributeName: font]
+        return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
     
     
-    private let darkAttributes : [String : AnyObject] = {
+    private let boldAttributes : [String : AnyObject] = {
         
-        let font = UIFont.systemFontOfSize(11)
-        return [NSForegroundColorAttributeName : UIColor.blackColor().colorWithAlphaComponent(0.9), NSFontAttributeName: font]
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.75)
+        let font = UIFont.boldSystemFontOfSize(11)
+        return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
     
     
     func timeAndLocationAttributedString(authoredObject: AuthoredObject) -> NSAttributedString {
         
-        let s1 = NSMutableAttributedString(string: dateToString(authoredObject.createdAt), attributes: darkAttributes)
+        let s = NSMutableAttributedString(string: "created ", attributes: normalAttributes)
         
-        var locationText = String()
-        if let objectLocation = authoredObject.location {
+        let s1 = NSAttributedString(string: dateToString(authoredObject.createdAt), attributes: boldAttributes)
+        
+        s.appendAttributedString(s1)
+        
+        let s2 = NSAttributedString(string: " from ", attributes: normalAttributes)
+        s.appendAttributedString(s2)
+        
+        var locationText = ""
+        
+        if let location = authoredObject.location {
             
-            locationText += "  |  "
-            
-            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(objectLocation) {
+            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(location) {
                 
                 let distance = metersAway / 1000
                 
                 if distance < 1.0 {
-                    locationText += "Nearby"
+                    locationText += "nearby"
                 }
                 else if distance < 15.0 {
                     locationText += relativeDistanceString(distance)
@@ -129,13 +137,11 @@ class TableViewCell: UITableViewCell {
                     }
                 }
             }
-            
-            locationText = locationText.uppercaseString
         }
         
-        let s2 = NSAttributedString(string: locationText, attributes: normalAttributes)
-        s1.appendAttributedString(s2)
-        return s1
+        let s3 = NSAttributedString(string: locationText, attributes: boldAttributes)
+        s.appendAttributedString(s3)
+        return s
     }
     
     
@@ -145,20 +151,25 @@ class TableViewCell: UITableViewCell {
             return timeAndLocationAttributedString(topic)
         }
         
-        let s1 = NSMutableAttributedString(string: dateToString(topic.updatedAt), attributes: darkAttributes)
+        let s = NSMutableAttributedString(string: "last updated ", attributes: normalAttributes)
         
-        var locationText = String()
+        let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: boldAttributes)
+        
+        s.appendAttributedString(s1)
+        
+        let s2 = NSAttributedString(string: " from ", attributes: normalAttributes)
+        s.appendAttributedString(s2)
+        
+        var locationText = ""
         
         if let lastPostLocation = topic.lastPostLocation {
-            
-            locationText += "  |  "
             
             if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(lastPostLocation) {
                 
                 let distance = metersAway / 1000
                 
                 if distance < 1.0 {
-                    locationText += "Nearby"
+                    locationText += "nearby"
                 }
                 else if distance < 15.0 {
                     locationText += relativeDistanceString(distance)
@@ -173,13 +184,11 @@ class TableViewCell: UITableViewCell {
                     }
                 }
             }
-            
-            locationText = locationText.uppercaseString
         }
         
-        let s2 = NSAttributedString(string: locationText, attributes: normalAttributes)
-        s1.appendAttributedString(s2)
-        return s1
+        let s3 = NSAttributedString(string: locationText, attributes: boldAttributes)
+        s.appendAttributedString(s3)
+        return s
     }
     
 }

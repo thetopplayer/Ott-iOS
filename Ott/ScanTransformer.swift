@@ -79,48 +79,6 @@ class AztecCode {
 }
 
 
-class DotView: UIView {
-    
-    var fillColor = UIColor.whiteColor()
-    var borderColor = UIColor.blueColor()
-    var borderWidth = CGFloat(1)
-    
-    override init(frame: CGRect) {
-        
-        super.init(frame: frame)
-        backgroundColor = UIColor.clearColor()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        
-        super.init(coder: aDecoder)
-        backgroundColor = UIColor.clearColor()
-    }
-    
-    
-    convenience init(frame: CGRect, fillColor: UIColor, borderColor: UIColor, borderWidth: CGFloat) {
-        
-        self.init(frame: frame)
-        self.fillColor = fillColor
-        self.borderColor = borderColor
-        self.borderWidth = borderWidth
-    }
-    
-    
-    override func drawRect(rect: CGRect) {
-        
-        let rect = CGRectMake(borderWidth, borderWidth, bounds.size.width - 2 * borderWidth, bounds.size.height - 2 * borderWidth)
-        let path = UIBezierPath(ovalInRect: rect)
-        fillColor.setFill()
-        path.fill()
-        
-        path.lineWidth = borderWidth
-        borderColor.setStroke()
-        path.stroke()
-    }
-}
-
-
 class ScanTransformer {
     
     static let sharedInstance = ScanTransformer()

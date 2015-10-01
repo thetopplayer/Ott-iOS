@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -22,6 +22,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="TIME | LOCATION" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="yhR-CB-qmU">
                                         <rect key="frame" x="8" y="3" width="575" height="19"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="19" id="0Gw-a6-Uuf"/>
                                         </constraints>
@@ -29,26 +30,19 @@
                                         <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                         <nil key="highlightedColor"/>
                                     </label>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="ePj-r1-VHW">
-                                        <rect key="frame" x="551" y="3" width="20" height="20"/>
-                                        <constraints>
-                                            <constraint firstAttribute="height" constant="20" id="adm-va-WOn"/>
-                                            <constraint firstAttribute="width" constant="20" id="qPG-Nk-xIr"/>
-                                        </constraints>
-                                    </imageView>
                                 </subviews>
+                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="yhR-CB-qmU" firstAttribute="top" secondItem="0Vk-sQ-qmi" secondAttribute="top" constant="3" id="9F4-LB-bYd"/>
                                     <constraint firstAttribute="trailing" secondItem="yhR-CB-qmU" secondAttribute="trailing" constant="15" id="A37-sG-VBI"/>
-                                    <constraint firstAttribute="trailing" secondItem="ePj-r1-VHW" secondAttribute="trailing" constant="4" id="Rxq-YG-mKd"/>
                                     <constraint firstItem="yhR-CB-qmU" firstAttribute="leading" secondItem="0Vk-sQ-qmi" secondAttribute="leading" constant="8" id="Ve4-BE-sfC"/>
-                                    <constraint firstItem="ePj-r1-VHW" firstAttribute="centerY" secondItem="0Vk-sQ-qmi" secondAttribute="centerY" id="uG8-9d-zyI"/>
                                     <constraint firstAttribute="height" constant="25" id="uNW-id-Qdy"/>
                                 </constraints>
                             </view>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="l6o-gH-jvk">
                                 <rect key="frame" x="8" y="32" width="568" height="160"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="160" id="AMy-3t-2vF"/>
                                     <constraint firstAttribute="width" constant="85" id="Zgr-ak-R7Y"/>
@@ -61,6 +55,7 @@
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="4jP-Uc-zKK">
                                 <rect key="frame" x="8" y="200" width="568" height="36"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="36" id="Alm-J9-wHL"/>
                                     <constraint firstAttribute="height" constant="27" id="YkA-ai-8Ix"/>
@@ -75,6 +70,7 @@
                                 </variation>
                             </label>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="0Vk-sQ-qmi" firstAttribute="top" secondItem="Qji-UI-64z" secondAttribute="top" constant="-1" id="2QQ-Ar-lae"/>
@@ -94,6 +90,7 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="K8H-cV-EK1">
                                 <rect key="frame" x="14" y="2" width="556" height="19"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="SYC-pl-TGo"/>
                                 </constraints>
@@ -102,6 +99,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="K8H-cV-EK1" firstAttribute="leading" secondItem="COW-Uw-XCX" secondAttribute="leading" constant="8" id="OQS-Jb-XVK"/>
@@ -111,6 +109,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <animations/>
                 <constraints>
                     <constraint firstAttribute="bottomMargin" secondItem="Qji-UI-64z" secondAttribute="bottom" constant="24" id="Ecn-bP-MZw"/>
                     <constraint firstItem="COW-Uw-XCX" firstAttribute="bottom" secondItem="pO6-JJ-6mc" secondAttribute="bottomMargin" id="Mt2-f2-FUz"/>
@@ -121,21 +120,16 @@
                     <constraint firstItem="Qji-UI-64z" firstAttribute="leading" secondItem="pO6-JJ-6mc" secondAttribute="leadingMargin" id="mwc-lz-eYD"/>
                 </constraints>
             </tableViewCellContentView>
+            <animations/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <connections>
-                <outlet property="contentLabel" destination="4jP-Uc-zKK" id="z0I-K2-dZa"/>
+                <outlet property="commentLabel" destination="yhR-CB-qmU" id="ttM-Ve-jO6"/>
                 <outlet property="innerContentContainer" destination="Qji-UI-64z" id="mev-Ms-9tP"/>
-                <outlet property="responseStatusImageView" destination="ePj-r1-VHW" id="kcZ-6O-rRk"/>
-                <outlet property="statusBar" destination="COW-Uw-XCX" id="BLl-2I-wKD"/>
-                <outlet property="statusLabel" destination="K8H-cV-EK1" id="OPu-kX-Uby"/>
-                <outlet property="topBar" destination="0Vk-sQ-qmi" id="REe-rI-QAJ"/>
-                <outlet property="topBarLabel" destination="yhR-CB-qmU" id="Tgz-AD-8zs"/>
+                <outlet property="statusLabel" destination="K8H-cV-EK1" id="qVC-SM-SDY"/>
+                <outlet property="titleLabel" destination="4jP-Uc-zKK" id="nsH-x5-Rtl"/>
                 <outlet property="topicImageView" destination="l6o-gH-jvk" id="Npl-cP-WxC"/>
             </connections>
             <point key="canvasLocation" x="145" y="224.5"/>
         </tableViewCell>
     </objects>
-    <resources>
-        <image name="smallDot" width="20" height="20"/>
-    </resources>
 </document>

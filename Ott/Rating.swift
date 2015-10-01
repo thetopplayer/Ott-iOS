@@ -50,7 +50,7 @@ struct Rating {
         
         if let r = value {
             
-            let color = r < 5 ? UIColor.redColor() : UIColor.tint()
+            let color = r < 5 ? UIColor.redColor() : UIColor.fern()
             return color
         }
         return UIColor.darkGrayColor()

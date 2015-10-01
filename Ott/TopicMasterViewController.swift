@@ -162,7 +162,7 @@ class TopicMasterViewController: TableViewController {
     
     private let cellNibName = "TopicMasterTableViewCell"
     private let cellIdentifier = "topicCell"
-    private let cellHeight = CGFloat(125)
+    private let cellHeight = CGFloat(100)
     
     private let imageCellNibName = "TopicWithImageMasterTableViewCell"
     private let imageCellIdentifier = "topicImageCell"
@@ -176,7 +176,7 @@ class TopicMasterViewController: TableViewController {
     
     private func setupTableView() {
         
-        tableView.separatorStyle = .None
+//        tableView.separatorStyle = .Default
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
 
