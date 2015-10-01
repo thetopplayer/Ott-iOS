@@ -160,13 +160,16 @@ class TopicMasterViewController: TableViewController {
     
     // MARK: - Table View
     
-    private let cellNibName = "TopicMasterTableViewCell"
-    private let cellIdentifier = "topicCell"
-    private let cellHeight = CGFloat(100)
+    private let cellNibName1 = "TopicMasterTableViewCellOne"
+    private let cellIdentifier1 = "topicCellOne"
+    private let cellNibName2 = "TopicMasterTableViewCellTwo"
+    private let cellIdentifier2 = "topicCellTwo"
+    private let cellNibName3 = "TopicMasterTableViewCellThree"
+    private let cellIdentifier3 = "topicCellThree"
     
-    private let imageCellNibName = "TopicWithImageMasterTableViewCell"
-    private let imageCellIdentifier = "topicImageCell"
-    private let imageCellHeight = CGFloat(285)
+    private let cellHeight = CGFloat(72)
+    private let cellHeightWithComment = CGFloat(96)
+    private let imageCellHeight = CGFloat(117)
     
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(0.1)
@@ -176,7 +179,6 @@ class TopicMasterViewController: TableViewController {
     
     private func setupTableView() {
         
-//        tableView.separatorStyle = .Default
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
 
@@ -188,11 +190,12 @@ class TopicMasterViewController: TableViewController {
             return rc
         }()
         
-        let nib = UINib(nibName: cellNibName, bundle: nil)
-        tableView.registerNib(nib, forCellReuseIdentifier: cellIdentifier)
-        
-        let nib1 = UINib(nibName: imageCellNibName, bundle: nil)
-        tableView.registerNib(nib1, forCellReuseIdentifier: imageCellIdentifier)
+        let nib1 = UINib(nibName: cellNibName1, bundle: nil)
+        tableView.registerNib(nib1, forCellReuseIdentifier: cellIdentifier1)
+        let nib2 = UINib(nibName: cellNibName2, bundle: nil)
+        tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)
+        let nib3 = UINib(nibName: cellNibName3, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: cellIdentifier3)
     }
 
     
@@ -237,26 +240,70 @@ class TopicMasterViewController: TableViewController {
         return displayedTopics.count
     }
     
+    
+    private enum CellType {
+        case NoCommentNoImage, NoImage, Image
+    }
+    
 
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    private func cellTypeForIndexPath(indexPath: NSIndexPath) -> CellType {
         
         let theTopic = displayedTopics[indexPath.row]
+        var type: CellType
+        
         if theTopic.hasImage() {
-            return imageCellHeight
+            type = .Image
+        }
+        else {
+            if theTopic.comment == nil {
+                type = .NoCommentNoImage
+            }
+            else {
+                type = .NoImage
+            }
         }
         
-        return cellHeight
+        return type
+    }
+    
+    
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var height = CGFloat(0)
+        switch cellTypeForIndexPath(indexPath) {
+            
+        case .NoCommentNoImage:
+            height = cellHeight
+            
+        case .NoImage:
+            height = cellHeightWithComment
+            
+        case .Image:
+            height = imageCellHeight
+        }
+        
+        return height
     }
     
     
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let theTopic = displayedTopics[indexPath.row]
+        let identifier: String
+        switch cellTypeForIndexPath(indexPath) {
+            
+        case .NoCommentNoImage:
+            identifier = cellIdentifier1
+            
+        case .NoImage:
+            identifier = cellIdentifier2
+            
+        case .Image:
+            identifier = cellIdentifier3
+        }
         
-        let identifier = theTopic.hasImage() ? imageCellIdentifier: cellIdentifier
         let cell = tableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
-        
-        cell.displayedTopic = theTopic
+        cell.displayedTopic = displayedTopics[indexPath.row]
+
         return cell
     }
     

@@ -63,6 +63,8 @@ class DotView: UIView {
         let dotRect: CGRect = CGRectMake(borderWidth, borderWidth, bounds.size.width - (2 * borderWidth), bounds.size.height - (2 * borderWidth))
         
         let path = UIBezierPath(ovalInRect: dotRect)
+        path.lineWidth = borderWidth
+        
         fillColor.setFill()
         path.fill()
         borderColor.setStroke()

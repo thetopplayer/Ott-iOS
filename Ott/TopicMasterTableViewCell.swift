@@ -15,7 +15,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var commentLabel: UILabel?
-    @IBOutlet var ratingView: LabeledDotView?
+    @IBOutlet var ratingView: LabeledDotView!
     @IBOutlet var topicImageView: UIImageView?
     
 
@@ -23,15 +23,21 @@ class TopicMasterTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
-        ratingView?.textColor = UIColor.whiteColor()
-        ratingView?.font = UIFont.boldSystemFontOfSize(15)
-        ratingView?.hidden = true
+        contentView.backgroundColor = UIColor.whiteColor()
+        
+        ratingView.textColor = UIColor.whiteColor()
+        ratingView.borderColor = UIColor.whiteColor()
+        ratingView.borderWidth = 2
+        ratingView.font = UIFont.boldSystemFontOfSize(15)
+        ratingView.hidden = true
+        
+        commentLabel?.textColor = UIColor(white: 0.15, alpha: 1.0)
         
         if let topicImageView = topicImageView {
             
             topicImageView.contentMode = .ScaleAspectFill
             topicImageView.clipsToBounds = true
-            topicImageView.addBorder()
+            topicImageView.addRoundedBorder(withColor: UIColor.whiteColor())
         }
 
         selectionStyle = .None
@@ -87,6 +93,9 @@ class TopicMasterTableViewCell: TableViewCell {
             titleLabel.attributedText = attributedTitle()
             if let comment = topic.comment {
                 commentLabel?.text = comment
+            }
+            else {
+                commentLabel?.text = ""
             }
             
             statusLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
