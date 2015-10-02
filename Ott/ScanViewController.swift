@@ -32,7 +32,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             startScanning()
         }
         else {
-            if hasRequestedCameraAccess {
+            if Globals.sharedInstance.didRequestCameraAccess {
                 
                 let alertViewController = UIAlertController(title: "Camera Access Disabled", message: "Please enable camera access in Settings>Preferences>Privacy to enable this feature.", preferredStyle: .Alert)
                 
@@ -63,12 +63,6 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     
     //MARK: - Access
     
-    private let requestedAccessUserDefaultsKey = "requestedCameraAccess"
-    private var hasRequestedCameraAccess: Bool {
-        return NSUserDefaults.standardUserDefaults().boolForKey(requestedAccessUserDefaultsKey)
-    }
-    
-    
     private func requestAccessToCamera() {
         
         let alertViewController = UIAlertController(title: "Camera Access", message: "This app can recognize 2D bar codes associated with topics.  In order to enable this feature, you will be asked to provide the app with access to your camera.", preferredStyle: .Alert)
@@ -78,7 +72,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             AVCaptureDevice.requestAccessForMediaType(AVMediaTypeVideo, completionHandler: {
                 (granted: Bool) -> Void in
                 
-                NSUserDefaults.standardUserDefaults().setBool(true, forKey: self.requestedAccessUserDefaultsKey)
+                Globals.sharedInstance.didRequestCameraAccess = true
                 
                 if granted {
                     self.createScanningSession()

@@ -94,24 +94,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func remindUserToPost() {
         
         let maximumNumberOfPrompts = 2
-        let userDefaultsKey = "remindersToPost"
-        func userPrompts() -> Int {
-            
-            return NSUserDefaults.standardUserDefaults().integerForKey(userDefaultsKey)
-        }
-        
-        func setUserPrompts(value: Int) {
-            NSUserDefaults.standardUserDefaults().setInteger(value, forKey: userDefaultsKey)
-        }
-
-        let numberOfPrompts = userPrompts()
+        let numberOfPrompts = Globals.sharedInstance.remindersToPostToTopic
         if numberOfPrompts >= maximumNumberOfPrompts {
             return
         }
         
         presentOKAlert(title: "Create a Post", message: "See what others have said about this topic by first posting your take on it.", actionHandler: nil)
         
-        setUserPrompts(numberOfPrompts + 1)
+        Globals.sharedInstance.remindersToPostToTopic = numberOfPrompts + 1
     }
     
     

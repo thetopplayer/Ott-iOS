@@ -126,30 +126,29 @@ class TopicMasterViewController: TableViewController {
     
     func update() {
         //stub
-        NSLog("NEED TO IMPLEMENT UPDATE FUNCTION")
     }
     
-
-    func _handleUpdateTimerFire(timer: NSTimer) {
-
-        update()
-    }
-    
-    
-    private var autoRefreshTimer: NSTimer?
-    func startAutomaticallyUpdatingFetches() {
-        
-        autoRefreshTimer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
-    }
-    
-    
-    func stopAutomaticallyUpdatingFetches() {
-        
-        if let autoRefreshTimer = autoRefreshTimer {
-            autoRefreshTimer.invalidate()
-        }
-    }
-    
+//
+//    func _handleUpdateTimerFire(timer: NSTimer) {
+//
+//        update()
+//    }
+//    
+//    
+//    private var autoRefreshTimer: NSTimer?
+//    func startAutomaticallyUpdatingFetches() {
+//        
+//        autoRefreshTimer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
+//    }
+//    
+//    
+//    func stopAutomaticallyUpdatingFetches() {
+//        
+//        if let autoRefreshTimer = autoRefreshTimer {
+//            autoRefreshTimer.invalidate()
+//        }
+//    }
+//    
     
     func hideRefreshControl() {
         

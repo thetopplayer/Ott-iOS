@@ -11,14 +11,87 @@ import UIKit
 
 //MARK: - Vars
 
-struct Globals {
+class Globals {
+    
+   static let sharedInstance = Globals()
+    
+    
+    //MARK: - Login and Sign Up
     
     var handleUsedToLogin = ""
     var nameUsedToLogin = ""
     var phoneNumberUsedToLogin = ""
+    
+    
+    //MARK: - User Defaults
+    
+    var defaultFetchSinceDate: NSDate {
+        let weekAgo = NSDate().daysFrom(-7)
+        return weekAgo
+    }
+    
+    private let lastUpdatedLocalTopicsKey = "lastUpdatedLocalTopicsKey"
+    var lastUpdatedLocalTopics: NSDate {
+        
+        get {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedLocalTopicsKey) as? NSDate {
+                return date
+            }
+            return defaultFetchSinceDate
+        }
+        
+        set {
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedLocalTopicsKey)
+        }
+    }
+    
+    private let lastUpdatedFollowedUsersTopicsKey = "lastUpdatedFollowedUsersTopics"
+    var lastUpdatedFollowedUsersTopics: NSDate {
+        
+        get {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFollowedUsersTopicsKey) as? NSDate {
+                return date
+            }
+            return defaultFetchSinceDate
+        }
+        
+        set {
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedFollowedUsersTopicsKey)
+        }
+    }
+    
+    
+    private let requestedAccessUserDefaultsKey = "requestedCameraAccess"
+    var didRequestCameraAccess: Bool {
+        
+        get {
+
+            return NSUserDefaults.standardUserDefaults().boolForKey(requestedAccessUserDefaultsKey)
+        }
+        
+        set {
+            
+            NSUserDefaults.standardUserDefaults().setBool(newValue, forKey: self.requestedAccessUserDefaultsKey)
+        }
+    }
+    
+    
+    private let remindersToPostKey = "remindersToPost"
+    var remindersToPostToTopic: Int {
+        
+        get {
+            
+            return NSUserDefaults.standardUserDefaults().integerForKey(remindersToPostKey)
+        }
+        
+        set {
+            
+            NSUserDefaults.standardUserDefaults().setInteger(newValue, forKey: remindersToPostKey)
+        }
+    }
 }
 
-var globals = Globals()
+
 
 
 //MARK: - Utilities
@@ -60,5 +133,11 @@ func documentsDirectory(withSubpath subpath: String) -> String? {
         return nil
     }
 }
+
+
+
+//MARK: - User Defaults
+
+
 
 

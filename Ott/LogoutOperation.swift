@@ -32,6 +32,7 @@ class LogoutOperation: ParseOperation {
         currentUser().purgeAuthoredTopicsArchive()
         currentUser().purgePostedTopicArchive()
         currentUser().purgeFollowedUsersArchive()
+        PFQuery.clearAllCachedResults()
         User.logOut()
         
         finishWithError(nil)

@@ -56,4 +56,47 @@ class ParseOperation: Operation {
         }
     }
     
+    
+    //MARK: - Caching
+    
+    enum DataSource {
+        case Cache, Server
+    }
+    
+    
+    static func replaceCache(pinName: String, withObjects newObjects: [PFObject]) {
+        
+        do {
+            
+            let _ = try? PFObject.unpinAllObjectsWithName(pinName)
+            updateCache(pinName, withObjects: newObjects)
+        }
+    }
+    
+    
+    static func updateCache(pinName: String, withObjects objects: [PFObject]) {
+        
+        do {
+            
+            try PFObject.pinAll(Array(objects), withName: pinName)
+        }
+        catch let error as NSError {
+            NSLog("error in updateCache = %@", error)
+        }
+    }
+    
+    
+    static func cachedObjects(pinName pinName: String) -> [PFObject] {
+        
+        let query = PFObject.query()!
+        query.fromPinWithName(pinName)
+        
+        let objects = try? query.findObjects()
+        
+        if objects == nil {
+            return []
+        }
+        return objects!
+    }
+
 }

@@ -16,14 +16,14 @@ class FetchFollowersOperation: ParseOperation {
     typealias CompletionBlock = (relationships: [Follow]?, error: NSError?) -> Void
     var completionHandler: CompletionBlock?
     
-    var fetchedData: [Follow]?
-    
     init(completion: CompletionBlock?) {
         
         completionHandler = completion
         super.init()
     }
     
+    
+    var fetchedData: [Follow]?
     
     
     //MARK: - Execution

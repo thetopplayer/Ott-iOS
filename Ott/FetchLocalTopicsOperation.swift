@@ -14,71 +14,43 @@ import Foundation
 class FetchLocalTopicsOperation: ParseOperation {
 
     static let localRadius = Double(20)
-    static let cacheName = "localTopicsCache"
+    static let pinName = "localTopics"
     
     let location: CLLocation
-    let updateOnly: Bool
+    let startingAt: NSDate
+    let replaceCache: Bool
+    let dataSource: ParseOperation.DataSource
     
+    typealias CompletionBlock = (topics: [Topic]?, error: NSError?) -> Void
+    var completionHandler: CompletionBlock?
     
-    init(location: CLLocation, updateOnly: Bool = false) {
+    init(dataSource: ParseOperation.DataSource, location: CLLocation, startingAt: NSDate, replaceCache: Bool, completion: CompletionBlock?) {
         
+        self.dataSource = dataSource
         self.location = location
-        self.updateOnly = updateOnly
+        self.startingAt = startingAt
+        self.replaceCache = replaceCache
+        completionHandler = completion
         
         super.init()
     }
     
-    
-    //MARK: - Caching
-    
-    private func replaceCachedTopics(withTopics newTopics: [Topic]) {
+    var fetchedData: [Topic]? {
         
-        do {
-           
-            let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
-            try PFObject.pinAll(newTopics, withName: FetchLocalTopicsOperation.cacheName)
-        }
-        catch let error as NSError {
-            NSLog("error in replaceCachedTopics = %@", error)
-        }
-    }
-    
-    
-    private func updateCachedTopics(withTopics newTopics: [Topic]) {
-        
-        let existingObjects = cachedLocalTopics()
-        
-        do {
+        didSet {
             
-            let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.cacheName)
-            let allTopics = Set(newTopics).union(Set(existingObjects))
-            try PFObject.pinAll(Array(allTopics), withName: FetchLocalTopicsOperation.cacheName)
-        }
-        catch let error as NSError {
-            NSLog("error in updateCachedTopics = %@", error)
-        }
-    }
-    
-    
-    private let lastUpdatedKey = "localTopicsLastUpdated"
-    private var defaultFetchSinceDate: NSDate {
-        let weekAgo = NSDate().daysFrom(-7)
-        return weekAgo
-    }
-    
-    private var lastUpdated: NSDate {
-        
-        get {
-            if updateOnly {
-                if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedKey) as? NSDate {
-                    return date
+            if let data = fetchedData {
+                
+                if dataSource == .Server {
+                    
+                    if replaceCache {
+                        ParseOperation.replaceCache(FetchLocalTopicsOperation.pinName, withObjects: data)
+                    }
+                    else {
+                        ParseOperation.updateCache(FetchLocalTopicsOperation.pinName, withObjects: data)
+                    }
                 }
-             }
-            return defaultFetchSinceDate
-        }
-        
-        set {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedKey)
+            }
         }
     }
     
@@ -90,28 +62,14 @@ class FetchLocalTopicsOperation: ParseOperation {
         let query = Topic.query()!
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
+        query.whereKey(DataKeys.UpdatedAt, greaterThan: startingAt)
         
-        let updateDate = updateOnly ? lastUpdated : defaultFetchSinceDate
-        query.whereKey(DataKeys.UpdatedAt, greaterThan: updateDate)
+        if dataSource == ParseOperation.DataSource.Cache {
+            query.fromPinWithName(FetchLocalTopicsOperation.pinName)
+        }
         
         do {
-            
-            let objects = try query.findObjects()
-            if let topics = objects as? [Topic] {
-                
-                if let mostRecentTopicUpdate = topics.first?.updatedAt {
-                    
-                    self.lastUpdated = mostRecentTopicUpdate
-                    
-                    if updateOnly {
-                        updateCachedTopics(withTopics: topics)
-                    }
-                    else {
-                        replaceCachedTopics(withTopics: topics)
-                    }
-                }
-            }
-            
+            fetchedData = (try query.findObjects()) as? [Topic]
             finishWithError(nil)
         }
         catch let error as NSError {
@@ -123,26 +81,11 @@ class FetchLocalTopicsOperation: ParseOperation {
     override func finished(errors: [NSError]) {
         
         super.finished(errors)
+        
+        if let completion = completionHandler {
+            completion(topics: fetchedData, error: errors.first)
+        }
     }
-}
-
-
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedLocalTopics() -> [Topic] {
-    
-    let query = Topic.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(FetchLocalTopicsOperation.cacheName)
-    
-    let topics = try? query.findObjects() as? [Topic]
-    
-    if topics == nil {
-        return []
-    }
-    return topics!!
 }
 
 

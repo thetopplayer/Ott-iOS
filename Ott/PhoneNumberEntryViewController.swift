@@ -106,7 +106,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     private func validateHandleIsAssociatedWithPhoneNumber() {
         
-        let params = ["phoneNumber": globals.phoneNumberUsedToLogin, "handle": globals.handleUsedToLogin]
+        let params = ["phoneNumber": Globals.sharedInstance.phoneNumberUsedToLogin, "handle": Globals.sharedInstance.handleUsedToLogin]
         PFCloud.callFunctionInBackground("verifyMatchingUsernameAndPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -129,7 +129,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
                         }
                         else {
                             
-                            let message = "The handle \(globals.handleUsedToLogin) is not associated with the phone number you entered.  Please make sure to enter the correct phone number and try again."
+                            let message = "The handle \(Globals.sharedInstance.handleUsedToLogin) is not associated with the phone number you entered.  Please make sure to enter the correct phone number and try again."
                             self.presentOKAlert(title: "Incorrect Data", message: message, actionHandler: {
                                 
                                 self.resetTextField()
@@ -154,7 +154,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
     
     private func sendVerificationCode() {
         
-        let params = ["phoneNumber": globals.phoneNumberUsedToLogin]
+        let params = ["phoneNumber": Globals.sharedInstance.phoneNumberUsedToLogin]
         PFCloud.callFunctionInBackground("sendVerificationCode", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
             dispatch_async(dispatch_get_main_queue()) {
@@ -182,7 +182,7 @@ class PhoneNumberEntryViewController: PageViewController, UITextFieldDelegate {
         button.enabled = false
         
         let formattedNumber = E164FormattedPhoneNumber(textField.text!)
-        globals.phoneNumberUsedToLogin = formattedNumber
+        Globals.sharedInstance.phoneNumberUsedToLogin = formattedNumber
         
         if verificationType == .Phone {
             button.setTitle("Sending Text...", forState: .Disabled)

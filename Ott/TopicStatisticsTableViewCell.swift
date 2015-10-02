@@ -27,10 +27,10 @@ class TopicStatisticsTableViewCell: TableViewCell {
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
         innerContentContainer?.addBorder()
         innerContentContainer?.addDownShadow()
-        countTitleLabel = "Posts"
+        countTitleLabel.text = "Posts"
         countLabel.text = ""
         countLabel.textColor = UIColor.brownColor()
-        ratingTitleLabel = "Average"
+        ratingTitleLabel.text = "Average"
         ratingLabel.text = ""
     }
     

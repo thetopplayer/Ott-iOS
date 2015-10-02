@@ -1,14 +1,14 @@
 //
-//  LocalViewController.swift
+//  FollowedTopicsViewController.swift
 //  Ott
 //
-//  Created by Max on 6/25/15.
+//  Created by Max on 10/2/15
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
 import UIKit
 
-class LocalViewController: TopicMasterViewController {
+class FollowedTopicsViewController: TopicMasterViewController {
 
     
     //MARK: - Lifecycle
@@ -25,36 +25,23 @@ class LocalViewController: TopicMasterViewController {
         fetchTopics(.CachedThenUpdate)
     }
 
-    
-    override func viewDidAppear(animated: Bool) {
-        
-        super.viewDidAppear(animated)
-//        startAutomaticallyUpdatingFetches()
-    }
-    
-    
-    override func viewDidDisappear(animated: Bool) {
-        
-        super.viewDidDisappear(animated)
-//        stopAutomaticallyUpdatingFetches()
-    }
-    
+
     
     
     //MARK: - Data
     
     private enum FetchType {
-        case CachedThenUpdate, Full, Update
+        case CachedThenUpdate, Update
     }
     
     
     private func fetchTopics(type: FetchType) {
 
-        func initializeCachedFetchOperation(location: CLLocation) -> Operation {
+        func initializeCachedFetchOperation() -> Operation {
             
             let start = Globals.sharedInstance.defaultFetchSinceDate
             
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, location: location, startingAt: start, replaceCache: false, completion: { (topics, error) -> Void in
+            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Cache, startingAt: start, completion: { (topics, error) in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -72,12 +59,12 @@ class LocalViewController: TopicMasterViewController {
         }
         
         
-        func initializeServerFetchOperation(location: CLLocation, startingAt: NSDate, replaceCache: Bool) -> Operation {
+        func initializeServerFetchOperation(startingAt startingAt: NSDate) -> Operation {
             
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, location: location, startingAt: startingAt, replaceCache: replaceCache, completion: { (topics, error) -> Void in
+            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Server, startingAt: startingAt, completion: { (topics, error) in
                 
                 if let mostRecentTopic = topics?.first {
-                     Globals.sharedInstance.lastUpdatedLocalTopics = mostRecentTopic.updatedAt!
+                    Globals.sharedInstance.lastUpdatedFollowedUsersTopics = mostRecentTopic.updatedAt!
                 }
                 
                 dispatch_async(dispatch_get_main_queue()) {
@@ -87,7 +74,7 @@ class LocalViewController: TopicMasterViewController {
                     self.displayStatus()
                     
                     if let error = error {
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving data from server", actionHandler: nil)
+                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
                     }
                 }
             })
@@ -95,34 +82,32 @@ class LocalViewController: TopicMasterViewController {
             return fetchOperation
         }
         
-        
-        guard let location = LocationManager.sharedInstance.location else {
-            print("call to fetch update but have no location")
-            return
-        }
-        
-        
+
         displayStatus(.Fetching)
         
         switch type {
             
         case .CachedThenUpdate:
 
-            let cacheOperation = initializeCachedFetchOperation(location)
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.defaultFetchSinceDate, replaceCache: true)
-            serverOperation.addDependency(cacheOperation)
+            let cacheOperation = initializeCachedFetchOperation()
+            
+            let fetchFollowersOperation = FetchFollowersOperation(completion: nil)
+            fetchFollowersOperation.addDependency(cacheOperation)
+            
+            let serverOperation = initializeServerFetchOperation(startingAt: Globals.sharedInstance.defaultFetchSinceDate)
+            serverOperation.addDependency(fetchFollowersOperation)
             
             FetchQueue.sharedInstance.addOperation(cacheOperation)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
-            
-        case .Full:
-            
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.defaultFetchSinceDate, replaceCache: true)
+            FetchQueue.sharedInstance.addOperation(fetchFollowersOperation)
             FetchQueue.sharedInstance.addOperation(serverOperation)
             
         case .Update:
             
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.lastUpdatedLocalTopics, replaceCache: false)
+            let fetchFollowersOperation = FetchFollowersOperation(completion: nil)
+            let serverOperation = initializeServerFetchOperation(startingAt: Globals.sharedInstance.defaultFetchSinceDate)
+            serverOperation.addDependency(fetchFollowersOperation)
+            
+            FetchQueue.sharedInstance.addOperation(fetchFollowersOperation)
             FetchQueue.sharedInstance.addOperation(serverOperation)
         }
     }
@@ -167,18 +152,13 @@ class LocalViewController: TopicMasterViewController {
         
         super.startObservations()
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidChange, object: nil)
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidFetchTopicNotification:", name: FetchTopicOperation.Notifications.DidFetch, object: nil)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
-
     }
     
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
-        fetchTopics(.Full)
+        fetchTopics(.Update)
     }
     
     
@@ -195,11 +175,5 @@ class LocalViewController: TopicMasterViewController {
                 tableView.endUpdates()
             }
         }
-    }
-
-    
-    func handleDidUploadTopicNotification(notification: NSNotification) {
-        
-        update()
     }
 }

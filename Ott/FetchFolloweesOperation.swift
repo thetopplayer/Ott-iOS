@@ -12,11 +12,21 @@ import Foundation
 //MARK: - FetchFolloweesOperation
 
 class FetchFolloweesOperation: ParseOperation {
+
+    static let pinName = "currentUserFollowees"
     
     typealias CompletionBlock = (relationships: [Follow]?, error: NSError?) -> Void
     var completionHandler: CompletionBlock?
     
-    var fetchedData: [Follow]?
+    var fetchedData: [Follow]? {
+        
+        didSet {
+            if let data = fetchedData {
+                ParseOperation.updateCache(FetchFolloweesOperation.pinName, withObjects: data)
+            }
+        }
+    }
+    
     
     init(completion: CompletionBlock?) {
         

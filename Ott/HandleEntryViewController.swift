@@ -78,7 +78,7 @@ class HandleEntryViewController: PageViewController, UITextFieldDelegate {
                     }
                     else {
                         
-                        let message = "No user could be found with the handle \(globals.handleUsedToLogin)."
+                        let message = "No user could be found with the handle \(Globals.sharedInstance.handleUsedToLogin)."
                         presentOKAlert(title: "No Such User", message: message, actionHandler: { () -> Void in
                             self.resetDisplay()
                         })
@@ -95,8 +95,8 @@ class HandleEntryViewController: PageViewController, UITextFieldDelegate {
         button.setTitle("Fetching data...", forState: .Disabled)
         validatingHandleActivityIndicator.startAnimating()
         
-        globals.handleUsedToLogin = textField.text!
-        confirmHandleExists(globals.handleUsedToLogin)
+        Globals.sharedInstance.handleUsedToLogin = textField.text!
+        confirmHandleExists(Globals.sharedInstance.handleUsedToLogin)
     }
     
     
