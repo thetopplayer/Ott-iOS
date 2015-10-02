@@ -88,7 +88,7 @@ class TableViewCell: UITableViewCell {
     
     private let normalAttributes : [String : AnyObject] = {
         
-        let color = UIColor.blackColor().colorWithAlphaComponent(0.75)
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.5)
         let font = UIFont.systemFontOfSize(11)
         return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
@@ -96,7 +96,15 @@ class TableViewCell: UITableViewCell {
     
     private let boldAttributes : [String : AnyObject] = {
         
-        let color = UIColor.blackColor().colorWithAlphaComponent(0.75)
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.5)
+        let font = UIFont.boldSystemFontOfSize(11)
+        return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
+        }()
+    
+    
+    private let separatorAttributes : [String : AnyObject] = {
+        
+        let color = UIColor.blackColor()
         let font = UIFont.boldSystemFontOfSize(11)
         return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
@@ -110,7 +118,7 @@ class TableViewCell: UITableViewCell {
         
         s.appendAttributedString(s1)
         
-        let s2 = NSAttributedString(string: " from ", attributes: normalAttributes)
+        let s2 = NSAttributedString(string: " \u{00b7} ", attributes: separatorAttributes)
         s.appendAttributedString(s2)
         
         var locationText = ""
@@ -151,13 +159,13 @@ class TableViewCell: UITableViewCell {
             return timeAndLocationAttributedString(topic)
         }
         
-        let s = NSMutableAttributedString(string: "last updated ", attributes: normalAttributes)
+        let s = NSMutableAttributedString(string: "updated ", attributes: normalAttributes)
         
         let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: boldAttributes)
         
         s.appendAttributedString(s1)
         
-        let s2 = NSAttributedString(string: " from ", attributes: normalAttributes)
+        let s2 = NSAttributedString(string: " \u{00b7} ", attributes: separatorAttributes)
         s.appendAttributedString(s2)
         
         var locationText = ""

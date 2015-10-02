@@ -15,8 +15,13 @@ extension UIColor {
     static func background() -> UIColor {
 //        return UIColor(hex: 0xFFE082)
 //        return UIColor(hex: 0xFFEFB0)
-        return UIColor(white: 0.96, alpha: 1.0)
+        return UIColor(white: 0.92, alpha: 1.0)
     }
+    
+    static func separator() -> UIColor {
+        return UIColor(white: 0.4, alpha: 0.5)
+    }
+    
     
     static func tint() -> UIColor {
 //        return UIColor(hex: 0x3266CC)

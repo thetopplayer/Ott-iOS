@@ -72,10 +72,10 @@ extension PFObject {
     
     func getImage(forKey imageKey: String = DataKeys.Image, completion: ((success: Bool, image: UIImage?) -> Void)?) {
         
-        if hasImage(forKey: imageKey) == false {
-            completion?(success: false, image: nil)
-            return
-        }
+//        if hasImage(forKey: imageKey) == false {
+//            completion?(success: false, image: nil)
+//            return
+//        }
         
         if let imageFile = self[imageKey] as? PFFile {
             

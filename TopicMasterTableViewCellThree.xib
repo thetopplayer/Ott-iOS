@@ -18,7 +18,7 @@
                         <rect key="frame" x="15" y="8" width="577" height="100"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="#Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KzQ-iX-zOU">
-                                <rect key="frame" x="0.0" y="3" width="464" height="24"/>
+                                <rect key="frame" x="0.0" y="3" width="471" height="24"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="2ls-ge-KHw"/>
@@ -38,7 +38,7 @@
                                 </variation>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sas-A0-Gtz">
-                                <rect key="frame" x="472" y="5" width="90" height="90"/>
+                                <rect key="frame" x="479" y="5" width="90" height="90"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="90" id="Czu-F7-Eg9"/>
@@ -46,16 +46,16 @@
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YwD-yG-Uhz" customClass="LabeledDotView" customModule="Ott" customModuleProvider="target">
-                                <rect key="frame" x="545" y="0.0" width="32" height="32"/>
+                                <rect key="frame" x="543" y="0.0" width="34" height="34"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="6KT-Tr-E3B"/>
-                                    <constraint firstAttribute="width" constant="32" id="hT6-VN-St7"/>
+                                    <constraint firstAttribute="height" constant="34" id="6KT-Tr-E3B"/>
+                                    <constraint firstAttribute="width" constant="34" id="hT6-VN-St7"/>
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fgg-CL-jmY">
-                                <rect key="frame" x="0.0" y="79" width="464" height="17"/>
+                                <rect key="frame" x="0.0" y="79" width="471" height="17"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="tON-rN-gt7"/>
@@ -65,7 +65,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="comments" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCb-bl-Gch">
-                                <rect key="frame" x="0.0" y="35" width="464" height="17"/>
+                                <rect key="frame" x="0.0" y="35" width="471" height="17"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleSubhead"/>
                                 <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -78,7 +78,7 @@
                             <constraint firstItem="KzQ-iX-zOU" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" id="6u0-Rz-W73"/>
                             <constraint firstItem="cCb-bl-Gch" firstAttribute="top" secondItem="KzQ-iX-zOU" secondAttribute="bottom" constant="8" id="8hi-Jv-uvY"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="KzQ-iX-zOU" secondAttribute="trailing" constant="8" id="GJa-a6-yDj"/>
-                            <constraint firstAttribute="trailing" secondItem="Sas-A0-Gtz" secondAttribute="trailing" constant="15" id="HGY-QG-q3C"/>
+                            <constraint firstAttribute="trailing" secondItem="Sas-A0-Gtz" secondAttribute="trailing" constant="8" id="HGY-QG-q3C"/>
                             <constraint firstItem="KzQ-iX-zOU" firstAttribute="top" secondItem="NAz-LN-5WF" secondAttribute="top" constant="3" id="J65-Si-PG9"/>
                             <constraint firstAttribute="trailing" secondItem="YwD-yG-Uhz" secondAttribute="trailing" id="NnG-GU-wOS"/>
                             <constraint firstItem="fgg-CL-jmY" firstAttribute="top" relation="greaterThanOrEqual" secondItem="cCb-bl-Gch" secondAttribute="bottom" constant="8" id="a9n-Xb-YDo"/>

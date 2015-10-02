@@ -211,20 +211,20 @@ class UserDetailViewController: TableViewController {
                 
             case .Following:
                 
-                if fetchStatus_UsersBeingFollowed == .DidFetch {
+                if fetchStatus_followingOthersRelationships == .DidFetch {
                     updateDataSection()
                 }
-                else if fetchStatus_UsersBeingFollowed == .NotFetched {
-                    fetchUsersBeingFollowed()
+                else if fetchStatus_followingOthersRelationships == .NotFetched {
+                    fetchfollowingOthersRelationships()
                 }
                 
             case .Followers:
                 
-                if fetchStatus_UsersFollowingMe == .DidFetch {
+                if fetchStatus_followingMeRelationships == .DidFetch {
                     updateDataSection()
                 }
-                else if fetchStatus_UsersFollowingMe == .NotFetched {
-                    fetchUsersUsersFollowingMe()
+                else if fetchStatus_followingMeRelationships == .NotFetched {
+                    fetchUsersfollowingMeRelationships()
                 }
                 
             case .None:
@@ -236,8 +236,8 @@ class UserDetailViewController: TableViewController {
     
     private var authoredTopics = [Topic]()
     private var authoredPosts = [Post]()
-    private var usersBeingFollowed = [User]()
-    private var usersFollowingMe = [User]()
+    private var followingOthersRelationships = [Follow]()
+    private var followingMeRelationships = [Follow]()
 
     private enum FetchStatus {
         case NotFetched, Fetching, DidFetch
@@ -245,21 +245,21 @@ class UserDetailViewController: TableViewController {
     
     private var fetchStatus_AuthoredTopics = FetchStatus.NotFetched
     private var fetchStatus_AuthoredPosts = FetchStatus.NotFetched
-    private var fetchStatus_UsersBeingFollowed = FetchStatus.NotFetched
-    private var fetchStatus_UsersFollowingMe = FetchStatus.NotFetched
+    private var fetchStatus_followingOthersRelationships = FetchStatus.NotFetched
+    private var fetchStatus_followingMeRelationships = FetchStatus.NotFetched
     
     
     private func voidData() {
         
         authoredTopics.removeAll()
         authoredPosts.removeAll()
-        usersBeingFollowed.removeAll()
-        usersFollowingMe.removeAll()
+        followingOthersRelationships.removeAll()
+        followingMeRelationships.removeAll()
         
         fetchStatus_AuthoredTopics = FetchStatus.NotFetched
         fetchStatus_AuthoredPosts = FetchStatus.NotFetched
-        fetchStatus_UsersBeingFollowed = FetchStatus.NotFetched
-        fetchStatus_UsersFollowingMe = FetchStatus.NotFetched
+        fetchStatus_followingOthersRelationships = FetchStatus.NotFetched
+        fetchStatus_followingMeRelationships = FetchStatus.NotFetched
         
         displayedData = .None
     }
@@ -297,17 +297,75 @@ class UserDetailViewController: TableViewController {
     
     private func fetchAuthoredPosts() {
         
+        //        displayStatus(.Fetching)
         updateDataSection()
-    }
-    
-    
-    private func fetchUsersBeingFollowed() {
         
-        updateDataSection()
+        if fetchStatus_AuthoredPosts == .Fetching {
+            return
+        }
+        
+        fetchStatus_AuthoredPosts = .Fetching
+        
+        let fetchOperation = FetchAuthoredPostsOperation(user: user!) {
+            
+            (posts, error) in
+            
+            self.fetchStatus_AuthoredPosts = .DidFetch
+            
+            if let posts = posts {
+                
+                self.authoredPosts = posts
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.updateDataSection()
+                }
+            }
+            else if let error = error {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.presentOKAlertWithError(error)
+                }
+            }
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
     
     
-    private func fetchUsersUsersFollowingMe() {
+    private func fetchfollowingOthersRelationships() {
+        
+        //        displayStatus(.Fetching)
+        updateDataSection()
+        
+        if fetchStatus_followingOthersRelationships == .Fetching {
+            return
+        }
+        
+        fetchStatus_followingOthersRelationships = .Fetching
+        
+        let fetchOperation = FetchFolloweesOperation() {
+            
+            (followedUsers, error) in
+            
+            self.fetchStatus_followingOthersRelationships = .DidFetch
+            
+            if let followedUsers = followedUsers {
+                
+                self.followingOthersRelationships = followedUsers
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.updateDataSection()
+                }
+            }
+            else if let error = error {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.presentOKAlertWithError(error)
+                }
+            }
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
+    }
+    
+    
+    private func fetchUsersfollowingMeRelationships() {
         
         updateDataSection()
     }
@@ -351,6 +409,10 @@ class UserDetailViewController: TableViewController {
     private let topicWithImageCellViewIdentifier = "topicCellThree"
     private let topicWithImageCellViewHeight = CGFloat(117)
     
+    private let postCellNibName = "PostDetailTableViewCell"
+    private let postCellIdentifier = "postCell"
+    private let postCellHeight = CGFloat(125)
+    
     private let loadingDataCellViewNibName = "LoadingTableViewCell"
     private let loadingDataCellViewIdentifier = "loadingCell"
     private let loadingDataCellViewHeight = CGFloat(44)
@@ -359,13 +421,13 @@ class UserDetailViewController: TableViewController {
     private let displayOptionsCellViewIdentifier = "dataOptionsCell"
     private let displayOptionsCellViewHeight = CGFloat(44)
     
-    private let headerViewHeight = CGFloat(0.1)
-    private let footerViewHeight = CGFloat(1.0)
-
+    private let followCellViewNibName = "FollowTableViewCell"
+    private let followCellViewIdentifier = "followCell"
+    private let followCellViewHeight = CGFloat(69)
     
     private func setupTableView() {
         
-//        tableView.separatorStyle = .None
+        tableView.separatorColor = UIColor.separator()
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
         
@@ -389,6 +451,12 @@ class UserDetailViewController: TableViewController {
         
         let nib6 = UINib(nibName: displayOptionsCellViewNibName, bundle: nil)
         tableView.registerNib(nib6, forCellReuseIdentifier: displayOptionsCellViewIdentifier)
+        
+        let nib7 = UINib(nibName: postCellNibName, bundle: nil)
+        tableView.registerNib(nib7, forCellReuseIdentifier: postCellIdentifier)
+        
+        let nib8 = UINib(nibName: followCellViewNibName, bundle: nil)
+        tableView.registerNib(nib8, forCellReuseIdentifier: followCellViewIdentifier)
     }
 
     
@@ -413,10 +481,10 @@ class UserDetailViewController: TableViewController {
                 number = authoredPosts.count
                 
             case .Following:
-                number = usersBeingFollowed.count
+                number = followingOthersRelationships.count
                 
             case .Followers:
-                number = usersFollowingMe.count
+                number = followingMeRelationships.count
                 
             case .None:
                 number = 0
@@ -513,7 +581,7 @@ class UserDetailViewController: TableViewController {
     
     override func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
-        return footerViewHeight
+        return 0.1
     }
     
     
@@ -585,10 +653,10 @@ class UserDetailViewController: TableViewController {
             height = topicWithImageCellViewHeight
             
         case .Post:
-            height = 0
+            height = postCellHeight
             
         case .FolloweeOrFollower:
-            height = 0
+            height = followCellViewHeight
         }
         
         return height
@@ -652,15 +720,15 @@ class UserDetailViewController: TableViewController {
         
         func initializePostCell(post: Post) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellViewIdentifier) as! TopicMasterTableViewCell
-//            cell.displayedTopic = topic
+            let cell = tableView.dequeueReusableCellWithIdentifier(postCellIdentifier) as! PostDetailTableViewCell
+            cell.displayedPost = post
             return cell
         }
         
-        func initializeFolloweeFollowerCell(user: User) -> UITableViewCell {
+        func initializeFolloweeFollowerCell(followRelationship: Follow) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
-            cell.displayedUser = user
+            let cell = tableView.dequeueReusableCellWithIdentifier(followCellViewIdentifier) as! FollowTableViewCell
+            cell.displayedFollow = followRelationship
             return cell
         }
         
@@ -707,7 +775,7 @@ class UserDetailViewController: TableViewController {
             
         case .FolloweeOrFollower:
             
-            let theUser = displayedData == .Following ? usersBeingFollowed[indexPath.row] : usersFollowingMe[indexPath.row]
+            let theUser = displayedData == .Following ? followingOthersRelationships[indexPath.row] : followingMeRelationships[indexPath.row]
             cell = initializeFolloweeFollowerCell(theUser)
         }
         
@@ -716,6 +784,14 @@ class UserDetailViewController: TableViewController {
 
     
     private func updateDataSection() {
+        
+        if displayedData == .AuthoredPosts {
+            tableView.separatorColor = UIColor.background()
+        }
+        else {
+            
+            tableView.separatorColor = UIColor.separator()
+        }
         
         tableView.beginUpdates()
         tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
