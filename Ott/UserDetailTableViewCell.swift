@@ -32,6 +32,8 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.tintColor = UIColor.tint()
         settingsButton.addRoundedBorder(withColor: UIColor.tint())
         settingsButton.hidden = true
+        
+        exportButton.enabled = false
     }
     
     
@@ -57,9 +59,11 @@ class UserDetailTableViewCell: TableViewCell {
             if let user = displayedUser {
                 displayingCurrentUser = user.isEqual(currentUser())
                 updateDisplayForUser()
+                exportButton.enabled = true
             }
             else {
                 displayingCurrentUser = false
+                exportButton.enabled = false
             }
         }
     }
@@ -130,10 +134,23 @@ class UserDetailTableViewCell: TableViewCell {
     
     //MARK: - Actions
     
-    static let settingsButtonWasTappedNotification = "settingsButtonWasTappedNotification"
+    static let settingsButtonTapNotification = "userDetailSettingsButtonTap"
     @IBAction func displaySettingsAction(sender: AnyObject) {
         
-        let notification = NSNotification(name: UserDetailTableViewCell.settingsButtonWasTappedNotification, object: self)
+        let notification = NSNotification(name: UserDetailTableViewCell.settingsButtonTapNotification, object: self)
+        NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostASAP)
+    }
+    
+    static let exportButtonTapNotification = "userDetailExportButtonTap"
+    static let userKey = "user"
+    @IBAction func exportAction(sender: AnyObject) {
+        
+        guard let user = displayedUser else {
+            return
+        }
+        
+        let userinfo = [UserDetailTableViewCell.userKey: user]
+        let notification = NSNotification(name: UserDetailTableViewCell.exportButtonTapNotification, object: self, userInfo: userinfo)
         NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostASAP)
     }
 }

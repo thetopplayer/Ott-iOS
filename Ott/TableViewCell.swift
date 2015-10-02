@@ -20,9 +20,6 @@ class TableViewCell: UITableViewCell {
         
         separatorInset = UIEdgeInsetsZero
         layoutMargins = UIEdgeInsetsZero
-        
-        contentView.backgroundColor = UIColor.background()
-        innerContentContainer?.backgroundColor = UIColor.whiteColor()
         innerContentContainer?.clipsToBounds = true
     }
     

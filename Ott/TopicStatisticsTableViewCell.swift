@@ -27,7 +27,10 @@ class TopicStatisticsTableViewCell: TableViewCell {
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
         innerContentContainer?.addBorder()
         innerContentContainer?.addDownShadow()
+        countTitleLabel = "Posts"
         countLabel.text = ""
+        countLabel.textColor = UIColor.brownColor()
+        ratingTitleLabel = "Average"
         ratingLabel.text = ""
     }
     
@@ -45,6 +48,7 @@ class TopicStatisticsTableViewCell: TableViewCell {
         if let topic = displayedTopic {
             countLabel.text = "\(topic.numberOfPosts)"
             ratingLabel.text = String.localizedStringWithFormat("%.1f", topic.averageRating)
+            ratingLabel.textColor = Rating(withFloat: topic.averageRating / 10).color()
         }
     }
 

@@ -13,27 +13,35 @@ extension UIColor {
     //MARK: - Colors
     
     static func background() -> UIColor {
-//        return UIColor(hex: 0xFFE082)
-//        return UIColor(hex: 0xFFEFB0)
-        return UIColor(white: 0.92, alpha: 1.0)
+        return UIColor(hex: 0xF2F1EF)
+//        return UIColor(white: 0.97, alpha: 1.0)
     }
     
     static func separator() -> UIColor {
         return UIColor(white: 0.4, alpha: 0.5)
+//        return UIColor(hex: 0xBDC3C7)
     }
     
     
     static func tint() -> UIColor {
 //        return UIColor(hex: 0x3266CC)
-        return aqua()
+        return blue()
     }
     
-    static func fern() -> UIColor {
-        return UIColor(hex: 0x408000)
+    static func red() -> UIColor {
+        return UIColor(hex: 0xE74C3C)
     }
     
-    static func aqua() -> UIColor {
-        return UIColor(hex: 0x0080FF)
+    static func orange() -> UIColor {
+        return UIColor(hex: 0xF4B350)
+    }
+    
+    static func green() -> UIColor {
+        return UIColor(hex: 0x019875)
+    }
+    
+    static func blue() -> UIColor {
+        return UIColor(hex: 0x3973BD)
     }
     
     

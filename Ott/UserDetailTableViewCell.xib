@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
@@ -19,6 +19,7 @@
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="forestBackground" translatesAutoresizingMaskIntoConstraints="NO" id="DmJ-aq-5Rt" userLabel="Caption Image View">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="140"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="140" id="20d-Hl-gCc"/>
                                 </constraints>
@@ -28,12 +29,14 @@
                                 <subviews>
                                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="TXG-fI-4hg">
                                         <rect key="frame" x="3" y="3" width="64" height="64"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="64" id="cv2-vD-sBc"/>
                                             <constraint firstAttribute="width" constant="64" id="p6V-eL-ABM"/>
                                         </constraints>
                                     </imageView>
                                 </subviews>
+                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="TXG-fI-4hg" firstAttribute="centerY" secondItem="0bK-xg-b3g" secondAttribute="centerY" id="1rN-de-cCc"/>
@@ -44,6 +47,7 @@
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="@handle" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="w0t-9e-0Wa">
                                 <rect key="frame" x="97" y="152" width="495" height="21"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="21" id="AD8-4h-440"/>
                                 </constraints>
@@ -53,20 +57,26 @@
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="qX8-GU-D2r">
                                 <rect key="frame" x="32" y="192" width="36" height="36"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="36" id="hrA-dJ-vCX"/>
                                     <constraint firstAttribute="height" constant="36" id="ly7-K2-od4"/>
                                 </constraints>
                                 <state key="normal" image="action"/>
+                                <connections>
+                                    <action selector="exportAction:" destination="b47-XV-U1m" eventType="touchUpInside" id="5Yc-Rp-zqf"/>
+                                </connections>
                             </button>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="Bio" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="2Sc-D6-8Zp">
                                 <rect key="frame" x="101" y="183" width="491" height="55"/>
+                                <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="14"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                             <button opaque="NO" contentMode="scaleToFill" ambiguous="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="4yT-mJ-0aR">
                                 <rect key="frame" x="545" y="120" width="40" height="40"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="40" id="AwN-1m-fmZ"/>
                                     <constraint firstAttribute="width" constant="40" id="X1K-Fp-Ixg"/>
@@ -79,6 +89,7 @@
                                 </connections>
                             </button>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="4yT-mJ-0aR" firstAttribute="top" secondItem="e0B-1g-7ZM" secondAttribute="top" constant="120" id="1iz-9O-eOs"/>
@@ -101,6 +112,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <animations/>
                 <constraints>
                     <constraint firstItem="e0B-1g-7ZM" firstAttribute="top" secondItem="qyk-yk-kjk" secondAttribute="topMargin" constant="-8" id="N8P-NB-ZqG"/>
                     <constraint firstAttribute="trailingMargin" secondItem="e0B-1g-7ZM" secondAttribute="trailing" constant="-8" id="P3W-Ok-3x0"/>
@@ -108,6 +120,7 @@
                     <constraint firstAttribute="bottomMargin" secondItem="e0B-1g-7ZM" secondAttribute="bottom" constant="-8" id="uKO-p2-DGO"/>
                 </constraints>
             </tableViewCellContentView>
+            <animations/>
             <connections>
                 <outlet property="avatarImageContainerView" destination="0bK-xg-b3g" id="wnQ-Ux-idQ"/>
                 <outlet property="avatarImageView" destination="TXG-fI-4hg" id="hOT-Oc-aDT"/>

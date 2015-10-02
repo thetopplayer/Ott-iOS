@@ -52,13 +52,13 @@ struct Rating {
             
             var color: UIColor
             if r <= 3 {
-                color = UIColor.redColor()
+                color = UIColor.red()
             }
             else if r <= 7 {
-                color = UIColor.orangeColor()
+                color = UIColor.green()
             }
             else {
-                color = UIColor.fern()
+                color = UIColor.orange()
             }
             return color
         }

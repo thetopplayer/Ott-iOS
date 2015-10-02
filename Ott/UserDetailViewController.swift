@@ -266,15 +266,12 @@ class UserDetailViewController: TableViewController {
     
     private func fetchAuthoredTopics() {
         
-//        displayStatus(.Fetching)
-        updateDataSection()
-        
         if fetchStatus_AuthoredTopics == .Fetching {
             return
         }
         
-        
         fetchStatus_AuthoredTopics = .Fetching
+        updateDataSection()
         
         let fetchTopicsOperation = FetchAuthoredTopicsOperation(user: user!)
         
@@ -286,8 +283,6 @@ class UserDetailViewController: TableViewController {
             dispatch_async(dispatch_get_main_queue()) {
                 
                 self.updateDataSection()
-//                self.hideRefreshControl()
-//                self.displayStatus()
             }
         })
         
@@ -297,14 +292,12 @@ class UserDetailViewController: TableViewController {
     
     private func fetchAuthoredPosts() {
         
-        //        displayStatus(.Fetching)
-        updateDataSection()
-        
         if fetchStatus_AuthoredPosts == .Fetching {
             return
         }
         
         fetchStatus_AuthoredPosts = .Fetching
+        updateDataSection()
         
         let fetchOperation = FetchAuthoredPostsOperation(user: user!) {
             
@@ -331,15 +324,13 @@ class UserDetailViewController: TableViewController {
     
     
     private func fetchfollowingOthersRelationships() {
-        
-        //        displayStatus(.Fetching)
-        updateDataSection()
-        
+
         if fetchStatus_followingOthersRelationships == .Fetching {
             return
         }
         
         fetchStatus_followingOthersRelationships = .Fetching
+        updateDataSection()
         
         let fetchOperation = FetchFolloweesOperation() {
             
@@ -367,7 +358,34 @@ class UserDetailViewController: TableViewController {
     
     private func fetchUsersfollowingMeRelationships() {
         
+        if fetchStatus_followingMeRelationships == .Fetching {
+            return
+        }
+        
+        fetchStatus_followingMeRelationships = .Fetching
         updateDataSection()
+        
+        let fetchOperation = FetchFollowersOperation() {
+            
+            (followers, error) in
+            
+            self.fetchStatus_followingMeRelationships = .DidFetch
+            
+            if let followers = followers {
+                
+                self.followingMeRelationships = followers
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.updateDataSection()
+                }
+            }
+            else if let error = error {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.presentOKAlertWithError(error)
+                }
+            }
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
     
     
@@ -393,9 +411,9 @@ class UserDetailViewController: TableViewController {
     private let userDetailCellViewIdentifer = "userDetail"
     private let userDetailCellViewHeight = CGFloat(250) 
     
-    private let userFollowCellViewNibName = "UserFollowTableViewCell"
-    private let userFollowCellViewIdentifer = "followCell"
-    private let userFollowCellViewHeight = CGFloat(44)
+    private let followStatsCellViewNibName = "FollowStatsTableViewCell"
+    private let followStatsCellViewIdentifer = "followStatsCell"
+    private let followStatsCellViewHeight = CGFloat(44)
     
     private let simpleTopicCellViewNibName = "TopicMasterTableViewCellOne"
     private let simpleTopicCellViewIdentifier = "topicCellOne"
@@ -434,8 +452,8 @@ class UserDetailViewController: TableViewController {
         let nib = UINib(nibName: userDetailCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: userDetailCellViewIdentifer)
         
-        let nib1 = UINib(nibName: userFollowCellViewNibName, bundle: nil)
-        tableView.registerNib(nib1, forCellReuseIdentifier: userFollowCellViewIdentifer)
+        let nib1 = UINib(nibName: followStatsCellViewNibName, bundle: nil)
+        tableView.registerNib(nib1, forCellReuseIdentifier: followStatsCellViewIdentifer)
         
         let nib2 = UINib(nibName: simpleTopicCellViewNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: simpleTopicCellViewIdentifier)
@@ -475,16 +493,16 @@ class UserDetailViewController: TableViewController {
             switch displayedData {
                 
             case .AuthoredTopics:
-                number = authoredTopics.count
+                number = fetchStatus_AuthoredTopics == .Fetching ? 1 : authoredTopics.count
                 
             case .AuthoredPosts:
-                number = authoredPosts.count
+                number = fetchStatus_AuthoredPosts == .Fetching ? 1 : authoredPosts.count
                 
             case .Following:
-                number = followingOthersRelationships.count
+                number = fetchStatus_followingOthersRelationships == .Fetching ? 1 : followingOthersRelationships.count
                 
             case .Followers:
-                number = followingMeRelationships.count
+                number = fetchStatus_followingMeRelationships == .Fetching ? 1 : followingMeRelationships.count
                 
             case .None:
                 number = 0
@@ -545,27 +563,52 @@ class UserDetailViewController: TableViewController {
             switch displayedData {
                 
             case .AuthoredTopics:
-                let theTopic = authoredTopics[indexPath.row]
-                if theTopic.hasImage() {
-                    type = .TopicWithImage
+                
+                if fetchStatus_AuthoredTopics == .Fetching {
+                    type = .Loading
                 }
                 else {
-                    if theTopic.comment == nil {
-                        type = .TopicSimple
+                    
+                    let theTopic = authoredTopics[indexPath.row]
+                    if theTopic.hasImage() {
+                        type = .TopicWithImage
                     }
                     else {
-                        type = .TopicNoImage
+                        if theTopic.comment == nil {
+                            type = .TopicSimple
+                        }
+                        else {
+                            type = .TopicNoImage
+                        }
                     }
                 }
                 
             case .AuthoredPosts:
-                type = .Post
+                
+                if fetchStatus_AuthoredPosts == .Fetching {
+                    type = .Loading
+                }
+                else {
+                    type = .Post
+                }
                 
             case .Following:
-                type = .FolloweeOrFollower
+                
+                if fetchStatus_followingOthersRelationships == .Fetching {
+                    type = .Loading
+                }
+                else {
+                    type = .FolloweeOrFollower
+                }
                 
             case .Followers:
-                type = .FolloweeOrFollower
+                
+                if fetchStatus_followingMeRelationships == .Fetching {
+                    type = .Loading
+                }
+                else {
+                    type = .FolloweeOrFollower
+                }
                 
             case .None:
                 assert(false)
@@ -638,7 +681,7 @@ class UserDetailViewController: TableViewController {
             height = loadingDataCellViewHeight
             
         case .FollowStats:
-            height = userFollowCellViewHeight
+            height = followStatsCellViewHeight
             
         case .DisplayOptions:
             height = displayOptionsCellViewHeight
@@ -680,7 +723,7 @@ class UserDetailViewController: TableViewController {
         
         func initializeFollowStatsCell(user: User) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(userFollowCellViewIdentifer) as! UserFollowTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(followStatsCellViewIdentifer) as! FollowStatsTableViewCell
             cell.displayedUser = user
             return cell
         }
@@ -785,11 +828,41 @@ class UserDetailViewController: TableViewController {
     
     private func updateDataSection() {
         
-        if displayedData == .AuthoredPosts {
-            tableView.separatorColor = UIColor.background()
-        }
-        else {
+        
+        switch displayedData {
             
+        case .AuthoredTopics:
+            
+            if fetchStatus_AuthoredTopics == .Fetching || authoredTopics.count == 0 {
+                tableView.separatorColor = UIColor.background()
+            }
+            else {
+                tableView.separatorColor = UIColor.separator()
+            }
+            
+        case .AuthoredPosts:
+            
+            tableView.separatorColor = UIColor.background()
+            
+        case .Following:
+            
+            if fetchStatus_followingOthersRelationships == .Fetching || followingOthersRelationships.count == 0 {
+                tableView.separatorColor = UIColor.background()
+            }
+            else {
+                tableView.separatorColor = UIColor.separator()
+            }
+            
+        case .Followers:
+            
+            if fetchStatus_followingMeRelationships == .Fetching || followingMeRelationships.count == 0 {
+                tableView.separatorColor = UIColor.background()
+            }
+            else {
+                tableView.separatorColor = UIColor.separator()
+            }
+            
+        default:
             tableView.separatorColor = UIColor.separator()
         }
         
@@ -806,7 +879,9 @@ class UserDetailViewController: TableViewController {
     
     private func startObservations() {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSettingsAction:", name: UserDetailTableViewCell.settingsButtonWasTappedNotification, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSettingsAction:", name: UserDetailTableViewCell.settingsButtonTapNotification, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleExportAction:", name: UserDetailTableViewCell.exportButtonTapNotification, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDisplayOptionDidChange:", name: DataDisplayOptionsTableViewCell.selectionDidChangeNotification, object: nil)
         
@@ -826,6 +901,20 @@ class UserDetailViewController: TableViewController {
         let viewController = storyboard.instantiateViewControllerWithIdentifier("settingsViewController")
         
         presentViewController(viewController, animated: true, completion: nil)
+    }
+    
+    
+    func handleExportAction(notification: NSNotification) {
+        
+        if let userinfo = notification.userInfo {
+            
+            if let user = userinfo[UserDetailTableViewCell.userKey] as? User {
+                
+                if let navController = navigationController as? NavigationController {
+                    navController.presentExportViewController(withUser: user)
+                }
+            }
+        }
     }
     
     

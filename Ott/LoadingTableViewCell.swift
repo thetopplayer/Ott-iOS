@@ -16,6 +16,10 @@ class LoadingTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        innerContentContainer?.addBorder()
+    }
+    
+    override func prepareForReuse() {
+        
+        activityIndicator.startAnimating()
     }
 }

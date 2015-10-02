@@ -28,11 +28,11 @@ extension UIImageView {
         self.hidden = false
         
         if ok {
-            self.tintColor = UIColor.fern()
+            self.tintColor = UIColor.green()
             self.image = okImage
         }
         else {
-            self.tintColor = UIColor.redColor()
+            self.tintColor = UIColor.red()
             self.image = errImage
         }
     }

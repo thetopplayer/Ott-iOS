@@ -84,6 +84,10 @@ class User: PFUser {
         static var FollowersCount: String {
             return "followersCount"
         }
+        
+        static var LastTopicCreatedAt: String {
+            return "lastTopicCreatedAt"
+        }
     }
     
     
@@ -95,7 +99,7 @@ class User: PFUser {
         user.numberOfPosts = 0
         user.followingCount = 0
         user.followersCount = 0
-        
+        user.lastTopicCreatedAt = NSDate.distantPast()
         return user
     }
     
@@ -114,6 +118,7 @@ class User: PFUser {
     @NSManaged var bio: String?
     @NSManaged var followingCount: Int
     @NSManaged var followersCount: Int
+    @NSManaged var lastTopicCreatedAt: NSDate?
     
     static var defaultAvatar: UIImage = {
         

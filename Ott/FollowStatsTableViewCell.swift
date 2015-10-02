@@ -1,5 +1,5 @@
 //
-//  UserFollowTableViewCell.swift
+//  FollowStatsTableViewCell.swift
 //  Ott
 //
 //  Created by Max on 9/29/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UserFollowTableViewCell: TableViewCell {
+class FollowStatsTableViewCell: TableViewCell {
 
     @IBOutlet var followingInfoLabel: UILabel!
     @IBOutlet var followButton: UIButton!

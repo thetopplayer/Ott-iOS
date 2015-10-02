@@ -32,6 +32,8 @@ class PostDetailTableViewCell: TableViewCell {
         super.awakeFromNib()
         
         innerContentContainer?.addRoundedBorder()
+        contentView.backgroundColor = UIColor.background()
+        innerContentContainer?.backgroundColor = UIColor.whiteColor()
 
         topBar.backgroundColor = UIColor.whiteColor()
         topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
