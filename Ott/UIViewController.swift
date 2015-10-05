@@ -49,6 +49,9 @@ extension UIViewController {
     }
     
     
+    
+    //MARK: - Alerts
+    
     func presentOKAlert(title title: String?, message: String?, actionHandler: AlertPresentionHandler?) {
         
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
@@ -103,6 +106,7 @@ extension UIViewController {
     }
     
     
+    
     func presentTopicCreationViewController() {
         
         if LocationManager.sharedInstance.permissionGranted {
@@ -117,10 +121,12 @@ extension UIViewController {
         }
     }
     
+    
     func presentTopicDetailViewController(withTopic topic: Topic?, exitMethod: TopicDetailViewController.ExitMethod = .Back) {
         
         let detailViewController: TopicDetailViewController = {
             
+            // if one is already on the stack, use it
             var theController: TopicDetailViewController? = nil
             for vc in navigationController!.viewControllers {
                 if vc is TopicDetailViewController {
@@ -132,6 +138,7 @@ extension UIViewController {
                 return theController
             }
             
+            // else instantiate it
             let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
             theController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as? TopicDetailViewController
             
@@ -142,7 +149,13 @@ extension UIViewController {
             
             detailViewController.exitMethod = exitMethod
             detailViewController.topic = topic
-            navigationController!.pushViewController(detailViewController, animated: true)
+            
+            if exitMethod == .Back {
+                navigationController!.pushViewController(detailViewController, animated: true)
+            }
+            else {
+                presentViewController(detailViewController, animated: true, completion: nil)
+            }
         }
         
         if LocationManager.sharedInstance.permissionGranted {
@@ -158,42 +171,44 @@ extension UIViewController {
     }
     
     
-    func presentUserDetailViewController(withUser user: User?, exitMethod: UserDetailViewController.ExitMethod = .Back) {
+    private func presentUserDetailViewController(withObject object: PFObject?) {
         
-        let detailViewController: UserDetailViewController = {
-            
-            var theController: UserDetailViewController? = nil
-            for vc in navigationController!.viewControllers {
-                if vc is UserDetailViewController {
-                    theController = vc as? UserDetailViewController
-                }
-            }
-            
-            if let theController = theController {
-                return theController
-            }
+        let detailViewController: NavigationController = {
             
             let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
-            theController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as?UserDetailViewController
+            let theController = storyboard.instantiateViewControllerWithIdentifier("initialViewController") as?NavigationController
             
             return theController!
             }()
         
-        func presentController() {
-            
-            detailViewController.exitMethod = exitMethod
+        if let user = object as? User {
             detailViewController.user = user
-            navigationController!.pushViewController(detailViewController, animated: true)
+        }
+        else if let topic = object as? Topic {
+            detailViewController.topic = topic
         }
         
-        presentController()
+        presentViewController(detailViewController, animated: true, completion: nil)
     }
     
     
-    func presentUserDetailViewController(withTopic topic: Topic?, exitMethod: UserDetailViewController.ExitMethod = .Back) {
+    func presentUserDetailViewController(withUser user: User?) {
+        
+        presentUserDetailViewController(withObject: user)
+    }
+    
+    
+    func presentUserDetailViewController(withTopic topic: Topic?) {
+        
+        presentUserDetailViewController(withObject: topic)
+    }
+    
+    
+    private func pushUserDetailViewController(withObject object: PFObject?) {
         
         let detailViewController: UserDetailViewController = {
             
+            // if one is already on the stack, use it
             var theController: UserDetailViewController? = nil
             for vc in navigationController!.viewControllers {
                 if vc is UserDetailViewController {
@@ -205,20 +220,33 @@ extension UIViewController {
                 return theController
             }
             
+            // else instantiate it
             let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
             theController = storyboard.instantiateViewControllerWithIdentifier("userDetailViewController") as?UserDetailViewController
             
             return theController!
             }()
         
-        func presentController() {
-            
-            detailViewController.exitMethod = exitMethod
-            detailViewController.fetchUserFromTopic(topic!)
-            navigationController!.pushViewController(detailViewController, animated: true)
+        detailViewController.exitMethod = .Back
+        
+        if let user = object as? User {
+            detailViewController.user = user
+        }
+        else if let topic = object as? Topic {
+            detailViewController.fetchUserFromTopic(topic)
         }
         
-        presentController()
+        navigationController!.pushViewController(detailViewController, animated: true)
     }
-
+    
+    func pushUserDetailViewController(withUser user: User?) {
+        
+        pushUserDetailViewController(withObject: user)
+    }
+    
+    
+    func pushUserDetailViewController(withTopic topic: Topic?) {
+        
+        pushUserDetailViewController(withObject: topic)
+    }
 }

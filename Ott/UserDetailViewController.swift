@@ -25,6 +25,16 @@ class UserDetailViewController: TableViewController {
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
+
+        // if data has not been set, look to my navigation controller
+        if user == nil && topic == nil {
+            
+            user = (navigationController as? NavigationController)?.user
+            if let topic = (navigationController as? NavigationController)?.topic {
+                fetchUserFromTopic(topic)
+            }
+        }
+        
         startObservations()
     }
     
@@ -50,7 +60,7 @@ class UserDetailViewController: TableViewController {
         case Back, Dismiss
     }
     
-    var exitMethod = ExitMethod.Back {
+    var exitMethod = ExitMethod.Dismiss {
         
         didSet {
             
@@ -266,10 +276,14 @@ class UserDetailViewController: TableViewController {
             return
         }
         
+        guard let user = user else {
+            return
+        }
+        
         fetchStatus_AuthoredTopics = .Fetching
         updateDataSection()
         
-        let fetchTopicsOperation = FetchAuthoredTopicsOperation(dataSource: .Server, user: user!) {
+        let fetchTopicsOperation = FetchAuthoredTopicsOperation(dataSource: .Server, user: user) {
             
             (results, error) in
             
@@ -544,7 +558,7 @@ class UserDetailViewController: TableViewController {
         switch section {
             
         case 0:
-            numberOfRows = 2
+            numberOfRows = topic == nil && user == nil ? 0 : 2
             
         case 1:
             numberOfRows = numberOfDataRows()
@@ -673,12 +687,16 @@ class UserDetailViewController: TableViewController {
             return ""
         }
         
+        guard let user = user else {
+            return "Author"
+        }
+        
         let title: String
         switch displayedData {
             
         case .AuthoredTopics:
             
-            let number = user!.numberOfTopics
+            let number = user.numberOfTopics
             if number == 1 {
                 title = "\(number) Authored Topic"
             }
@@ -688,7 +706,7 @@ class UserDetailViewController: TableViewController {
             
         case .AuthoredPosts:
             
-            let number = user!.numberOfPosts
+            let number = user.numberOfPosts
             if number == 1 {
                 title = "\(number) Authored Post"
             }
@@ -698,7 +716,7 @@ class UserDetailViewController: TableViewController {
             
         case .Followers:
             
-            let number = user!.followersCount
+            let number = user.followersCount
             if number == 1 {
                 title = "\(number) Follower"
             }
@@ -708,7 +726,7 @@ class UserDetailViewController: TableViewController {
             
         case .Following:
             
-            let number = user!.followingCount
+            let number = user.followingCount
             if number == 1 {
                 title = "Following \(number) User"
             }

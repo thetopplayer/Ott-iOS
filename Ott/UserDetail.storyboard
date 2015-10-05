@@ -19,10 +19,35 @@
                             <outlet property="delegate" destination="k5s-I0-84B" id="2FH-nc-4Oi"/>
                         </connections>
                     </tableView>
+                    <navigationItem key="navigationItem" id="RTQ-jq-ZLb">
+                        <barButtonItem key="leftBarButtonItem" systemItem="done" id="0ai-y4-jO3">
+                            <connections>
+                                <action selector="handleDoneAction:" destination="k5s-I0-84B" id="CpD-vM-gb0"/>
+                            </connections>
+                        </barButtonItem>
+                    </navigationItem>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="rIV-4n-YkN" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="439" y="406"/>
+            <point key="canvasLocation" x="561" y="366"/>
+        </scene>
+        <!--Navigation Controller-->
+        <scene sceneID="sFz-Xm-lCa">
+            <objects>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Hjg-Sq-DQg" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                <navigationController storyboardIdentifier="initialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="nvT-yR-0VU" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="RUS-9I-nJ0">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="k5s-I0-84B" kind="relationship" relationship="rootViewController" id="sph-uX-WSP"/>
+                    </connections>
+                </navigationController>
+            </objects>
+            <point key="canvasLocation" x="-199" y="366"/>
         </scene>
     </scenes>
 </document>

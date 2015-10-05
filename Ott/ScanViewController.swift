@@ -348,7 +348,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     
     func displayDetailsForUser(user: User) {
 
-        presentUserDetailViewController(withUser: user, exitMethod: .Dismiss)
+        presentUserDetailViewController(withUser: user)
     }
     
     

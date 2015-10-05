@@ -63,14 +63,6 @@ class TopicAuthorTableViewCell: TableViewCell {
         authorHandleLabel.text = topic.authorHandle
         authorBioLabel.text = topic.authorBio
         authorImageView.displayImageInFile(topic.authorAvatarFile)
-//        if topic.hasAuthorAvatar() {
-//            topic.getAuthorAvatarImage({ (success, image) -> Void in
-//                
-//                if success {
-//                    self.authorImageView.image = image
-//                }
-//            })
-//        }
     }
     
     
@@ -81,7 +73,7 @@ class TopicAuthorTableViewCell: TableViewCell {
         }
         
         if let viewController = topmostViewController() {
-            viewController.presentUserDetailViewController(withTopic: topic, exitMethod: .Back)
+            viewController.presentUserDetailViewController(withTopic: topic)
         }
     }
     
