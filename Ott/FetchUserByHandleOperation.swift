@@ -15,24 +15,17 @@ username)
 
 import UIKit
 
-typealias UserCompletionBlock = (user: User?, error: NSError?) -> Void
-
-class FetchUserByHandleOperation: ParseOperation {
+class FetchUserByHandleOperation: ParseFetchOperation {
 
     let searchByUsername: Bool
     let handle: String
-    let fetchCompletionBlock: UserCompletionBlock?
-    var user: User? = nil
-    
-    
-    init(handle: String, caseInsensitive: Bool, completion: UserCompletionBlock? = nil) {
+
+    init(handle: String, caseInsensitive: Bool, completion: FetchCompletionBlock?) {
         
         self.handle = handle
         searchByUsername = caseInsensitive
-        fetchCompletionBlock = completion
-        super.init()
+        super.init(dataSource: .Server, completion: completion)
     }
-    
     
     struct Notifications {
         
@@ -43,6 +36,10 @@ class FetchUserByHandleOperation: ParseOperation {
     }
     
     
+    var fetchedData: [User]?
+    
+    
+
     //MARK: - Execution
     
     override func execute() {
@@ -59,11 +56,7 @@ class FetchUserByHandleOperation: ParseOperation {
                 query.whereKey("handle", equalTo: handle)
             }
             
-            let results = try query.findObjects()
-            if results.count > 0 {
-                user = results.first! as? User
-            }
-            
+            fetchedData = (try query.findObjects()) as? [User]
             finishWithError(nil)
         }
         catch let error as NSError {
@@ -71,12 +64,4 @@ class FetchUserByHandleOperation: ParseOperation {
         }
     }
     
-    
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-        dispatch_async(dispatch_get_main_queue()) {
-            fetchCompletionBlock?(user: user, error: errors.first)
-        }
-    }
 }

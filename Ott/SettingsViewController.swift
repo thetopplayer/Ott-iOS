@@ -230,20 +230,27 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         
         func confirmUniqueHandle(handle: String) {
             
-            func handleFetchCompletion(user: User?, error: NSError?) {
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true) {
                 
-                handleIsUnique = user == nil
-                self.handleExistsLabel.hidden = handleIsUnique
-                self.validatingHandleActivityIndicator.stopAnimating()
-                self.handleEntryStatusImageView.hidden = false
+                (users, error) in
                 
-                if let error = error {
-                    presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
+                var handleIsUnique = true
+                if let _ = users?.first {
+                    handleIsUnique = false
+                }
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                
+                    self.handleExistsLabel.hidden = handleIsUnique
+                    self.validatingHandleActivityIndicator.stopAnimating()
+                    self.handleEntryStatusImageView.hidden = false
+                    
+                    if let error = error {
+                        self.presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
+                    }
                 }
             }
             
-            handleIsUnique = false
-            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true, completion: handleFetchCompletion)
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
 

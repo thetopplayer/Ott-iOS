@@ -180,23 +180,29 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
         
         func confirmUniqueHandle(handle: String) {
             
-            func handleFetchCompletion(user: User?, error: NSError?) {
-                
-                if let error = error {
-                    presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
-                }
-                else {
-                    handleIsUnique = user == nil
-                    handleExistsLabel.hidden = handleIsUnique
-                    validatingHandleActivityIndicator.stopAnimating()
-                    handleEntryStatusImageView.hidden = false
-              }
-           }
-            
             handleEntryStatusImageView.hidden = true
             validatingHandleActivityIndicator.startAnimating()
             
-            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true, completion: handleFetchCompletion)
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true) {
+                
+                (fetchResults, error) in
+                
+                if let error = error {
+                    self.presentOKAlertWithError(error, messagePreamble: "Error validating handle: ")
+                }
+                else {
+                    
+                    var handleIsUnique = true
+                    if let _ = fetchResults?.first as? User {
+                        handleIsUnique = false
+                    }
+                    
+                    self.handleExistsLabel.hidden = handleIsUnique
+                    self.validatingHandleActivityIndicator.stopAnimating()
+                    self.handleEntryStatusImageView.hidden = false
+                }
+            }
+            
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
         

@@ -37,7 +37,7 @@
                                     </mask>
                                 </variation>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sas-A0-Gtz">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sas-A0-Gtz" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="479" y="5" width="90" height="90"/>
                                 <animations/>
                                 <constraints>

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LogInOperation: ParseOperation {
+class LogInOperation: ParseServerOperation {
 
     let handle: String
     let password: String

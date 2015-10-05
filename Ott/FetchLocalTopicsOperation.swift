@@ -11,28 +11,17 @@ import Foundation
 
 //MARK: - FetchLocalTopicsOperation
 
-class FetchLocalTopicsOperation: ParseOperation {
+class FetchLocalTopicsOperation: ParseFetchOperation {
+
+    static private let pinName = "localTopics"
 
     static let localRadius = Double(20)
-    static let pinName = "localTopics"
-    
     let location: CLLocation
-    let startingAt: NSDate
-    let replaceCache: Bool
-    let dataSource: ParseOperation.DataSource
     
-    typealias CompletionBlock = (topics: [Topic]?, error: NSError?) -> Void
-    var completionHandler: CompletionBlock?
-    
-    init(dataSource: ParseOperation.DataSource, location: CLLocation, startingAt: NSDate, replaceCache: Bool, completion: CompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, location: CLLocation, completion: FetchCompletionBlock?) {
         
-        self.dataSource = dataSource
         self.location = location
-        self.startingAt = startingAt
-        self.replaceCache = replaceCache
-        completionHandler = completion
-        
-        super.init()
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     var fetchedData: [Topic]? {
@@ -42,17 +31,12 @@ class FetchLocalTopicsOperation: ParseOperation {
             if let data = fetchedData {
                 
                 if dataSource == .Server {
-                    
-                    if replaceCache {
-                        ParseOperation.replaceCache(FetchLocalTopicsOperation.pinName, withObjects: data)
-                    }
-                    else {
-                        ParseOperation.updateCache(FetchLocalTopicsOperation.pinName, withObjects: data)
-                    }
+                     ParseOperation.updateCache(FetchLocalTopicsOperation.pinName, withObjects: data)
                 }
             }
         }
     }
+    
     
     
     //MARK: - Execution
@@ -62,7 +46,6 @@ class FetchLocalTopicsOperation: ParseOperation {
         let query = Topic.query()!
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
-        query.whereKey(DataKeys.UpdatedAt, greaterThan: startingAt)
         
         if dataSource == ParseOperation.DataSource.Cache {
             query.fromPinWithName(FetchLocalTopicsOperation.pinName)
@@ -74,16 +57,6 @@ class FetchLocalTopicsOperation: ParseOperation {
         }
         catch let error as NSError {
             finishWithError(error)
-        }
-    }
-    
-    
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-        
-        if let completion = completionHandler {
-            completion(topics: fetchedData, error: errors.first)
         }
     }
 }

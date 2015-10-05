@@ -152,7 +152,7 @@ class TopicMasterViewController: TableViewController {
     
     func hideRefreshControl() {
         
-        self.refreshControl?.endRefreshing()
+        refreshControl?.endRefreshing()
     }
     
     
@@ -250,7 +250,7 @@ class TopicMasterViewController: TableViewController {
         let theTopic = displayedTopics[indexPath.row]
         var type: CellType
         
-        if theTopic.hasImage() {
+        if theTopic.imageFile != nil {
             type = .Image
         }
         else {

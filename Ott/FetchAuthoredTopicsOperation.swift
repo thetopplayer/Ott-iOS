@@ -11,98 +11,55 @@ import Foundation
 
 //MARK: - FetchAuthoredTopicsOperation
 
-class FetchAuthoredTopicsOperation: ParseOperation {
+class FetchAuthoredTopicsOperation: ParseFetchOperation {
+    
+    static private let pinName = "authoredTopics"
     
     let user: User
     
-    init(user: User) {
+    init(dataSource: ParseOperation.DataSource, user: User, completion: FetchCompletionBlock?) {
         
         self.user = user
-        super.init()
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     
-    //MARK: - Caching
-    
-    static func cacheNameForTopicsAuthoredByUser(user: User) -> String? {
-        return user.objectId
-    }
-    
-    private func replaceCachedTopics(withTopics topics: [Topic]) {
+    var fetchedData: [Topic]? {
         
-        guard let cacheName = FetchAuthoredTopicsOperation.cacheNameForTopicsAuthoredByUser(user) else {
-            return
-        }
-        
-        do {
+        didSet {
             
-            let _ = try? PFObject.unpinAllObjectsWithName(cacheName)
-            try PFObject.pinAll(topics, withName: cacheName)
-        }
-        catch let error as NSError {
-            finishWithError(error)
+            if let data = fetchedData {
+                
+                if dataSource == .Server {
+                    ParseOperation.updateCache(FetchAuthoredTopicsOperation.pinName, withObjects: data)
+                }
+            }
         }
     }
     
-
-
+    
+    
     //MARK: - Execution
-
+    
     override func execute() {
         
         let query = Topic.query()!
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Author, equalTo: user)
         
+        if dataSource == ParseOperation.DataSource.Cache {
+            query.fromPinWithName(FetchAuthoredTopicsOperation.pinName)
+        }
+        
         do {
             
-            let objects = try query.findObjects()
-            if let topics = objects as? [Topic] {
-                replaceCachedTopics(withTopics: topics)
-            }
-            
+            self.fetchedData = (try query.findObjects()) as? [Topic]
             finishWithError(nil)
         }
         catch let error as NSError {
             finishWithError(error)
         }
     }
-    
-    
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-    }
-}
 
-
-//MARK: - Utility Methods
-
-// note that this query is synchronous
-// todo:  handle error
-func cachedTopicsAuthoredByUser(user: User, clearCacheAfterReturning: Bool = true) -> [Topic] {
-    
-    guard let cacheName = FetchAuthoredTopicsOperation.cacheNameForTopicsAuthoredByUser(user) else {
-        return []
-    }
-    
-    let query = Topic.query()!
-    query.orderByDescending(DataKeys.UpdatedAt)
-    query.fromPinWithName(cacheName)
-    
-    do {
-        
-        let topics = try query.findObjects()
-        
-        if clearCacheAfterReturning {
-            let _ = try? PFObject.unpinAll(topics, withName: cacheName)
-        }
-        return topics as! [Topic]
-    }
-    catch let error as NSError {
-        
-        NSLog("Error getting cached topics %@", error.localizedDescription)
-        return []
-    }
 }
 

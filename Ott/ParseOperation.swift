@@ -16,28 +16,7 @@ import UIKit
 
 class ParseOperation: Operation {
 
-    override init() {
-        
-        super.init()
-        
-        addCondition(reachabilityCondition)
-        addObserver(timeoutObserver)
-    }
-    
-    
-    //MARK: - Conditions and Observers
-    
-    let reachabilityCondition: ReachabilityCondition = {
-        
-        let host = NSURL(string: "https://api.parse.com")
-        return ReachabilityCondition(host: host!)
-        }()
-    
-    
-    let timeoutObserver = TimeoutObserver(timeout: 15)
-    
-    
-    
+
     //MARK: - Background Task Tracking
     
     var backgroundTaskIdentifier: UIBackgroundTaskIdentifier?

@@ -81,14 +81,22 @@ class Follow: BaseObject, PFSubclassing {
     @NSManaged var followeeHandle: String?
     @NSManaged var followeeBio: String?
     
-    func hasFolloweeAvatar() -> Bool {
-        return self[DataKeys.FolloweeAvatar] != nil
-    }
+//    func hasFolloweeAvatar() -> Bool {
+//        return self[DataKeys.FolloweeAvatar] != nil
+//    }
+//    
     
-    
-    func getFolloweeAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+    var followeeAvatarFile: PFFile? {
         
-        getImage(forKey: DataKeys.FolloweeAvatar, completion: completion)
+        get {
+            return self[DataKeys.FolloweeAvatar] as? PFFile
+        }
     }
+//    
+//    
+//    func getFolloweeAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+//        
+//        getImage(forKey: DataKeys.FolloweeAvatar, completion: completion)
+//    }
 
 }

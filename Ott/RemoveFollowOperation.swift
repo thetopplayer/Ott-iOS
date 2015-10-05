@@ -8,7 +8,7 @@
 
 import UIKit
 
-class RemoveFollowOperation: ParseOperation {
+class RemoveFollowOperation: ParseServerOperation {
 
     let followerHandle: String
     let followeeHandle: String
@@ -17,7 +17,7 @@ class RemoveFollowOperation: ParseOperation {
         
         self.followerHandle = followerHandle
         self.followeeHandle = followeeHandle
-        super.init()
+        super.init(timeout: 30)
     }
     
     struct Notifications {
@@ -34,16 +34,17 @@ class RemoveFollowOperation: ParseOperation {
         
         logBackgroundTask()
         
-        currentUser().removeHandleFromFollowedUserHandlesArchive(followeeHandle)
-        
         let query = Follow.query()!
-        query.limit = 1
         query.whereKey(DataKeys.FollowerHandle, equalTo: followerHandle)
         query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
         
         do {
+            
             let object = try query.getFirstObject()
             try object.delete()
+            let _ = try object.unpin()  // unpin from local store, but ignore error
+            let _ = try? currentUser().fetch()  // update current user
+            
             finishWithError(nil)
         }
         catch let error as NSError {
@@ -69,7 +70,7 @@ class RemoveFollowOperation: ParseOperation {
             dispatch_async(dispatch_get_main_queue()) {
                 
                 guard let controller = topmostViewController() else {
-                    print("ERROR creating follow relationship")
+                    print("ERROR deleting follow relationship")
                     return
                 }
                 

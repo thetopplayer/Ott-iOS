@@ -32,6 +32,7 @@ class UserDetailViewController: TableViewController {
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
+        updateCurrentlyDisplayedData()
     }
     
     
@@ -105,14 +106,9 @@ class UserDetailViewController: TableViewController {
         didSet {
             
             dispatch_async(dispatch_get_main_queue()) {
-                
-                self.navigationItem.title = self.user?.name
-                
-                self.tableView.beginUpdates()
-                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
-                self.tableView.endUpdates()
-                
+
                 self.displayedData = .AuthoredTopics
+                self.updateUserSection()
             }
         }
     }
@@ -163,9 +159,9 @@ class UserDetailViewController: TableViewController {
         }
         else {
             
-            let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (user, error) in
+            let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (fetchResults, error) in
                 
-                if user != nil {
+                if let user = fetchResults?.first as? User {
                     self.user = user
                 }
                 else if error != nil {
@@ -273,18 +269,27 @@ class UserDetailViewController: TableViewController {
         fetchStatus_AuthoredTopics = .Fetching
         updateDataSection()
         
-        let fetchTopicsOperation = FetchAuthoredTopicsOperation(user: user!)
-        
-        fetchTopicsOperation.addCompletionBlock({
+        let fetchTopicsOperation = FetchAuthoredTopicsOperation(dataSource: .Server, user: user!) {
+            
+            (results, error) in
             
             self.fetchStatus_AuthoredTopics = .DidFetch
-
-            self.authoredTopics = cachedTopicsAuthoredByUser(self.user!)
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                self.updateDataSection()
+            if let topics = results as? [Topic] {
+                self.authoredTopics = topics
             }
-        })
+            
+            if let error = error {
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.presentOKAlertWithError(error)
+                }
+            }
+            else {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    self.updateDataSection()
+                }
+            }
+        }
         
         FetchQueue.sharedInstance.addOperation(fetchTopicsOperation)
     }
@@ -299,28 +304,28 @@ class UserDetailViewController: TableViewController {
         fetchStatus_AuthoredPosts = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchAuthoredPostsOperation(user: user!) {
+        let fetchOperation = FetchAuthoredPostsOperation(dataSource: .Server, user: user!) {
             
-            (posts, error) in
+            (results, error) in
             
             self.fetchStatus_AuthoredPosts = .DidFetch
-            
-            if let posts = posts {
-                
+            if let posts = results as? [Post] {
                 self.authoredPosts = posts
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.updateDataSection()
-                }
             }
-            else if let error = error {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.presentOKAlertWithError(error)
-                }
+            
+            if let error = error {
+                self.presentOKAlertWithError(error)
+            }
+            else {
+                self.updateDataSection()
             }
         }
         
         FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
+    
+    
+    // TODO; if user is currentUser, fetch from cache, then update from server
     
     
     private func fetchfollowingOthersRelationships() {
@@ -332,23 +337,19 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingOthersRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchFolloweesOperation() {
+        let fetchOperation = FetchFolloweesOperation(dataSource: .Server) {
             
-            (followedUsers, error) in
+            (fetchResults, error) in
             
             self.fetchStatus_followingOthersRelationships = .DidFetch
             
-            if let followedUsers = followedUsers {
+            if let followedUsers = fetchResults as? [Follow] {
                 
                 self.followingOthersRelationships = followedUsers
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.updateDataSection()
-                }
+                self.updateDataSection()
             }
             else if let error = error {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.presentOKAlertWithError(error)
-                }
+                self.presentOKAlertWithError(error)
             }
         }
         
@@ -365,23 +366,19 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingMeRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchFollowersOperation() {
+        let fetchOperation = FetchFollowersOperation(dataSource: .Server) {
             
-            (followers, error) in
+            (fetchResults, error) in
             
             self.fetchStatus_followingMeRelationships = .DidFetch
             
-            if let followers = followers {
+            if let followers = fetchResults as? [Follow] {
                 
                 self.followingMeRelationships = followers
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.updateDataSection()
-                }
+                self.updateDataSection()
             }
             else if let error = error {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.presentOKAlertWithError(error)
-                }
+                self.presentOKAlertWithError(error)
             }
         }
         
@@ -389,7 +386,31 @@ class UserDetailViewController: TableViewController {
     }
     
     
+    func updateCurrentlyDisplayedData() {
+        
+        updateUserSection()
+        
+        switch displayedData {
+            
+        case .AuthoredTopics:
+            fetchAuthoredTopics()
+            
+        case .AuthoredPosts:
+            fetchAuthoredPosts()
+            
+        case .Following:
+            fetchfollowingOthersRelationships()
+            
+        case .Followers:
+            fetchUsersfollowingMeRelationships()
+            
+        default:
+            ()
+        }
+        
+    }
 
+    
 
     //MARK: - Actions
     
@@ -448,6 +469,14 @@ class UserDetailViewController: TableViewController {
         tableView.separatorColor = UIColor.separator()
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
+        
+        refreshControl = {
+            
+            let rc = UIRefreshControl()
+            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+            rc.addTarget(self, action: "updateCurrentlyDisplayedData", forControlEvents: UIControlEvents.ValueChanged)
+            return rc
+            }()
         
         let nib = UINib(nibName: userDetailCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: userDetailCellViewIdentifer)
@@ -570,7 +599,7 @@ class UserDetailViewController: TableViewController {
                 else {
                     
                     let theTopic = authoredTopics[indexPath.row]
-                    if theTopic.hasImage() {
+                    if theTopic.imageFile != nil {
                         type = .TopicWithImage
                     }
                     else {
@@ -648,16 +677,44 @@ class UserDetailViewController: TableViewController {
         switch displayedData {
             
         case .AuthoredTopics:
-            title = "\(user!.numberOfTopics) Authored Topics"
+            
+            let number = user!.numberOfTopics
+            if number == 1 {
+                title = "\(number) Authored Topic"
+            }
+            else {
+                title = "\(number) Authored Topics"
+            }
             
         case .AuthoredPosts:
-            title = "\(user!.numberOfPosts) Authored Posts"
+            
+            let number = user!.numberOfPosts
+            if number == 1 {
+                title = "\(number) Authored Post"
+            }
+            else {
+                title = "\(number) Authored Posts"
+            }
             
         case .Followers:
-            title = "\(user!.followersCount) Followers"
+            
+            let number = user!.followersCount
+            if number == 1 {
+                title = "\(number) Follower"
+            }
+            else {
+                title = "\(number) Followers"
+            }
             
         case .Following:
-            title = "Following \(user!.followingCount) Users"
+            
+            let number = user!.followingCount
+            if number == 1 {
+                title = "Following \(number) User"
+            }
+            else {
+                title = "Following \(number) Users"
+            }
             
         default:
             title = ""
@@ -737,6 +794,25 @@ class UserDetailViewController: TableViewController {
         func initializeDisplayOptionsCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(displayOptionsCellViewIdentifier) as! DataDisplayOptionsTableViewCell
+            
+            switch displayedData {
+                
+            case .AuthoredTopics:
+                cell.segmentedControl.selectedSegmentIndex = 0
+                
+            case .AuthoredPosts:
+                cell.segmentedControl.selectedSegmentIndex = 1
+                
+            case .Following:
+                cell.segmentedControl.selectedSegmentIndex = 2
+                
+            case .Followers:
+                cell.segmentedControl.selectedSegmentIndex = 3
+                
+            case .None:
+                cell.segmentedControl.selectedSegmentIndex = 0                
+            }
+            
             return cell
         }
         
@@ -826,8 +902,17 @@ class UserDetailViewController: TableViewController {
     }
 
     
-    private func updateDataSection() {
+    private func updateUserSection() {
         
+        navigationItem.title = self.user?.name
+
+        tableView.beginUpdates()
+        tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Automatic)
+        tableView.endUpdates()
+    }
+    
+    
+    private func updateDataSection() {
         
         switch displayedData {
             
@@ -869,15 +954,15 @@ class UserDetailViewController: TableViewController {
         tableView.beginUpdates()
         tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
         tableView.endUpdates()
+        
+        refreshControl?.endRefreshing()
     }
     
-    
-
     
     
     //MARK: - Observations and Delegate Methods
     
-    private func startObservations() {
+    func startObservations() {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleSettingsAction:", name: UserDetailTableViewCell.settingsButtonTapNotification, object: nil)
         
@@ -889,7 +974,7 @@ class UserDetailViewController: TableViewController {
     }
     
     
-    private func endObservations() {
+    func endObservations() {
         
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }

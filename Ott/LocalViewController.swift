@@ -22,7 +22,7 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
         
-        fetchTopics(.CachedThenUpdate)
+        fetchTopics(.CacheThenServer)
     }
 
     
@@ -44,7 +44,7 @@ class LocalViewController: TopicMasterViewController {
     //MARK: - Data
     
     private enum FetchType {
-        case CachedThenUpdate, Full, Update
+        case CacheThenServer, Server
     }
     
     
@@ -52,19 +52,18 @@ class LocalViewController: TopicMasterViewController {
 
         func initializeCachedFetchOperation(location: CLLocation) -> Operation {
             
-            let start = Globals.sharedInstance.defaultFetchSinceDate
-            
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, location: location, startingAt: start, replaceCache: false, completion: { (topics, error) -> Void in
+            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, location: location, completion: { (fetchResults, error) -> Void in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
-                    self.reloadTableView(withTopics: topics)
+                    if let topics = fetchResults as? [Topic] {
+                        self.reloadTableView(withTopics: topics)
+                    }
                     self.hideRefreshControl()
                     self.displayStatus()
                     
-                    if let error = error {
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
-                    }
+                    // fetch from server now that we can be sure that table has been updated
+                    self.fetchTopics(.Server)
                 }
             })
             
@@ -72,17 +71,15 @@ class LocalViewController: TopicMasterViewController {
         }
         
         
-        func initializeServerFetchOperation(location: CLLocation, startingAt: NSDate, replaceCache: Bool) -> Operation {
+        func initializeServerFetchOperation(location: CLLocation) -> Operation {
             
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, location: location, startingAt: startingAt, replaceCache: replaceCache, completion: { (topics, error) -> Void in
-                
-                if let mostRecentTopic = topics?.first {
-                     Globals.sharedInstance.lastUpdatedLocalTopics = mostRecentTopic.updatedAt!
-                }
+            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, location: location, completion: { (fetchResults, error) -> Void in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
-                    self.reloadTableView(withTopics: topics)
+                    if let topics = fetchResults as? [Topic] {
+                        self.reloadTableView(withTopics: topics)
+                    }
                     self.hideRefreshControl()
                     self.displayStatus()
                     
@@ -106,30 +103,25 @@ class LocalViewController: TopicMasterViewController {
         
         switch type {
             
-        case .CachedThenUpdate:
+        case .CacheThenServer:
 
             let cacheOperation = initializeCachedFetchOperation(location)
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.defaultFetchSinceDate, replaceCache: true)
-            serverOperation.addDependency(cacheOperation)
+//            let serverOperation = initializeServerFetchOperation(location)
+//            serverOperation.addDependency(cacheOperation)
             
             FetchQueue.sharedInstance.addOperation(cacheOperation)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
+//            FetchQueue.sharedInstance.addOperation(serverOperation)
             
-        case .Full:
+        case .Server:
             
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.defaultFetchSinceDate, replaceCache: true)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
-            
-        case .Update:
-            
-            let serverOperation = initializeServerFetchOperation(location, startingAt: Globals.sharedInstance.lastUpdatedLocalTopics, replaceCache: false)
+            let serverOperation = initializeServerFetchOperation(location)
             FetchQueue.sharedInstance.addOperation(serverOperation)
         }
     }
     
     
     override func update() {
-        fetchTopics(.Update)
+        fetchTopics(.Server)
     }
     
     
@@ -178,7 +170,7 @@ class LocalViewController: TopicMasterViewController {
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
-        fetchTopics(.Full)
+        fetchTopics(.Server)
     }
     
     

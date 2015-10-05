@@ -8,14 +8,14 @@
 
 import UIKit
 
-class UploadPostOperation: ParseOperation {
+class UploadPostOperation: ParseServerOperation {
 
     let post: Post
     
     init(post: Post) {
         
         self.post = post
-        super.init()
+        super.init(timeout: 60)
     }
     
     struct Notifications {

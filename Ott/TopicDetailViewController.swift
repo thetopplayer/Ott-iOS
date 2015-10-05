@@ -366,72 +366,48 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private var posts = [Post]()
     private var didFetchPosts = false
-    private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
-    private var reloadTopicOperation: FetchTopicOperation?
     private var dateOfMostRecentPost: NSDate?
     
+    private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
+    private var reloadTopicOperation: FetchTopicOperation?
+    
+    
     private func fetchPosts(reloadingTopic reloadingTopic: Bool = false) {
-        
-        func updateDisplayWithPostsFromCache() {
-            
-            let cachedPosts = cachedPostsForTopic(topic!)
-            dateOfMostRecentPost = cachedPosts.first?.createdAt
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                self.displayStatus(type: .Normal)
-                self.refreshTableView(withUpdatedPosts: cachedPosts)
-                self.reloadMapView()
-            }
-        }
-
-        
-        /*****/
         
         didFetchPosts = true
         displayStatus(type: .Fetching)
 
-        fetchPostsForTopicOperation = {
+        fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!) {
             
-            var operation: FetchPostsForTopicOperation
-            if let minDate = dateOfMostRecentPost {
-                operation = FetchPostsForTopicOperation(topic: topic!, postedSince: minDate)
+            (fetchResults, error) in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.displayStatus(type: .Normal)
+                if let thePosts = fetchResults as? [Post] {
+                    
+                    self.refreshTableView(withUpdatedPosts: thePosts)
+                    self.reloadMapView()
+                }
             }
-            else {
-                operation = FetchPostsForTopicOperation(topic: topic!)
-            }
-            
-            operation.addCompletionBlock({
-                updateDisplayWithPostsFromCache()
-            })
-            
-            return operation
-            }()
+        }
         
+        FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
         
         if reloadingTopic {
             
-            reloadTopicOperation = {
+            reloadTopicOperation = FetchTopicOperation(topic: topic!)
+            reloadTopicOperation!.addCompletionBlock({
                 
-                let operation = FetchTopicOperation(topic: topic!)
-                operation.addDependency(fetchPostsForTopicOperation!)
-                
-                operation.addCompletionBlock({
-                    updateDisplayWithPostsFromCache()
-                })
-                
-                return operation
-            }()
-            
-            FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
-            FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
-        }
-        else {
-            
-            fetchPostsForTopicOperation!.addCompletionBlock({
-                updateDisplayWithPostsFromCache()
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    self.tableView.beginUpdates()
+                    self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
+                    self.tableView.endUpdates()
+                }
             })
             
-            FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
+            FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
         }
     }
     
@@ -684,7 +660,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             switch section {
                 
             case TableViewSections.Topic.rawValue:
-                number = topic.hasImage() ? 3 : 2
+                number = topic.imageFile != nil ? 3 : 2
                 
             case TableViewSections.Statistics.rawValue:
                 number = 1
@@ -716,7 +692,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case TableViewSections.Topic.rawValue:
             
-            let displayingImage = topic!.hasImage()
+            let displayingImage = topic!.imageFile != nil
             switch indexPath.row {
                 
             case 0:

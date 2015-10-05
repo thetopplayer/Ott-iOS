@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
     <objects>
@@ -22,6 +21,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="1000" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="QSD-g0-7fZ">
                                         <rect key="frame" x="8" y="0.0" width="114" height="48"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="SzD-nT-UZ3"/>
                                         </constraints>
@@ -36,6 +36,7 @@
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Posts" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="MSj-JU-nFS">
                                         <rect key="frame" x="8" y="51" width="114" height="17"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="S2K-vf-8Oy"/>
                                         </constraints>
@@ -49,6 +50,7 @@
                                         </variation>
                                     </label>
                                 </subviews>
+                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="bottom" secondItem="MSj-JU-nFS" secondAttribute="bottom" id="0Yb-yj-g60"/>
@@ -65,6 +67,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="10" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="hiw-Zd-ViF">
                                         <rect key="frame" x="8" y="0.0" width="114" height="48"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="46" id="dex-EN-uEd"/>
                                         </constraints>
@@ -79,6 +82,7 @@
                                     </label>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" text="Rating" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Jpr-Yp-1Vy">
                                         <rect key="frame" x="8" y="51" width="114" height="17"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="21" id="N0a-HJ-XPq"/>
                                         </constraints>
@@ -92,6 +96,7 @@
                                         </variation>
                                     </label>
                                 </subviews>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="Jpr-Yp-1Vy" secondAttribute="trailing" constant="8" id="4v9-j1-ntn"/>
                                     <constraint firstAttribute="width" constant="130" id="AAr-ut-LEC"/>
@@ -109,6 +114,7 @@
                                 </variation>
                             </view>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailing" secondItem="AgR-xs-cAx" secondAttribute="trailing" constant="40" id="4x0-CQ-Pj2"/>
@@ -121,6 +127,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <animations/>
                 <constraints>
                     <constraint firstAttribute="trailing" secondItem="jfY-dO-SWQ" secondAttribute="trailing" constant="-1" id="EK1-BS-LME"/>
                     <constraint firstAttribute="bottom" secondItem="jfY-dO-SWQ" secondAttribute="bottom" constant="8" id="YIt-4Z-GcO"/>
@@ -128,6 +135,7 @@
                     <constraint firstItem="jfY-dO-SWQ" firstAttribute="leading" secondItem="Ylb-t7-4Ju" secondAttribute="leading" constant="-1" id="eGh-za-QFL"/>
                 </constraints>
             </tableViewCellContentView>
+            <animations/>
             <connections>
                 <outlet property="countContainerView" destination="Myi-ha-Qiw" id="zJQ-5E-aRd"/>
                 <outlet property="countLabel" destination="QSD-g0-7fZ" id="iue-wk-xtn"/>

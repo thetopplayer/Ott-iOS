@@ -8,7 +8,7 @@
 
 import UIKit
 
-class UpdateUserOperation: ParseOperation {
+class UpdateUserOperation: ParseServerOperation {
 
     typealias CompletionBlock = (success: Bool, error: NSError?) -> Void
     
@@ -17,7 +17,7 @@ class UpdateUserOperation: ParseOperation {
     init(completion: CompletionBlock?) {
         
         completionHandler = completion
-        super.init()
+        super.init(timeout: 30)
     }
     
     struct Notifications {

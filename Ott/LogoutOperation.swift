@@ -8,12 +8,8 @@
 
 import UIKit
 
-class LogoutOperation: ParseOperation {
+class LogoutOperation: ParseServerOperation {
 
-    override init() {
-        
-        super.init()
-    }
     
     struct Notifications {
         
@@ -31,8 +27,13 @@ class LogoutOperation: ParseOperation {
         
         currentUser().purgeAuthoredTopicsArchive()
         currentUser().purgePostedTopicArchive()
-        currentUser().purgeFollowedUsersArchive()
-        PFQuery.clearAllCachedResults()
+
+//        let _ = try? PFObject.unpinAllObjectsWithName(FetchAuthoredTopicsOperation.pinName)
+//        let _ = try? PFObject.unpinAllObjectsWithName(FetchAuthoredPostsOperation.pinName)
+//        let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.pinName)
+//        let _ = try? PFObject.unpinAllObjectsWithName(FetchCachedFolloweeTopicsOperation.pinName)
+//        let _ = try? PFObject.unpinAllObjectsWithName(FetchFolloweesOperation.pinName)
+        
         User.logOut()
         
         finishWithError(nil)

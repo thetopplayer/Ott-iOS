@@ -8,14 +8,14 @@
 
 import UIKit
 
-class UploadTopicOperation: ParseOperation {
+class UploadTopicOperation: ParseServerOperation {
 
     let topic: Topic
     
     init(topic: Topic) {
         
         self.topic = topic
-        super.init()
+        super.init(timeout: 60)
     }
     
     struct Notifications {

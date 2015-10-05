@@ -77,6 +77,10 @@ class User: PFUser {
             return "bio"
         }
         
+        static var Avatar: String {
+            return "avatar"
+        }
+        
         static var FollowingCount: String {
             return "followingCount"
         }
@@ -126,16 +130,27 @@ class User: PFUser {
         }()
     
     
-    func hasAvatar() -> Bool {
+    var avatarFile: PFFile? {
         
-        return hasImage()
+        return self[DataKeys.Avatar] as? PFFile
     }
     
     
-    func getAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+    func setAvatar(avatar: UIImage?) {
         
-        getImage(completion: completion)
+        setImage(avatar, forKey: DataKeys.Avatar)
     }
+
+//    func hasAvatar() -> Bool {
+//        
+//        return hasImage()
+//    }
+//    
+//    
+//    func getAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+//        
+//        getImage(completion: completion)
+//    }
     
 
     func createPrivateData() -> PrivateUserData {
@@ -273,56 +288,69 @@ class User: PFUser {
     
     //MARK: - Followed Users
     
-    private var followedUserHandlesArchivePath: String {
+    func getFollowStatusOfUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
         
-        return documentsDirectory(withSubpath: "/followedUsers.ott")!
-    }
-    
-    
-    private func followedUserHandles() -> [String] {
-        
-        if let archive = NSArray(contentsOfFile: followedUserHandlesArchivePath) {
-            return archive as! [String]
+        let fetchOperation = FetchFolloweesOperation(followeeHandle: handle) { (relationship, error) in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                completion(following: relationship != nil)
+            }
         }
         
-        return Array<String>()
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
     
-    
-    private func archiveFollowedUserHandles(handles: NSArray) {
-        
-        handles.writeToFile(followedUserHandlesArchivePath, atomically: true)
-    }
-    
-    
-    func archiveFollowedUserHandle(handle: String) {
-        
-        let allHandles = NSMutableSet()
-        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-        allHandles.addObject(handle)
-        archiveFollowedUserHandles(allHandles.allObjects)
-    }
-    
-    
-    func isFollowingUserWithHandle(handle: String) -> Bool {
-        
-        return followedUserHandles().contains(handle)
-    }
-    
-    
-    func removeHandleFromFollowedUserHandlesArchive(handle: String) {
-        
-        let allHandles = NSMutableSet()
-        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-        allHandles.removeObject(handle)
-        archiveFollowedUserHandles(allHandles.allObjects)
-    }
-    
-    
-    func purgeFollowedUsersArchive() {
-        
-        archiveFollowedUserHandles([])
-    }
+//    
+//    private var followedUserHandlesArchivePath: String {
+//        
+//        return documentsDirectory(withSubpath: "/followedUsers.ott")!
+//    }
+//    
+//    
+//    private func followedUserHandles() -> [String] {
+//        
+//        if let archive = NSArray(contentsOfFile: followedUserHandlesArchivePath) {
+//            return archive as! [String]
+//        }
+//        
+//        return Array<String>()
+//    }
+//    
+//    
+//    private func archiveFollowedUserHandles(handles: NSArray) {
+//        
+//        handles.writeToFile(followedUserHandlesArchivePath, atomically: true)
+//    }
+//    
+//    
+//    func archiveFollowedUserHandle(handle: String) {
+//        
+//        let allHandles = NSMutableSet()
+//        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+//        allHandles.addObject(handle)
+//        archiveFollowedUserHandles(allHandles.allObjects)
+//    }
+//    
+//    
+//    func isFollowingUserWithHandle(handle: String) -> Bool {
+//        
+//        return followedUserHandles().contains(handle)
+//    }
+//    
+//    
+//    func removeHandleFromFollowedUserHandlesArchive(handle: String) {
+//        
+//        let allHandles = NSMutableSet()
+//        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
+//        allHandles.removeObject(handle)
+//        archiveFollowedUserHandles(allHandles.allObjects)
+//    }
+//    
+//    
+//    func purgeFollowedUsersArchive() {
+//        
+//        archiveFollowedUserHandles([])
+//    }
 
 }
 

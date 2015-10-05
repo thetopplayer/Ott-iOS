@@ -38,7 +38,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
    
     private func clearAvatar() {
         
-        currentUser().setImage(nil)
+        currentUser().setAvatar(nil)
         self.imageView.image = UIImage(named: "addAvatar")
     }
     
@@ -94,7 +94,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
         let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
-        currentUser().setImage(resizedImage)
+        currentUser().setAvatar(resizedImage)
         
         imageView.image = image
         doneButton.setTitle("Next", forState: .Normal)
@@ -105,7 +105,7 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
     
     func imagePickerControllerDidCancel(picker: UIImagePickerController) {
         
-        if currentUser().hasImage() {
+        if currentUser().avatarFile != nil {
             doneButton.setTitle("Next", forState: .Normal)
         }
         else {

@@ -10,9 +10,9 @@ import UIKit
 
 class UserDetailTableViewCell: TableViewCell {
 
-    @IBOutlet weak var captionImageView: UIImageView!
+    @IBOutlet weak var captionImageView: ParseImageView!
     @IBOutlet weak var avatarImageContainerView: UIView!
-    @IBOutlet weak var avatarImageView: UIImageView!
+    @IBOutlet weak var avatarImageView: ParseImageView!
     @IBOutlet weak var handleTextLabel: UILabel!
     @IBOutlet weak var bioTextLabel: UILabel!
     @IBOutlet weak var exportButton: UIButton!
@@ -97,15 +97,15 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = topic.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
-        
-        if topic.hasAuthorAvatar() {
-            topic.getAuthorAvatarImage({ (success, image) -> Void in
-                
-                if success {
-                    self.avatarImageView.setImageWithFade(image)
-                }
-            })
-        }
+        avatarImageView.displayImageInFile(topic.imageFile)
+//        if topic.hasAuthorAvatar() {
+//            topic.getAuthorAvatarImage({ (success, image) -> Void in
+//                
+//                if success {
+//                    self.avatarImageView.image = image
+//                }
+//            })
+//        }
         
     }
     
@@ -119,15 +119,15 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = user.handle
         bioTextLabel.attributedText = attributedTextForBio(user.bio)
-        
-        if user.hasAvatar() {
-            user.getAvatar({ (success, image) -> Void in
-                
-                if success {
-                    self.avatarImageView!.setImageWithFade(image)
-                }
-            })
-        }
+        avatarImageView.displayImageInFile(user.avatarFile)
+//        if user.hasAvatar() {
+//            user.getAvatar({ (success, image) -> Void in
+//                
+//                if success {
+//                    self.avatarImageView!.image = image
+//                }
+//            })
+//        }
     }
     
     

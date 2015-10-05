@@ -9,31 +9,10 @@
 import UIKit
 
 
-extension DataKeys {
-    
-    // default name
-    static var Image: String {
-        return "image"
-    }
-    
-    
-    static func hasImage(forKey imageKey: String) -> String {
-        
-        return "has_" + imageKey
-    }
-}
-
-
 extension PFObject {
     
     private func defaultImageQuality() -> CGFloat {
         return CGFloat(0.8)
-    }
-    
-    
-    func setImage(image: UIImage?) {
-        
-        setImage(image, quality: defaultImageQuality(), forKey: DataKeys.Image)
     }
     
     
@@ -51,18 +30,15 @@ extension PFObject {
                 
                 let imageFile = PFFile(name: "image.jpg", data:imageRep)
                 self[imageKey] = imageFile
-                self[DataKeys.hasImage(forKey: imageKey)] = true
             }
             else {
                 self[imageKey] = NSNull()
-                self[DataKeys.hasImage(forKey: imageKey)] = false
             }
         }
         
         if image == nil {
             
             self[imageKey] = NSNull()
-            self[DataKeys.hasImage(forKey: imageKey)] = false
             return
         }
         
@@ -70,50 +46,50 @@ extension PFObject {
     }
     
     
-    func getImage(forKey imageKey: String = DataKeys.Image, completion: ((success: Bool, image: UIImage?) -> Void)?) {
-        
-//        if hasImage(forKey: imageKey) == false {
-//            completion?(success: false, image: nil)
-//            return
+//    func getImage(forKey imageKey: String = DataKeys.Image, completion: ((success: Bool, image: UIImage?) -> Void)?) {
+//        
+////        if hasImage(forKey: imageKey) == false {
+////            completion?(success: false, image: nil)
+////            return
+////        }
+//        
+//        if let imageFile = self[imageKey] as? PFFile {
+//            
+//            imageFile.getDataInBackgroundWithBlock {
+//                
+//                (imageData: NSData?, error: NSError?) -> Void in
+//                if error == nil {
+//                    
+//                    if let imageData = imageData {
+//                        let image = UIImage(data: imageData)
+//                        dispatch_async(dispatch_get_main_queue()) {
+//                            completion?(success: true, image: image)
+//                        }
+//                    }
+//                }
+//                else {
+//                    
+//                    dispatch_async(dispatch_get_main_queue()) {
+//                        completion?(success: false, image: nil)
+//                    }
+//                }
+//            }
 //        }
-        
-        if let imageFile = self[imageKey] as? PFFile {
-            
-            imageFile.getDataInBackgroundWithBlock {
-                
-                (imageData: NSData?, error: NSError?) -> Void in
-                if error == nil {
-                    
-                    if let imageData = imageData {
-                        let image = UIImage(data: imageData)
-                        dispatch_async(dispatch_get_main_queue()) {
-                            completion?(success: true, image: image)
-                        }
-                    }
-                }
-                else {
-                    
-                    dispatch_async(dispatch_get_main_queue()) {
-                        completion?(success: false, image: nil)
-                    }
-                }
-            }
-        }
-    }
-    
-    
-    func hasImage() -> Bool {
-        
-        return hasImage(forKey: DataKeys.Image)
-    }
-    
-    
-    func hasImage(forKey forKey: String) -> Bool {
-        
-        if let value = self[DataKeys.hasImage(forKey: forKey)] as? Bool {
-            return value
-        }
-        
-        return false
-    }
+//    }
+//    
+//    
+//    func hasImage() -> Bool {
+//        
+//        return hasImage(forKey: DataKeys.Image)
+//    }
+//    
+//    
+//    func hasImage(forKey forKey: String) -> Bool {
+//        
+//        if let value = self[DataKeys.hasImage(forKey: forKey)] as? Bool {
+//            return value
+//        }
+//        
+//        return false
+//    }
 }

@@ -45,6 +45,24 @@ extension UIColor {
     }
     
     
+    static func darkText() -> UIColor {
+        return UIColor.blackColor()
+    }
+    
+    
+    static func mediumText() -> UIColor {
+        return UIColor(white: 0.3, alpha: 1.0)
+    }
+    
+    
+    static func lightText() -> UIColor {
+        return UIColor(white: 0.5, alpha: 1.0)
+    }
+    
+    
+    
+    
+    
     //MARK: - Methods
     
     convenience init (hex: Int) {

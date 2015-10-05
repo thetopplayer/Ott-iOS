@@ -36,4 +36,24 @@ class CurrentUserDetailViewController: UserDetailViewController {
             navController.presentTopicScanViewController()
         }
     }
+    
+    
+    //MARK: - Observations and Delegate Methods
+    
+    override func startObservations() {
+        
+        super.startObservations()
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleFollowDidChangeNotification:", name: RemoveFollowOperation.Notifications.DidRemove, object: nil)
+        
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleFollowDidChangeNotification:", name: CreateFollowOperation.Notifications.DidCreate, object: nil)
+    }
+    
+    
+    func handleFollowDidChangeNotification(notification: NSNotification) {
+        
+        updateCurrentlyDisplayedData()
+    }
+    
+
 }

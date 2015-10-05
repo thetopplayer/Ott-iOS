@@ -16,7 +16,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var commentLabel: UILabel?
     @IBOutlet var ratingView: LabeledDotView!
-    @IBOutlet var topicImageView: UIImageView?
+    @IBOutlet var topicImageView: ParseImageView?
     
 
     override func awakeFromNib() {
@@ -54,30 +54,34 @@ class TopicMasterTableViewCell: TableViewCell {
         }()
     
     
-    private var _displayedTopic: Topic?
+//    private var _displayedTopic: Topic?
     var displayedTopic: Topic? {
         
-        set {
-            
-            if _displayedTopic == nil {
-                _displayedTopic = newValue
-                updateContents(ignoringImage: false)
-            }
-            else {
-                
-                if newValue!.isEqual(_displayedTopic) {
-                    updateContents(ignoringImage: true)
-                }
-                else {
-                    _displayedTopic = newValue
-                    updateContents(ignoringImage: false)
-                }
-           }
+        didSet {
+            updateContents()
         }
         
-        get {
-            return _displayedTopic
-        }
+//        set {
+//            
+//            if _displayedTopic == nil {
+//                _displayedTopic = newValue
+//                updateContents(ignoringImage: false)
+//            }
+//            else {
+//                
+//                if newValue!.isEqual(_displayedTopic) {
+//                    updateContents(ignoringImage: true)
+//                }
+//                else {
+//                    _displayedTopic = newValue
+//                    updateContents(ignoringImage: false)
+//                }
+//           }
+//        }
+//        
+//        get {
+//            return _displayedTopic
+//        }
     }
     
     
@@ -86,7 +90,7 @@ class TopicMasterTableViewCell: TableViewCell {
     }
     
     
-    private func updateContents(ignoringImage ignoringImage: Bool) {
+    private func updateContents() {
         
         if let topic = displayedTopic {
             
@@ -111,26 +115,28 @@ class TopicMasterTableViewCell: TableViewCell {
                 ratingView?.hidden = true
             }
             
-            if topic.hasImage() {
-                
-                topic.getImage() {(success, image) in
-                    
-                    if success {
-                        
-                        if let currentImage = self.topicImageView!.image {
-                            
-                            if currentImage != image {
-//                                self.topicImageView!.setImageWithFade(image)
-                                self.topicImageView!.image = image
-                            }
-                        }
-                        else {
-                            //                                self.topicImageView!.setImageWithFade(image)
-                            self.topicImageView!.image = image
-                        }
-                    }
-                }
-            }
+            topicImageView!.displayImageInFile(topic.imageFile)
+            
+//            if topic.hasImage() {
+//                
+//                topic.getImage() {(success, image) in
+//                    
+//                    if success {
+//                        
+//                        if let currentImage = self.topicImageView!.image {
+//                            
+//                            if currentImage != image {
+////                                self.topicImageView!.setImageWithFade(image)
+//                                self.topicImageView!.image = image
+//                            }
+//                        }
+//                        else {
+//                            //                                self.topicImageView!.setImageWithFade(image)
+//                            self.topicImageView!.image = image
+//                        }
+//                    }
+//                }
+//            }
         }
     }
     

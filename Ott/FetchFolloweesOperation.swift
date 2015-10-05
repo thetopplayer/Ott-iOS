@@ -6,32 +6,51 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
+/**
+
+either fetch all followees of the currentUser, or a singleFollowee by his handle
+*/
+
+
 import Foundation
 
 
 //MARK: - FetchFolloweesOperation
 
-class FetchFolloweesOperation: ParseOperation {
+class FetchFolloweesOperation: ParseFetchOperation {
 
-    static let pinName = "currentUserFollowees"
+    static private let pinName = "currentUserFollowees"
     
-    typealias CompletionBlock = (relationships: [Follow]?, error: NSError?) -> Void
-    var completionHandler: CompletionBlock?
+    static func cachedFolloweePinName() -> String {
+        return pinName
+    }
+    
+    override init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+        
+        super.init(dataSource: dataSource, completion: completion)
+    }
+    
+    
+    var followeeHandle: String?
+    
+    init(followeeHandle: String, completion: FetchCompletionBlock?) {
+        
+        self.followeeHandle = followeeHandle
+        super.init(dataSource: .Server, completion: completion)
+    }
+    
     
     var fetchedData: [Follow]? {
         
         didSet {
+            
             if let data = fetchedData {
-                ParseOperation.updateCache(FetchFolloweesOperation.pinName, withObjects: data)
+                
+                if dataSource == .Server {
+                    ParseOperation.updateCache(FetchFolloweesOperation.pinName, withObjects: data)
+                }
             }
         }
-    }
-    
-    
-    init(completion: CompletionBlock?) {
-        
-        completionHandler = completion
-        super.init()
     }
     
     
@@ -41,29 +60,25 @@ class FetchFolloweesOperation: ParseOperation {
     override func execute() {
         
         let query = Follow.query()!
-        query.orderByDescending(DataKeys.UpdatedAt)
         query.whereKey(DataKeys.Follower, equalTo: currentUser())
+        query.orderByDescending(DataKeys.UpdatedAt)
+        
+        if dataSource == ParseOperation.DataSource.Cache {
+            query.fromPinWithName(FetchFolloweesOperation.pinName)
+        }
+        
+        if let followeeHandle = followeeHandle {
+            query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
+            query.limit = 1
+        }
         
         do {
             
-            let objects = try query.findObjects()
-            fetchedData = objects as? [Follow]
+            fetchedData = (try query.findObjects()) as? [Follow]
             finishWithError(nil)
         }
         catch let error as NSError {
             finishWithError(error)
-        }
-    }
-    
-
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-        
-        if let completionHandler = completionHandler {
-            dispatch_async(dispatch_get_main_queue()) {
-                completionHandler(relationships: self.fetchedData, error: errors.first)
-            }
         }
     }
 }

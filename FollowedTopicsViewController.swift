@@ -37,15 +37,20 @@ class FollowedTopicsViewController: TopicMasterViewController {
     
     private func fetchTopics(type: FetchType) {
 
+        // there may be some topics cached
+        // for a full fetch, we first need to fetch the followees, cache those results
+        // and then fetch those followee's topics in a separate operation
+        
         func initializeCachedFetchOperation() -> Operation {
             
-            let start = Globals.sharedInstance.defaultFetchSinceDate
-            
-            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Cache, startingAt: start, completion: { (topics, error) in
+            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Cache, completion: { (fetchedObjects, error) in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
-                    self.reloadTableView(withTopics: topics)
+                    if let topics = fetchedObjects as? [Topic] {
+                        self.reloadTableView(withTopics: topics)
+                    }
+                    
                     self.hideRefreshControl()
                     self.displayStatus()
                     
@@ -59,17 +64,16 @@ class FollowedTopicsViewController: TopicMasterViewController {
         }
         
         
-        func initializeServerFetchOperation(startingAt startingAt: NSDate) -> Operation {
+        func initializeServerFetchOperation() -> Operation {
             
-            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Server, startingAt: startingAt, completion: { (topics, error) in
-                
-                if let mostRecentTopic = topics?.first {
-                    Globals.sharedInstance.lastUpdatedFollowedUsersTopics = mostRecentTopic.updatedAt!
-                }
+            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Server, completion: { (fetchedObjects, error) in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
-                    self.reloadTableView(withTopics: topics)
+                    if let topics = fetchedObjects as? [Topic] {
+                        self.reloadTableView(withTopics: topics)
+                    }
+                    
                     self.hideRefreshControl()
                     self.displayStatus()
                     
@@ -91,10 +95,10 @@ class FollowedTopicsViewController: TopicMasterViewController {
 
             let cacheOperation = initializeCachedFetchOperation()
             
-            let fetchFollowersOperation = FetchFollowersOperation(completion: nil)
+            let fetchFollowersOperation = FetchFollowersOperation(dataSource: .Server, completion: nil)
             fetchFollowersOperation.addDependency(cacheOperation)
             
-            let serverOperation = initializeServerFetchOperation(startingAt: Globals.sharedInstance.defaultFetchSinceDate)
+            let serverOperation = initializeServerFetchOperation()
             serverOperation.addDependency(fetchFollowersOperation)
             
             FetchQueue.sharedInstance.addOperation(cacheOperation)
@@ -103,8 +107,8 @@ class FollowedTopicsViewController: TopicMasterViewController {
             
         case .Update:
             
-            let fetchFollowersOperation = FetchFollowersOperation(completion: nil)
-            let serverOperation = initializeServerFetchOperation(startingAt: Globals.sharedInstance.defaultFetchSinceDate)
+            let fetchFollowersOperation = FetchFollowersOperation(dataSource: .Server, completion: nil)
+            let serverOperation = initializeServerFetchOperation()
             serverOperation.addDependency(fetchFollowersOperation)
             
             FetchQueue.sharedInstance.addOperation(fetchFollowersOperation)

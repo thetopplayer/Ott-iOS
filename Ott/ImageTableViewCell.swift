@@ -10,7 +10,7 @@ import UIKit
 
 class ImageTableViewCell: TableViewCell {
     
-    @IBOutlet var topicImageView: UIImageView!
+    @IBOutlet var topicImageView: ParseImageView!
     
     var roundedBorder = false
     
@@ -38,15 +38,16 @@ class ImageTableViewCell: TableViewCell {
         
         if let topic = displayedTopic {
             
-            if topic.hasImage() {
-                
-                topic.getImage() {(success, image) in
-                    
-                    if success {
-                        self.topicImageView!.image = image
-                    }
-                }
-            }
+            topicImageView!.displayImageInFile(topic.imageFile)
+//            if topic.hasImage() {
+//                
+//                topic.getImage() {(success, image) in
+//                    
+//                    if success {
+//                        self.topicImageView!.image = image
+//                    }
+//                }
+//            }
         }
     }
     

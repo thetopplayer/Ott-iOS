@@ -17,7 +17,6 @@ class FollowStatsTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-//        innerContentContainer?.backgroundColor = UIColor(white: 1.0, alpha: 0.9)
         innerContentContainer?.addBorder()
     }
     
@@ -60,11 +59,14 @@ class FollowStatsTableViewCell: TableViewCell {
             return
         }
         
-        if currentUser().isFollowingUserWithHandle(user.handle!) {
-            setUnfollowButton()
-        }
-        else {
-            setFollowButton()
+        currentUser().getFollowStatusOfUserWithHandle(user.handle!) { (following) -> Void in
+            
+            if following {
+                self.setUnfollowButton()
+            }
+            else {
+                self.setFollowButton()
+            }
         }
         
         followingInfoLabel.attributedText = {

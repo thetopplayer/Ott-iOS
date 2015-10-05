@@ -17,7 +17,7 @@
                     <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e0B-1g-7ZM">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="250"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="forestBackground" translatesAutoresizingMaskIntoConstraints="NO" id="DmJ-aq-5Rt" userLabel="Caption Image View">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="forestBackground" translatesAutoresizingMaskIntoConstraints="NO" id="DmJ-aq-5Rt" userLabel="Caption Image View" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="140"/>
                                 <animations/>
                                 <constraints>
@@ -27,7 +27,7 @@
                             <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="0bK-xg-b3g">
                                 <rect key="frame" x="15" y="114" width="70" height="70"/>
                                 <subviews>
-                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="TXG-fI-4hg">
+                                    <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="TXG-fI-4hg" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
                                         <rect key="frame" x="3" y="3" width="64" height="64"/>
                                         <animations/>
                                         <constraints>

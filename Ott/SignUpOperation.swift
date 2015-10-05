@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SignUpOperation: ParseOperation {
+class SignUpOperation: ParseServerOperation {
 
     let phoneNumber: String
     let handle: String

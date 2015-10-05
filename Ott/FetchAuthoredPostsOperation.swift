@@ -11,52 +11,54 @@ import Foundation
 
 //MARK: - FetchAuthoredTopicsOperation
 
-class FetchAuthoredPostsOperation: ParseOperation {
+class FetchAuthoredPostsOperation: ParseFetchOperation {
+    
+    static private let pinName = "authoredPosts"
     
     let user: User
     
-    typealias CompletionBlock = (posts: [Post]?, error: NSError?) -> Void
-    var completionHandler: CompletionBlock?
-    
-    var fetchedData: [Post]?
-    
-    init(user: User, completion: CompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, user: User, completion: FetchCompletionBlock?) {
         
         self.user = user
-        completionHandler = completion
-        super.init()
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     
-
+    var fetchedData: [Post]? {
+        
+        didSet {
+            
+            if let data = fetchedData {
+                
+                if dataSource == .Server {
+                    ParseOperation.updateCache(FetchAuthoredPostsOperation.pinName, withObjects: data)
+                }
+            }
+        }
+    }
+    
+    
+    
     //MARK: - Execution
-
+    
     override func execute() {
         
         let query = Post.query()!
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Author, equalTo: user)
         
+        if dataSource == ParseOperation.DataSource.Cache {
+            query.fromPinWithName(FetchAuthoredPostsOperation.pinName)
+        }
+        
         do {
             
-            let objects = try query.findObjects()
-            self.fetchedData = objects as? [Post]
+            self.fetchedData = (try query.findObjects()) as? [Post]
             finishWithError(nil)
         }
         catch let error as NSError {
             finishWithError(error)
         }
-    }
-    
-    
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-        
-        if let completionHandler = completionHandler {
-            completionHandler(posts: fetchedData, error: errors.first)
-        }
-        
     }
 }
 

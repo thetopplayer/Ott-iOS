@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -23,6 +22,7 @@
                                 <subviews>
                                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="TIME | LOCATION" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="maL-aq-AFu">
                                         <rect key="frame" x="16" y="3" width="548" height="19"/>
+                                        <animations/>
                                         <constraints>
                                             <constraint firstAttribute="height" constant="19" id="PIw-cX-7k6"/>
                                         </constraints>
@@ -31,6 +31,7 @@
                                         <nil key="highlightedColor"/>
                                     </label>
                                 </subviews>
+                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="trailing" secondItem="maL-aq-AFu" secondAttribute="trailing" constant="20" id="D8K-5c-hqt"/>
@@ -47,6 +48,7 @@
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="10" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="w6h-cT-rOE">
                                 <rect key="frame" x="14" y="26" width="40" height="40"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="40" id="38M-ID-95j"/>
                                     <constraint firstAttribute="height" constant="40" id="CYF-o0-V8K"/>
@@ -57,11 +59,13 @@
                             </label>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e19-s5-eqe">
                                 <rect key="frame" x="62" y="32" width="514" height="30"/>
+                                <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="15"/>
-                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
+                                <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" red="0.80000001190000003" green="0.80000001190000003" blue="0.80000001190000003" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstItem="Ocq-Ug-dWS" firstAttribute="top" secondItem="yin-0g-e6x" secondAttribute="top" constant="-1" id="8Sf-w5-pt4"/>
@@ -81,6 +85,7 @@
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="6P3-2x-inN">
                                 <rect key="frame" x="8" y="3" width="556" height="19"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="19" id="ZZK-ps-e5k"/>
                                 </constraints>
@@ -89,6 +94,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="6P3-2x-inN" firstAttribute="leading" secondItem="iEa-13-NkY" secondAttribute="leading" constant="8" id="3YW-Ql-ZjF"/>
@@ -98,6 +104,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <animations/>
                 <constraints>
                     <constraint firstItem="yin-0g-e6x" firstAttribute="top" secondItem="xwd-UU-ZUw" secondAttribute="topMargin" id="25m-OV-kEV"/>
                     <constraint firstItem="iEa-13-NkY" firstAttribute="trailing" secondItem="xwd-UU-ZUw" secondAttribute="trailingMargin" id="Dux-D9-ou5"/>
@@ -108,6 +115,7 @@
                     <constraint firstAttribute="bottomMargin" secondItem="yin-0g-e6x" secondAttribute="bottom" constant="24" id="pFz-G6-4B1"/>
                 </constraints>
             </tableViewCellContentView>
+            <animations/>
             <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
             <connections>
                 <outlet property="commentLabel" destination="e19-s5-eqe" id="RHL-rl-dXR"/>

@@ -38,8 +38,12 @@ class CreateFollowOperation: ParseOperation {
         do {
             
             try follow.save()
-            currentUser().archiveFollowedUserHandle(followeeHandle)
-            try currentUser().fetch()  // refresh user data
+            try follow.fetch() // fetch since saving operation adds data to record
+            
+            let pinName = FetchFolloweesOperation.cachedFolloweePinName()
+            try follow.pinWithName(pinName) // add to local cache
+            
+            let _ = try? currentUser().fetch()  // update current user
             finishWithError(nil)
         }
         catch let error as NSError {

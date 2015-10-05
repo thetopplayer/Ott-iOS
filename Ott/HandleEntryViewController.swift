@@ -63,30 +63,34 @@ class HandleEntryViewController: PageViewController, UITextFieldDelegate {
             
             func handleFetchCompletion(user: User?, error: NSError?) {
                 
-                validatingHandleActivityIndicator.stopAnimating()
+            }
+            
+            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: false) {
+               
+                (fetchResults, error) in
+                
+                self.validatingHandleActivityIndicator.stopAnimating()
                 
                 if let error = error {
-                    
-                    presentOKAlertWithError(error, messagePreamble: "Error fetching data from server.", actionHandler: { self.resetDisplay() })
+                    self.presentOKAlertWithError(error, messagePreamble: "Error fetching data from server.", actionHandler: { self.resetDisplay() })
                 }
                 else {
                     
-                    if user != nil {
+                    if let _ = fetchResults?.first as? User {
                         
                         self.tasksCompleted = true
-                        gotoNextPage()
+                        self.gotoNextPage()
                     }
                     else {
                         
                         let message = "No user could be found with the handle \(Globals.sharedInstance.handleUsedToLogin)."
-                        presentOKAlert(title: "No Such User", message: message, actionHandler: { () -> Void in
+                        self.presentOKAlert(title: "No Such User", message: message, actionHandler: { () -> Void in
                             self.resetDisplay()
                         })
                     }
                 }
             }
             
-            let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: false, completion: handleFetchCompletion)
             FetchQueue.sharedInstance.addOperation(fetchUserOperation)
         }
         

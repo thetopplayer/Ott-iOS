@@ -11,19 +11,22 @@ import Foundation
 
 //MARK: - FetchFollowersOperation
 
-class FetchFollowersOperation: ParseOperation {
+class FetchFollowersOperation: ParseFetchOperation {
     
-    typealias CompletionBlock = (relationships: [Follow]?, error: NSError?) -> Void
-    var completionHandler: CompletionBlock?
+    static private let pinName = "currentUserFollowers"
     
-    init(completion: CompletionBlock?) {
+    var fetchedData: [Follow]? {
         
-        completionHandler = completion
-        super.init()
+        didSet {
+            
+            if let data = fetchedData {
+                
+                if dataSource == .Server {
+                    ParseOperation.updateCache(FetchFollowersOperation.pinName, withObjects: data)
+                }
+            }
+        }
     }
-    
-    
-    var fetchedData: [Follow]?
     
     
     //MARK: - Execution
@@ -34,26 +37,17 @@ class FetchFollowersOperation: ParseOperation {
         query.orderByDescending(DataKeys.UpdatedAt)
         query.whereKey(DataKeys.Followee, equalTo: currentUser())
         
+        if dataSource == ParseOperation.DataSource.Cache {
+            query.fromPinWithName(FetchFollowersOperation.pinName)
+        }
+        
         do {
             
-            let objects = try query.findObjects()
-            fetchedData = objects as? [Follow]
+            fetchedData = (try query.findObjects()) as? [Follow]
             finishWithError(nil)
         }
         catch let error as NSError {
             finishWithError(error)
-        }
-    }
-    
-
-    override func finished(errors: [NSError]) {
-        
-        super.finished(errors)
-        
-        if let completionHandler = completionHandler {
-            dispatch_async(dispatch_get_main_queue()) {
-                completionHandler(relationships: self.fetchedData, error: errors.first)
-            }
         }
     }
 }

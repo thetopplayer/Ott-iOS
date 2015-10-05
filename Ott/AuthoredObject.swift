@@ -43,6 +43,12 @@ extension DataKeys {
         return "comment"
     }
     
+    
+    static var Image: String {
+        return "image"
+    }
+
+    
     static var Location: String {
         return "location"
     }
@@ -96,15 +102,27 @@ class AuthoredObject: BaseObject, MKAnnotation {
     }
     
     
-    func hasAuthorAvatar() -> Bool {
+    var imageFile: PFFile? {
         
-        return hasImage(forKey: DataKeys.AuthorAvatar)
+        return self[DataKeys.Image] as? PFFile
     }
     
     
-    func getAuthorAvatarImage(completion: ((success: Bool, image: UIImage?) -> Void)?) {
+    func setImage(image: UIImage?) {
         
-        getImage(forKey: DataKeys.AuthorAvatar, completion: completion)
+        setImage(image, forKey: DataKeys.Image)
+    }
+
+    
+    var authorAvatarFile: PFFile? {
+        
+        return self[DataKeys.AuthorAvatar] as? PFFile
+    }
+    
+    
+    func setAuthorAvatar(avatar: UIImage?) {
+        
+        setImage(avatar, forKey: DataKeys.AuthorAvatar)
     }
     
     

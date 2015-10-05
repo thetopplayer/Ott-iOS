@@ -13,7 +13,7 @@ class TopicAuthorTableViewCell: TableViewCell {
     @IBOutlet var authorNameLabel: UILabel!
     @IBOutlet var authorHandleLabel: UILabel!
     @IBOutlet var authorBioLabel: UILabel!
-    @IBOutlet var authorImageView: UIImageView!
+    @IBOutlet var authorImageView: ParseImageView!
     
     
     override func awakeFromNib() {
@@ -62,15 +62,15 @@ class TopicAuthorTableViewCell: TableViewCell {
         authorNameLabel.text = topic.authorName
         authorHandleLabel.text = topic.authorHandle
         authorBioLabel.text = topic.authorBio
-        
-        if topic.hasAuthorAvatar() {
-            topic.getAuthorAvatarImage({ (success, image) -> Void in
-                
-                if success {
-                    self.authorImageView.setImageWithFade(image)
-                }
-            })
-        }
+        authorImageView.displayImageInFile(topic.authorAvatarFile)
+//        if topic.hasAuthorAvatar() {
+//            topic.getAuthorAvatarImage({ (success, image) -> Void in
+//                
+//                if success {
+//                    self.authorImageView.image = image
+//                }
+//            })
+//        }
     }
     
     

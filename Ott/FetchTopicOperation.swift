@@ -6,20 +6,24 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
-import Foundation
 
+/**
+this is used to update the data for a particular topic
+*/
+
+import Foundation
 
 
 //MARK: - FetchTopicOperation
 
-class FetchTopicOperation: ParseOperation {
+class FetchTopicOperation: ParseFetchOperation {
 
     let topic: Topic
     
     init(topic: Topic) {
         
         self.topic = topic
-        super.init()
+        super.init(dataSource: .Server, completion: nil)
     }
     
     
@@ -30,6 +34,8 @@ class FetchTopicOperation: ParseOperation {
         static let TopicKey = "topic"
         static let ErrorKey = "error"
     }
+    
+    
 
     
     //MARK: - Execution
@@ -48,11 +54,11 @@ class FetchTopicOperation: ParseOperation {
     
     override func finished(errors: [NSError]) {
         
+        super.finished(errors)
+        
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {
-                
-                print("posting")
                 
                 let userinfo: [NSObject: AnyObject] = [FetchTopicOperation.Notifications.TopicKey: self.topic]
                 NSNotificationCenter.defaultCenter().postNotificationName(FetchTopicOperation.Notifications.DidFetch,
@@ -72,7 +78,6 @@ class FetchTopicOperation: ParseOperation {
                 
                 controller.presentOKAlertWithError(errors.first!)
             }
-            
         }
     }
 }
