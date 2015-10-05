@@ -24,7 +24,7 @@ class FetchUserByHandleOperation: ParseFetchOperation {
         
         self.handle = handle
         searchByUsername = caseInsensitive
-        super.init(dataSource: .Server, completion: completion)
+        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
     }
     
     struct Notifications {
@@ -35,9 +35,7 @@ class FetchUserByHandleOperation: ParseFetchOperation {
         static let ErrorKey = "error"
     }
     
-    
-    var fetchedData: [User]?
-    
+
     
 
     //MARK: - Execution
@@ -56,7 +54,7 @@ class FetchUserByHandleOperation: ParseFetchOperation {
                 query.whereKey("handle", equalTo: handle)
             }
             
-            fetchedData = (try query.findObjects()) as? [User]
+            fetchedData = try query.findObjects()
             finishWithError(nil)
         }
         catch let error as NSError {

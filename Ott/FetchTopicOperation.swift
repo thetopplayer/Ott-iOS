@@ -23,7 +23,7 @@ class FetchTopicOperation: ParseFetchOperation {
     init(topic: Topic) {
         
         self.topic = topic
-        super.init(dataSource: .Server, completion: nil)
+        super.init(dataSource: .Server, pinFetchedData: false, completion: nil)
     }
     
     

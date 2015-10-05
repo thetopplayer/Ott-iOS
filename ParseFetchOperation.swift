@@ -18,15 +18,26 @@ import UIKit
 class ParseFetchOperation: ParseServerOperation {
 
     // pin name for caching should be unique to each subclass
-    static private let pinName = "parseFetchOperationDefaultPin"
+    class func pinName() -> String {
+        assert(false)
+        return ""
+    }
+    
+    
+    /// whether data fetched to server is pinned
+    var pinFetchedData: Bool
+    
     
     let dataSource: ParseOperation.DataSource
     typealias FetchCompletionBlock = (results: [PFObject]?, error: NSError?) -> Void
+    
+    /// a block exectuted on the main thread when the operation is finished
     var completionHandler: FetchCompletionBlock?
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, pinFetchedData: Bool, completion: FetchCompletionBlock?) {
         
         self.dataSource = dataSource
+        self.pinFetchedData = pinFetchedData
         completionHandler = completion
         super.init()
     }
@@ -39,7 +50,9 @@ class ParseFetchOperation: ParseServerOperation {
             if let data = fetchedData {
                 
                 if dataSource == .Server {
-                    ParseOperation.updateCache(self.dynamicType.pinName, withObjects: data)
+                    if pinFetchedData {
+                        ParseOperation.updateCache(self.dynamicType.pinName(), withObjects: data)
+                    }
                 }
             }
         }
@@ -61,17 +74,26 @@ class ParseFetchOperation: ParseServerOperation {
 
 
 
-
 extension ParseFetchOperation {
     
-    static func purgeCache(sinceDate: NSDate? = nil) {
+    class func purgeCache(priorTo: NSDate? = nil) {
         
-        if let sinceDate = sinceDate {
+        if let priorToDate = priorTo {
             
+            do {
+                let query = PFObject.query()!
+                query.whereKey(DataKeys.UpdatedAt, lessThan: priorToDate)
+                let objects = try query.findObjects()
+                
+                try PFObject.unpinAll(objects)
+            }
+            catch let error as NSError {
+                
+                NSLog("error purging cache in \(self.dynamicType): \(error)")
+            }
         }
         else {
-            
-            let _ = try? PFObject.unpinAllObjectsWithName(self.pinName)
+            let _ = try? PFObject.unpinAllObjectsWithName(self.pinName())
         }
     }
 }

@@ -13,21 +13,16 @@ import Foundation
 
 class FetchFollowersOperation: ParseFetchOperation {
     
-    static private let pinName = "currentUserFollowers"
-    
-    var fetchedData: [Follow]? {
-        
-        didSet {
-            
-            if let data = fetchedData {
-                
-                if dataSource == .Server {
-                    ParseOperation.updateCache(FetchFollowersOperation.pinName, withObjects: data)
-                }
-            }
-        }
+    override class func pinName() -> String {
+        return "currentUserFollowers"
     }
     
+    
+    init (dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+        
+        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+    }
+
     
     //MARK: - Execution
     
@@ -38,12 +33,12 @@ class FetchFollowersOperation: ParseFetchOperation {
         query.whereKey(DataKeys.Followee, equalTo: currentUser())
         
         if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchFollowersOperation.pinName)
+            query.fromPinWithName(self.dynamicType.pinName())
         }
         
         do {
             
-            fetchedData = (try query.findObjects()) as? [Follow]
+            fetchedData = try query.findObjects()
             finishWithError(nil)
         }
         catch let error as NSError {

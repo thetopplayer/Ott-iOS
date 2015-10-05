@@ -13,7 +13,9 @@ import Foundation
 
 class FetchLocalTopicsOperation: ParseFetchOperation {
 
-    static private let pinName = "localTopics"
+    override class func pinName() -> String {
+        return "localTopics"
+    }
 
     static let localRadius = Double(20)
     let location: CLLocation
@@ -21,20 +23,7 @@ class FetchLocalTopicsOperation: ParseFetchOperation {
     init(dataSource: ParseOperation.DataSource, location: CLLocation, completion: FetchCompletionBlock?) {
         
         self.location = location
-        super.init(dataSource: dataSource, completion: completion)
-    }
-    
-    var fetchedData: [Topic]? {
-        
-        didSet {
-            
-            if let data = fetchedData {
-                
-                if dataSource == .Server {
-                     ParseOperation.updateCache(FetchLocalTopicsOperation.pinName, withObjects: data)
-                }
-            }
-        }
+        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
     }
     
     
@@ -48,11 +37,11 @@ class FetchLocalTopicsOperation: ParseFetchOperation {
         query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
         
         if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchLocalTopicsOperation.pinName)
+            query.fromPinWithName(self.dynamicType.pinName())
         }
         
         do {
-            fetchedData = (try query.findObjects()) as? [Topic]
+            fetchedData = (try query.findObjects())
             finishWithError(nil)
         }
         catch let error as NSError {

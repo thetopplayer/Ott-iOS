@@ -19,21 +19,15 @@ Fetching from server fetches the topics of the cached followees
 
 class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
     
-    static private let pinName = "followeeTopics"
-    
-    var fetchedData: [Topic]? {
-        
-        didSet {
-            
-            if let data = fetchedData {
-                
-                if dataSource == .Server {
-                    ParseOperation.updateCache(FetchCachedFolloweeTopicsOperation.pinName, withObjects: data)
-                }
-            }
-        }
+    override class func pinName() -> String {
+        return "followeeTopics"
     }
     
+    
+    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+        
+        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+    }
     
     
     //MARK: - Execution
@@ -43,10 +37,10 @@ class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
         if dataSource == .Cache {
             
             let query = Topic.query()!
-            query.fromPinWithName(FetchCachedFolloweeTopicsOperation.pinName)
+            query.fromPinWithName(self.dynamicType.pinName())
             do {
                 
-                fetchedData = (try query.findObjects()) as? [Topic]
+                fetchedData = try query.findObjects()
                 finishWithError(nil)
             }
             catch let error as NSError {
@@ -56,11 +50,10 @@ class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
         else {
             
             let query = Follow.query()!
-            let followeePinName = FetchFolloweesOperation.cachedFolloweePinName()
-            query.fromPinWithName(followeePinName)
+            query.fromPinWithName(FetchFolloweesOperation.pinName())
             do {
                 
-                if let followRelationships = (try query.findObjects()) as? [Follow] {
+                if let followRelationships = try query.findObjects() as? [Follow] {
                     
                     var allTopics = [Topic]()
                     
@@ -70,8 +63,7 @@ class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
                         let author = follow[DataKeys.Followee]
                         topicQuery.whereKey(DataKeys.Author, equalTo: author)
                        
-                        if let topics = (try topicQuery.findObjects()) as? [Topic] {
-                            
+                        if let topics = try topicQuery.findObjects() as? [Topic] {
                             allTopics += topics
                         }
                     }

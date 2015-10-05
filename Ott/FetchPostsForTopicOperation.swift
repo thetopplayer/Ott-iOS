@@ -19,12 +19,10 @@ class FetchPostsForTopicOperation: ParseFetchOperation {
     init(topic: Topic, completion: FetchCompletionBlock?) {
         
         self.topic = topic
-        super.init(dataSource: .Server, completion: completion)
+        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
     }
     
-    var fetchedData: [Post]?
-    
-    
+
 
     //MARK: - Execution
     
@@ -33,11 +31,10 @@ class FetchPostsForTopicOperation: ParseFetchOperation {
         let query = Post.query()!
         query.orderByDescending(DataKeys.CreatedAt)
         query.whereKey(DataKeys.Topic, equalTo: topic)
-        query.cachePolicy = .CacheElseNetwork
         
         do {
             
-            fetchedData = (try query.findObjects()) as? [Post]
+            fetchedData = try query.findObjects()
             finishWithError(nil)
         }
         catch let error as NSError {

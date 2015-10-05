@@ -13,29 +13,18 @@ import Foundation
 
 class FetchAuthoredTopicsOperation: ParseFetchOperation {
     
-    static private let pinName = "authoredTopics"
+    override class func pinName() -> String {
+        return "authoredTopics"
+    }
     
     let user: User
     
     init(dataSource: ParseOperation.DataSource, user: User, completion: FetchCompletionBlock?) {
         
         self.user = user
-        super.init(dataSource: dataSource, completion: completion)
+        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
     }
     
-    
-    var fetchedData: [Topic]? {
-        
-        didSet {
-            
-            if let data = fetchedData {
-                
-                if dataSource == .Server {
-                    ParseOperation.updateCache(FetchAuthoredTopicsOperation.pinName, withObjects: data)
-                }
-            }
-        }
-    }
     
     
     
@@ -48,12 +37,12 @@ class FetchAuthoredTopicsOperation: ParseFetchOperation {
         query.whereKey(DataKeys.Author, equalTo: user)
         
         if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchAuthoredTopicsOperation.pinName)
+            query.fromPinWithName(self.dynamicType.pinName())
         }
         
         do {
             
-            self.fetchedData = (try query.findObjects()) as? [Topic]
+            self.fetchedData = (try query.findObjects())
             finishWithError(nil)
         }
         catch let error as NSError {

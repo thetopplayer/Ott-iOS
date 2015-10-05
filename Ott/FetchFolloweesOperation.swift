@@ -19,15 +19,13 @@ import Foundation
 
 class FetchFolloweesOperation: ParseFetchOperation {
 
-    static private let pinName = "currentUserFollowees"
-    
-    static func cachedFolloweePinName() -> String {
-        return pinName
+    override class func pinName() -> String {
+        return "currentUserFollowees"
     }
     
-    override init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, completion: completion)
+        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
     }
     
     
@@ -36,21 +34,7 @@ class FetchFolloweesOperation: ParseFetchOperation {
     init(followeeHandle: String, completion: FetchCompletionBlock?) {
         
         self.followeeHandle = followeeHandle
-        super.init(dataSource: .Server, completion: completion)
-    }
-    
-    
-    var fetchedData: [Follow]? {
-        
-        didSet {
-            
-            if let data = fetchedData {
-                
-                if dataSource == .Server {
-                    ParseOperation.updateCache(FetchFolloweesOperation.pinName, withObjects: data)
-                }
-            }
-        }
+        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
     }
     
     
@@ -64,7 +48,7 @@ class FetchFolloweesOperation: ParseFetchOperation {
         query.orderByDescending(DataKeys.UpdatedAt)
         
         if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchFolloweesOperation.pinName)
+            query.fromPinWithName(FetchFolloweesOperation.pinName())
         }
         
         if let followeeHandle = followeeHandle {
@@ -74,7 +58,7 @@ class FetchFolloweesOperation: ParseFetchOperation {
         
         do {
             
-            fetchedData = (try query.findObjects()) as? [Follow]
+            fetchedData = try query.findObjects()
             finishWithError(nil)
         }
         catch let error as NSError {

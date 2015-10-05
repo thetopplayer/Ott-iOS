@@ -25,14 +25,11 @@ class LogoutOperation: ParseServerOperation {
         
         logBackgroundTask()
         
-        currentUser().purgeAuthoredTopicsArchive()
-        currentUser().purgePostedTopicArchive()
-
-//        let _ = try? PFObject.unpinAllObjectsWithName(FetchAuthoredTopicsOperation.pinName)
-//        let _ = try? PFObject.unpinAllObjectsWithName(FetchAuthoredPostsOperation.pinName)
-//        let _ = try? PFObject.unpinAllObjectsWithName(FetchLocalTopicsOperation.pinName)
-//        let _ = try? PFObject.unpinAllObjectsWithName(FetchCachedFolloweeTopicsOperation.pinName)
-//        let _ = try? PFObject.unpinAllObjectsWithName(FetchFolloweesOperation.pinName)
+        FetchAuthoredTopicsOperation.purgeCache()
+        FetchAuthoredPostsOperation.purgeCache()
+        FetchLocalTopicsOperation.purgeCache()
+        FetchFolloweesOperation.purgeCache()
+        FetchCachedFolloweeTopicsOperation.purgeCache()
         
         User.logOut()
         

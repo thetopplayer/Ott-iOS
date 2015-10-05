@@ -115,28 +115,7 @@ class TopicMasterTableViewCell: TableViewCell {
                 ratingView?.hidden = true
             }
             
-            topicImageView!.displayImageInFile(topic.imageFile)
-            
-//            if topic.hasImage() {
-//                
-//                topic.getImage() {(success, image) in
-//                    
-//                    if success {
-//                        
-//                        if let currentImage = self.topicImageView!.image {
-//                            
-//                            if currentImage != image {
-////                                self.topicImageView!.setImageWithFade(image)
-//                                self.topicImageView!.image = image
-//                            }
-//                        }
-//                        else {
-//                            //                                self.topicImageView!.setImageWithFade(image)
-//                            self.topicImageView!.image = image
-//                        }
-//                    }
-//                }
-//            }
+            topicImageView?.displayImageInFile(topic.imageFile)
         }
     }
     
