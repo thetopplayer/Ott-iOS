@@ -29,19 +29,19 @@ extension UIColor {
     }
     
     static func red() -> UIColor {
-        return UIColor(hex: 0xE74C3C)
+        return UIColor(hex: 0xEE5F5B)
     }
     
-    static func orange() -> UIColor {
-        return UIColor(hex: 0xF4B350)
+    static func gold() -> UIColor {
+        return UIColor(hex: 0xE5DC4E)
     }
     
     static func green() -> UIColor {
-        return UIColor(hex: 0x019875)
+        return UIColor(hex: 0x62C462)
     }
     
     static func blue() -> UIColor {
-        return UIColor(hex: 0x3973BD)
+        return UIColor(hex: 0x6084EB)
     }
     
     

@@ -108,7 +108,7 @@ class OperationQueue: NSOperationQueue {
     
     override func addOperations(operations: [NSOperation], waitUntilFinished wait: Bool) {
         /*
-            The BaseObject implementation of this method does not call `addOperation()`,
+            The DataObject implementation of this method does not call `addOperation()`,
             so we'll call it ourselves.
         */
         for operation in operations {

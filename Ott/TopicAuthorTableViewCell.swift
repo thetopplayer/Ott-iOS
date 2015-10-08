@@ -45,6 +45,13 @@ class TopicAuthorTableViewCell: TableViewCell {
     }
     
     
+    override func prepareForReuse() {
+        
+        super.prepareForReuse()
+        authorImageView.clear()
+    }
+    
+    
     var displayedTopic: Topic? {
         
         didSet {

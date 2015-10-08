@@ -26,6 +26,7 @@ class AccountCreationViewController: PageCollectionViewController {
         }
         
         super.viewDidLoad()
+        view.backgroundColor = UIColor.background()
         backButton!.tintColor = UIColor.tint()
         backButton!.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
         

@@ -83,21 +83,21 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     //MARK: - Data Entry
     
-    lazy var authoredTopicNames: [String] = {
-        
-        return currentUser().authoredTopicNames()
-    }()
-    
-    
-    func didAuthorTopicNamed(name: String?) -> Bool {
-        
-        if let name = name {
-            return authoredTopicNames.contains(name)
-        }
-        else {
-            return false
-        }
-    }
+//    lazy var authoredTopicNames: [String] = {
+//        
+//        return currentUser().authoredTopicNames()
+//    }()
+//    
+//    
+//    func didAuthorTopicNamed(name: String?) -> Bool {
+//        
+//        if let name = name {
+//            return authoredTopicNames.contains(name)
+//        }
+//        else {
+//            return false
+//        }
+//    }
     
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
@@ -212,14 +212,31 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     func handleTextFieldDidChange(notification: NSNotification) {
   
-        let didAuthor = didAuthorTopicNamed(title)
-        warningLabel.hidden = didAuthor == false
-        
-        if let nameLength = title?.length {
+        func notifyDelegate(validName: Bool) {
             
-            if let delegate = delegate {
-                delegate.validNameWasEntered(didAuthor == false && nameLength > 0)
+            if let delegate = self.delegate {
+                delegate.validNameWasEntered(validName)
             }
+        }
+        
+        if let topicName = textField.text {
+            
+            if topicName.length == 0 {
+                notifyDelegate(false)
+            }
+            else {
+                
+                currentUser().verifyNewTopicTitle(topicName) {
+                    
+                    (isNew) in
+                    
+                    self.warningLabel.hidden = isNew
+                    notifyDelegate(isNew)
+                }
+            }
+        }
+        else {
+            notifyDelegate(false)
         }
     }
     

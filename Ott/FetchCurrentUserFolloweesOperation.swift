@@ -1,5 +1,5 @@
 //
-//  FetchFolloweesOperation.swift
+//  FetchCurrentUserFolloweesOperation.swift
 //  Ott
 //
 //  Created by Max on 9/6/15.
@@ -15,17 +15,15 @@ either fetch all followees of the currentUser, or a singleFollowee by his handle
 import Foundation
 
 
-//MARK: - FetchFolloweesOperation
+class FetchCurrentUserFolloweesOperation: ParseFetchOperation {
 
-class FetchFolloweesOperation: ParseFetchOperation {
-
-    override class func pinName() -> String {
+    override class func pinName() -> String? {
         return "currentUserFollowees"
     }
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    override init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     
@@ -34,7 +32,7 @@ class FetchFolloweesOperation: ParseFetchOperation {
     init(followeeHandle: String, completion: FetchCompletionBlock?) {
         
         self.followeeHandle = followeeHandle
-        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
+        super.init(dataSource: .Server, completion: completion)
     }
     
     
@@ -48,7 +46,7 @@ class FetchFolloweesOperation: ParseFetchOperation {
         query.orderByDescending(DataKeys.UpdatedAt)
         
         if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchFolloweesOperation.pinName())
+            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
         }
         
         if let followeeHandle = followeeHandle {
@@ -57,7 +55,6 @@ class FetchFolloweesOperation: ParseFetchOperation {
         }
         
         do {
-            
             fetchedData = try query.findObjects()
             finishWithError(nil)
         }

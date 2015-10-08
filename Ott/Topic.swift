@@ -20,8 +20,12 @@ extension DataKeys {
         return "posts"
     }
     
-    static var NumberOfPosts: String {
-        return "numberOfPosts"
+    static var Name: String {
+        return "name"
+    }
+    
+    static var AllCapsName: String {
+        return "acName"
     }
     
     static var LastPostLocation: String {
@@ -59,14 +63,30 @@ class Topic: AuthoredObject, PFSubclassing {
         topic.numberOfPosts = 0
         topic.averageRating = 0
         topic.lastPostLocationName = ""
-        
+        topic.currentUserDidPostTo = true
         return topic
     }
     
     
     //MARK: - Attributes
     
-    @NSManaged var name: String?
+    var name: String? {
+        
+        set {
+            
+            if let theName = newValue {
+                
+                self[DataKeys.Name] = theName
+                self[DataKeys.AllCapsName] = theName.uppercaseString
+            }
+        }
+        
+        get {
+            return self[DataKeys.Name] as? String
+        }
+    }
+    
+    @NSManaged var currentUserDidPostTo: Bool  // flag used locally
     @NSManaged var numberOfPosts: Int
     @NSManaged var averageRating: Float
     @NSManaged var lastPostLocationName: String?

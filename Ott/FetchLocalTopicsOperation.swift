@@ -9,11 +9,9 @@
 import Foundation
 
 
-//MARK: - FetchLocalTopicsOperation
+class FetchLocalTopicsOperation: FetchTopicsOperation {
 
-class FetchLocalTopicsOperation: ParseFetchOperation {
-
-    override class func pinName() -> String {
+    override class func pinName() -> String? {
         return "localTopics"
     }
 
@@ -23,14 +21,11 @@ class FetchLocalTopicsOperation: ParseFetchOperation {
     init(dataSource: ParseOperation.DataSource, location: CLLocation, completion: FetchCompletionBlock?) {
         
         self.location = location
-        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     
-    
-    //MARK: - Execution
-    
-    override func execute() {
+    override func query() -> PFQuery {
         
         let query = Topic.query()!
         query.orderByDescending(DataKeys.CreatedAt)
@@ -40,13 +35,7 @@ class FetchLocalTopicsOperation: ParseFetchOperation {
             query.fromPinWithName(self.dynamicType.pinName())
         }
         
-        do {
-            fetchedData = (try query.findObjects())
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+        return query
     }
 }
 

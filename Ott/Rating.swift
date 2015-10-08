@@ -58,7 +58,7 @@ struct Rating {
                 color = UIColor.green()
             }
             else {
-                color = UIColor.orange()
+                color = UIColor.gold()
             }
             return color
         }

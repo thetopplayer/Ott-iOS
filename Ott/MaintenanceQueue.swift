@@ -10,5 +10,10 @@ import UIKit
 
 class MaintenanceQueue: OperationQueue {
     
-    static let sharedInstance = MaintenanceQueue()
+    static let sharedInstance: MaintenanceQueue = {
+       
+        let queue = MaintenanceQueue()
+        queue.qualityOfService = .Background
+        return queue
+    }()
 }

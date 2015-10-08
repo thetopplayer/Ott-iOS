@@ -8,7 +8,7 @@
 
 import UIKit
 
-class PrivateUserData: BaseObject, PFSubclassing {
+class PrivateUserData: DataObject, PFSubclassing {
 
     override class func initialize() {
         struct Static {
@@ -25,4 +25,8 @@ class PrivateUserData: BaseObject, PFSubclassing {
         return "PrivateUserData"
     }
     
+
+    //MARK: - Attributes
+    
+    @NSManaged var phoneNumber: String?
 }

@@ -202,8 +202,8 @@ class TopicMasterViewController: TableViewController {
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
             
-            let firstTime = (a as! BaseObject).updatedAt!
-            let secondTime = (b as! BaseObject).updatedAt!
+            let firstTime = (a as! DataObject).updatedAt!
+            let secondTime = (b as! DataObject).updatedAt!
             return firstTime.laterDate(secondTime) == firstTime
         }
         

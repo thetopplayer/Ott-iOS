@@ -63,11 +63,12 @@ extension DataKeys {
 }
 
 
-class AuthoredObject: BaseObject, MKAnnotation {
+class AuthoredObject: DataObject, MKAnnotation {
 
     
     //MARK: - Attributes
 
+    @NSManaged var author: User?
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
     @NSManaged var authorBio: String?

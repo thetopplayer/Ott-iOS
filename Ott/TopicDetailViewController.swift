@@ -70,7 +70,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
         else {
-            remindUserToPost()
+            
+            performOnMainQueueAfterDelay(1) {
+                self.remindUserToPost()
+            }
         }
     }
     
@@ -107,7 +110,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private var didInitializeViewForTopic = false
     private func initializeViewForTopic() {
-                
+        
         guard let topic = topic else {
             return
         }
@@ -122,10 +125,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             displayType = .List
             
             didInitializeViewForTopic = true
-       }
+        }
     }
     
-
+    
     private enum DisplayedData {
         case Topic, TopicAndPosts
     }
@@ -178,10 +181,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             button.contentHorizontalAlignment = .Left
             let backImage = UIImage(named: "halfArrowLeft")
             button.setImage(backImage, forState: UIControlState.Normal)
-            
-            let title = presentingViewController?.title
-            button.setTitle(title, forState: UIControlState.Normal)
-            button.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
             button.addTarget(self, action: "handleDoneAction:", forControlEvents: UIControlEvents.TouchUpInside)
             
             let backButton = UIBarButtonItem(customView: button)
@@ -245,7 +244,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-
+    
     private enum DisplayType {
         case Map, List
     }
@@ -350,14 +349,21 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-
+    
     
     //MARK: - Data
     
     var topic: Topic? {
         
         didSet {
-            userDidPostToTopic = currentUser().didPostToTopic(topic!)
+            
+            if let theTopic = topic {
+                userDidPostToTopic = theTopic.currentUserDidPostTo
+            }
+            else {
+                userDidPostToTopic = false
+            }
+            
             didInitializeViewForTopic = false
         }
     }
@@ -376,7 +382,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         didFetchPosts = true
         displayStatus(type: .Fetching)
-
+        
         fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!) {
             
             (fetchResults, error) in
@@ -520,7 +526,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
-
+    
     
     
     //MARK: - TableView
@@ -587,8 +593,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
             
-            let firstTime = (a as! BaseObject).updatedAt!
-            let secondTime = (b as! BaseObject).updatedAt!
+            let firstTime = (a as! DataObject).updatedAt!
+            let secondTime = (b as! DataObject).updatedAt!
             return firstTime.laterDate(secondTime) == firstTime
         }
         
@@ -835,7 +841,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func reloadMapView() {
         
         let allObjects: [AuthoredObject] = [topic!] + posts
-
+        
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(allObjects)
         mapView.showAnnotations(allObjects, animated: true)
@@ -972,5 +978,5 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayMode = .Edit
         displayStatus(type: .Normal)
     }
-
+    
 }

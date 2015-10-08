@@ -37,6 +37,14 @@ class UserDetailTableViewCell: TableViewCell {
     }
     
     
+    override func prepareForReuse() {
+        
+        super.prepareForReuse()
+        avatarImageView.clear()
+    }
+    
+    
+
     
     //MARK: - Data
     
@@ -87,6 +95,7 @@ class UserDetailTableViewCell: TableViewCell {
         }
     }
     
+    private let defaultAvatarImage = UIImage(named: "avatar")!
     
     private func updateDisplayForTopic() {
         
@@ -97,16 +106,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = topic.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
-        avatarImageView.displayImageInFile(topic.imageFile)
-//        if topic.hasAuthorAvatar() {
-//            topic.getAuthorAvatarImage({ (success, image) -> Void in
-//                
-//                if success {
-//                    self.avatarImageView.image = image
-//                }
-//            })
-//        }
-        
+        avatarImageView.displayImageInFile(topic.imageFile, defaultImage: defaultAvatarImage)
     }
     
     
@@ -119,15 +119,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = user.handle
         bioTextLabel.attributedText = attributedTextForBio(user.bio)
-        avatarImageView.displayImageInFile(user.avatarFile)
-//        if user.hasAvatar() {
-//            user.getAvatar({ (success, image) -> Void in
-//                
-//                if success {
-//                    self.avatarImageView!.image = image
-//                }
-//            })
-//        }
+        avatarImageView.displayImageInFile(user.avatarFile, defaultImage: defaultAvatarImage)
     }
     
     

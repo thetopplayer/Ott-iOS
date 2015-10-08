@@ -18,15 +18,6 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     @IBOutlet weak var nameEntryStatusImageView: UIImageView!
     @IBOutlet weak var validatingHandleActivityIndicator: UIActivityIndicatorView!
   
-    private func indicateHandleOK(ok: Bool) {
-        handleEntryStatusImageView.indicateOK(ok)
-    }
-    
-    
-    private func indicateNameOK(ok: Bool) {
-        nameEntryStatusImageView.indicateOK(ok)
-    }
-    
     
     override func viewDidLoad() {
         
@@ -97,7 +88,7 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     
     
     
-    //MARK: - Data
+    //MARK: - Data and Display
     
     private var okToContinue: Bool = false {
         
@@ -110,7 +101,8 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     private var handleIsUnique = false {
         
         didSet {
-            indicateHandleOK(handleIsUnique)
+            handleExistsLabel.hidden = handleIsUnique
+            handleEntryStatusImageView.indicateOK(handleIsUnique)
             okToContinue = handleIsUnique && nameIsValid
         }
     }
@@ -118,7 +110,7 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
     private var nameIsValid = false {
         
         didSet {
-            indicateNameOK(nameIsValid)
+            nameEntryStatusImageView.indicateOK(nameIsValid)
             okToContinue = handleIsUnique && nameIsValid
         }
     }
@@ -192,12 +184,13 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
                 }
                 else {
                     
-                    var handleIsUnique = true
                     if let _ = fetchResults?.first as? User {
-                        handleIsUnique = false
+                        self.handleIsUnique = false
+                    }
+                    else {
+                        self.handleIsUnique = true
                     }
                     
-                    self.handleExistsLabel.hidden = handleIsUnique
                     self.validatingHandleActivityIndicator.stopAnimating()
                     self.handleEntryStatusImageView.hidden = false
                 }
@@ -213,7 +206,7 @@ class AccountSetupViewController: PageViewController, UITextFieldDelegate {
                 confirmUniqueHandle(handleTextField.text!)
             }
             else {
-                indicateHandleOK(false)
+                handleEntryStatusImageView.indicateOK(false)
                 handleExistsLabel.hidden = true
             }
         }

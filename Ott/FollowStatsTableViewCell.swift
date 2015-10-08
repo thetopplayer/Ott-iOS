@@ -59,7 +59,7 @@ class FollowStatsTableViewCell: TableViewCell {
             return
         }
         
-        currentUser().getFollowStatusOfUserWithHandle(user.handle!) { (following) -> Void in
+        currentUser().getFollowStatusForUserWithHandle(user.handle!) { (following) -> Void in
             
             if following {
                 self.setUnfollowButton()

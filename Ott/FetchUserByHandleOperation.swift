@@ -24,7 +24,7 @@ class FetchUserByHandleOperation: ParseFetchOperation {
         
         self.handle = handle
         searchByUsername = caseInsensitive
-        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
+        super.init(dataSource: .Server, completion: completion)
     }
     
     struct Notifications {

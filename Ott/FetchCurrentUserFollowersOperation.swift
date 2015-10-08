@@ -1,5 +1,5 @@
 //
-//  FetchFollowersOperation.swift
+//  FetchCurrentUserFollowersOperation.swift
 //  Ott
 //
 //  Created by Max on 10/2/15
@@ -9,18 +9,16 @@
 import Foundation
 
 
-//MARK: - FetchFollowersOperation
-
-class FetchFollowersOperation: ParseFetchOperation {
+class FetchCurrentUserFollowersOperation: ParseFetchOperation {
     
     override class func pinName() -> String {
         return "currentUserFollowers"
     }
     
     
-    init (dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    override init (dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+        super.init(dataSource: dataSource, completion: completion)
     }
 
     

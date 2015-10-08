@@ -10,6 +10,10 @@ import UIKit
 
 class PostQueue: OperationQueue {
 
-    static let sharedInstance = PostQueue()
-    
+    static let sharedInstance: PostQueue = {
+        
+        let queue = PostQueue()
+        queue.qualityOfService = .Background
+        return queue
+    }()
 }

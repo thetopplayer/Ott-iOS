@@ -19,14 +19,14 @@ Fetching from server fetches the topics of the cached followees
 
 class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
     
-    override class func pinName() -> String {
+    override class func pinName() -> String? {
         return "followeeTopics"
     }
     
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    override init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+        super.init(dataSource: dataSource, completion: completion)
     }
     
     
@@ -50,7 +50,7 @@ class FetchCachedFolloweeTopicsOperation: ParseFetchOperation {
         else {
             
             let query = Follow.query()!
-            query.fromPinWithName(FetchFolloweesOperation.pinName())
+            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
             do {
                 
                 if let followRelationships = try query.findObjects() as? [Follow] {

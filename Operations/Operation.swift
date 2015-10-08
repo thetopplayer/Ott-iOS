@@ -120,18 +120,18 @@ class Operation: NSOperation {
         }
     }
     
-    var userInitiated: Bool {
-        get {
-            return qualityOfService == .UserInitiated
-        }
-
-        set {
-            assert(state < .Executing, "Cannot modify userInitiated after execution has begun.")
-
-            qualityOfService = newValue ? .UserInitiated : .Default
-        }
-    }
-    
+//    var userInitiated: Bool {
+//        get {
+//            return qualityOfService == .UserInitiated
+//        }
+//
+//        set {
+//            assert(state < .Executing, "Cannot modify userInitiated after execution has begun.")
+//
+//            qualityOfService = newValue ? .UserInitiated : .Default
+//        }
+//    }
+//    
     override var executing: Bool {
         return state == .Executing
     }

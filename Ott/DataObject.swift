@@ -1,5 +1,5 @@
 //
-//  BaseObject.swift
+//  DataObject.swift
 //  Ott
 //
 //  Created by Max on 6/25/15.
@@ -25,17 +25,27 @@ class DataKeys {
         return "updatedAt"
     }
     
+    static var PinName: String {
+        return "pinName"
+    }
 }
 
 
-class BaseObject: PFObject {
+class DataObject: PFObject {
+    
+    
+    //MARK: - Attributes
+    
+    /// used in some cases to keep track of the object's pinName when cached in the local datastore
+    @NSManaged var pinName: String?
+    
     
     
     //MARK: - NSObject Protocol
     
     override func isEqual(object: AnyObject?) -> Bool {
         
-        if let otherObject = object as? BaseObject {
+        if let otherObject = object as? DataObject {
             return otherObject.hash == hash
         }
         
@@ -51,7 +61,4 @@ class BaseObject: PFObject {
         
         return super.hash
     }
-    
-    
-    @NSManaged var phoneNumber: String?
 }

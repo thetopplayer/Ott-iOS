@@ -19,21 +19,20 @@ class FetchPostsForTopicOperation: ParseFetchOperation {
     init(topic: Topic, completion: FetchCompletionBlock?) {
         
         self.topic = topic
-        super.init(dataSource: .Server, pinFetchedData: false, completion: completion)
+        super.init(dataSource: .Server, completion: completion)
     }
     
-
+    
 
     //MARK: - Execution
     
     override func execute() {
         
         let query = Post.query()!
-        query.orderByDescending(DataKeys.CreatedAt)
+        query.orderByDescending(DataKeys.UpdatedAt)
         query.whereKey(DataKeys.Topic, equalTo: topic)
         
         do {
-            
             fetchedData = try query.findObjects()
             finishWithError(nil)
         }

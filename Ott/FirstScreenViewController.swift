@@ -13,7 +13,9 @@ class FirstScreenViewController: ViewController {
     @IBOutlet weak var signUpButton: UIButton!
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
+        view.backgroundColor = UIColor.background()
         signUpButton.addRoundedBorder(withColor: UIColor.tint())
     }
 

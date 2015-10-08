@@ -35,8 +35,22 @@ class UploadPostOperation: ParseServerOperation {
         
         do {
             
+            let topicPinName = post.topic!.pinName
+            
             try post.save()
-            currentUser().archivePostedTopicID(post.topic!.objectId!)
+            try post.fetchIfNeeded()
+            try post.pinWithName(FetchCurrentUserAuthoredPostsOperation.pinName()!)
+            
+            // fetch the updated topic, update its locally used attributes, and re-pin (if it was originally pinned)
+            let topic = post.topic!
+            try post.topic!.fetchIfNeeded()
+            
+            topic.currentUserDidPostTo = true
+            if let topicPinName = topicPinName {
+                topic.pinName = topicPinName
+                try topic.pinWithName(topicPinName)
+            }
+            
             finishWithError(nil)
         }
         catch let error as NSError {

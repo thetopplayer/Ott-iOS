@@ -65,6 +65,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         setupParseBackend()
+        CacheManager.sharedInstance.start()
 
         UITabBar.appearance().tintColor = UIColor.tint()
         UINavigationBar.appearance().tintColor = UIColor.tint()
@@ -95,6 +96,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
+        
+        CacheManager.sharedInstance.stop()
     }
 
 

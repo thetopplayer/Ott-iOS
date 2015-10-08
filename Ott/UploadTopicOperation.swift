@@ -36,7 +36,7 @@ class UploadTopicOperation: ParseServerOperation {
         do {
             
             try topic.save()
-            currentUser().archiveAuthoredTopicName(topic.name!)
+            try topic.pinWithName(FetchCurrentUserAuthoredTopicsOperation.pinName()!)  // store in local cache
             finishWithError(nil)
         }
         catch let error as NSError {
@@ -53,6 +53,9 @@ class UploadTopicOperation: ParseServerOperation {
         if errors.count == 0 {
             
             dispatch_async(dispatch_get_main_queue()) {
+                
+                print("topic saved = \(self.topic)")
+                
                 NSNotificationCenter.defaultCenter().postNotificationName(UploadTopicOperation.Notifications.DidUpload,
                     object: self)
             }

@@ -283,9 +283,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_AuthoredTopics = .Fetching
         updateDataSection()
         
-        let fetchTopicsOperation = FetchAuthoredTopicsOperation(dataSource: .Server, user: user) {
-            
-            (results, error) in
+        func handleFetchResults(results: [PFObject]?, error: NSError?) {
             
             self.fetchStatus_AuthoredTopics = .DidFetch
             if let topics = results as? [Topic] {
@@ -293,17 +291,24 @@ class UserDetailViewController: TableViewController {
             }
             
             if let error = error {
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.presentOKAlertWithError(error)
-                }
+                self.presentOKAlertWithError(error)
+            }
+            else {
+                self.updateDataSection()
+            }
+        }
+        
+        let fetchTopicsOperation: FetchAuthoredTopicsOperation = {
+            
+            if user == currentUser() {
+                
+                return FetchCurrentUserAuthoredTopicsOperation(dataSource: .Cache, completion: handleFetchResults)
             }
             else {
                 
-                dispatch_async(dispatch_get_main_queue()) {
-                    self.updateDataSection()
-                }
+                return FetchAuthoredTopicsOperation(dataSource: .Server, user: user, completion: handleFetchResults)
             }
-        }
+        }()
         
         FetchQueue.sharedInstance.addOperation(fetchTopicsOperation)
     }
@@ -317,10 +322,8 @@ class UserDetailViewController: TableViewController {
         
         fetchStatus_AuthoredPosts = .Fetching
         updateDataSection()
-        
-        let fetchOperation = FetchAuthoredPostsOperation(dataSource: .Server, user: user!) {
-            
-            (results, error) in
+
+        func handleFetchResults(results: [PFObject]?, error: NSError?) {
             
             self.fetchStatus_AuthoredPosts = .DidFetch
             if let posts = results as? [Post] {
@@ -335,11 +338,25 @@ class UserDetailViewController: TableViewController {
             }
         }
         
-        FetchQueue.sharedInstance.addOperation(fetchOperation)
+        
+        let fetchPostsOperation: FetchAuthoredPostsOperation = {
+            
+            if user == currentUser() {
+                
+                return FetchCurrentUserAuthoredPostsOperation(dataSource: .Cache, completion: handleFetchResults)
+            }
+            else {
+                
+                return FetchAuthoredPostsOperation(dataSource: .Server, user: user!, completion: handleFetchResults)
+            }
+        }()
+        
+        
+        FetchQueue.sharedInstance.addOperation(fetchPostsOperation)
     }
     
     
-    // TODO; if user is currentUser, fetch from cache, then update from server
+    // TODO:  fetch from cache then server
     
     
     private func fetchfollowingOthersRelationships() {
@@ -351,7 +368,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingOthersRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchFolloweesOperation(dataSource: .Server) {
+        let fetchOperation = FetchCurrentUserFolloweesOperation(dataSource: .Server) {
             
             (fetchResults, error) in
             
@@ -380,7 +397,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingMeRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchFollowersOperation(dataSource: .Server) {
+        let fetchOperation = FetchCurrentUserFollowersOperation(dataSource: .Server) {
             
             (fetchResults, error) in
             
@@ -925,7 +942,7 @@ class UserDetailViewController: TableViewController {
         navigationItem.title = self.user?.name
 
         tableView.beginUpdates()
-        tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .Automatic)
+        tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
         tableView.endUpdates()
     }
     

@@ -15,7 +15,7 @@ class Globals {
     
    static let sharedInstance = Globals()
     
-    
+
     //MARK: - Login and Sign Up
     
     var handleUsedToLogin = ""
@@ -25,25 +25,37 @@ class Globals {
     
     //MARK: - User Defaults
     
-    var defaultFetchSinceDate: NSDate {
-        let weekAgo = NSDate().daysFrom(-7)
-        return weekAgo
-    }
-    
-    private let lastUpdatedLocalTopicsKey = "lastUpdatedLocalTopicsKey"
-    var lastUpdatedLocalTopics: NSDate {
+    private let lastUpdatedAuthoredTopicsKey = "lastUpdatedAuthoredTopicsKey"
+    var lastUpdatedAuthoredTopics: NSDate {
         
         get {
-            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedLocalTopicsKey) as? NSDate {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedAuthoredTopicsKey) as? NSDate {
                 return date
             }
-            return defaultFetchSinceDate
+            return NSDate.distantPast()
         }
         
         set {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedLocalTopicsKey)
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedAuthoredTopicsKey)
         }
     }
+    
+    
+    private let lastUpdatedAuthoredPostsKey = "lastUpdatedAuthoredPostsKey"
+    var lastUpdatedAuthoredPosts: NSDate {
+        
+        get {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedAuthoredPostsKey) as? NSDate {
+                return date
+            }
+            return NSDate.distantPast()
+        }
+        
+        set {
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedAuthoredPostsKey)
+        }
+    }
+    
     
     private let lastUpdatedFollowedUsersTopicsKey = "lastUpdatedFollowedUsersTopics"
     var lastUpdatedFollowedUsersTopics: NSDate {
@@ -52,7 +64,7 @@ class Globals {
             if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFollowedUsersTopicsKey) as? NSDate {
                 return date
             }
-            return defaultFetchSinceDate
+            return NSDate.distantPast()
         }
         
         set {
@@ -104,6 +116,13 @@ func openSettings() {
 }
 
 
+func performOnMainQueueAfterDelay(delay: NSTimeInterval, block: () -> Void) {
+    
+    dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), block)
+}
+
+
+
 
 //MARK: - Directories
 
@@ -134,9 +153,6 @@ func documentsDirectory(withSubpath subpath: String) -> String? {
     }
 }
 
-
-
-//MARK: - User Defaults
 
 
 

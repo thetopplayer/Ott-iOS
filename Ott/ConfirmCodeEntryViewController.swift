@@ -27,7 +27,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         super.viewDidLoad()
         
         textField.delegate = self
-        
+
         button.setTitle("Enter Code", forState: UIControlState.Disabled)
         button.setTitle("Next", forState: UIControlState.Normal)
         button.enabled = false

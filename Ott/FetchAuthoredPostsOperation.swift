@@ -9,22 +9,25 @@
 import Foundation
 
 
-//MARK: - FetchAuthoredTopicsOperation
-
 class FetchAuthoredPostsOperation: ParseFetchOperation {
     
-    override class func pinName() -> String {
-        return "authoredPosts"
-    }
-    
     let user: User
+    var startDate: NSDate? = nil
     
     init(dataSource: ParseOperation.DataSource, user: User, completion: FetchCompletionBlock?) {
         
         self.user = user
-        super.init(dataSource: dataSource, pinFetchedData: true, completion: completion)
+        super.init(dataSource: dataSource, completion: completion)
     }
    
+    
+    init(dataSource: ParseOperation.DataSource, user: User, updatedSince: NSDate, completion: FetchCompletionBlock?) {
+        
+        self.user = user
+        startDate = updatedSince
+        super.init(dataSource: dataSource, completion: completion)
+    }
+
     
     
     //MARK: - Execution
@@ -32,16 +35,14 @@ class FetchAuthoredPostsOperation: ParseFetchOperation {
     override func execute() {
         
         let query = Post.query()!
-        query.orderByDescending(DataKeys.CreatedAt)
+        query.orderByDescending(DataKeys.UpdatedAt)
         query.whereKey(DataKeys.Author, equalTo: user)
-        
-        if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(self.dynamicType.pinName())
+        if let startDate = startDate {
+            query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
         }
-        
+
         do {
-            
-            self.fetchedData = (try query.findObjects())
+            fetchedData = (try query.findObjects())
             finishWithError(nil)
         }
         catch let error as NSError {

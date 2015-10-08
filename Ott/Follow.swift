@@ -53,7 +53,7 @@ extension DataKeys {
 }
 
 
-class Follow: BaseObject, PFSubclassing {
+class Follow: DataObject, PFSubclassing {
 
     override class func initialize() {
         struct Static {

@@ -9,6 +9,51 @@
 import UIKit
 
 
+extension DataKeys {
+    
+    static var PrivateData: String {
+        return "privateData"
+    }
+    
+    // the handle is the prettier version of "username" as created by the user
+    static var Handle: String {
+        return "handle"
+    }
+    
+    static var NumberOfTopics: String {
+        return "numberOfTopics"
+    }
+    
+    static var PhoneNumber: String {
+        return "phoneNumber"
+    }
+    
+    static var NumberOfPosts: String {
+        return "numberOfPosts"
+    }
+    
+    static var Bio: String {
+        return "bio"
+    }
+    
+    static var Avatar: String {
+        return "avatar"
+    }
+    
+    static var FollowingCount: String {
+        return "followingCount"
+    }
+    
+    static var FollowersCount: String {
+        return "followersCount"
+    }
+    
+    static var LastTopicCreatedAt: String {
+        return "lastTopicCreatedAt"
+    }
+}
+
+
 //MARK: - Static Functions
 
 func userIsLoggedIn() -> Bool {
@@ -49,51 +94,6 @@ class User: PFUser {
     
     
     //MARK: - Core Attributes
-    
-    struct DataKeys {
-        
-        static var PrivateData: String {
-            return "privateData"
-        }
-        
-        // the handle is the prettier version of "username" as created by the user
-        static var Handle: String {
-            return "handle"
-        }
-        
-        static var NumberOfTopics: String {
-            return "numberOfTopics"
-        }
-        
-        static var PhoneNumber: String {
-            return "phoneNumber"
-        }
-        
-        static var NumberOfPosts: String {
-            return "numberOfPosts"
-        }
-        
-        static var Bio: String {
-            return "bio"
-        }
-        
-        static var Avatar: String {
-            return "avatar"
-        }
-        
-        static var FollowingCount: String {
-            return "followingCount"
-        }
-        
-        static var FollowersCount: String {
-            return "followersCount"
-        }
-        
-        static var LastTopicCreatedAt: String {
-            return "lastTopicCreatedAt"
-        }
-    }
-    
     
     /** Use this to create */
     class func create() -> User {
@@ -140,17 +140,6 @@ class User: PFUser {
         
         setImage(avatar, forKey: DataKeys.Avatar)
     }
-
-//    func hasAvatar() -> Bool {
-//        
-//        return hasImage()
-//    }
-//    
-//    
-//    func getAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
-//        
-//        getImage(completion: completion)
-//    }
     
 
     func createPrivateData() -> PrivateUserData {
@@ -188,109 +177,67 @@ class User: PFUser {
     }
 
 
-    
-    //MARK: - Authored Topics
-    
-    private var authoredTopicArchivePath: String {
-        
-        return documentsDirectory() + "/authoredTopics.ott"
-    }
-    
-    
-    func authoredTopicNames() -> [String] {
-        
-        if let archive = NSArray(contentsOfFile: authoredTopicArchivePath) {
-            return archive as! [String]
-        }
-        
-        return Array<String>()
-    }
-    
-    
-    private func archiveAuthoredTopicNames(names: NSArray) {
-        
-        names.writeToFile(authoredTopicArchivePath, atomically: true)
-    }
-    
-    
-    func archiveAuthoredTopicName(name: String) {
-        
-        let topicNames = NSMutableSet()
-        topicNames.unionSet(NSSet(array: authoredTopicNames()) as! Set<String>)
-        topicNames.addObject(name)
-        archiveAuthoredTopicNames(topicNames.allObjects)
-    }
-    
+
+    //MARK: - Queries
     
     func didAuthorTopic(topic: Topic) -> Bool {
         
-        let topicAuthorHandle = topic.authorHandle?.capitalizedString
-        return handle?.capitalizedString == topicAuthorHandle
-    }
-    
-    
-    func purgeAuthoredTopicsArchive() {
-        
-        archiveAuthoredTopicNames([])
+        let author = topic.author!
+        return author.isEqual(currentUser())
     }
     
 
-    
-    //MARK: - Quick Tracking of Topics and Posts
-    
-    private var postedTopicArchivePath: String {
+    // search cached topics authored by currentUser, returning true if a topic with this name has already been authored
+    func verifyNewTopicTitle(name: String, completion: (isNew: Bool) -> Void) {
         
-        return documentsDirectory(withSubpath: "/postedTopics.ott")!
-    }
-    
-    
-    private func postedTopicIDs() -> [String] {
+        let searchName = name.capitalizedString
         
-        if let archive = NSArray(contentsOfFile: postedTopicArchivePath) {
-            return archive as! [String]
+        let query = Topic.query()!
+        query.whereKey(DataKeys.AllCapsName, equalTo: searchName)
+        query.fromPinWithName(FetchAuthoredTopicsOperation.pinName())
+        query.limit = 1
+        
+        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                if let _ = (objects as? [Topic])?.first {
+                    completion(isNew: false)
+                }
+                else {
+                    completion(isNew: true)
+                }
+            }
         }
-        
-        return Array<String>()
     }
-    
-    
-    private func archivePostedTopicIDs(topicIDs: NSArray) {
-        
-        topicIDs.writeToFile(postedTopicArchivePath, atomically: true)
-    }
-    
-    
-    func archivePostedTopicID(topicID: String) {
-        
-        let topicIDs = NSMutableSet()
-        topicIDs.unionSet(NSSet(array: postedTopicIDs()) as! Set<String>)
-        topicIDs.addObject(topicID)
-        archivePostedTopicIDs(topicIDs.allObjects)
-    }
-    
-    
-    func didPostToTopic(topic: Topic) -> Bool {
-        
-        if let topicID = topic.objectId {
-            return postedTopicIDs().contains(topicID)
-        }
-        
-        return false
-    }
-    
 
-    func purgePostedTopicArchive() {
+    
+//    // as determined by only searching local cache, which should only contain posts authored by currentUser
+//    func didPostToTopic(topic: Topic, completion: (didPost: Bool) -> Void) {
+//        
+//        let query = Post.query()!
+//        query.whereKey(DataKeys.Topic, equalTo: topic)
+//        query.fromPinWithName(FetchAuthoredPostsOperation.pinName())
+//        query.limit = 1
+//        
+//        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+//            
+//            dispatch_async(dispatch_get_main_queue()) {
+//
+//                if let _ = (objects as? [Post])?.first {
+//                    completion(didPost: true)
+//                }
+//                else {
+//                    completion(didPost: false)
+//                }
+//            }
+//        }
+//    }
+//    
+    
+    func getFollowStatusForUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
         
-        archivePostedTopicIDs([])
-    }
-    
-    
-    
-    //MARK: - Followed Users
-    
-    func getFollowStatusOfUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
-        
-        let fetchOperation = FetchFolloweesOperation(followeeHandle: handle) { (relationship, error) in
+        let fetchOperation = FetchCurrentUserFolloweesOperation(followeeHandle: handle) { (relationship, error) in
             
             dispatch_async(dispatch_get_main_queue()) {
                 completion(following: relationship != nil)
@@ -299,58 +246,6 @@ class User: PFUser {
         
         FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
-    
-//    
-//    private var followedUserHandlesArchivePath: String {
-//        
-//        return documentsDirectory(withSubpath: "/followedUsers.ott")!
-//    }
-//    
-//    
-//    private func followedUserHandles() -> [String] {
-//        
-//        if let archive = NSArray(contentsOfFile: followedUserHandlesArchivePath) {
-//            return archive as! [String]
-//        }
-//        
-//        return Array<String>()
-//    }
-//    
-//    
-//    private func archiveFollowedUserHandles(handles: NSArray) {
-//        
-//        handles.writeToFile(followedUserHandlesArchivePath, atomically: true)
-//    }
-//    
-//    
-//    func archiveFollowedUserHandle(handle: String) {
-//        
-//        let allHandles = NSMutableSet()
-//        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-//        allHandles.addObject(handle)
-//        archiveFollowedUserHandles(allHandles.allObjects)
-//    }
-//    
-//    
-//    func isFollowingUserWithHandle(handle: String) -> Bool {
-//        
-//        return followedUserHandles().contains(handle)
-//    }
-//    
-//    
-//    func removeHandleFromFollowedUserHandlesArchive(handle: String) {
-//        
-//        let allHandles = NSMutableSet()
-//        allHandles.unionSet(NSSet(array: followedUserHandles()) as! Set<String>)
-//        allHandles.removeObject(handle)
-//        archiveFollowedUserHandles(allHandles.allObjects)
-//    }
-//    
-//    
-//    func purgeFollowedUsersArchive() {
-//        
-//        archiveFollowedUserHandles([])
-//    }
 
 }
 

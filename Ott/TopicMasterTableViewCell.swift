@@ -44,6 +44,13 @@ class TopicMasterTableViewCell: TableViewCell {
     }
     
     
+    override func prepareForReuse() {
+        
+        super.prepareForReuse()
+        topicImageView?.clear()
+    }
+    
+    
     static var didRespondImage: UIImage = {
         return UIImage(named: "arrowBack")!
         }()
@@ -54,37 +61,15 @@ class TopicMasterTableViewCell: TableViewCell {
         }()
     
     
-//    private var _displayedTopic: Topic?
     var displayedTopic: Topic? {
         
         didSet {
+            
             updateContents()
         }
-        
-//        set {
-//            
-//            if _displayedTopic == nil {
-//                _displayedTopic = newValue
-//                updateContents(ignoringImage: false)
-//            }
-//            else {
-//                
-//                if newValue!.isEqual(_displayedTopic) {
-//                    updateContents(ignoringImage: true)
-//                }
-//                else {
-//                    _displayedTopic = newValue
-//                    updateContents(ignoringImage: false)
-//                }
-//           }
-//        }
-//        
-//        get {
-//            return _displayedTopic
-//        }
     }
     
-    
+
     private func topicRating() -> Rating {
         return Rating(withFloat: displayedTopic!.averageRating / 10.0)
     }
@@ -103,71 +88,41 @@ class TopicMasterTableViewCell: TableViewCell {
             }
             
             statusLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
-            if currentUser().didPostToTopic(topic) {
+            if topic.currentUserDidPostTo {
                 
-                let rating = topicRating()
-                ratingView?.fillColor = rating.color()
-                ratingView?.text = rating.text()
-                ratingView?.hidden = false
+                let rating = self.topicRating()
+                self.ratingView?.fillColor = rating.color()
+                self.ratingView?.text = rating.text()
+                self.ratingView?.hidden = false
             }
             else {
-                
-                ratingView?.hidden = true
+                self.ratingView?.hidden = true
             }
             
-            topicImageView?.displayImageInFile(topic.imageFile)
+            let imageFile = topic.imageFile
+            topicImageView?.displayImageInFile(imageFile)
         }
     }
     
-
+    
     private func attributedTitle() -> NSAttributedString {
         
-        if let topic = displayedTopic {
-            
-            let hashColor = currentUser().didPostToTopic(topic) ? UIColor.grayColor() : UIColor.tint()            
-            let titleColor = UIColor.blackColor()
-            
-            let titleFont = UIFont.boldSystemFontOfSize(20)
-            let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
-            
-            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : titleColor, NSFontAttributeName: titleFont]
-            
-            let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
-            let s1 = NSAttributedString(string: topic.name!, attributes: boldAttributes)
-            fullString.appendAttributedString(s1)
-            
-            return fullString
+        guard let topic = displayedTopic else {
+            return NSAttributedString(string: "")
         }
         
-        return NSAttributedString(string: "")
+        let hashColor = topic.currentUserDidPostTo ? UIColor.grayColor() : UIColor.tint()
+        let titleColor = UIColor.blackColor()
+        
+        let titleFont = UIFont.boldSystemFontOfSize(20)
+        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
+        
+        let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : titleColor, NSFontAttributeName: titleFont]
+        
+        let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
+        let s1 = NSAttributedString(string: topic.name!, attributes: boldAttributes)
+        fullString.appendAttributedString(s1)
+        
+        return fullString
     }
-    
-    
-//    private func attributedDescription() -> NSAttributedString {
-//        
-//        if let topic = displayedTopic {
-//            
-//            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.systemFontOfSize(10)]
-//            
-//            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(10)]
-//            
-//            let s1 = NSMutableAttributedString(string: "by ", attributes: normalAttributes)
-//            let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
-//            let s2 = NSAttributedString(string: authorName, attributes: boldAttributes)
-//            s1.appendAttributedString(s2)
-//            
-//            let s3 = NSMutableAttributedString(string: " |  ", attributes: normalAttributes)
-//            let s4 = NSAttributedString(string: "\(topic.numberOfPosts)", attributes: boldAttributes)
-//            let p = topic.numberOfPosts == 1 ? " post" : " posts"
-//            let s5 = NSAttributedString(string: p, attributes: normalAttributes)
-//            s3.appendAttributedString(s4)
-//            s3.appendAttributedString(s5)
-//            
-//            s1.appendAttributedString(s3)
-//            return s1
-//        }
-//        
-//        return NSAttributedString(string: "")
-//    }
-    
 }

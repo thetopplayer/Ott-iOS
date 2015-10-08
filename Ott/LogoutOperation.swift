@@ -25,10 +25,10 @@ class LogoutOperation: ParseServerOperation {
         
         logBackgroundTask()
         
-        FetchAuthoredTopicsOperation.purgeCache()
-        FetchAuthoredPostsOperation.purgeCache()
+        FetchCurrentUserAuthoredTopicsOperation.purgeCache()
+        FetchCurrentUserAuthoredPostsOperation.purgeCache()
         FetchLocalTopicsOperation.purgeCache()
-        FetchFolloweesOperation.purgeCache()
+        FetchCurrentUserFolloweesOperation.purgeCache()
         FetchCachedFolloweeTopicsOperation.purgeCache()
         
         User.logOut()

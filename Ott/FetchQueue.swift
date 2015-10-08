@@ -10,5 +10,10 @@ import UIKit
 
 class FetchQueue: OperationQueue {
 
-    static let sharedInstance = FetchQueue()
+    static let sharedInstance: FetchQueue = {
+        
+        let queue = FetchQueue()
+        queue.qualityOfService = .UserInitiated
+        return queue
+    }()
 }
