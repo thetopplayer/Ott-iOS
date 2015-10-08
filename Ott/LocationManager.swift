@@ -133,6 +133,8 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
             return
         }
         
+        print("reverse geocoding")
+        
         geoCoder.reverseGeocodeLocation(location!, completionHandler: { (placemarks, error) -> Void in
             
             if error == nil {
@@ -193,6 +195,8 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         }
         
         priorLocation = locations.first
+        reverseGeocodeCurrentLocation()
+
         NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
     }
     

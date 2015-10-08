@@ -15,7 +15,7 @@ username)
 
 import UIKit
 
-class FetchUserByHandleOperation: ParseFetchOperation {
+class FetchUserByHandleOperation: FetchOperation {
 
     let searchByUsername: Bool
     let handle: String

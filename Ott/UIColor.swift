@@ -33,7 +33,7 @@ extension UIColor {
     }
     
     static func gold() -> UIColor {
-        return UIColor(hex: 0xE5DC4E)
+        return UIColor(hex: 0xD8D219)
     }
     
     static func green() -> UIColor {

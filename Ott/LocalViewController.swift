@@ -10,6 +10,8 @@ import UIKit
 
 class LocalViewController: TopicMasterViewController {
 
+    var aTopicWasUpdated = false
+    
     
     //MARK: - Lifecycle
     
@@ -29,6 +31,12 @@ class LocalViewController: TopicMasterViewController {
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
+        
+        if aTopicWasUpdated {
+            aTopicWasUpdated = false
+            fetchTopics(.Cache)
+        }
+        
 //        startAutomaticallyUpdatingFetches()
     }
     
@@ -44,13 +52,13 @@ class LocalViewController: TopicMasterViewController {
     //MARK: - Data
     
     private enum FetchType {
-        case CacheThenServer, Server
+        case Cache, CacheThenServer, Server
     }
     
     
     private func fetchTopics(type: FetchType) {
 
-        func initializeCachedFetchOperation(location: CLLocation) -> Operation {
+        func initializeCachedFetchOperation(location: CLLocation, fetchingFromServerNext: Bool) -> Operation {
             
             let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, location: location, completion: { (fetchResults, error) -> Void in
                 
@@ -63,7 +71,9 @@ class LocalViewController: TopicMasterViewController {
                     self.displayStatus()
                     
                     // fetch from server now that we can be sure that table has been updated
-                    self.fetchTopics(.Server)
+                    if fetchingFromServerNext {
+                        self.fetchTopics(.Server)
+                    }
                 }
             })
             
@@ -103,14 +113,16 @@ class LocalViewController: TopicMasterViewController {
         
         switch type {
             
+        case .Cache:
+            
+            let cacheOperation = initializeCachedFetchOperation(location, fetchingFromServerNext: false)
+            FetchQueue.sharedInstance.addOperation(cacheOperation)
+            
+            
         case .CacheThenServer:
 
-            let cacheOperation = initializeCachedFetchOperation(location)
-//            let serverOperation = initializeServerFetchOperation(location)
-//            serverOperation.addDependency(cacheOperation)
-            
+            let cacheOperation = initializeCachedFetchOperation(location, fetchingFromServerNext: true)
             FetchQueue.sharedInstance.addOperation(cacheOperation)
-//            FetchQueue.sharedInstance.addOperation(serverOperation)
             
         case .Server:
             
@@ -161,7 +173,7 @@ class LocalViewController: TopicMasterViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidChange, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidFetchTopicNotification:", name: FetchTopicOperation.Notifications.DidFetch, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUpdateTopicNotification:", name: UpdateTopicOperation.Notifications.DidUpdate, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
 
@@ -173,20 +185,10 @@ class LocalViewController: TopicMasterViewController {
         fetchTopics(.Server)
     }
     
-    
-    func handleDidFetchTopicNotification(notification: NSNotification) {
+    // this notification is typically received when the view is not visible, since topics are updated after the user has posted to them in the detailed topic view
+    func handleDidUpdateTopicNotification(notification: NSNotification) {
         
-        let userInfo = notification.userInfo as! [String: Topic]
-        if let topic = userInfo[FetchTopicOperation.Notifications.TopicKey] {
-            
-            if let rowForTopic = displayedTopics.indexOf(topic) {
-                
-                tableView.beginUpdates()
-                let indexPath = NSIndexPath(forRow: rowForTopic, inSection: 0)
-                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
-                tableView.endUpdates()
-            }
-        }
+        aTopicWasUpdated = true
     }
 
     

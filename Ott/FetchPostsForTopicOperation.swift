@@ -12,7 +12,7 @@ import Foundation
 
 //MARK: - FetchPostsForTopicOperation
 
-class FetchPostsForTopicOperation: ParseFetchOperation {
+class FetchPostsForTopicOperation: FetchOperation {
     
     let topic: Topic
     

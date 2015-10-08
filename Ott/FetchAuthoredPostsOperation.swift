@@ -9,7 +9,7 @@
 import Foundation
 
 
-class FetchAuthoredPostsOperation: ParseFetchOperation {
+class FetchAuthoredPostsOperation: FetchOperation {
     
     let user: User
     var startDate: NSDate? = nil

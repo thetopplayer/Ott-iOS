@@ -24,18 +24,32 @@ class FetchLocalTopicsOperation: FetchTopicsOperation {
         super.init(dataSource: dataSource, completion: completion)
     }
     
-    
+    // ignore location if simply fetching from cache
     override func query() -> PFQuery {
         
         let query = Topic.query()!
-        query.orderByDescending(DataKeys.CreatedAt)
-        query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
+        query.orderByDescending(DataKeys.UpdatedAt)
         
-        if dataSource == ParseOperation.DataSource.Cache {
+        if dataSource == .Cache {
             query.fromPinWithName(self.dynamicType.pinName())
+        }
+        else {
+            
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
         }
         
         return query
+    }
+    
+    
+    override func execute() {
+        
+        // purge cache before fetching from server
+        if dataSource == .Server {
+            self.dynamicType.purgeCache()
+        }
+        
+        super.execute()
     }
 }
 

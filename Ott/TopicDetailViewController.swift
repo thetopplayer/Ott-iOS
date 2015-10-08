@@ -63,17 +63,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewDidAppear(animated)
         
-        if userDidPostToTopic {
-            
-            if didFetchPosts == false {
-                fetchPosts()
-            }
-        }
-        else {
-            
-            performOnMainQueueAfterDelay(1) {
-                self.remindUserToPost()
-            }
+        performOnMainQueueAfterDelay(1) {
+            self.remindUserToPost()
         }
     }
     
@@ -115,17 +106,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
-        if didInitializeViewForTopic == false {
-            
-            displayedData = userDidPostToTopic ? .TopicAndPosts : .Topic
-            displayMode = userDidPostToTopic ? .View : .Edit
-            
-            let title = "#" + topic.name!
-            navigationItem.title = title
-            displayType = .List
-            
-            didInitializeViewForTopic = true
+        if didInitializeViewForTopic {
+            return
         }
+        
+        displayedData = topic.currentUserDidPostTo ? .TopicAndPosts : .Topic
+        displayMode = topic.currentUserDidPostTo ? .View : .Edit
+        
+        let title = "#" + topic.name!
+        navigationItem.title = title
+        displayType = .List
+        
+        didInitializeViewForTopic = true
     }
     
     
@@ -145,12 +137,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var displayMode: DisplayMode = .View {
         
         didSet {
-            
-            if displayMode == .Edit {
-                // prepare in case we are going to post
-                LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
-            }
-            
             _setDisplayMode(displayMode)
         }
     }
@@ -312,7 +298,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private enum StatusType {
-        case Normal, Fetching, Posting
+        case Normal, Updating, Fetching, Posting
     }
     
     private func displayStatus(type type: StatusType = .Normal) {
@@ -337,8 +323,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             switch type {
                 
             case .Normal:
-                
                 self.statusLabel.text = ""
+                
+            case .Updating:
+                self.statusLabel.text = "Updating..."
                 
             case .Fetching:
                 self.statusLabel.text = "Fetching Posts..."
@@ -357,70 +345,71 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         didSet {
             
-            if let theTopic = topic {
-                userDidPostToTopic = theTopic.currentUserDidPostTo
-            }
-            else {
-                userDidPostToTopic = false
+            guard let theTopic = topic else {
+                return;
             }
             
             didInitializeViewForTopic = false
+            if isVisible() {
+                initializeViewForTopic()
+            }
+            
+            if theTopic.currentUserDidPostTo {
+                fetchPosts()
+            }
         }
     }
-    
-    private var userDidPostToTopic: Bool = false
     
     private var posts = [Post]()
     private var didFetchPosts = false
     private var dateOfMostRecentPost: NSDate?
     
     private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
-    private var reloadTopicOperation: FetchTopicOperation?
+    private var reloadTopicOperation: UpdateTopicOperation?
     
     
-    private func fetchPosts(reloadingTopic reloadingTopic: Bool = false) {
+    private func refreshTopic() {
+        
+        reloadTopicOperation = UpdateTopicOperation(topic: topic!) {
+            
+            (fetchResults, error) in
+            
+            self.displayStatus(type: .Normal)
+            if let refreshedTopic = fetchResults!.first as? Topic {
+                
+                // setting the topic to the refreshedTopic will force a re-fetch of the posts
+                self.topic = refreshedTopic
+            }
+        }
+        
+        displayStatus(type: .Updating)
+        FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
+    }
+    
+    
+    private func fetchPosts() {
         
         didFetchPosts = true
-        displayStatus(type: .Fetching)
         
         fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!) {
             
             (fetchResults, error) in
             
-            dispatch_async(dispatch_get_main_queue()) {
+            self.displayStatus(type: .Normal)
+            if let thePosts = fetchResults as? [Post] {
                 
-                self.displayStatus(type: .Normal)
-                if let thePosts = fetchResults as? [Post] {
-                    
-                    self.refreshTableView(withUpdatedPosts: thePosts)
-                    self.reloadMapView()
-                }
+                self.refreshTableView(withUpdatedPosts: thePosts)
+                self.reloadMapView()
             }
         }
         
+        displayStatus(type: .Fetching)
         FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
-        
-        if reloadingTopic {
-            
-            reloadTopicOperation = FetchTopicOperation(topic: topic!)
-            reloadTopicOperation!.addCompletionBlock({
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    self.tableView.beginUpdates()
-                    self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
-                    self.tableView.endUpdates()
-                }
-            })
-            
-            FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
-        }
     }
     
     
-    private func saveChanges() {
+    private func savePost() {
         
-        userDidPostToTopic = true
         displayMode = .View
         displayStatus(type: .Posting)
         
@@ -432,7 +421,28 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
         
-        let postOperation = UploadPostOperation(post: myPost)
+        let postOperation = UploadPostOperation(post: myPost) {
+            
+            (post, error) in
+         
+            self.displayStatus(type: .Normal)
+            if post != nil {
+                
+                self.displayedData = .TopicAndPosts
+                self.displayMode = .View
+                
+                self.refreshTopic()
+            }
+            else if let error = error {
+                
+                self.presentOKAlertWithError(error, messagePreamble: "An error occurred uploading your post.", actionHandler: { () -> Void in
+                    
+                    self.didInitializeViewForTopic = false
+                    self.initializeViewForTopic()
+                })
+            }
+        }
+        
         PostQueue.sharedInstance.addOperation(postOperation)
     }
     
@@ -459,7 +469,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func postInputViewPostActionDidOccur() {
         
-        saveChanges()
+        savePost()
     }
     
     
@@ -531,17 +541,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - TableView
     
-    enum TableViewSections: Int {
-        case Topic = 0
-        case Statistics = 1
-        case Posts = 2
-        
-        static func maximumNumberOfSections() -> Int {
-            return 3
-        }
-    }
-    
-    
     private let textCellViewNibName = "TopicTextTableViewCell"
     private let textCellViewIdentifier = "textCell"
     private let textCellViewHeight = CGFloat(78)
@@ -589,39 +588,54 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    enum TableViewSections: Int {
+        case Topic = 0
+        case Statistics = 1
+        case Posts = 2
+        
+        static func maximumNumberOfSections() -> Int {
+            return 3
+        }
+    }
+    
     func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
         
-        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
-            
-            let firstTime = (a as! DataObject).updatedAt!
-            let secondTime = (b as! DataObject).updatedAt!
-            return firstTime.laterDate(secondTime) == firstTime
-        }
+//        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
+//            
+//            let firstTime = (a as! DataObject).updatedAt!
+//            let secondTime = (b as! DataObject).updatedAt!
+//            return firstTime.laterDate(secondTime) == firstTime
+//        }
         
         guard displayedData == .TopicAndPosts else {
             print("ERROR - trying to update table view but posts are not allowed")
             return
         }
         
-        self.tableView.beginUpdates()
-        if tableView.numberOfSections == 1 {
+        posts = updatedPosts
+
+        if numberOfSectionsInTableView(tableView) == 1 {
             
-            // this will be the case when going from requiring a post entry to displaying all data
-            
-            posts = updatedPosts
-            
-            let allDataSections = NSMutableIndexSet(index:TableViewSections.Statistics.rawValue)
-            allDataSections.addIndex(TableViewSections.Posts.rawValue)
-            self.tableView.insertSections(allDataSections, withRowAnimation: .Top)
+            self.tableView.beginUpdates()
+            self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
+            self.tableView.endUpdates()
         }
         else {
             
-            let statsIndexPath = NSIndexPath(forRow: 0, inSection: TableViewSections.Statistics.rawValue)
-            self.tableView.reloadRowsAtIndexPaths([statsIndexPath], withRowAnimation: .None)
+            if tableView.numberOfSections == TableViewSections.maximumNumberOfSections() {
+                
+                self.tableView.beginUpdates()
+                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
+                self.tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
+                self.tableView.reloadSections(NSIndexSet(index: 2), withRowAnimation: .Automatic)
+                self.tableView.endUpdates()
+            }
+            else {
+                tableView.reloadData()
+            }
             
-            tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
+//            tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
         }
-        self.tableView.endUpdates()
     }
     
     
@@ -882,10 +896,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadPost:", name: UploadPostOperation.Notifications.DidUpload, object: nil)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFail:", name: UploadPostOperation.Notifications.UploadDidFail, object: nil)
     }
     
     
@@ -962,21 +972,4 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     self.adjustTableViewInsets(withBottom: bottom)
                 }}
     }
-    
-    
-    func handleDidUploadPost(notification: NSNotification) {
-        
-        displayedData = userDidPostToTopic ? .TopicAndPosts : .Topic
-        displayMode = userDidPostToTopic ? .View : .Edit
-        
-        fetchPosts(reloadingTopic: true)
-    }
-    
-    
-    func handleUploadDidFail(notification: NSNotification) {
-        
-        displayMode = .Edit
-        displayStatus(type: .Normal)
-    }
-    
 }

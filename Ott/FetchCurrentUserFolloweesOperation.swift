@@ -15,7 +15,7 @@ either fetch all followees of the currentUser, or a singleFollowee by his handle
 import Foundation
 
 
-class FetchCurrentUserFolloweesOperation: ParseFetchOperation {
+class FetchCurrentUserFolloweesOperation: FetchOperation {
 
     override class func pinName() -> String? {
         return "currentUserFollowees"

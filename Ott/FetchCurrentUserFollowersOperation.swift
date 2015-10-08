@@ -9,7 +9,7 @@
 import Foundation
 
 
-class FetchCurrentUserFollowersOperation: ParseFetchOperation {
+class FetchCurrentUserFollowersOperation: FetchOperation {
     
     override class func pinName() -> String {
         return "currentUserFollowers"
