@@ -57,10 +57,20 @@ class LocalViewController: TopicMasterViewController {
     
     
     private func fetchTopics(type: FetchType) {
-
-        func initializeCachedFetchOperation(location: CLLocation, fetchingFromServerNext: Bool) -> Operation {
+        
+        let localRadius = Double(20)
+        
+        func fetchFromCacheOperationThenServer(fetchingFromServerNext: Bool) -> Operation {
             
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, location: location, completion: { (fetchResults, error) -> Void in
+            let theQuery: PFQuery = {
+                
+                let query = Topic.query()!
+                query.orderByDescending(DataKeys.UpdatedAt)
+                return query
+                }()
+
+            
+            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, query: theQuery, completion: { (fetchResults, error) -> Void in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -83,7 +93,17 @@ class LocalViewController: TopicMasterViewController {
         
         func initializeServerFetchOperation(location: CLLocation) -> Operation {
             
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, location: location, completion: { (fetchResults, error) -> Void in
+            let theQuery: PFQuery = {
+                
+                let query = Topic.query()!
+                query.orderByDescending(DataKeys.UpdatedAt)
+                query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
+                
+                return query
+                }()
+            
+            
+            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, query: theQuery, completion: { (fetchResults, error) -> Void in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -115,13 +135,13 @@ class LocalViewController: TopicMasterViewController {
             
         case .Cache:
             
-            let cacheOperation = initializeCachedFetchOperation(location, fetchingFromServerNext: false)
+            let cacheOperation = fetchFromCacheOperationThenServer(false)
             FetchQueue.sharedInstance.addOperation(cacheOperation)
             
             
         case .CacheThenServer:
 
-            let cacheOperation = initializeCachedFetchOperation(location, fetchingFromServerNext: true)
+            let cacheOperation = fetchFromCacheOperationThenServer(true)
             FetchQueue.sharedInstance.addOperation(cacheOperation)
             
         case .Server:

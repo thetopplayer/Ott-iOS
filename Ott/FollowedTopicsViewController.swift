@@ -37,13 +37,11 @@ class FollowedTopicsViewController: TopicMasterViewController {
     
     private func fetchTopics(type: FetchType) {
 
-        // there may be some topics cached
-        // for a full fetch, we first need to fetch the followees, cache those results
-        // and then fetch those followee's topics in a separate operation
-        
-        func initializeCachedFetchOperation() -> Operation {
+        func fetchCachedTopicsOperation() -> Operation {
             
-            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Cache, completion: { (fetchedObjects, error) in
+            let fetchOperation = FetchFolloweeTopicsOperation(dataSource: .Cache, offset: 0, sinceDate: nil, completion: {
+                
+                (fetchedObjects, error) in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -56,6 +54,11 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     
                     if let error = error {
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
+                    }
+                    else {
+                        
+                        // now that we've refreshed the display, fetch from server
+                        FetchQueue.sharedInstance.addOperation(fetchTopicsFromServerOperation())
                     }
                 }
             })
@@ -64,9 +67,12 @@ class FollowedTopicsViewController: TopicMasterViewController {
         }
         
         
-        func initializeServerFetchOperation() -> Operation {
+        func fetchTopicsFromServerOperation() -> Operation {
             
-            let fetchOperation = FetchCachedFolloweeTopicsOperation(dataSource: .Server, completion: { (fetchedObjects, error) in
+            let now = NSDate()
+            let lastFetched = Globals.sharedInstance.lastUpdatedFolloweeTopics
+            
+            let fetchOperation = FetchFolloweeTopicsOperation(dataSource: .Server, offset: 0, sinceDate: lastFetched, completion: { (fetchedObjects, error) in
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -79,6 +85,9 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     
                     if let error = error {
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
+                    }
+                    else {
+                        Globals.sharedInstance.lastUpdatedFolloweeTopics = now
                     }
                 }
             })
@@ -93,26 +102,11 @@ class FollowedTopicsViewController: TopicMasterViewController {
             
         case .CachedThenUpdate:
 
-            let cacheOperation = initializeCachedFetchOperation()
-            
-            let fetchOperation = FetchCurrentUserFollowersOperation(dataSource: .Server, completion: nil)
-            fetchOperation.addDependency(cacheOperation)
-            
-            let serverOperation = initializeServerFetchOperation()
-            serverOperation.addDependency(fetchOperation)
-            
-            FetchQueue.sharedInstance.addOperation(cacheOperation)
-            FetchQueue.sharedInstance.addOperation(fetchOperation)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
+            FetchQueue.sharedInstance.addOperation(fetchCachedTopicsOperation())
             
         case .Update:
             
-            let fetchOperation = FetchCurrentUserFollowersOperation(dataSource: .Server, completion: nil)
-            let serverOperation = initializeServerFetchOperation()
-            serverOperation.addDependency(fetchOperation)
-            
-            FetchQueue.sharedInstance.addOperation(fetchOperation)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
+            FetchQueue.sharedInstance.addOperation(fetchTopicsFromServerOperation())
         }
     }
     

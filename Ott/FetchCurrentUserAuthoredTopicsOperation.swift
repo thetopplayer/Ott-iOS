@@ -9,49 +9,51 @@
 import Foundation
 
 
-class FetchCurrentUserAuthoredTopicsOperation: FetchAuthoredTopicsOperation {
+class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
     
     override class func pinName() -> String? {
         return "authoredTopics"
     }
     
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, user: currentUser(), completion: completion)
+        let theQuery: PFQuery = {
+           
+            let query = Topic.query()!
+            query.skip = offset
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Author, equalTo: currentUser())
+            return query
+        }()
+        
+        super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
     
     
-    init(dataSource: ParseOperation.DataSource, updatedSince: NSDate, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, user: currentUser(), updatedSince: updatedSince, completion: completion)
+        let theQuery: PFQuery = {
+            
+            let query = Topic.query()!
+            query.skip = offset
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Author, equalTo: currentUser())
+            query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: updatedSince)
+            return query
+            }()
+        
+        
+        super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
-
     
     
-    //MARK: - Execution
+   //MARK: - Execution
     
     override func execute() {
         
         logBackgroundTask()
-        
-        do {
-            
-            if let data = (try query().findObjects()) as? [Topic] {
-                
-                if dataSource == .Server {
-                    for topic in data {
-                        topic.currentUserDidPostTo = true  // for my own topics, flag as true
-                    }
-                }
-                fetchedData = data
-            }
-            
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+        super.execute()
     }
 
     

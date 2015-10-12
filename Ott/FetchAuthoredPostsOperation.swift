@@ -14,25 +14,25 @@ class FetchAuthoredPostsOperation: FetchOperation {
     let user: User
     var startDate: NSDate? = nil
     
-    init(dataSource: ParseOperation.DataSource, user: User, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, limit: Int, user: User, completion: FetchCompletionBlock?) {
         
         self.user = user
-        super.init(dataSource: dataSource, completion: completion)
+        super.init(dataSource: dataSource, offset: offset, limit: limit, completion: completion)
     }
    
     
-    init(dataSource: ParseOperation.DataSource, user: User, updatedSince: NSDate, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, limit: Int, user: User, updatedSince: NSDate, completion: FetchCompletionBlock?) {
         
         self.user = user
         startDate = updatedSince
-        super.init(dataSource: dataSource, completion: completion)
+        super.init(dataSource: dataSource, offset: offset, limit: limit, completion: completion)
     }
 
     
     
     //MARK: - Execution
     
-    override func execute() {
+    func query() -> PFQuery {
         
         let query = Post.query()!
         query.orderByDescending(DataKeys.UpdatedAt)
@@ -40,14 +40,8 @@ class FetchAuthoredPostsOperation: FetchOperation {
         if let startDate = startDate {
             query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
         }
-
-        do {
-            fetchedData = (try query.findObjects())
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+     
+        return query
     }
 }
 

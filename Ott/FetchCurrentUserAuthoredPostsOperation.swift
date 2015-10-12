@@ -9,49 +9,51 @@
 import Foundation
 
 
-class FetchCurrentUserAuthoredPostsOperation: FetchAuthoredPostsOperation {
+class FetchCurrentUserAuthoredPostsOperation: FetchOperation {
     
     override class func pinName() -> String? {
         return "authoredPosts"
     }
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, user: currentUser(), completion: completion)
+        let theQuery: PFQuery = {
+            
+            let query = Post.query()!
+            query.skip = offset
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Author, equalTo: currentUser())
+            return query
+        }()
+        
+        super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
-   
     
-    init(dataSource: ParseOperation.DataSource, updatedSince: NSDate, completion: FetchCompletionBlock?) {
+    
+    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate?, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, user: currentUser(), updatedSince: updatedSince, completion: completion)
+        let theQuery: PFQuery = {
+            
+            let query = Post.query()!
+            query.skip = offset
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Author, equalTo: currentUser())
+            if let startDate = updatedSince {
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
+            }
+            return query
+            }()
+        
+        super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
 
-    
-    
+
     //MARK: - Execution
-    
+
     override func execute() {
         
         logBackgroundTask()
-        
-        let query = Post.query()!
-        query.orderByDescending(DataKeys.UpdatedAt)
-        query.whereKey(DataKeys.Author, equalTo: user)
-        if let startDate = startDate {
-            query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
-        }
-        
-        if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(self.dynamicType.pinName())
-        }
-        
-        do {
-            fetchedData = try query.findObjects()
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+        super.execute()
     }
     
     

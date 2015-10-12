@@ -29,7 +29,7 @@ class LogoutOperation: ParseServerOperation {
         FetchCurrentUserAuthoredPostsOperation.purgeCache()
         FetchLocalTopicsOperation.purgeCache()
         FetchCurrentUserFolloweesOperation.purgeCache()
-        FetchCachedFolloweeTopicsOperation.purgeCache()
+        FetchFolloweeTopicsOperation.purgeCache()
         
         User.logOut()
         

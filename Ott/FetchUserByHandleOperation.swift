@@ -17,36 +17,13 @@ import UIKit
 
 class FetchUserByHandleOperation: FetchOperation {
 
-    let searchByUsername: Bool
-    let handle: String
-
     init(handle: String, caseInsensitive: Bool, completion: FetchCompletionBlock?) {
         
-        self.handle = handle
-        searchByUsername = caseInsensitive
-        super.init(dataSource: .Server, completion: completion)
-    }
-    
-    struct Notifications {
-        
-        static let DidFetch = "didFetchUser"
-        static let FetchDidFail = "userFetchDidFail"
-        static let TopicKey = "user"
-        static let ErrorKey = "error"
-    }
-    
-
-    
-
-    //MARK: - Execution
-    
-    override func execute() {
-
-        do {
+        let theQuery: PFQuery = {
             
             let query = User.query()!
             query.limit = 1
-            if searchByUsername {
+            if caseInsensitive {
                 let username = User.usernameFromHandle(handle)
                 query.whereKey("username", equalTo: username)
             }
@@ -54,12 +31,10 @@ class FetchUserByHandleOperation: FetchOperation {
                 query.whereKey("handle", equalTo: handle)
             }
             
-            fetchedData = try query.findObjects()
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+            return query
+        }()
+        
+        super.init(dataSource: .Server, query: theQuery, completion: completion)
     }
     
 }

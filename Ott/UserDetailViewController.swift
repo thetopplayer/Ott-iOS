@@ -298,15 +298,23 @@ class UserDetailViewController: TableViewController {
             }
         }
         
-        let fetchTopicsOperation: FetchAuthoredTopicsOperation = {
+        let fetchTopicsOperation: FetchTopicsOperation = {
             
             if user == currentUser() {
                 
-                return FetchCurrentUserAuthoredTopicsOperation(dataSource: .Cache, completion: handleFetchResults)
+                return FetchCurrentUserAuthoredTopicsOperation(dataSource: .Cache, offset: 0, completion: handleFetchResults)
             }
             else {
                 
-                return FetchAuthoredTopicsOperation(dataSource: .Server, user: user, completion: handleFetchResults)
+                let theQuery: PFQuery = {
+                    
+                    let query = Topic.query()!
+                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.whereKey(DataKeys.Author, equalTo: user)
+                    return query
+                    }()
+                
+                return FetchTopicsOperation(dataSource: .Server, query: theQuery, completion: handleFetchResults)
             }
         }()
         
@@ -323,7 +331,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_AuthoredPosts = .Fetching
         updateDataSection()
 
-        func handleFetchResults(results: [PFObject]?, error: NSError?) {
+        func completionHandler(results: [PFObject]?, error: NSError?) {
             
             self.fetchStatus_AuthoredPosts = .DidFetch
             if let posts = results as? [Post] {
@@ -339,24 +347,29 @@ class UserDetailViewController: TableViewController {
         }
         
         
-        let fetchPostsOperation: FetchAuthoredPostsOperation = {
+        let fetchPostsOperation: FetchOperation = {
             
             if user == currentUser() {
                 
-                return FetchCurrentUserAuthoredPostsOperation(dataSource: .Cache, completion: handleFetchResults)
+                return FetchCurrentUserAuthoredPostsOperation(dataSource: .Cache, offset: 0, completion: completionHandler)
             }
             else {
                 
-                return FetchAuthoredPostsOperation(dataSource: .Server, user: user!, completion: handleFetchResults)
+                let theQuery: PFQuery = {
+                    
+                    let query = Post.query()!
+                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.whereKey(DataKeys.Author, equalTo: currentUser())
+                    return query
+                    }()
+                
+                return FetchOperation(dataSource: .Server, query: theQuery, completion: completionHandler)
             }
         }()
         
         
         FetchQueue.sharedInstance.addOperation(fetchPostsOperation)
     }
-    
-    
-    // TODO:  fetch from cache then server
     
     
     private func fetchfollowingOthersRelationships() {
@@ -368,9 +381,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingOthersRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchCurrentUserFolloweesOperation(dataSource: .Server) {
-            
-            (fetchResults, error) in
+        func completionHandler(fetchResults: [PFObject]?, error: NSError?) {
             
             self.fetchStatus_followingOthersRelationships = .DidFetch
             
@@ -383,6 +394,29 @@ class UserDetailViewController: TableViewController {
                 self.presentOKAlertWithError(error)
             }
         }
+        
+        let fetchOperation: FetchOperation = {
+            
+            var operation: FetchOperation
+            if user == currentUser() {
+                
+                operation = FetchCurrentUserFolloweesOperation(dataSource: .Cache, offset: 0, completion: completionHandler)
+            }
+            else {
+                
+                let theQuery: PFQuery = {
+                    
+                    let query = Follow.query()!
+                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.whereKey(DataKeys.Follower, equalTo: user!)
+                    return query
+                    }()
+
+                operation = FetchOperation(dataSource: .Server, query: theQuery, completion: completionHandler)
+            }
+            
+            return operation
+        }()
         
         FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
@@ -397,7 +431,7 @@ class UserDetailViewController: TableViewController {
         fetchStatus_followingMeRelationships = .Fetching
         updateDataSection()
         
-        let fetchOperation = FetchCurrentUserFollowersOperation(dataSource: .Server) {
+        let fetchOperation = FetchCurrentUserFollowersOperation(dataSource: .Server, offset: 0) {
             
             (fetchResults, error) in
             

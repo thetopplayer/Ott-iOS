@@ -15,45 +15,28 @@ Abstract class used to fetch topics
 import Foundation
 
 
-class FetchTopicsOperation: FetchOperation {
+class FetchTopicsOperation: FetchOperation, TopicOperationProtocol {
     
 
-    //MARK: - User Did Post
+    /// fully override super in order to check each topic downloaded from the server to see if the current user posted to them
+    override func execute() {
         
-    /// searches locally cached posts
-    func currentUserDidPostToTopic(topic: Topic) -> Bool {
-
-        let postQuery: PFQuery = {
+        guard let query = query else {
             
-            let query = Post.query()!
-            query.fromPinWithName(FetchCurrentUserAuthoredPostsOperation.pinName()!)
-            query.limit = 1
-            
-            return query
-            }()
-        
-        postQuery.whereKey(DataKeys.Topic, equalTo: topic)
-        if let posts = try? postQuery.findObjects() {
-            return posts.count > 0
+            assert(false)
+            return
         }
         
-        return false
-    }
-    
-    
-    //MARK: - Execution
-    
-    /// this should be overridden by subclasses
-    func query() -> PFQuery {
-        assert(false)
-    }
-
-    
-    override func execute() {
+        if dataSource == .Cache {
+            
+            if let pinName = self.dynamicType.pinName() {
+                query.fromPinWithName(pinName)
+            }
+        }
         
         do {
             
-            if let data = (try query().findObjects()) as? [Topic] {
+            if let data = (try query.findObjects()) as? [Topic] {
                 
                 if dataSource == .Server {
                     for topic in data {

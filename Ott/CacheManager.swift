@@ -66,6 +66,7 @@ class CacheManager {
             
             currentUser().fetchIfNeededInBackground()
             updateCachedAuthoredObjects()
+            updateCachedFollowees()
             didUpdateCurrentUserCaches = true
         }
     }
@@ -75,7 +76,7 @@ class CacheManager {
         
         let now = NSDate()
         let lastUpdatedPosts = Globals.sharedInstance.lastUpdatedAuthoredPosts
-        let fetchPostsOperation = FetchCurrentUserAuthoredPostsOperation(dataSource: .Server, updatedSince: lastUpdatedPosts, completion: {
+        let fetchPostsOperation = FetchCurrentUserAuthoredPostsOperation(dataSource: .Server, offset: 0, updatedSince: lastUpdatedPosts, completion: {
             (_, error) in
             
             if error == nil {
@@ -83,8 +84,10 @@ class CacheManager {
             }
         })
         
+        fetchPostsOperation.fetchAll = true
+        
         let lastUpdatedTopics = Globals.sharedInstance.lastUpdatedAuthoredTopics
-        let fetchTopicsOperation = FetchCurrentUserAuthoredTopicsOperation(dataSource: .Server, updatedSince: lastUpdatedTopics, completion: {
+        let fetchTopicsOperation = FetchCurrentUserAuthoredTopicsOperation(dataSource: .Server, offset: 0, updatedSince: lastUpdatedTopics, completion: {
             (_, error) in
             
             if error == nil {
@@ -92,13 +95,37 @@ class CacheManager {
             }
         })
         
+        fetchTopicsOperation.fetchAll = true
+        
         // because topics are flagged as having been posted to by the current user based on the locally cached posts, get posts first
         fetchTopicsOperation.addDependency(fetchPostsOperation)
         
         MaintenanceQueue.sharedInstance.addOperation(fetchPostsOperation)
         MaintenanceQueue.sharedInstance.addOperation(fetchTopicsOperation)
     }
+    
+    
+    private func updateCachedFollowees() {
+        
+        let now = NSDate()
+        let lastUpdated = Globals.sharedInstance.lastUpdatedFollowees
+        let fetchOperation = FetchCurrentUserFolloweesOperation(dataSource: .Server, offset: 0, updatedSince: lastUpdated, completion: {
+            (_, error) in
+            
+            if error == nil {
+                Globals.sharedInstance.lastUpdatedFollowees = now
+            }
+        })
 
+        fetchOperation.fetchAll = true
+        MaintenanceQueue.sharedInstance.addOperation(fetchOperation)
+    }
+    
+    
+    
+    
+    
+    //MARK: - Cleanup
     
     private func cleanupLocalTopicsCache() {
         

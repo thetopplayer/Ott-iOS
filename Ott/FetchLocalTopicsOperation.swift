@@ -15,38 +15,14 @@ class FetchLocalTopicsOperation: FetchTopicsOperation {
         return "localTopics"
     }
 
-    static let localRadius = Double(20)
-    let location: CLLocation
-    
-    init(dataSource: ParseOperation.DataSource, location: CLLocation, completion: FetchCompletionBlock?) {
-        
-        self.location = location
-        super.init(dataSource: dataSource, completion: completion)
-    }
-    
-    // ignore location if simply fetching from cache
-    override func query() -> PFQuery {
-        
-        let query = Topic.query()!
-        query.orderByDescending(DataKeys.UpdatedAt)
-        
-        if dataSource == .Cache {
-            query.fromPinWithName(self.dynamicType.pinName())
-        }
-        else {
-            
-            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: FetchLocalTopicsOperation.localRadius)
-        }
-        
-        return query
-    }
-    
-    
     override func execute() {
         
         // purge cache before fetching from server
         if dataSource == .Server {
-            self.dynamicType.purgeCache()
+            
+            if query!.skip == 0 {
+                self.dynamicType.purgeCache()
+            }
         }
         
         super.execute()

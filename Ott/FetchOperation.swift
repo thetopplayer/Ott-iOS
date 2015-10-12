@@ -24,19 +24,24 @@ class FetchOperation: ParseServerOperation {
     
     
     let dataSource: ParseOperation.DataSource
-    typealias FetchCompletionBlock = (results: [PFObject]?, error: NSError?) -> Void
+    let query: PFQuery?
+    
+    /// whether fetch continues until all objects are retrieved
+    var fetchAll = false
     
     /// a block exectuted on the main thread when the operation is finished
+    typealias FetchCompletionBlock = (results: [PFObject]?, error: NSError?) -> Void
     var completionHandler: FetchCompletionBlock?
     
-    init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    
+    init(dataSource: ParseOperation.DataSource, query: PFQuery?, completion: FetchCompletionBlock?) {
         
         self.dataSource = dataSource
+        self.query = query
         completionHandler = completion
         super.init()
     }
     
-
     /// if a pin name is provided, pin the data after setting.  if the data is made up of DataObjects, then also store the pinName in each.
     var fetchedData: [PFObject]? {
         
@@ -60,7 +65,49 @@ class FetchOperation: ParseServerOperation {
             }
         }
     }
-
+    
+    
+    override func execute() {
+        
+        guard let query = query else {
+            finishWithError(nil)
+            return
+        }
+        
+        if dataSource == .Cache {
+            
+            if let pinName = self.dynamicType.pinName() {
+                query.fromPinWithName(pinName)
+            }
+        }
+        
+        do {
+            
+            var data: [PFObject]?
+            if fetchAll {
+                
+                data = []
+                var limitReached = false
+                while limitReached == false {
+                    
+                    let thisRoundData = try query.findObjects()
+                    data! += thisRoundData
+                    limitReached = !(thisRoundData.count < query.limit)
+                    query.skip = thisRoundData.count
+               }
+            }
+            else {
+                data = try query.findObjects()
+            }
+            
+            fetchedData = data
+            finishWithError(nil)
+        }
+        catch let error as NSError {
+            finishWithError(error)
+        }
+    }
+    
     
     override func finished(errors: [NSError]) {
         
@@ -73,6 +120,16 @@ class FetchOperation: ParseServerOperation {
         }
     }
     
+    
+    override func cancelWithError(error: NSError?) {
+        
+        super.cancelWithError(error)
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            print("operation canceled: \(self.dynamicType)")
+            self.completionHandler?(results: nil, error: error)
+        }
+    }
 }
 
 

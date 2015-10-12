@@ -232,10 +232,10 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
             
             let fetchUserOperation = FetchUserByHandleOperation(handle: handle, caseInsensitive: true) {
                 
-                (users, error) in
+                (fetchResults, error) in
                 
                 var handleIsUnique = true
-                if let _ = users?.first {
+                if let _ = fetchResults?.first {
                     handleIsUnique = false
                 }
                 

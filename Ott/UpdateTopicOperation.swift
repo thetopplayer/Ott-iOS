@@ -10,15 +10,11 @@
 import Foundation
 
 
-class UpdateTopicOperation: FetchTopicsOperation {
+class UpdateTopicOperation: UpdateOperation, TopicOperationProtocol {
 
-    
-    let topic: Topic
-    
-    init(topic: Topic, completion: FetchCompletionBlock?) {
+    init(topic: Topic, completion: UpdateCompletionBlock?) {
         
-        self.topic = topic
-        super.init(dataSource: .Server, completion: completion)
+        super.init(object: topic, completion: completion)
     }
     
     
@@ -35,7 +31,13 @@ class UpdateTopicOperation: FetchTopicsOperation {
     
     //MARK: - Execution
     
+    // fully override super
     override func execute() {
+        
+        guard let topic = object as? Topic else {
+            assert(false)
+            return
+        }
         
         do {
             
@@ -43,12 +45,13 @@ class UpdateTopicOperation: FetchTopicsOperation {
             
             try topic.fetch()
             
-            if let topicPinName = topicPinName {
-                topic.pinName = topicPinName
-            }
             topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
             
-            fetchedData = [topic]
+            if let topicPinName = topicPinName {
+                topic.pinName = topicPinName
+                try topic.pinWithName(topicPinName)
+            }
+
             finishWithError(nil)
         }
         catch let error as NSError {
@@ -65,7 +68,7 @@ class UpdateTopicOperation: FetchTopicsOperation {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                let userinfo: [NSObject: AnyObject] = [UpdateTopicOperation.Notifications.TopicKey: self.topic]
+                let userinfo: [NSObject: AnyObject] = [UpdateTopicOperation.Notifications.TopicKey: self.object]
                 NSNotificationCenter.defaultCenter().postNotificationName(UpdateTopicOperation.Notifications.DidUpdate,
                     object: self,
                     userInfo: userinfo)

@@ -372,10 +372,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         reloadTopicOperation = UpdateTopicOperation(topic: topic!) {
             
-            (fetchResults, error) in
+            (refreshedObject, error) in
             
             self.displayStatus(type: .Normal)
-            if let refreshedTopic = fetchResults!.first as? Topic {
+            if let refreshedTopic = refreshedObject as? Topic {
                 
                 // setting the topic to the refreshedTopic will force a re-fetch of the posts
                 self.topic = refreshedTopic
@@ -387,11 +387,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    private func fetchPosts() {
+    private func fetchPosts(offset: Int = 0) {
         
         didFetchPosts = true
         
-        fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!) {
+        fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 50) {
             
             (fetchResults, error) in
             
@@ -401,6 +401,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.refreshTableView(withUpdatedPosts: thePosts)
                 self.reloadMapView()
             }
+            
+            // TODO;  ALLOW ADDITIONAL FETCHING FROM OFFSET
+            
         }
         
         displayStatus(type: .Fetching)
@@ -600,13 +603,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
         
-//        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
-//            
-//            let firstTime = (a as! DataObject).updatedAt!
-//            let secondTime = (b as! DataObject).updatedAt!
-//            return firstTime.laterDate(secondTime) == firstTime
-//        }
-        
         guard displayedData == .TopicAndPosts else {
             print("ERROR - trying to update table view but posts are not allowed")
             return
@@ -633,6 +629,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             else {
                 tableView.reloadData()
             }
+            
+            //        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
+            //
+            //            let firstTime = (a as! DataObject).updatedAt!
+            //            let secondTime = (b as! DataObject).updatedAt!
+            //            return firstTime.laterDate(secondTime) == firstTime
+            //        }
             
 //            tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
         }

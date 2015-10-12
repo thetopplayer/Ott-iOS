@@ -57,18 +57,34 @@ class Globals {
     }
     
     
-    private let lastUpdatedFollowedUsersTopicsKey = "lastUpdatedFollowedUsersTopics"
-    var lastUpdatedFollowedUsersTopics: NSDate {
+    private let lastUpdatedFolloweesKey = "lastUpdatedFollowees"
+    var lastUpdatedFollowees: NSDate {
         
         get {
-            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFollowedUsersTopicsKey) as? NSDate {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFolloweesKey) as? NSDate {
                 return date
             }
             return NSDate.distantPast()
         }
         
         set {
-            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedFollowedUsersTopicsKey)
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedFolloweesKey)
+        }
+    }
+    
+    
+    private let lastUpdatedFolloweeTopicsKey = "lastUpdatedFolloweeTopics"
+    var lastUpdatedFolloweeTopics: NSDate {
+        
+        get {
+            if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFolloweeTopicsKey) as? NSDate {
+                return date
+            }
+            return NSDate.distantPast()
+        }
+        
+        set {
+            NSUserDefaults.standardUserDefaults().setObject(newValue, forKey: lastUpdatedFolloweeTopicsKey)
         }
     }
     

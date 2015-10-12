@@ -14,31 +14,20 @@ import Foundation
 
 class FetchPostsForTopicOperation: FetchOperation {
     
-    let topic: Topic
-    
-    init(topic: Topic, completion: FetchCompletionBlock?) {
+    init(topic: Topic, offset: Int, limit: Int, completion: FetchCompletionBlock?) {
         
-        self.topic = topic
-        super.init(dataSource: .Server, completion: completion)
+        let theQuery: PFQuery = {
+            
+            let query = Post.query()!
+            query.skip = offset
+            query.limit = limit
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Topic, equalTo: topic)
+            return query
+        }()
+        
+        super.init(dataSource: .Server, query: theQuery, completion: completion)
     }
     
-    
-
-    //MARK: - Execution
-    
-    override func execute() {
-        
-        let query = Post.query()!
-        query.orderByDescending(DataKeys.UpdatedAt)
-        query.whereKey(DataKeys.Topic, equalTo: topic)
-        
-        do {
-            fetchedData = try query.findObjects()
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
-    }
 }
 

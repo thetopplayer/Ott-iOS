@@ -15,6 +15,9 @@ Abstract class at root of all data
 
 import UIKit
 
+
+//MARK: - DataKeys
+
 class DataKeys {
     
     static var CreatedAt: String {
@@ -30,6 +33,9 @@ class DataKeys {
     }
 }
 
+
+
+//MARK: - DataObject
 
 class DataObject: PFObject {
     
@@ -62,3 +68,25 @@ class DataObject: PFObject {
         return super.hash
     }
 }
+
+
+
+//MARK: - Utilities
+
+func sortByUpdatedAt(var objects: [DataObject]) {
+    
+    let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
+        
+        let firstTime = (a as! DataObject).updatedAt!
+        let secondTime = (b as! DataObject).updatedAt!
+        return firstTime.laterDate(secondTime) == firstTime
+    }
+    
+    return objects.sortInPlace(sortFn)
+}
+
+
+
+
+
+

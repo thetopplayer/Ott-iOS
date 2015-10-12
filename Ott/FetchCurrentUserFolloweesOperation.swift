@@ -6,61 +6,53 @@
 //  Copyright © 2015 Senisa Software. All rights reserved.
 //
 
-/**
-
-either fetch all followees of the currentUser, or a singleFollowee by his handle
-*/
-
 
 import Foundation
-
 
 class FetchCurrentUserFolloweesOperation: FetchOperation {
 
     override class func pinName() -> String? {
-        return "currentUserFollowees"
+        return "followees"
     }
     
-    override init(dataSource: ParseOperation.DataSource, completion: FetchCompletionBlock?) {
+    
+    
+    convenience init(dataSource: ParseOperation.DataSource, offset: Int, completion: FetchCompletionBlock?) {
+    
+        self.init(dataSource: dataSource, offset: offset, updatedSince: nil, completion: completion)
+    }
+    
+    
+    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate?, completion: FetchCompletionBlock?) {
         
-        super.init(dataSource: dataSource, completion: completion)
-    }
-    
-    
-    var followeeHandle: String?
-    
-    init(followeeHandle: String, completion: FetchCompletionBlock?) {
+        let theQuery: PFQuery = {
+            
+            let query = Follow.query()!
+            query.skip = offset
+            query.orderByDescending(DataKeys.UpdatedAt)
+            query.whereKey(DataKeys.Follower, equalTo: currentUser())
+            if let startDate = updatedSince {
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
+            }
+            
+            return query
+            }()
         
-        self.followeeHandle = followeeHandle
-        super.init(dataSource: .Server, completion: completion)
+        super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
     
-    
-    
-    //MARK: - Execution
     
     override func execute() {
         
-        let query = Follow.query()!
-        query.whereKey(DataKeys.Follower, equalTo: currentUser())
-        query.orderByDescending(DataKeys.UpdatedAt)
+        logBackgroundTask()
+        super.execute()
+    }
+    
+    
+    override func finished(errors: [NSError]) {
         
-        if dataSource == ParseOperation.DataSource.Cache {
-            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
-        }
-        
-        if let followeeHandle = followeeHandle {
-            query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
-            query.limit = 1
-        }
-        
-        do {
-            fetchedData = try query.findObjects()
-            finishWithError(nil)
-        }
-        catch let error as NSError {
-            finishWithError(error)
-        }
+        super.finished(errors)
+        clearBackgroundTask()
     }
 }
 

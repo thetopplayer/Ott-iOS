@@ -194,7 +194,7 @@ class User: PFUser {
         
         let query = Topic.query()!
         query.whereKey(DataKeys.AllCapsName, equalTo: searchName)
-        query.fromPinWithName(FetchAuthoredTopicsOperation.pinName())
+        query.fromPinWithName(FetchCurrentUserAuthoredTopicsOperation.pinName())
         query.limit = 1
         
         query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
@@ -237,7 +237,17 @@ class User: PFUser {
     
     func getFollowStatusForUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
         
-        let fetchOperation = FetchCurrentUserFolloweesOperation(followeeHandle: handle) { (relationship, error) in
+        
+        let theQuery: PFQuery = {
+            
+            let query = Follow.query()!
+            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
+            query.whereKey(DataKeys.FolloweeHandle, equalTo: handle)
+            query.limit = 1
+            return query
+        }()
+        
+        let fetchOperation = FetchOperation(dataSource: .Cache, query: theQuery) { (relationship, error) in
             
             dispatch_async(dispatch_get_main_queue()) {
                 completion(following: relationship != nil)
