@@ -19,11 +19,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" title="Local" id="Tx2-na-enK">
-                        <barButtonItem key="leftBarButtonItem" image="scan" id="JJo-Se-nsW">
-                            <connections>
-                                <action selector="presentTopicScanViewController:" destination="iv5-LA-iIu" id="59I-uG-t4B"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="HUQ-4E-Xpw">
                             <connections>
                                 <action selector="presentTopicCreationViewController:" destination="iv5-LA-iIu" id="OEq-EF-eVg"/>
@@ -56,6 +51,5 @@
     </scenes>
     <resources>
         <image name="local" width="30" height="30"/>
-        <image name="scan" width="32" height="32"/>
     </resources>
 </document>

@@ -17,28 +17,41 @@ class MainTabBarController: UITabBarController {
         MainTabBarController.activeController = self
     }
     
+    
+    enum ViewControllerPositions: Int {
+        
+        case Scan = 0
+        case LocalTopics = 1
+        case Following = 2
+        case Search = 3
+        case User = 4
+    }
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         loadViewControllers()
         updateViewControllers()
+        
+        // don't start with scan
+        selectedViewController = viewControllers?[ViewControllerPositions.LocalTopics.rawValue]
+        
         startObservations()
     }
 
-    
-    enum ViewControllerPositions: Int {
-        
-        case LocalTopics = 0
-        case Trending = 1
-        case Following = 2
-        case User = 3
-    }
-    
     
     private lazy var noPermissionViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "LocationNoPermissionViewController", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
+        }()
+    
+    
+    private lazy var scanViewController: UIViewController = {
+        
+        let storyboard = UIStoryboard(name: "Scan", bundle: nil)
+        return storyboard.instantiateViewControllerWithIdentifier("scanViewController")
         }()
     
     
@@ -49,9 +62,9 @@ class MainTabBarController: UITabBarController {
         }()
     
     
-    private lazy var trendingViewController: UIViewController = {
+    private lazy var searchViewController: UIViewController = {
         
-        let storyboard = UIStoryboard(name: "Trending", bundle: nil)
+        let storyboard = UIStoryboard(name: "Search", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
@@ -78,29 +91,51 @@ class MainTabBarController: UITabBarController {
             return
         }
         
-        viewControllers = [trendingViewController, followingViewController, userSummaryViewController]
+        viewControllers = [scanViewController, localTopicsViewController, followingViewController, searchViewController, userSummaryViewController]
         didLoadViewControllers = true
     }
     
     
-    var didInsertLocalTopicsViewController = false
+    /*
+    test for location permission to display local topics
+    TODO:  test for camera access permission to display scan
+    */
     private func updateViewControllers() {
         
-        func updateLocalTopicsVC() {
+        // scan
+        
+        if ScanViewController.cameraAccessGranted() {
             
-            if didInsertLocalTopicsViewController {
-                viewControllers?.removeAtIndex(ViewControllerPositions.LocalTopics.rawValue)
-            }
+        }
+        else {
             
-            let viewController = LocationManager.sharedInstance.permissionGranted ? localTopicsViewController : noPermissionViewController
-            
-            viewControllers?.insert(viewController, atIndex: ViewControllerPositions.LocalTopics.rawValue)
-            didInsertLocalTopicsViewController = true
         }
         
-        updateLocalTopicsVC()
         
-        selectedViewController = viewControllers?.first
+        
+        
+        // location
+        
+        if LocationManager.sharedInstance.permissionGranted {
+            
+            if viewControllers!.contains(localTopicsViewController) {
+                return
+            }
+        }
+        else {
+            
+            if viewControllers!.contains(noPermissionViewController) {
+                return
+            }
+        }
+        
+        viewControllers!.removeAtIndex(ViewControllerPositions.LocalTopics.rawValue)
+        
+        let viewController = LocationManager.sharedInstance.permissionGranted ? localTopicsViewController : noPermissionViewController
+        viewControllers!.insert(viewController, atIndex: ViewControllerPositions.LocalTopics.rawValue)
+        
+        
+        
     }
     
     

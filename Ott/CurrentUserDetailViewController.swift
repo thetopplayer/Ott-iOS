@@ -30,12 +30,12 @@ class CurrentUserDetailViewController: UserDetailViewController {
     }
     
     
-    @IBAction func presentTopicScanViewController(sender: AnyObject) {
-        
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicScanViewController()
-        }
-    }
+//    @IBAction func presentTopicScanViewController(sender: AnyObject) {
+//        
+//        if let navController = navigationController as? NavigationController {
+//            navController.presentTopicScanViewController()
+//        }
+//    }
     
     
     //MARK: - Observations and Delegate Methods

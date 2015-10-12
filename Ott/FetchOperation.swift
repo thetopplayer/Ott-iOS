@@ -24,7 +24,7 @@ class FetchOperation: ParseServerOperation {
     
     
     let dataSource: ParseOperation.DataSource
-    let query: PFQuery?
+    var query: PFQuery?
     
     /// whether fetch continues until all objects are retrieved
     var fetchAll = false

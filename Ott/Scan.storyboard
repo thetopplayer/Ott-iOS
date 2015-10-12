@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vtN-2v-AdQ">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="vtN-2v-AdQ">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
     </dependencies>
@@ -8,9 +8,12 @@
         <scene sceneID="hch-GC-jbA">
             <objects>
                 <navigationController storyboardIdentifier="scanViewController" title="Scanning Nav Controller" useStoryboardIdentifierAsRestorationIdentifier="YES" id="vtN-2v-AdQ" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <tabBarItem key="tabBarItem" title="Scan" image="target" selectedImage="target" id="AA1-Vc-lAa"/>
+                    <simulatedTabBarMetrics key="simulatedBottomBarMetrics"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="HLQ-g2-XPl">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
                     </navigationBar>
                     <connections>
                         <segue destination="vbE-Ps-sUH" kind="relationship" relationship="rootViewController" id="Vua-5O-UE2"/>
@@ -31,15 +34,10 @@
                     <view key="view" contentMode="scaleToFill" id="JAa-pB-uS9">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                     </view>
-                    <navigationItem key="navigationItem" title="Scanning..." id="cJy-F1-OnC">
-                        <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Jgh-iB-svE">
-                            <connections>
-                                <action selector="handleCancelScanAction:" destination="vbE-Ps-sUH" id="Jwy-Jt-w22"/>
-                            </connections>
-                        </barButtonItem>
-                    </navigationItem>
+                    <navigationItem key="navigationItem" title="Scanning..." id="cJy-F1-OnC"/>
                     <connections>
                         <segue destination="sUZ-Aa-4Hj" kind="unwind" identifier="unwindToMasterView" unwindAction="unwindForSegue:towardsViewController:" id="mI7-el-SKH"/>
                     </connections>
@@ -50,4 +48,7 @@
             <point key="canvasLocation" x="-1413" y="4289"/>
         </scene>
     </scenes>
+    <resources>
+        <image name="target" width="29" height="30"/>
+    </resources>
 </document>

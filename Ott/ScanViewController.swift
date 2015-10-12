@@ -14,55 +14,57 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
 
     //MARK: - Lifecycle
     
-    override func viewDidLoad() {
-        
-        super.viewDidLoad()
-        
-        if cameraAccessGranted {
-            createScanningSession()
-        }
-    }
-    
-    
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
         
-        if cameraAccessGranted {
-            startScanning()
-        }
-        else {
-            if Globals.sharedInstance.didRequestCameraAccess {
-                
-                let alertViewController = UIAlertController(title: "Camera Access Disabled", message: "Please enable camera access in Settings>Preferences>Privacy to enable this feature.", preferredStyle: .Alert)
-                
-                func viewSettingsActionHandler(action: UIAlertAction) {
-                    dispatch_after(0, dispatch_get_main_queue(), {
-                        self.dismissViewControllerAnimated(false, completion: {
-                            openSettings()
-                        })
-                    })
-                }
-                
-                let viewSettingsAction = UIAlertAction(title: "Settings", style: UIAlertActionStyle.Default, handler: viewSettingsActionHandler)
-                
-                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in self.dismissViewControllerAnimated(true, completion: nil) })
-                
-                alertViewController.addAction(viewSettingsAction)
-                alertViewController.addAction(cancelAction)
-                
-                presentViewController(alertViewController, animated: true, completion: nil)
-            }
-            else {
-                requestAccessToCamera()
-            }
-        }
+        startScanning()
+        
+        // TODO :  fade to scan/camera view
+        
+//        else {
+//            if Globals.sharedInstance.didRequestCameraAccess {
+//                
+//                let alertViewController = UIAlertController(title: "Camera Access Disabled", message: "Please enable camera access in Settings>Preferences>Privacy to enable this feature.", preferredStyle: .Alert)
+//                
+//                func viewSettingsActionHandler(action: UIAlertAction) {
+//                    dispatch_after(0, dispatch_get_main_queue(), {
+//                        self.dismissViewControllerAnimated(false, completion: {
+//                            openSettings()
+//                        })
+//                    })
+//                }
+//                
+//                let viewSettingsAction = UIAlertAction(title: "Settings", style: UIAlertActionStyle.Default, handler: viewSettingsActionHandler)
+//                
+//                let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in self.dismissViewControllerAnimated(true, completion: nil) })
+//                
+//                alertViewController.addAction(viewSettingsAction)
+//                alertViewController.addAction(cancelAction)
+//                
+//                presentViewController(alertViewController, animated: true, completion: nil)
+//            }
+//            else {
+//                requestAccessToCamera()
+//            }
+//        }
     }
+    
+    
+    
+    
+    override func viewDidDisappear(animated: Bool) {
+        
+        super.viewDidDisappear(animated)
+        stopScanning()
+    }
+    
     
     
     
     //MARK: - Access
     
+    /*
     private func requestAccessToCamera() {
         
         let alertViewController = UIAlertController(title: "Camera Access", message: "This app can recognize 2D bar codes associated with topics.  In order to enable this feature, you will be asked to provide the app with access to your camera.", preferredStyle: .Alert)
@@ -86,14 +88,14 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
         alertViewController.addAction(nextAction)
         presentViewController(alertViewController, animated: true, completion: nil)
     }
-
+    */
     
-    private var cameraAccessGranted: Bool {
+    class func cameraAccessGranted() -> Bool {
         let status = AVCaptureDevice.authorizationStatusForMediaType(AVMediaTypeVideo)
         return status == AVAuthorizationStatus.Authorized
     }
     
-    
+    /*
     var canScan: Bool {
         if cameraAccessGranted == false {
             return false
@@ -103,7 +105,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
         }
         return true
     }
-    
+    */
     
     
     //MARK: - Setup
@@ -319,10 +321,15 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
             return
         }
         
-        if canScan {
-            scanningSession?.startRunning()
-            isScanning = true
+        if let scanningSession = scanningSession {
+            scanningSession.startRunning()
         }
+        else {
+            createScanningSession()
+            scanningSession?.startRunning()
+        }
+        
+        isScanning = true
     }
     
     

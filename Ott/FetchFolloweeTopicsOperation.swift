@@ -44,12 +44,16 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
             
             // return cached topics
             
-            let query = Topic.query()!
-            query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
-            if let sinceDate = sinceDate {
-                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: sinceDate)
-            }
+            query = {
+                
+                let query = Topic.query()!
+                query.skip = offset
+                query.orderByDescending(DataKeys.UpdatedAt)
+                if let sinceDate = sinceDate {
+                    query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: sinceDate)
+                }
+                return query
+            }()
             
             super.execute()
         }
@@ -68,11 +72,15 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
         
         do {
             
-            let query = Follow.query()!
-            query.skip = offset
-            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
+            query = {
+                
+                let query = Follow.query()!
+                query.skip = offset
+                query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
+                return query
+            }()
             
-            if let followRelationships = try query.findObjects() as? [Follow] {
+            if let followRelationships = try query!.findObjects() as? [Follow] {
                 
                 var allTopics = [Topic]()
                 

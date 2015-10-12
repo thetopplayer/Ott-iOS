@@ -39,11 +39,6 @@
                         </connections>
                     </tableView>
                     <navigationItem key="navigationItem" id="ZE5-as-wQt">
-                        <barButtonItem key="leftBarButtonItem" image="scan" id="OAW-Ix-vKd" userLabel="Scan">
-                            <connections>
-                                <action selector="presentTopicScanViewController:" destination="Ovb-7t-gQa" id="hWp-GZ-e7T"/>
-                            </connections>
-                        </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" systemItem="compose" id="x5h-PZ-Y6Y">
                             <connections>
                                 <action selector="presentTopicCreationAction:" destination="Ovb-7t-gQa" id="5DC-RP-EtL"/>
@@ -58,6 +53,5 @@
     </scenes>
     <resources>
         <image name="home" width="30" height="30"/>
-        <image name="scan" width="32" height="32"/>
     </resources>
 </document>
