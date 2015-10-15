@@ -14,18 +14,17 @@ extension UIColor {
     
     static func background() -> UIColor {
         return UIColor.whiteColor()
-//        return UIColor(hex: 0xF2F1EF)
-//        return UIColor(white: 0.97, alpha: 1.0)
+    }
+    
+    static func navigationBar() -> UIColor {
+        return UIColor(hex: 0xFFFADF)
     }
     
     static func separator() -> UIColor {
         return UIColor(white: 0.4, alpha: 0.5)
-//        return UIColor(hex: 0xBDC3C7)
     }
     
-    
     static func tint() -> UIColor {
-//        return UIColor(hex: 0x3266CC)
         return blue()
     }
     
@@ -34,7 +33,7 @@ extension UIColor {
     }
     
     static func gold() -> UIColor {
-        return UIColor(hex: 0xD8D219)
+        return UIColor(hex: 0xFFCE00)
     }
     
     static func green() -> UIColor {
@@ -45,16 +44,13 @@ extension UIColor {
         return UIColor(hex: 0x6084EB)
     }
     
-    
     static func darkText() -> UIColor {
         return UIColor.blackColor()
     }
     
-    
     static func mediumText() -> UIColor {
         return UIColor(white: 0.3, alpha: 1.0)
     }
-    
     
     static func lightText() -> UIColor {
         return UIColor(white: 0.5, alpha: 1.0)

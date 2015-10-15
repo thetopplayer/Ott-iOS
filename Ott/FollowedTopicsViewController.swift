@@ -17,10 +17,20 @@ class FollowedTopicsViewController: TopicMasterViewController {
         
         super.viewDidLoad()
 
-//        let scanButton = UIBarButtonItem(image: UIImage(named: "scan"), style: .Plain, target: self, action: "presentTopicScanViewController:")
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
-//        navigationItem.leftBarButtonItem = scanButton
         navigationItem.rightBarButtonItem = createButton
+        
+        
+        let title: String
+        let number = currentUser().followingCount
+        if number == 1 {
+            title = "Following \(number) User"
+        }
+        else {
+            title = "Following \(number) Users"
+        }
+        navigationItem.title = title
+
         
         fetchTopics(.CachedThenUpdate)
     }
@@ -84,7 +94,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     self.displayStatus()
                     
                     if let error = error {
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
+                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving followee topics from server", actionHandler: nil)
                     }
                     else {
                         Globals.sharedInstance.lastUpdatedFolloweeTopics = now

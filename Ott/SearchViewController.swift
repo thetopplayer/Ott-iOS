@@ -29,7 +29,7 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
             
             bar.delegate = self
             bar.barTintColor = UIColor.blackColor()
-            bar.translucent = false
+            bar.translucent = true
             return bar
             }()
         

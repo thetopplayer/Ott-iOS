@@ -31,7 +31,7 @@ class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
     }
     
     
-    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate?, completion: FetchCompletionBlock?) {
         
         let theQuery: PFQuery = {
             
@@ -39,7 +39,9 @@ class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
             query.skip = offset
             query.orderByDescending(DataKeys.UpdatedAt)
             query.whereKey(DataKeys.Author, equalTo: currentUser())
-            query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: updatedSince)
+            if let updatedSince = updatedSince {
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: updatedSince)
+            }
             return query
             }()
         

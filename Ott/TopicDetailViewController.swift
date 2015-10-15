@@ -424,7 +424,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
         
-        let postOperation = UploadPostOperation(post: myPost) {
+        let postOperation = UploadPostOperation(post: myPost, topic: topic!) {
             
             (post, error) in
          

@@ -69,6 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         UITabBar.appearance().tintColor = UIColor.tint()
         UINavigationBar.appearance().tintColor = UIColor.tint()
+        UINavigationBar.appearance().barTintColor = UIColor.navigationBar()
         UIControl.appearance().tintColor = UIColor.tint()
         return true
     }

@@ -37,6 +37,21 @@ class CreateFollowOperation: ParseOperation {
         
         do {
             
+            // first make sure the follow relationship doesn't already exist
+            let query = Follow.query()!
+            query.whereKey(DataKeys.FolloweeHandle, equalTo: followeeHandle)
+            query.whereKey(DataKeys.Follower, equalTo: currentUser())
+            query.limit = 1
+            
+            let results = try query.findObjects()
+            if results.count > 0 {
+                
+                let message = "Already following \(followeeHandle)"
+                let userinfo = [NSLocalizedDescriptionKey: message]
+                let error = NSError(domain: "ott.senisa.net", code: 100, userInfo: userinfo)
+                finishWithError(error)
+            }
+            
             try follow.save()
             try follow.fetch() // fetch since saving operation adds data to record
             

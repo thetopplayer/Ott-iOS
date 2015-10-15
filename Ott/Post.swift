@@ -18,6 +18,10 @@ extension DataKeys {
     static var TopicName: String {
         return "topicName"
     }
+    
+    static var TopicID: String {
+        return "topicID"
+    }
 }
 
 

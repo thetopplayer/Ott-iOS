@@ -26,13 +26,13 @@ class Globals {
     //MARK: - User Defaults
     
     private let lastUpdatedAuthoredTopicsKey = "lastUpdatedAuthoredTopicsKey"
-    var lastUpdatedAuthoredTopics: NSDate {
+    var lastUpdatedAuthoredTopics: NSDate? {
         
         get {
             if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedAuthoredTopicsKey) as? NSDate {
                 return date
             }
-            return NSDate.distantPast()
+            return nil
         }
         
         set {
@@ -42,13 +42,13 @@ class Globals {
     
     
     private let lastUpdatedAuthoredPostsKey = "lastUpdatedAuthoredPostsKey"
-    var lastUpdatedAuthoredPosts: NSDate {
+    var lastUpdatedAuthoredPosts: NSDate? {
         
         get {
             if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedAuthoredPostsKey) as? NSDate {
                 return date
             }
-            return NSDate.distantPast()
+            return nil
         }
         
         set {
@@ -58,13 +58,13 @@ class Globals {
     
     
     private let lastUpdatedFolloweesKey = "lastUpdatedFollowees"
-    var lastUpdatedFollowees: NSDate {
+    var lastUpdatedFollowees: NSDate? {
         
         get {
             if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFolloweesKey) as? NSDate {
                 return date
             }
-            return NSDate.distantPast()
+            return nil
         }
         
         set {
@@ -74,13 +74,13 @@ class Globals {
     
     
     private let lastUpdatedFolloweeTopicsKey = "lastUpdatedFolloweeTopics"
-    var lastUpdatedFolloweeTopics: NSDate {
+    var lastUpdatedFolloweeTopics: NSDate? {
         
         get {
             if let date = NSUserDefaults.standardUserDefaults().objectForKey(lastUpdatedFolloweeTopicsKey) as? NSDate {
                 return date
             }
-            return NSDate.distantPast()
+            return nil
         }
         
         set {
@@ -108,7 +108,6 @@ class Globals {
     var remindersToPostToTopic: Int {
         
         get {
-            
             return NSUserDefaults.standardUserDefaults().integerForKey(remindersToPostKey)
         }
         

@@ -237,7 +237,6 @@ class User: PFUser {
     
     func getFollowStatusForUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
         
-        
         let theQuery: PFQuery = {
             
             let query = Follow.query()!
@@ -247,10 +246,12 @@ class User: PFUser {
             return query
         }()
         
-        let fetchOperation = FetchOperation(dataSource: .Cache, query: theQuery) { (relationship, error) in
+        let fetchOperation = FetchOperation(dataSource: .Cache, query: theQuery) { (follows, error) in
+            
+            let isFollowing = follows == nil ? false : follows!.count > 0
             
             dispatch_async(dispatch_get_main_queue()) {
-                completion(following: relationship != nil)
+                completion(following: isFollowing)
             }
         }
         

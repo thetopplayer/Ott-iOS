@@ -23,7 +23,7 @@ class FetchCurrentUserFollowersOperation: FetchOperation {
             let query = Follow.query()!
             query.skip = offset
             query.orderByDescending(DataKeys.UpdatedAt)
-            query.whereKey(DataKeys.Follower, equalTo: currentUser())
+            query.whereKey(DataKeys.Followee, equalTo: currentUser())
             return query
             }()
         

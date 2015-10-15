@@ -11,10 +11,12 @@ import UIKit
 class UploadPostOperation: UploadOperation {
 
     let post: Post
+    let topic: Topic
     
-    init(post: Post, completion: UploadCompletionBlock?) {
+    init(post: Post, topic: Topic, completion: UploadCompletionBlock?) {
         
         self.post = post
+        self.topic = topic
         super.init(completion: completion)
     }
     
@@ -35,6 +37,11 @@ class UploadPostOperation: UploadOperation {
         do {
             
 //            let topicPinName = post.topic!.pinName
+            
+//            let params = ["post": post, "topic": topic]
+            
+//            let results = try PFCloud.callFunction("savePostForTopic", withParameters: params)
+//            print("upload results = \(results)")
             
             try post.save()
             try post.fetchIfNeeded()
