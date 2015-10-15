@@ -73,6 +73,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewWillDisappear(animated)
         endObservations()
+        
+        // record when this topic was viewed
+        MaintenanceQueue.sharedInstance.addOperation(UpdateViewHistoryOperation(topic: topic!, viewedAt: NSDate()))
     }
     
     
@@ -113,8 +116,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         displayedData = topic.currentUserDidPostTo ? .TopicAndPosts : .Topic
         displayMode = topic.currentUserDidPostTo ? .View : .Edit
         
-        let title = "#" + topic.name!
-        navigationItem.title = title
+        navigationItem.title = topic.name!
         displayType = .List
         
         didInitializeViewForTopic = true

@@ -31,7 +31,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         warningLabel.text = "\u{26A0}  You already authored this topic"
         
         textField.delegate = self
-        textField.placeholder = "#name"
+        textField.placeholder = "topic name"
         
         textView.addRoundedBorder()
         textView.delegate = self
@@ -102,9 +102,9 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         
-        if textField.text!.length == 0 {
-            textField.text = "#"
-        }
+//        if textField.text!.length == 0 {
+//            textField.text = "#"
+//        }
         
         return true
     }
@@ -112,7 +112,11 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         
-        if range.location == 0 {
+//        if range.location == 0 {
+//            return false
+//        }
+//        
+        if range.location > Topic.maximumNameLength {
             return false
         }
         
@@ -121,9 +125,9 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
             return false
         }
         
-        if string.containsCharacter(inCharacterSet: NSCharacterSet.whitespaceCharacterSet()) {
-            return false
-        }
+//        if string.containsCharacter(inCharacterSet: NSCharacterSet.whitespaceCharacterSet()) {
+//            return false
+//        }
         
         return true
     }
@@ -156,14 +160,16 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     var title: String? {
         get {
-            let text = textField.text?.stringByReplacingOccurrencesOfString("#", withString: "")
-            return text
+            return textField.text
+//            let text = textField.text?.stringByReplacingOccurrencesOfString("#", withString: "")
+//            return text
         }
         
         set {
-            if let text = newValue?.stringByReplacingOccurrencesOfString("#", withString: "") {
-                textField.text = "#" + text
-            }
+            textField.text = newValue
+//            if let text = newValue?.stringByReplacingOccurrencesOfString("#", withString: "") {
+//                textField.text = "#" + text
+//            }
         }
     }
     

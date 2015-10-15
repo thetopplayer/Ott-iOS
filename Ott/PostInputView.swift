@@ -95,14 +95,14 @@ class PostInputView: UIView, UITextViewDelegate {
                 
                 if self.didDrawActiveLabel == false {
                     
-                    self.ratingLabel.addRoundedBorder(withColor: UIColor.tint())
-                    self.ratingLabel.backgroundColor = UIColor.tint()
                     self.ratingLabel.textColor = UIColor.whiteColor()
                     self.ratingLabel.font = UIFont.boldSystemFontOfSize(20)
                     self.didDrawActiveLabel = true
                 }
                 
                 self.ratingLabel.text = rating.text()
+                self.ratingLabel.addRoundedBorder(withColor: rating.color())
+                self.ratingLabel.backgroundColor = rating.color()
             }
             else {
                 

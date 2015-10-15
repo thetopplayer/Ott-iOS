@@ -41,6 +41,7 @@ class FetchTopicsOperation: FetchOperation, TopicOperationProtocol {
                 if dataSource == .Server {
                     for topic in data {
                         topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
+                        topic.currentUserViewedAt = currentUserLastViewedTopic(topic)
                     }
                 }
                 fetchedData = data

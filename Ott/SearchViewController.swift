@@ -44,6 +44,12 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
         super.viewWillAppear(animated)
     }
     
+    override func viewDidAppear(animated: Bool) {
+        
+        super.viewDidAppear(animated)
+        searchBar?.becomeFirstResponder()
+    }
+    
 
     
     //MARK: - Search

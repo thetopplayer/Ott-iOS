@@ -17,6 +17,7 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var commentLabel: UILabel?
     @IBOutlet var ratingView: LabeledDotView!
     @IBOutlet var topicImageView: ParseImageView?
+    @IBOutlet var updatedIndicatorImageView: UIImageView!
     
 
     override func awakeFromNib() {
@@ -24,6 +25,8 @@ class TopicMasterTableViewCell: TableViewCell {
         super.awakeFromNib()
         
         contentView.backgroundColor = UIColor.whiteColor()
+        
+        updatedIndicatorImageView.tintColor = UIColor.tint()
         
         ratingView.textColor = UIColor.whiteColor()
         ratingView.borderColor = UIColor.whiteColor()
@@ -87,6 +90,20 @@ class TopicMasterTableViewCell: TableViewCell {
                 commentLabel?.text = ""
             }
             
+            if let lastPostDate = topic.lastPostDate {
+                
+                if let lastViewedDate = topic.currentUserViewedAt {
+                    
+                    updatedIndicatorImageView.hidden = lastPostDate.earlierDate(lastViewedDate) == lastPostDate
+                }
+                else {
+                    updatedIndicatorImageView.hidden = false
+                }
+            }
+            else {
+                updatedIndicatorImageView.hidden = false
+            }
+            
             statusLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
             if topic.currentUserDidPostTo {
                 
@@ -111,18 +128,19 @@ class TopicMasterTableViewCell: TableViewCell {
             return NSAttributedString(string: "")
         }
         
-        let hashColor = topic.currentUserDidPostTo ? UIColor.grayColor() : UIColor.tint()
+//        let hashColor = topic.currentUserDidPostTo ? UIColor.grayColor() : UIColor.tint()
         let titleColor = UIColor.blackColor()
         
         let titleFont = UIFont.boldSystemFontOfSize(20)
-        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
+//        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
         
         let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : titleColor, NSFontAttributeName: titleFont]
         
-        let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
+//        let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
         let s1 = NSAttributedString(string: topic.name!, attributes: boldAttributes)
-        fullString.appendAttributedString(s1)
+//        fullString.appendAttributedString(s1)
         
-        return fullString
+//        return fullString
+        return s1
     }
 }

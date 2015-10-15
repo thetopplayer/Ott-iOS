@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8187.4" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <deployment identifier="iOS"/>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8151.3"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -20,11 +19,13 @@
                         <subviews>
                             <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="Name" textAlignment="center" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="vty-Zi-C7U">
                                 <rect key="frame" x="7" y="16" width="586" height="30"/>
+                                <animations/>
                                 <fontDescription key="fontDescription" type="system" pointSize="25"/>
-                                <textInputTraits key="textInputTraits" autocorrectionType="no" spellCheckingType="no"/>
+                                <textInputTraits key="textInputTraits" autocapitalizationType="words" spellCheckingType="no"/>
                             </textField>
                             <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" misplaced="YES" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="XQp-wI-RaK">
                                 <rect key="frame" x="8" y="82" width="584" height="70"/>
+                                <animations/>
                                 <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="70" id="OFp-gq-gtc"/>
@@ -34,6 +35,7 @@
                             </textView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="You already authored this topic" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ss9-fq-x0j">
                                 <rect key="frame" x="200" y="54" width="201" height="17"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="oiT-vX-brV"/>
                                 </constraints>
@@ -42,6 +44,7 @@
                                 <nil key="highlightedColor"/>
                             </label>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="ss9-fq-x0j" firstAttribute="centerX" secondItem="EAe-k9-JZA" secondAttribute="centerX" id="6Bm-Fz-beL"/>
@@ -56,6 +59,7 @@
                         </constraints>
                     </view>
                 </subviews>
+                <animations/>
                 <constraints>
                     <constraint firstItem="EAe-k9-JZA" firstAttribute="leading" secondItem="kod-es-NfQ" secondAttribute="leadingMargin" constant="-8" id="JAw-JH-cHf"/>
                     <constraint firstAttribute="trailingMargin" secondItem="EAe-k9-JZA" secondAttribute="trailing" constant="-9" id="KoR-dG-vAm"/>
@@ -63,6 +67,7 @@
                     <constraint firstItem="EAe-k9-JZA" firstAttribute="top" secondItem="kod-es-NfQ" secondAttribute="topMargin" constant="-8" id="uqZ-6I-mdb"/>
                 </constraints>
             </tableViewCellContentView>
+            <animations/>
             <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
             <connections>
                 <outlet property="innerContentContainer" destination="EAe-k9-JZA" id="ytD-Wj-szY"/>

@@ -14,7 +14,15 @@
                 <rect key="frame" x="0.0" y="0.0" width="600" height="95"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeK-Sd-Xco">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="h8h-Uc-So8">
+                        <rect key="frame" x="4" y="17" width="12" height="12"/>
+                        <animations/>
+                        <constraints>
+                            <constraint firstAttribute="width" constant="16" id="Qtb-J9-zBc"/>
+                            <constraint firstAttribute="height" constant="16" id="QwM-7u-PGc"/>
+                        </constraints>
+                    </imageView>
+                    <view contentMode="scaleToFill" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="oeK-Sd-Xco">
                         <rect key="frame" x="15" y="8" width="577" height="87"/>
                         <subviews>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="#Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="8ra-Ov-r85">
@@ -43,7 +51,7 @@
                                 <color key="textColor" red="0.0" green="0.50196081400000003" blue="1" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="7C9-ge-yLW">
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="7C9-ge-yLW">
                                 <rect key="frame" x="0.0" y="63" width="539" height="17"/>
                                 <animations/>
                                 <constraints>
@@ -82,8 +90,10 @@
                 <animations/>
                 <constraints>
                     <constraint firstItem="oeK-Sd-Xco" firstAttribute="bottom" secondItem="DVT-pH-Ioy" secondAttribute="bottomMargin" id="2s9-kc-wSh"/>
+                    <constraint firstItem="h8h-Uc-So8" firstAttribute="leading" secondItem="DVT-pH-Ioy" secondAttribute="leadingMargin" constant="-4" id="K54-Ap-Fph"/>
+                    <constraint firstItem="h8h-Uc-So8" firstAttribute="top" secondItem="DVT-pH-Ioy" secondAttribute="topMargin" constant="7" id="Oee-9W-cAP"/>
                     <constraint firstItem="oeK-Sd-Xco" firstAttribute="top" secondItem="DVT-pH-Ioy" secondAttribute="topMargin" id="Vt4-07-je4"/>
-                    <constraint firstItem="oeK-Sd-Xco" firstAttribute="leading" secondItem="DVT-pH-Ioy" secondAttribute="leadingMargin" constant="7" id="Vun-zY-7D8"/>
+                    <constraint firstItem="oeK-Sd-Xco" firstAttribute="leading" secondItem="DVT-pH-Ioy" secondAttribute="leadingMargin" constant="15" id="Vun-zY-7D8"/>
                     <constraint firstItem="oeK-Sd-Xco" firstAttribute="trailing" secondItem="DVT-pH-Ioy" secondAttribute="trailingMargin" id="cXT-Jj-QNN"/>
                 </constraints>
             </tableViewCellContentView>
@@ -94,8 +104,12 @@
                 <outlet property="ratingView" destination="zpE-1y-nzn" id="YBY-uD-ayb"/>
                 <outlet property="statusLabel" destination="7C9-ge-yLW" id="ocC-Ht-YRW"/>
                 <outlet property="titleLabel" destination="8ra-Ov-r85" id="fJD-fh-XDe"/>
+                <outlet property="updatedIndicatorImageView" destination="h8h-Uc-So8" id="e2F-BK-Mcy"/>
             </connections>
             <point key="canvasLocation" x="320" y="570"/>
         </tableViewCell>
     </objects>
+    <resources>
+        <image name="smallDot" width="20" height="20"/>
+    </resources>
 </document>

@@ -32,9 +32,6 @@ class CreateFollowOperation: ParseOperation {
         
         logBackgroundTask()
         
-        let follow = Follow()
-        follow.followeeHandle = followeeHandle
-        
         do {
             
             // first make sure the follow relationship doesn't already exist
@@ -52,7 +49,10 @@ class CreateFollowOperation: ParseOperation {
                 finishWithError(error)
             }
             
-            try follow.save()
+            let follow = Follow()
+            follow.followeeHandle = followeeHandle
+            
+           try follow.save()
             try follow.fetch() // fetch since saving operation adds data to record
             
             let pinName = FetchCurrentUserFolloweesOperation.pinName()!

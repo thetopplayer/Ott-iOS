@@ -53,9 +53,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         func setupParseBackend() {
             
             // initialize subclasses of PFObject before initializing parse
-            User.initialize()
-            Topic.initialize()
+            Follow.initialize()
             Post.initialize()
+            PrivateUserData.initialize()
+            Topic.initialize()
+            User.initialize()
+            ViewHistory.initialize()
             
             Parse.enableLocalDatastore()
             

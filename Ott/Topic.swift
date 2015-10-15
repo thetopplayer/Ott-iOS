@@ -70,14 +70,18 @@ class Topic: AuthoredObject, PFSubclassing {
     
     //MARK: - Attributes
     
+    static var maximumNameLength: Int = 100
+    
     var name: String? {
         
         set {
             
             if let theName = newValue {
                 
-                self[DataKeys.Name] = theName
-                self[DataKeys.AllCapsName] = theName.uppercaseString
+                let truncatedName = theName.length > self.dynamicType.maximumNameLength ? theName.substring(startingAt: 0, length: self.dynamicType.maximumNameLength) : theName
+                
+                self[DataKeys.Name] = truncatedName
+                self[DataKeys.AllCapsName] = truncatedName.uppercaseString
             }
         }
         
@@ -86,11 +90,15 @@ class Topic: AuthoredObject, PFSubclassing {
         }
     }
     
-    @NSManaged var currentUserDidPostTo: Bool  // flag used locally
     @NSManaged var numberOfPosts: Int
     @NSManaged var averageRating: Float
     @NSManaged var lastPostLocationName: String?
+    @NSManaged var lastPostDate: NSDate?
 
+    @NSManaged var currentUserDidPostTo: Bool  // only for local use
+    @NSManaged var currentUserViewedAt: NSDate?  // only for local use
+    
+    
     // because Parse only allows one geoPoint per record, use this to store
     // additional location information
     struct LocationCoordinates {
