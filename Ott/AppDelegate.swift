@@ -69,7 +69,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         setupParseBackend()
         CacheManager.sharedInstance.start()
-
+        LocationManager.sharedInstance.start()
+        
         UITabBar.appearance().tintColor = UIColor.tint()
         UINavigationBar.appearance().tintColor = UIColor.tint()
         UINavigationBar.appearance().barTintColor = UIColor.navigationBar()

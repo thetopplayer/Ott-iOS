@@ -60,6 +60,10 @@ extension DataKeys {
     static var Rating: String {
         return "rating"
     }
+    
+    static var SearchWords: String {
+        return "searchWords"
+    }
 }
 
 

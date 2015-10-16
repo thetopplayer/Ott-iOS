@@ -35,7 +35,6 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
         
         navigationItem.titleView = searchBar
         showCreateButton()
-        
     }
 
     
@@ -77,13 +76,55 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         
-        showCancelButton()
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.showCancelButton()
+            self.reloadTableView(withTopics: [Topic]())
+        }
     }
     
     
     func searchBarTextDidEndEditing(searchBar: UISearchBar) {
         
         
+    }
+    
+    
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        
+    }
+    
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        
+        guard let query = searchBar.text else {
+            return
+        }
+        
+        guard query.length > 0 else {
+            return
+        }
+        
+        displayStatus(.Fetching)
+        
+        let fetchOperation = FetchSearchedTopicsOperation(searchPhrase: query) { (fetchResults, error) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                if let topics = fetchResults as? [Topic] {
+                    self.reloadTableView(withTopics: topics)
+                }
+                self.displayStatus()
+                
+                if let error = error {
+                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving data from server", actionHandler: nil)
+                }
+           }
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
+        searchBar.resignFirstResponder()
     }
     
     

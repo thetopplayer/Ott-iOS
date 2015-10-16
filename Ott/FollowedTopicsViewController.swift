@@ -144,14 +144,6 @@ class FollowedTopicsViewController: TopicMasterViewController {
         presentTopicCreationViewController()
     }
     
-    
-//    @IBAction func presentTopicScanViewController(sender: AnyObject) {
-//        
-//        if let navController = navigationController as? NavigationController {
-//            navController.presentTopicScanViewController()
-//        }
-//    }
-    
 
     
     //MARK: - Observations

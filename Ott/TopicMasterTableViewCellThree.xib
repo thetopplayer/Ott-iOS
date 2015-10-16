@@ -34,7 +34,7 @@
                                     <constraint firstAttribute="height" constant="27" id="Sls-hQ-cBH"/>
                                     <constraint firstAttribute="height" constant="30" id="nMa-hz-08W"/>
                                 </constraints>
-                                <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
+                                <fontDescription key="fontDescription" type="boldSystem" pointSize="18"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                                 <variation key="default">

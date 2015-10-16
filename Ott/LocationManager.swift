@@ -33,6 +33,15 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         super.init()
         delegate = self
         distanceFilter = notificationFilterDistance
+    }
+    
+    
+    deinit {
+        stop()
+    }
+    
+
+    func start() {
         
         if permissionGranted {
             startUpdatingLocation()
@@ -40,19 +49,33 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     }
     
     
-    deinit {
+    func stop() {
+        
         stopUpdatingLocation()
     }
     
-
     
     //MARK: - Data
     
-    private var placemarkForCurrentLocation: CLPlacemark?
+    private let placemarkArchive = documentsDirectory() + "/placemark"
+    private var currentPlacemark: CLPlacemark? {
+    
+        set {
+            let didArchive = NSKeyedArchiver.archiveRootObject(newValue!, toFile: placemarkArchive)
+            if !didArchive {
+                print("failed to archive placemark")
+            }
+        }
+        
+        get {
+            return NSKeyedUnarchiver.unarchiveObjectWithFile(placemarkArchive) as? CLPlacemark
+        }
+    }
+
     
     private func placemarkIsWithinDistance(distance: CLLocationDistance) -> Bool {
     
-        if let placemark = placemarkForCurrentLocation {
+        if let placemark = currentPlacemark {
             return distanceFromCurrentLocation(placemark.location!) <= distance
         }
         else {
@@ -63,7 +86,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     private func shouldReverseGeocodeLocation() -> Bool {
         
-        if let placemark = placemarkForCurrentLocation {
+        if let placemark = currentPlacemark {
             
             let meaningfulNameDistance = CLLocationDistance(100)
             return distanceFromCurrentLocation(placemark.location!) <= meaningfulNameDistance
@@ -77,19 +100,19 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     func nameForCurrentLocation() -> String? {
         
-        func placemarkIsGood() -> Bool {
-            
-            let validNameDistance = CLLocationDistance(100)
-            return placemarkIsWithinDistance(validNameDistance)
-        }
+//        func placemarkIsGood() -> Bool {
+//            
+//            let validNameDistance = CLLocationDistance(100)
+//            return placemarkIsWithinDistance(validNameDistance)
+//        }
         
-        guard let placemark = placemarkForCurrentLocation else {
+        guard let placemark = currentPlacemark else {
             return nil
         }
         
-        if placemarkIsGood() == false {
-            return nil
-        }
+//        if placemarkIsGood() == false {
+//            return nil
+//        }
         
         var result: String?
         if let areaOfInterest = placemark.areasOfInterest?.first {
@@ -121,28 +144,29 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         return result
     }
     
-
+    private var isGeocoding = false
     func reverseGeocodeCurrentLocation() {
         
-        func existingGeocodeIsFine() -> Bool {            
-            let filterRange = CLLocationDistance(25)
-            return placemarkIsWithinDistance(filterRange)
+        if isGeocoding {
+            return
         }
-        
-        if existingGeocodeIsFine() {
+
+        if placemarkIsWithinDistance(CLLocationDistance(25)) {
             return
         }
         
         print("reverse geocoding")
         
+        isGeocoding = true
         geoCoder.reverseGeocodeLocation(location!, completionHandler: { (placemarks, error) -> Void in
             
             if error == nil {
-                
                 if let placemarks = placemarks {
-                    self.placemarkForCurrentLocation = placemarks.first
+                    self.currentPlacemark = placemarks.first
                 }
             }
+            
+            self.isGeocoding = false
         })
     }
     
@@ -172,29 +196,14 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         }
     }
     
-    private let priorLocationArchive = documentsDirectory() + "/priorLocation"
-    private var priorLocation: CLLocation? {
-        
-        set {
-            NSKeyedArchiver.archiveRootObject(newValue!, toFile: priorLocationArchive)
-        }
-        
-        get {
-            return NSKeyedUnarchiver.unarchiveObjectWithFile(priorLocationArchive) as? CLLocation
-        }
-    }
-    
-    
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        if let lastLocation = priorLocation {
-            
+        if let lastLocation = currentPlacemark?.location {
             if distanceFromCurrentLocation(lastLocation) < notificationFilterDistance {
                 return
            }
         }
         
-        priorLocation = locations.first
         reverseGeocodeCurrentLocation()
 
         NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
