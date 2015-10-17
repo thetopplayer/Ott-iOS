@@ -14,7 +14,7 @@ class TopicMasterTableViewCell: TableViewCell {
     
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var statusLabel: UILabel!
-    @IBOutlet var commentLabel: UILabel?
+    @IBOutlet var authorLabel: UILabel?
     @IBOutlet var ratingView: LabeledDotView!
     @IBOutlet var topicImageView: ParseImageView?
     @IBOutlet var updatedIndicatorImageView: UIImageView!
@@ -24,6 +24,8 @@ class TopicMasterTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
+        separatorInset = UIEdgeInsetsMake(0, 21, 0, 0)
+
         contentView.backgroundColor = UIColor.whiteColor()
         
         updatedIndicatorImageView.tintColor = UIColor.tint()
@@ -34,7 +36,7 @@ class TopicMasterTableViewCell: TableViewCell {
         ratingView.font = UIFont.boldSystemFontOfSize(15)
         ratingView.hidden = true
         
-        commentLabel?.textColor = UIColor(white: 0.15, alpha: 1.0)
+        authorLabel?.textColor = UIColor(white: 0.15, alpha: 1.0)
         
         if let topicImageView = topicImageView {
             
@@ -83,17 +85,10 @@ class TopicMasterTableViewCell: TableViewCell {
         if let topic = displayedTopic {
             
             titleLabel.attributedText = attributedTitle()
-            if let comment = topic.comment {
-                commentLabel?.text = comment
-            }
-            else {
-                commentLabel?.text = ""
-            }
+            authorLabel?.text = (topic.authorName)?.uppercaseString
             
             if let lastPostDate = topic.lastPostDate {
-                
                 if let lastViewedDate = topic.currentUserViewedAt {
-                    
                     updatedIndicatorImageView.hidden = lastPostDate.earlierDate(lastViewedDate) == lastPostDate
                 }
                 else {
@@ -104,7 +99,7 @@ class TopicMasterTableViewCell: TableViewCell {
                 updatedIndicatorImageView.hidden = false
             }
             
-            statusLabel.attributedText = updatedTimeAndLocationAttributedString(topic)
+            statusLabel.attributedText = timeAndLocationAttributedString(topic)
             if topic.currentUserDidPostTo {
                 
                 let rating = self.topicRating()
@@ -128,19 +123,24 @@ class TopicMasterTableViewCell: TableViewCell {
             return NSAttributedString(string: "")
         }
         
-//        let hashColor = topic.currentUserDidPostTo ? UIColor.grayColor() : UIColor.tint()
-        let titleColor = UIColor.blackColor()
+        let nameColor = UIColor.blackColor()
+        let commentColor = UIColor.darkGrayColor()
         
-        let titleFont = UIFont.boldSystemFontOfSize(20)
-//        let hashAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : hashColor, NSFontAttributeName : titleFont]
+        let titleFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        let titleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : nameColor, NSFontAttributeName: titleFont]
         
-        let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : titleColor, NSFontAttributeName: titleFont]
+        let nameString = topic.name! + "  "
+        let fullString = NSMutableAttributedString(string: nameString, attributes: titleAttributes)
         
-//        let fullString = NSMutableAttributedString(string: "#", attributes: hashAttributes)
-        let s1 = NSAttributedString(string: topic.name!, attributes: boldAttributes)
-//        fullString.appendAttributedString(s1)
+        if let comments = topic.comment {
+            
+            let commentFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+            let commentAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : commentColor, NSFontAttributeName : commentFont]
+            
+            let s1 = NSAttributedString(string: comments, attributes: commentAttributes)
+            fullString.appendAttributedString(s1)
+        }
         
-//        return fullString
-        return s1
+        return fullString
     }
 }

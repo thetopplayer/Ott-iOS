@@ -86,15 +86,15 @@ class TableViewCell: UITableViewCell {
     private let normalAttributes : [String : AnyObject] = {
         
         let color = UIColor.blackColor().colorWithAlphaComponent(0.5)
-        let font = UIFont.systemFontOfSize(11)
+        let font = UIFont.preferredFontForTextStyle(UIFontTextStyleCaption2)
         return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
     
     
-    private let boldAttributes : [String : AnyObject] = {
+    private let strongAttributes : [String : AnyObject] = {
         
-        let color = UIColor.blackColor().colorWithAlphaComponent(0.5)
-        let font = UIFont.boldSystemFontOfSize(11)
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.7)
+        let font = UIFont.preferredFontForTextStyle(UIFontTextStyleCaption2)
         return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
     
@@ -109,9 +109,10 @@ class TableViewCell: UITableViewCell {
     
     func timeAndLocationAttributedString(authoredObject: AuthoredObject) -> NSAttributedString {
         
-        let s = NSMutableAttributedString(string: "created ", attributes: normalAttributes)
+        let s = NSMutableAttributedString(string: "", attributes: normalAttributes)
+//        let s = NSMutableAttributedString(string: "created ", attributes: normalAttributes)
         
-        let s1 = NSAttributedString(string: dateToString(authoredObject.createdAt), attributes: boldAttributes)
+        let s1 = NSAttributedString(string: dateToString(authoredObject.createdAt), attributes: strongAttributes)
         
         s.appendAttributedString(s1)
         
@@ -144,7 +145,7 @@ class TableViewCell: UITableViewCell {
             }
         }
         
-        let s3 = NSAttributedString(string: locationText, attributes: boldAttributes)
+        let s3 = NSAttributedString(string: locationText, attributes: strongAttributes)
         s.appendAttributedString(s3)
         return s
     }
@@ -158,7 +159,7 @@ class TableViewCell: UITableViewCell {
         
         let s = NSMutableAttributedString(string: "updated ", attributes: normalAttributes)
         
-        let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: boldAttributes)
+        let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: strongAttributes)
         
         s.appendAttributedString(s1)
         
@@ -191,7 +192,7 @@ class TableViewCell: UITableViewCell {
             }
         }
         
-        let s3 = NSAttributedString(string: locationText, attributes: boldAttributes)
+        let s3 = NSAttributedString(string: locationText, attributes: strongAttributes)
         s.appendAttributedString(s3)
         return s
     }

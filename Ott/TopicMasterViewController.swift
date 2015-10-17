@@ -254,12 +254,12 @@ class TopicMasterViewController: TableViewController {
             type = .Image
         }
         else {
-            if theTopic.comment == nil {
-                type = .NoCommentNoImage
-            }
-            else {
+//            if theTopic.comment == nil {
+//                type = .NoCommentNoImage
+//            }
+//            else {
                 type = .NoImage
-            }
+//            }
         }
         
         return type
