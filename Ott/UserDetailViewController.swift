@@ -309,7 +309,7 @@ class UserDetailViewController: TableViewController {
                 let theQuery: PFQuery = {
                     
                     let query = Topic.query()!
-                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.orderByDescending(DataKeys.CreatedAt)
                     query.whereKey(DataKeys.Author, equalTo: user)
                     return query
                     }()
@@ -358,7 +358,7 @@ class UserDetailViewController: TableViewController {
                 let theQuery: PFQuery = {
                     
                     let query = Post.query()!
-                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.orderByDescending(DataKeys.CreatedAt)
                     query.whereKey(DataKeys.Author, equalTo: currentUser())
                     return query
                     }()
@@ -407,7 +407,7 @@ class UserDetailViewController: TableViewController {
                 let theQuery: PFQuery = {
                     
                     let query = Follow.query()!
-                    query.orderByDescending(DataKeys.UpdatedAt)
+                    query.orderByDescending(DataKeys.CreatedAt)
                     query.whereKey(DataKeys.Follower, equalTo: user!)
                     return query
                     }()

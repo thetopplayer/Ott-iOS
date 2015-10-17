@@ -21,7 +21,7 @@ class FetchCurrentUserAuthoredPostsOperation: FetchOperation {
             
             let query = Post.query()!
             query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Author, equalTo: currentUser())
             return query
         }()
@@ -36,7 +36,7 @@ class FetchCurrentUserAuthoredPostsOperation: FetchOperation {
             
             let query = Post.query()!
             query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Author, equalTo: currentUser())
             if let startDate = updatedSince {
                 query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)

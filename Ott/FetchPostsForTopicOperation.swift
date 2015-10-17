@@ -21,7 +21,7 @@ class FetchPostsForTopicOperation: FetchOperation {
             let query = Post.query()!
             query.skip = offset
             query.limit = limit
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Topic, equalTo: topic)
             return query
         }()

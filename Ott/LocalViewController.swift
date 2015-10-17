@@ -65,7 +65,7 @@ class LocalViewController: TopicMasterViewController {
             let theQuery: PFQuery = {
                 
                 let query = Topic.query()!
-                query.orderByDescending(DataKeys.UpdatedAt)
+                query.orderByDescending(DataKeys.CreatedAt)
                 return query
                 }()
 
@@ -96,7 +96,7 @@ class LocalViewController: TopicMasterViewController {
             let theQuery: PFQuery = {
                 
                 let query = Topic.query()!
-                query.orderByDescending(DataKeys.UpdatedAt)
+                query.orderByDescending(DataKeys.CreatedAt)
                 query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
                 
                 return query

@@ -22,7 +22,7 @@ class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
            
             let query = Topic.query()!
             query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Author, equalTo: currentUser())
             return query
         }()
@@ -37,7 +37,7 @@ class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
             
             let query = Topic.query()!
             query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Author, equalTo: currentUser())
             if let updatedSince = updatedSince {
                 query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: updatedSince)

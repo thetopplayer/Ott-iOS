@@ -48,7 +48,7 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
                 
                 let query = Topic.query()!
                 query.skip = offset
-                query.orderByDescending(DataKeys.UpdatedAt)
+                query.orderByDescending(DataKeys.CreatedAt)
                 if let sinceDate = sinceDate {
                     query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: sinceDate)
                 }

@@ -29,7 +29,7 @@ class FetchCurrentUserFolloweesOperation: FetchOperation {
             
             let query = Follow.query()!
             query.skip = offset
-            query.orderByDescending(DataKeys.UpdatedAt)
+            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Follower, equalTo: currentUser())
             if let startDate = updatedSince {
                 query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: startDate)
