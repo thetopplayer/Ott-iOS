@@ -62,7 +62,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         var result: String? = nil
         
         if let topic = objectToExport as? Topic {
-            result = "#" + topic.name!
+            result = topic.name!
         }
         else if let user = objectToExport as? User {
             result = user.handle

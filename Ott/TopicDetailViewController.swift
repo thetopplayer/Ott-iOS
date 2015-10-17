@@ -47,6 +47,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         setupTableView()
         setupMapView()
         displayType = .List  // affirmatively set in order to setup display
+        
+        // swipe right to go back / cancel
+        let swipeGR = UISwipeGestureRecognizer(target: self, action: "handleCancelAction:")
+        swipeGR.direction = UISwipeGestureRecognizerDirection.Right
+        tableView.addGestureRecognizer(swipeGR)
     }
     
     
