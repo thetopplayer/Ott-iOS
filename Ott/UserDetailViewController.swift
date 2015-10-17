@@ -501,10 +501,6 @@ class UserDetailViewController: TableViewController {
     private let followStatsCellViewIdentifer = "followStatsCell"
     private let followStatsCellViewHeight = CGFloat(44)
     
-    private let simpleTopicCellViewNibName = "TopicMasterTableViewCellOne"
-    private let simpleTopicCellViewIdentifier = "topicCellOne"
-    private let simpleTopicCellViewHeight = CGFloat(72)
-    
     private let topicWithCommentCellViewNibName = "TopicMasterTableViewCellTwo"
     private let topicWithCommentCellViewIdentifier = "topicCellTwo"
     private let topicWithCommentCellViewHeight = CGFloat(96)
@@ -548,9 +544,6 @@ class UserDetailViewController: TableViewController {
         
         let nib1 = UINib(nibName: followStatsCellViewNibName, bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: followStatsCellViewIdentifer)
-        
-        let nib2 = UINib(nibName: simpleTopicCellViewNibName, bundle: nil)
-        tableView.registerNib(nib2, forCellReuseIdentifier: simpleTopicCellViewIdentifier)
         
         let nib3 = UINib(nibName: topicWithCommentCellViewNibName, bundle: nil)
         tableView.registerNib(nib3, forCellReuseIdentifier: topicWithCommentCellViewIdentifier)
@@ -624,7 +617,7 @@ class UserDetailViewController: TableViewController {
     
     private enum TableCellType {
         
-        case UserDetail, Loading, FollowStats, DisplayOptions, TopicSimple, TopicNoImage, TopicWithImage, Post, FolloweeOrFollower
+        case UserDetail, Loading, FollowStats, DisplayOptions, TopicNoImage, TopicWithImage, Post, FolloweeOrFollower
     }
     
     
@@ -668,12 +661,7 @@ class UserDetailViewController: TableViewController {
                         type = .TopicWithImage
                     }
                     else {
-                        if theTopic.comment == nil {
-                            type = .TopicSimple
-                        }
-                        else {
-                            type = .TopicNoImage
-                        }
+                        type = .TopicNoImage
                     }
                 }
                 
@@ -812,9 +800,6 @@ class UserDetailViewController: TableViewController {
         case .DisplayOptions:
             height = displayOptionsCellViewHeight
             
-        case .TopicSimple:
-            height = simpleTopicCellViewHeight
-            
         case .TopicNoImage:
             height = topicWithCommentCellViewHeight
             
@@ -885,13 +870,6 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
-        func initializeSimpleTopicCell(topic: Topic) -> UITableViewCell {
-            
-            let cell = tableView.dequeueReusableCellWithIdentifier(simpleTopicCellViewIdentifier) as! TopicMasterTableViewCell
-            cell.displayedTopic = topic
-            return cell
-        }
-        
         func initializeTopicWithCommentCell(topic: Topic) -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(topicWithCommentCellViewIdentifier) as! TopicMasterTableViewCell
@@ -940,11 +918,6 @@ class UserDetailViewController: TableViewController {
         case .DisplayOptions:
             
             cell = initializeDisplayOptionsCell()
-            
-        case .TopicSimple:
-            
-            let topic = authoredTopics[indexPath.row]
-            cell = initializeSimpleTopicCell(topic)
             
         case .TopicNoImage:
             

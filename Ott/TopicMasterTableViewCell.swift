@@ -42,7 +42,7 @@ class TopicMasterTableViewCell: TableViewCell {
             
             topicImageView.contentMode = .ScaleAspectFill
             topicImageView.clipsToBounds = true
-            topicImageView.addRoundedBorder(withColor: UIColor.whiteColor())
+//            topicImageView.addRoundedBorder(withColor: UIColor.whiteColor())
         }
 
         selectionStyle = .None
