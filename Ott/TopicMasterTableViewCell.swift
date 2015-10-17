@@ -36,7 +36,7 @@ class TopicMasterTableViewCell: TableViewCell {
         ratingView.font = UIFont.boldSystemFontOfSize(15)
         ratingView.hidden = true
         
-        authorLabel?.textColor = UIColor(white: 0.15, alpha: 1.0)
+        authorLabel?.textColor = UIColor(white: 0.05, alpha: 1.0)
         
         if let topicImageView = topicImageView {
             
@@ -99,7 +99,13 @@ class TopicMasterTableViewCell: TableViewCell {
                 updatedIndicatorImageView.hidden = false
             }
             
-            statusLabel.attributedText = timeAndLocationAttributedString(topic)
+            if topicImageView != nil {
+                statusLabel.attributedText = timeAndLocationAttributedString(topic, separator: "\n")
+            }
+            else {
+                statusLabel.attributedText = timeAndLocationAttributedString(topic)
+            }
+
             if topic.currentUserDidPostTo {
                 
                 let rating = self.topicRating()

@@ -14,19 +14,19 @@
                 <rect key="frame" x="0.0" y="0.0" width="600" height="116"/>
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="Rmm-b4-QWo">
-                        <rect key="frame" x="4" y="15" width="16" height="16"/>
-                        <animations/>
-                        <constraints>
-                            <constraint firstAttribute="width" constant="16" id="XgZ-JF-J6f"/>
-                            <constraint firstAttribute="height" constant="16" id="whz-RS-Rnd"/>
-                        </constraints>
-                    </imageView>
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NAz-LN-5WF">
-                        <rect key="frame" x="23" y="8" width="569" height="100"/>
+                        <rect key="frame" x="0.0" y="8" width="592" height="100"/>
                         <subviews>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="Rmm-b4-QWo">
+                                <rect key="frame" x="4" y="7" width="14" height="14"/>
+                                <animations/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="14" id="XgZ-JF-J6f"/>
+                                    <constraint firstAttribute="height" constant="14" id="whz-RS-Rnd"/>
+                                </constraints>
+                            </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KzQ-iX-zOU">
-                                <rect key="frame" x="0.0" y="3" width="463" height="22"/>
+                                <rect key="frame" x="21" y="3" width="465" height="22"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="2ls-ge-KHw"/>
@@ -47,7 +47,7 @@
                                 </variation>
                             </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="Sas-A0-Gtz" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
-                                <rect key="frame" x="471" y="5" width="90" height="90"/>
+                                <rect key="frame" x="494" y="5" width="90" height="90"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="90" id="Czu-F7-Eg9"/>
@@ -55,7 +55,7 @@
                                 </constraints>
                             </imageView>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="YwD-yG-Uhz" customClass="LabeledDotView" customModule="Ott" customModuleProvider="target">
-                                <rect key="frame" x="535" y="0.0" width="34" height="34"/>
+                                <rect key="frame" x="558" y="0.0" width="34" height="34"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.0" green="1" blue="0.50196081400000003" alpha="1" colorSpace="calibratedRGB"/>
                                 <constraints>
@@ -63,8 +63,8 @@
                                     <constraint firstAttribute="width" constant="34" id="hT6-VN-St7"/>
                                 </constraints>
                             </view>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="status" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgg-CL-jmY">
-                                <rect key="frame" x="0.0" y="80" width="463" height="17"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="status" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgg-CL-jmY">
+                                <rect key="frame" x="21" y="84" width="465" height="13"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="17" id="tON-rN-gt7"/>
@@ -72,9 +72,14 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="tON-rN-gt7"/>
+                                    </mask>
+                                </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCb-bl-Gch">
-                                <rect key="frame" x="0.0" y="62" width="463" height="14"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCb-bl-Gch">
+                                <rect key="frame" x="21" y="62" width="465" height="14"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -85,7 +90,7 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="fgg-CL-jmY" firstAttribute="top" secondItem="cCb-bl-Gch" secondAttribute="bottom" constant="4" id="53b-qs-Q1q"/>
-                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" id="6u0-Rz-W73"/>
+                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="6u0-Rz-W73"/>
                             <constraint firstItem="cCb-bl-Gch" firstAttribute="top" secondItem="KzQ-iX-zOU" secondAttribute="bottom" constant="12" id="8hi-Jv-uvY"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="KzQ-iX-zOU" secondAttribute="trailing" constant="8" id="GJa-a6-yDj"/>
                             <constraint firstAttribute="trailing" secondItem="Sas-A0-Gtz" secondAttribute="trailing" constant="8" id="HGY-QG-q3C"/>
@@ -93,12 +98,14 @@
                             <constraint firstAttribute="trailing" secondItem="YwD-yG-Uhz" secondAttribute="trailing" id="NnG-GU-wOS"/>
                             <constraint firstItem="cCb-bl-Gch" firstAttribute="top" relation="greaterThanOrEqual" secondItem="KzQ-iX-zOU" secondAttribute="bottom" constant="12" id="QsR-Qb-urq"/>
                             <constraint firstAttribute="bottom" secondItem="fgg-CL-jmY" secondAttribute="bottom" constant="3" id="bTc-DB-pIJ"/>
-                            <constraint firstItem="cCb-bl-Gch" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" id="d0h-nF-qmL"/>
+                            <constraint firstItem="cCb-bl-Gch" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="d0h-nF-qmL"/>
+                            <constraint firstItem="Rmm-b4-QWo" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="4" id="dyX-L0-eDk"/>
                             <constraint firstAttribute="height" constant="100" id="fYb-Aw-Tja"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="cCb-bl-Gch" secondAttribute="trailing" constant="8" id="l0I-23-o8b"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="centerY" secondItem="NAz-LN-5WF" secondAttribute="centerY" id="lkD-eU-foK"/>
                             <constraint firstItem="YwD-yG-Uhz" firstAttribute="top" secondItem="NAz-LN-5WF" secondAttribute="top" id="mde-1z-Z0F"/>
-                            <constraint firstItem="fgg-CL-jmY" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" id="v9g-uA-Ote"/>
+                            <constraint firstItem="fgg-CL-jmY" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="v9g-uA-Ote"/>
+                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="centerY" secondItem="Rmm-b4-QWo" secondAttribute="centerY" id="wPe-bE-2qj"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="fgg-CL-jmY" secondAttribute="trailing" constant="8" id="xL8-EO-Wty"/>
                         </constraints>
                         <variation key="default">
@@ -110,12 +117,10 @@
                 </subviews>
                 <animations/>
                 <constraints>
-                    <constraint firstItem="Rmm-b4-QWo" firstAttribute="top" secondItem="vfC-sG-eem" secondAttribute="topMargin" constant="7" id="1C0-5c-QgE"/>
                     <constraint firstItem="NAz-LN-5WF" firstAttribute="top" secondItem="vfC-sG-eem" secondAttribute="topMargin" id="JuN-n0-bs3"/>
                     <constraint firstItem="NAz-LN-5WF" firstAttribute="trailing" secondItem="vfC-sG-eem" secondAttribute="trailingMargin" id="Vbf-uM-qIY"/>
-                    <constraint firstItem="Rmm-b4-QWo" firstAttribute="leading" secondItem="vfC-sG-eem" secondAttribute="leadingMargin" constant="-4" id="Xs2-Rg-nLf"/>
                     <constraint firstItem="NAz-LN-5WF" firstAttribute="bottom" secondItem="vfC-sG-eem" secondAttribute="bottomMargin" id="qDF-la-FxM"/>
-                    <constraint firstItem="NAz-LN-5WF" firstAttribute="leading" secondItem="vfC-sG-eem" secondAttribute="leadingMargin" constant="15" id="uPE-D4-F8g"/>
+                    <constraint firstItem="NAz-LN-5WF" firstAttribute="leading" secondItem="vfC-sG-eem" secondAttribute="leadingMargin" constant="-8" id="uPE-D4-F8g"/>
                 </constraints>
             </tableViewCellContentView>
             <animations/>

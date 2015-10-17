@@ -13,7 +13,7 @@ extension UIColor {
     //MARK: - Colors
     
     static func background() -> UIColor {
-        return UIColor.whiteColor()
+        return UIColor(hex: 0xFFFDF2)
     }
     
     static func navigationBar() -> UIColor {

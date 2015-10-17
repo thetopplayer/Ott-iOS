@@ -93,7 +93,7 @@ class TableViewCell: UITableViewCell {
     
     private let strongAttributes : [String : AnyObject] = {
         
-        let color = UIColor.blackColor().colorWithAlphaComponent(0.7)
+        let color = UIColor.blackColor().colorWithAlphaComponent(0.6)
         let font = UIFont.preferredFontForTextStyle(UIFontTextStyleCaption2)
         return [NSForegroundColorAttributeName : color, NSFontAttributeName: font]
         }()
@@ -107,7 +107,7 @@ class TableViewCell: UITableViewCell {
         }()
     
     
-    func timeAndLocationAttributedString(authoredObject: AuthoredObject) -> NSAttributedString {
+    func timeAndLocationAttributedString(authoredObject: AuthoredObject, separator: String = " \u{00b7} ") -> NSAttributedString {
         
         let s = NSMutableAttributedString(string: "", attributes: normalAttributes)
 //        let s = NSMutableAttributedString(string: "created ", attributes: normalAttributes)
@@ -116,7 +116,7 @@ class TableViewCell: UITableViewCell {
         
         s.appendAttributedString(s1)
         
-        let s2 = NSAttributedString(string: " \u{00b7} ", attributes: separatorAttributes)
+        let s2 = NSAttributedString(string: separator, attributes: separatorAttributes)
         s.appendAttributedString(s2)
         
         var locationText = ""

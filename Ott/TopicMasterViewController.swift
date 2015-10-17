@@ -159,8 +159,6 @@ class TopicMasterViewController: TableViewController {
     
     // MARK: - Table View
     
-    private let cellNibName1 = "TopicMasterTableViewCellOne"
-    private let cellIdentifier1 = "topicCellOne"
     private let cellNibName2 = "TopicMasterTableViewCellTwo"
     private let cellIdentifier2 = "topicCellTwo"
     private let cellNibName3 = "TopicMasterTableViewCellThree"
@@ -189,8 +187,6 @@ class TopicMasterViewController: TableViewController {
             return rc
         }()
         
-        let nib1 = UINib(nibName: cellNibName1, bundle: nil)
-        tableView.registerNib(nib1, forCellReuseIdentifier: cellIdentifier1)
         let nib2 = UINib(nibName: cellNibName2, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)
         let nib3 = UINib(nibName: cellNibName3, bundle: nil)
@@ -241,7 +237,7 @@ class TopicMasterViewController: TableViewController {
     
     
     private enum CellType {
-        case NoCommentNoImage, NoImage, Image
+        case NoImage, Image
     }
     
 
@@ -254,12 +250,7 @@ class TopicMasterViewController: TableViewController {
             type = .Image
         }
         else {
-//            if theTopic.comment == nil {
-//                type = .NoCommentNoImage
-//            }
-//            else {
-                type = .NoImage
-//            }
+            type = .NoImage
         }
         
         return type
@@ -270,9 +261,6 @@ class TopicMasterViewController: TableViewController {
         
         var height = CGFloat(0)
         switch cellTypeForIndexPath(indexPath) {
-            
-        case .NoCommentNoImage:
-            height = cellHeight
             
         case .NoImage:
             height = cellHeightWithComment
@@ -289,9 +277,6 @@ class TopicMasterViewController: TableViewController {
         
         let identifier: String
         switch cellTypeForIndexPath(indexPath) {
-            
-        case .NoCommentNoImage:
-            identifier = cellIdentifier1
             
         case .NoImage:
             identifier = cellIdentifier2
