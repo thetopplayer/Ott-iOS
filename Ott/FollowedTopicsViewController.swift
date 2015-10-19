@@ -56,7 +56,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchedObjects as? [Topic] {
-                        self.reloadTableView(withTopics: topics)
+                        self.refreshTableView(withTopics: topics)
                     }
                     
                     self.hideRefreshControl()
@@ -87,7 +87,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchedObjects as? [Topic] {
-                        self.reloadTableView(withTopics: topics)
+                        self.refreshTableView(withTopics: topics)
                     }
                     
                     self.hideRefreshControl()

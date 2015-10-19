@@ -70,15 +70,20 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
     
     private func fetchTopicsFromServer() {
         
-        do {
+        if offset == 0 {
+            self.dynamicType.purgeCache()
+        }
+        
+        query = {
             
-            query = {
-                
-                let query = Follow.query()!
-                query.skip = offset
-                query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
-                return query
+            let query = Follow.query()!
+            query.skip = offset
+            query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
+            return query
             }()
+        
+        
+        do {
             
             if let followRelationships = try query!.findObjects() as? [Follow] {
                 

@@ -16,6 +16,10 @@ extension DataKeys {
         return "averageRating"
     }
     
+    static var Bounds: String {
+        return "bounds"
+    }
+    
     static var Posts: String {
         return "posts"
     }
@@ -92,6 +96,7 @@ class Topic: AuthoredObject, PFSubclassing {
     
     @NSManaged var numberOfPosts: Int
     @NSManaged var averageRating: Float
+    @NSManaged var bounds: [Double]?
     @NSManaged var lastPostLocationName: String?
     @NSManaged var lastPostDate: NSDate?
 

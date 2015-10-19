@@ -73,7 +73,7 @@ class LocalViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchResults as? [Topic] {
-                        self.reloadTableView(withTopics: topics)
+                        self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
                     }
                     self.hideRefreshControl()
                     self.displayStatus()
@@ -106,7 +106,7 @@ class LocalViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchResults as? [Topic] {
-                        self.reloadTableView(withTopics: topics)
+                        self.refreshTableView(withTopics: topics)
                     }
                     self.hideRefreshControl()
                     self.displayStatus()

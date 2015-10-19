@@ -194,21 +194,19 @@ class TopicMasterViewController: TableViewController {
     }
 
     
-    func refreshTableView(withTopics updatedTopics: [Topic], replacingDatasourceData: Bool) {
+    func refreshTableView(withTopics updatedTopics: [Topic], replacingDatasourceData: Bool = false) {
         
         let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
             
-            let firstTime = (a as! DataObject).updatedAt!
-            let secondTime = (b as! DataObject).updatedAt!
+            let firstTime = (a as! DataObject).createdAt!
+            let secondTime = (b as! DataObject).createdAt!
             return firstTime.laterDate(secondTime) == firstTime
         }
         
         if replacingDatasourceData {
-            
             tableView.updateByReplacing(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
         else {
-            
             tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
         }
     }

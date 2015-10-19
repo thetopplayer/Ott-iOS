@@ -123,6 +123,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         navigationItem.title = topic.name!
         displayType = .List
+        adjustMapRegionForTopic()
         
         didInitializeViewForTopic = true
     }
@@ -371,13 +372,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var didFetchPosts = false
     private var dateOfMostRecentPost: NSDate?
     
-    private var fetchPostsForTopicOperation: FetchPostsForTopicOperation?
-    private var reloadTopicOperation: UpdateTopicOperation?
-    
-    
     private func refreshTopic() {
         
-        reloadTopicOperation = UpdateTopicOperation(topic: topic!) {
+        let reloadTopicOperation = UpdateTopicOperation(topic: topic!) {
             
             (refreshedObject, error) in
             
@@ -390,7 +387,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         displayStatus(type: .Updating)
-        FetchQueue.sharedInstance.addOperation(reloadTopicOperation!)
+        FetchQueue.sharedInstance.addOperation(reloadTopicOperation)
     }
     
     
@@ -398,7 +395,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         didFetchPosts = true
         
-        fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 50) {
+        let fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 50) {
             
             (fetchResults, error) in
             
@@ -414,7 +411,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         displayStatus(type: .Fetching)
-        FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation!)
+        FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation)
     }
     
     
@@ -498,8 +495,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private func goodbye() {
-        
-        fetchPostsForTopicOperation?.cancel()
         
         if exitMethod == .Back {
             navigationController?.popViewControllerAnimated(true)
@@ -617,35 +612,48 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         posts = updatedPosts
 
-        if numberOfSectionsInTableView(tableView) == 1 {
+        self.tableView.beginUpdates()
+        let numberOfSectionsThatWillBeDisplayed = numberOfSectionsInTableView(tableView)
+        
+        if tableView.numberOfSections == numberOfSectionsThatWillBeDisplayed {
             
-            self.tableView.beginUpdates()
-            self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
-            self.tableView.endUpdates()
+            switch numberOfSectionsInTableView(tableView) {
+                
+            case 1:
+                
+                self.tableView.reloadSections(NSIndexSet(index:  TableViewSections.Topic.rawValue), withRowAnimation: .Fade)
+                
+            case 2:
+                
+                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Statistics.rawValue), withRowAnimation: .Fade)
+                
+            case 3:
+                
+                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Statistics.rawValue), withRowAnimation: .Fade)
+                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Posts.rawValue), withRowAnimation: .Automatic)
+                
+            default:
+                assert(false)
+            }
+            
+        }
+        else if numberOfSectionsThatWillBeDisplayed == 2 {
+            
+            tableView.insertSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
+        }
+        else if numberOfSectionsThatWillBeDisplayed == 3 {
+            
+            if tableView.numberOfSections == 1 {
+                tableView.insertSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
+            }
+            
+            tableView.insertSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Automatic)
         }
         else {
-            
-            if tableView.numberOfSections == TableViewSections.maximumNumberOfSections() {
-                
-                self.tableView.beginUpdates()
-                self.tableView.reloadSections(NSIndexSet(index: 0), withRowAnimation: .None)
-                self.tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
-                self.tableView.reloadSections(NSIndexSet(index: 2), withRowAnimation: .Automatic)
-                self.tableView.endUpdates()
-            }
-            else {
-                tableView.reloadData()
-            }
-            
-            //        let sortFn = { (a: AnyObject, b: AnyObject) -> Bool in
-            //
-            //            let firstTime = (a as! DataObject).updatedAt!
-            //            let secondTime = (b as! DataObject).updatedAt!
-            //            return firstTime.laterDate(secondTime) == firstTime
-            //        }
-            
-//            tableView.updateByAddingTo(datasourceData: &posts, withData: updatedPosts, inSection: TableViewSections.Posts.rawValue, sortingArraysWith: sortFn)
+            assert(false)
         }
+        
+        self.tableView.endUpdates()
     }
     
     
@@ -862,13 +870,27 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private func adjustMapRegionForTopic() {
+        
+        guard let bounds = topic!.bounds else {
+            return
+        }
+        
+        let centerCoordinate = CLLocationCoordinate2DMake(bounds[0] + (bounds[2] / 2), bounds[1] + (bounds[3] / 2))
+        let span = MKCoordinateSpanMake(bounds[2], bounds[3])
+        let coordinateRegion = MKCoordinateRegionMake(centerCoordinate, span)
+        
+        mapView.setRegion(coordinateRegion, animated: false)
+    }
+    
+    
     private func reloadMapView() {
         
         let allObjects: [AuthoredObject] = [topic!] + posts
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.addAnnotations(allObjects)
-        mapView.showAnnotations(allObjects, animated: true)
+//        mapView.showAnnotations(allObjects, animated: true)
     }
     
     
