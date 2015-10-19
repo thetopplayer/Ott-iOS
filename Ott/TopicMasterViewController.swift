@@ -91,8 +91,11 @@ class TopicMasterViewController: TableViewController {
         case .Fetching:
             statusLabel.text = "Fetching Topics..."
             
-        default:
+        case .NoData:
             statusLabel.text = "No Topics"
+            
+        default:
+            statusLabel.text = ""
         }
     }
     
