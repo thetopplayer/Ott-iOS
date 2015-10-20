@@ -20,7 +20,6 @@ class FollowedTopicsViewController: TopicMasterViewController {
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.rightBarButtonItem = createButton
         
-        
         let title: String
         let number = currentUser().followingCount
         if number == 1 {
@@ -31,7 +30,6 @@ class FollowedTopicsViewController: TopicMasterViewController {
         }
         navigationItem.title = title
 
-        
         fetchTopics(.CachedThenUpdate)
     }
 

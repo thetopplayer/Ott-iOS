@@ -71,7 +71,7 @@ class TopicMasterViewController: TableViewController {
         
         let label = UILabel(frame: CGRectZero)
         label.textAlignment = .Center
-        label.textColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+        label.textColor = UIColor.lightGrayColor()
         label.text = "No Topics"
         return label
     }()
@@ -130,29 +130,7 @@ class TopicMasterViewController: TableViewController {
     func update() {
         //stub
     }
-    
-//
-//    func _handleUpdateTimerFire(timer: NSTimer) {
-//
-//        update()
-//    }
-//    
-//    
-//    private var autoRefreshTimer: NSTimer?
-//    func startAutomaticallyUpdatingFetches() {
-//        
-//        autoRefreshTimer = NSTimer.scheduledTimerWithTimeInterval(60, target: self, selector: "_handleUpdateTimerFire:", userInfo: nil, repeats: true)
-//    }
-//    
-//    
-//    func stopAutomaticallyUpdatingFetches() {
-//        
-//        if let autoRefreshTimer = autoRefreshTimer {
-//            autoRefreshTimer.invalidate()
-//        }
-//    }
-//    
-    
+   
     func hideRefreshControl() {
         
         refreshControl?.endRefreshing()

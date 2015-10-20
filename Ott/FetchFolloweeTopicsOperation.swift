@@ -70,10 +70,6 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
     
     private func fetchTopicsFromServer() {
         
-        if offset == 0 {
-            self.dynamicType.purgeCache()
-        }
-        
         query = {
             
             let query = Follow.query()!
@@ -81,7 +77,6 @@ class FetchFolloweeTopicsOperation: FetchTopicsOperation {
             query.fromPinWithName(FetchCurrentUserFolloweesOperation.pinName())
             return query
             }()
-        
         
         do {
             

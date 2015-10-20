@@ -27,7 +27,6 @@ class FetchCurrentUserFollowersOperation: FetchOperation {
             return query
             }()
         
-
         super.init(dataSource: dataSource, query: theQuery, completion: completion)
     }
     
