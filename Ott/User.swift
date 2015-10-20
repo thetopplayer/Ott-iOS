@@ -40,6 +40,10 @@ extension DataKeys {
         return "avatar"
     }
     
+    static var BackgroundImage: String {
+        return "backgroundImage"
+    }
+    
     static var FollowingCount: String {
         return "followingCount"
     }
@@ -141,7 +145,25 @@ class User: PFUser {
         setImage(avatar, forKey: DataKeys.Avatar)
     }
     
-
+    
+    static var defaultBackgroundImage: UIImage = {
+        
+        return UIImage(named:"blurryBlue")!
+        }()
+    
+    
+    var backgroundImageFile: PFFile? {
+        
+        return self[DataKeys.BackgroundImage] as? PFFile
+    }
+    
+    
+    func setBackgroundImage(backgroundImage: UIImage?) {
+        
+        setImage(backgroundImage, forKey: DataKeys.BackgroundImage)
+    }
+    
+    
     func createPrivateData() -> PrivateUserData {
         
         // create private data and set so that only the user can read & write

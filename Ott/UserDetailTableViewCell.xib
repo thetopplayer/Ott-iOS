@@ -17,7 +17,7 @@
                     <view contentMode="scaleToFill" ambiguous="YES" translatesAutoresizingMaskIntoConstraints="NO" id="e0B-1g-7ZM">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="250"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="forestBackground" translatesAutoresizingMaskIntoConstraints="NO" id="DmJ-aq-5Rt" userLabel="Caption Image View" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" image="blurryBlue" translatesAutoresizingMaskIntoConstraints="NO" id="DmJ-aq-5Rt" userLabel="Caption Image View" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="140"/>
                                 <animations/>
                                 <constraints>
@@ -137,7 +137,7 @@
     <resources>
         <image name="action" width="29" height="30"/>
         <image name="avatar" width="50" height="50"/>
-        <image name="forestBackground" width="400" height="300"/>
+        <image name="blurryBlue" width="400" height="227.15492248535156"/>
         <image name="gears" width="30" height="30"/>
     </resources>
 </document>

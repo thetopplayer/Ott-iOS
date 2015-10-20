@@ -96,6 +96,7 @@ class UserDetailTableViewCell: TableViewCell {
     }
     
     private let defaultAvatarImage = UIImage(named: "avatar")!
+    private let defaultBackgroundImage = UIImage(named: "blurryBlue")!
     
     private func updateDisplayForTopic() {
         
@@ -120,6 +121,7 @@ class UserDetailTableViewCell: TableViewCell {
         handleTextLabel.text = user.handle
         bioTextLabel.attributedText = attributedTextForBio(user.bio)
         avatarImageView.displayImageInFile(user.avatarFile, defaultImage: defaultAvatarImage)
+        captionImageView.displayImageInFile(user.backgroundImageFile, defaultImage: defaultBackgroundImage)
     }
     
     

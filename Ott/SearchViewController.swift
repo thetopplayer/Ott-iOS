@@ -46,7 +46,9 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
-        searchBar?.becomeFirstResponder()
+        if tableView.numberOfSections == 0 {
+            searchBar?.becomeFirstResponder()            
+        }
     }
     
 
