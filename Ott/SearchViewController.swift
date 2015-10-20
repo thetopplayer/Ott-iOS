@@ -8,10 +8,13 @@
 
 import UIKit
 
-class SearchViewController: TableViewController, UISearchBarDelegate {
+class SearchViewController: ViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
+    
+    @IBOutlet var tableView: UITableView!
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    @IBOutlet var noResultsLabel: UILabel!
     
     var searchBar: UISearchBar?
-    var activityIndicator: UIActivityIndicatorView?
     
     //MARK: - Lifecycle
     
@@ -35,15 +38,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
         navigationItem.titleView = searchBar
         showCreateButton()
         
-        activityIndicator = {
-            
-            let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 32, 32))
-            indicator.center = view.center
-            indicator.hidesWhenStopped = true
-            return indicator
-        }()
-        
-        view.addSubview(activityIndicator!)
+        noResultsLabel.hidden = true
         
         view.backgroundColor = UIColor.whiteColor()
         setupTableView()
@@ -93,6 +88,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
         
         users.removeAll()
         topics.removeAll()
+        noResultsLabel.hidden = true
         
         dispatch_async(dispatch_get_main_queue()) {
             
@@ -124,8 +120,6 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
             return
         }
         
-        //        displayStatus(.Fetching)
-        //
         fetchObjectsWithSearchPhrase(searchPhrase)
         searchBar.resignFirstResponder()
     }
@@ -139,8 +133,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     
     private func fetchObjectsWithSearchPhrase(searchPhrase: String, limit: Int = 10) {
         
-        activityIndicator!.hidden = false
-        activityIndicator!.startAnimating()
+        activityIndicator.startAnimating()
         
         let lowercaseString = searchPhrase.lowercaseString
         let cleanedString = lowercaseString.stringByRemovingCharactersInString(".,;:\"")
@@ -176,7 +169,9 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
-                self.activityIndicator?.stopAnimating()
+                self.activityIndicator.stopAnimating()
+                self.noResultsLabel.hidden = (self.users.count > 0) || (self.topics.count > 0)
+
                 self.tableView.reloadData()
             }
         }
@@ -208,17 +203,12 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     
     private func setupTableView() {
         
+        tableView.delegate = self
+        tableView.dataSource = self
+        
         tableView.separatorColor = UIColor.separator()
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
-        
-        refreshControl = {
-            
-            let rc = UIRefreshControl()
-            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
-            rc.addTarget(self, action: "updateCurrentlyDisplayedData", forControlEvents: UIControlEvents.ValueChanged)
-            return rc
-            }()
         
         let nib = UINib(nibName: userCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: userCellViewIdentifer)
@@ -251,7 +241,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     }
     
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
         var number = 0
         if isDisplayingUsers() {
@@ -311,13 +301,13 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     }
     
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) ->  CGFloat {
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) ->  CGFloat {
         
         return 36
     }
     
     
-    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
         
         let title: String?
         
@@ -334,7 +324,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     }
     
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         var number = 0
         switch sectionTypeForSection(section) {
@@ -350,7 +340,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     }
     
     
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         var height: CGFloat = 0
         
@@ -366,7 +356,7 @@ class SearchViewController: TableViewController, UISearchBarDelegate {
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         func initializeuserCell(user: User) -> UITableViewCell {
             

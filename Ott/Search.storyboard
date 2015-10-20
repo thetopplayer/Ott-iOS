@@ -2,41 +2,63 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Search-->
-        <scene sceneID="eoc-Nv-3fy">
+        <scene sceneID="4ax-rA-XAo">
             <objects>
-                <tableViewController title="Search" id="eTZ-a3-qGv" customClass="SearchViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="Pz7-Y2-39B">
+                <viewController id="NDd-VH-KGY" customClass="SearchViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="Fhi-B6-O3K"/>
+                        <viewControllerLayoutGuide type="bottom" id="F7O-fU-UF4"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="zoQ-y8-Gkk">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="WFw-7S-5sV">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
+                            </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="fwD-7J-Wte">
+                                <rect key="frame" x="290" y="290" width="20" height="20"/>
+                                <animations/>
+                            </activityIndicatorView>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="No results" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="eH1-Af-jSo">
+                                <rect key="frame" x="261" y="289" width="78" height="21"/>
+                                <animations/>
+                                <fontDescription key="fontDescription" type="system" pointSize="17"/>
+                                <color key="textColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
+                                <nil key="highlightedColor"/>
+                            </label>
+                        </subviews>
                         <animations/>
-                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <outlet property="dataSource" destination="eTZ-a3-qGv" id="FbS-NH-jg3"/>
-                            <outlet property="delegate" destination="eTZ-a3-qGv" id="f7e-Wu-gKN"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Search" id="Sz0-Fu-SDM">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Jgr-5h-3JS"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="fwD-7J-Wte" firstAttribute="centerY" secondItem="zoQ-y8-Gkk" secondAttribute="centerY" id="CUY-8f-yqQ"/>
+                            <constraint firstItem="eH1-Af-jSo" firstAttribute="centerX" secondItem="zoQ-y8-Gkk" secondAttribute="centerX" id="VEp-E8-6kD"/>
+                            <constraint firstItem="F7O-fU-UF4" firstAttribute="top" secondItem="WFw-7S-5sV" secondAttribute="bottom" id="b7u-D5-hx8"/>
+                            <constraint firstItem="WFw-7S-5sV" firstAttribute="top" secondItem="zoQ-y8-Gkk" secondAttribute="topMargin" id="bv6-Lf-j4h"/>
+                            <constraint firstItem="fwD-7J-Wte" firstAttribute="centerX" secondItem="zoQ-y8-Gkk" secondAttribute="centerX" id="cxH-rL-B1T"/>
+                            <constraint firstItem="WFw-7S-5sV" firstAttribute="leading" secondItem="zoQ-y8-Gkk" secondAttribute="leadingMargin" constant="-20" id="kyF-wO-tWe"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="WFw-7S-5sV" secondAttribute="trailing" constant="-20" id="qii-70-Qzv"/>
+                            <constraint firstItem="eH1-Af-jSo" firstAttribute="centerY" secondItem="zoQ-y8-Gkk" secondAttribute="centerY" id="vOc-HD-YhO"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Search" id="eVM-Sb-Klb">
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Umf-dW-sCS"/>
                     </navigationItem>
-                    <nil key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="searchDisplayController" destination="sJB-DE-a3j" id="uqU-uV-SkL"/>
+                        <outlet property="activityIndicator" destination="fwD-7J-Wte" id="l9N-nh-5SP"/>
+                        <outlet property="noResultsLabel" destination="eH1-Af-jSo" id="xaO-ir-fP9"/>
+                        <outlet property="tableView" destination="WFw-7S-5sV" id="IWO-b4-Djq"/>
                     </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="eOt-VQ-Awy" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <searchDisplayController id="sJB-DE-a3j">
-                    <connections>
-                        <outlet property="delegate" destination="eTZ-a3-qGv" id="QWj-09-29C"/>
-                        <outlet property="searchContentsController" destination="eTZ-a3-qGv" id="bHH-Fu-q2s"/>
-                        <outlet property="searchResultsDataSource" destination="eTZ-a3-qGv" id="uQh-Zs-pdn"/>
-                        <outlet property="searchResultsDelegate" destination="eTZ-a3-qGv" id="pvi-tN-rbC"/>
-                    </connections>
-                </searchDisplayController>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="irH-RV-WTI" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="51" y="604"/>
+            <point key="canvasLocation" x="3" y="604"/>
         </scene>
         <!--Search Nav Controller-->
         <scene sceneID="vzj-wS-mA9">
@@ -49,7 +71,7 @@
                         <animations/>
                     </navigationBar>
                     <connections>
-                        <segue destination="eTZ-a3-qGv" kind="relationship" relationship="rootViewController" id="wRx-Fi-oLy"/>
+                        <segue destination="NDd-VH-KGY" kind="relationship" relationship="rootViewController" id="Xui-Wr-GcK"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="Yfq-zn-WD1" userLabel="First Responder" sceneMemberID="firstResponder"/>
