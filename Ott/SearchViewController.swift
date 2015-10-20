@@ -8,11 +8,10 @@
 
 import UIKit
 
-class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
-    
+class SearchViewController: TableViewController, UISearchBarDelegate {
     
     var searchBar: UISearchBar?
-    
+    var activityIndicator: UIActivityIndicatorView?
     
     //MARK: - Lifecycle
     
@@ -35,23 +34,37 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
         
         navigationItem.titleView = searchBar
         showCreateButton()
+        
+        activityIndicator = {
+            
+            let indicator = UIActivityIndicatorView(frame: CGRectMake(0, 0, 32, 32))
+            indicator.center = view.center
+            indicator.hidesWhenStopped = true
+            return indicator
+        }()
+        
+        view.addSubview(activityIndicator!)
+        
+        view.backgroundColor = UIColor.whiteColor()
+        setupTableView()
     }
-
+    
     
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
     }
     
+    
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
         if tableView.numberOfSections == 0 {
-            searchBar?.becomeFirstResponder()            
+            searchBar?.becomeFirstResponder()
         }
     }
     
-
+    
     
     //MARK: - Search
     
@@ -78,10 +91,13 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
     
     func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
         
+        users.removeAll()
+        topics.removeAll()
+        
         dispatch_async(dispatch_get_main_queue()) {
             
             self.showCancelButton()
-            self.reloadTableView(withTopics: [Topic]())
+            self.tableView.reloadData()
         }
     }
     
@@ -100,44 +116,312 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
     
     func searchBarSearchButtonClicked(searchBar: UISearchBar) {
         
-        guard let query = searchBar.text else {
+        guard let searchPhrase = searchBar.text else {
             return
         }
         
-        guard query.length > 0 else {
+        guard searchPhrase.length > 0 else {
             return
         }
         
-        displayStatus(.Fetching)
-        
-        let fetchOperation = FetchSearchedTopicsOperation(searchPhrase: query) { (fetchResults, error) -> Void in
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                
-                if let topics = fetchResults as? [Topic] {
-                    self.reloadTableView(withTopics: topics)
-                }
-                self.displayStatus()
-                
-                if let error = error {
-                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving search results.", actionHandler: nil)
-                }
-           }
-        }
-        
-        FetchQueue.sharedInstance.addOperation(fetchOperation)
+        //        displayStatus(.Fetching)
+        //
+        fetchObjectsWithSearchPhrase(searchPhrase)
         searchBar.resignFirstResponder()
     }
     
     
+    //MARK: - Data
+    
+    var users = [User]()
+    var topics = [Topic]()
+    
+    
+    private func fetchObjectsWithSearchPhrase(searchPhrase: String, limit: Int = 10) {
+        
+        activityIndicator!.hidden = false
+        activityIndicator!.startAnimating()
+        
+        let lowercaseString = searchPhrase.lowercaseString
+        let cleanedString = lowercaseString.stringByRemovingCharactersInString(".,;:\"")
+        let wordArray = cleanedString.componentsSeparatedByString(" ")
+        
+        let userQuery = User.query()!
+        let topicQuery = Topic.query()!
+        
+        let theQueries: [PFQuery] = [userQuery, topicQuery]
+        
+        userQuery.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: wordArray)
+        for query in theQueries {
+            
+            query.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: wordArray)
+            query.orderByDescending(DataKeys.CreatedAt)
+            query.limit = limit
+        }
+        
+        // cannot or queries with different classes, so create separate operations for each
+        
+        let userFetchOperation = FetchOperation(dataSource: .Server, query: userQuery) { (fetchResults, error) -> Void in
+            
+            if let fetchResults = fetchResults as? [User] {
+                self.users = fetchResults
+            }
+        }
+        
+        let topicFetchOperation = FetchOperation(dataSource: .Server, query: topicQuery) { (fetchResults, error) -> Void in
+            
+            if let fetchResults = fetchResults as? [Topic] {
+                self.topics = fetchResults
+            }
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.activityIndicator?.stopAnimating()
+                self.tableView.reloadData()
+            }
+        }
+        
+        topicFetchOperation.addDependency(userFetchOperation)
+        
+        FetchQueue.sharedInstance.addOperation(userFetchOperation)
+        FetchQueue.sharedInstance.addOperation(topicFetchOperation)
+    }
+    
     
     //MARK: - TableView
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    private let userCellViewNibName = "UserTableViewCell"
+    private let userCellViewIdentifer = "userCell"
+    private let userCellViewHeight = CGFloat(69)
+    
+    private let topicCellViewNibName = "TopicMasterTableViewCellTwo"
+    private let topicCellViewIdentifier = "topicCellTwo"
+    private let topicCellViewHeight = CGFloat(96)
+    
+    private let topicWithImageCellViewNibName = "TopicMasterTableViewCellThree"
+    private let topicWithImageCellViewIdentifier = "topicCellThree"
+    private let topicWithImageCellViewHeight = CGFloat(117)
+    
+    private let loadingDataCellViewNibName = "LoadingTableViewCell"
+    private let loadingDataCellViewIdentifier = "loadingCell"
+    private let loadingDataCellViewHeight = CGFloat(44)
+    
+    private func setupTableView() {
         
-        super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-        presentTopicDetailViewController(withTopic: selection)
+        tableView.separatorColor = UIColor.separator()
+        tableView.backgroundColor = UIColor.background()
+        tableView.showsHorizontalScrollIndicator = false
+        
+        refreshControl = {
+            
+            let rc = UIRefreshControl()
+            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+            rc.addTarget(self, action: "updateCurrentlyDisplayedData", forControlEvents: UIControlEvents.ValueChanged)
+            return rc
+            }()
+        
+        let nib = UINib(nibName: userCellViewNibName, bundle: nil)
+        tableView.registerNib(nib, forCellReuseIdentifier: userCellViewIdentifer)
+        
+        let nib3 = UINib(nibName: topicCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: topicCellViewIdentifier)
+        
+        let nib4 = UINib(nibName: topicWithImageCellViewNibName, bundle: nil)
+        tableView.registerNib(nib4, forCellReuseIdentifier: topicWithImageCellViewIdentifier)
     }
+    
+    
+    enum SectionType {
+        case User, Topic
+    }
+    
+    
+    enum CellType {
+        case User, TopicNoImage, TopicWithImage
+    }
+    
+    
+    private func isDisplayingUsers() -> Bool {
+        return users.count > 0
+    }
+    
+    
+    private func isDisplayingTopics() -> Bool {
+        return topics.count > 0
+    }
+    
+    
+    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+        
+        var number = 0
+        if isDisplayingUsers() {
+            number++
+        }
+        if isDisplayingTopics() {
+            number++
+        }
+        
+        return number
+    }
+    
+    
+    private func sectionTypeForSection(section: Int) -> SectionType {
+        
+        var type: SectionType?
+        switch section {
+            
+        case 0:
+            
+            if isDisplayingUsers() {
+                type = .User
+            }
+            else if isDisplayingTopics() {
+                type = .Topic
+            }
+            
+        case 1:
+            
+            type = .Topic
+            
+        default:
+            assert(false)
+        }
+        
+        return type!
+    }
+    
+    
+    private func cellTypeForObject(object: PFObject) -> CellType {
+        
+        var theType: CellType?
+        
+        if object is User {
+            theType = .User
+        }
+        else if object is Topic {
+            if (object as! Topic).imageFile == nil {
+                theType = .TopicNoImage
+            }
+            else {
+                theType = .TopicWithImage
+            }
+        }
+        
+        return theType!
+    }
+    
+    
+    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) ->  CGFloat {
+        
+        return 36
+    }
+    
+    
+    override func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        let title: String?
+        
+        switch sectionTypeForSection(section) {
+            
+        case .User:
+            title = "Users"
+            
+        case .Topic:
+            title = "Topics"
+        }
+        
+        return title!
+    }
+    
+    
+    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        
+        var number = 0
+        switch sectionTypeForSection(section) {
+            
+        case .User:
+            number = users.count
+            
+        case .Topic:
+            number = topics.count
+        }
+        
+        return number
+    }
+    
+    
+    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+        
+        var height: CGFloat = 0
+        
+        switch sectionTypeForSection(indexPath.section) {
+            
+        case .User:
+            height = userCellViewHeight
+            
+        case .Topic:
+            height = topicWithImageCellViewHeight
+        }
+        return height
+    }
+    
+    
+    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+        
+        func initializeuserCell(user: User) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(userCellViewIdentifer) as! UserTableViewCell
+            
+            cell.user = user
+            return cell
+        }
+        
+        func initializetopicCell(topic: Topic) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicCellViewIdentifier) as! TopicMasterTableViewCell
+            cell.displayedTopic = topic
+            return cell
+        }
+        
+        func initializeTopicWithImageCell(topic: Topic) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellViewIdentifier) as! TopicMasterTableViewCell
+            cell.displayedTopic = topic
+            return cell
+        }
+        
+        
+        var cell: UITableViewCell
+        
+        switch sectionTypeForSection(indexPath.section) {
+            
+        case .User:
+            
+            let user = users[indexPath.row]
+            cell = initializeuserCell(user)
+            
+        case .Topic:
+            
+            let topic = topics[indexPath.row]
+            if topic.imageFile != nil {
+                cell = initializeTopicWithImageCell(topic)
+            }
+            else {
+                cell = initializetopicCell(topic)
+            }
+        }
+        
+        return cell
+    }
+    
+    
+    
+    //
+    //    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    //
+    //        super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
+    //        presentTopicDetailViewController(withTopic: selection)
+    //    }
     
     
     

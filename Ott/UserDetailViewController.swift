@@ -501,9 +501,9 @@ class UserDetailViewController: TableViewController {
     private let followStatsCellViewIdentifer = "followStatsCell"
     private let followStatsCellViewHeight = CGFloat(44)
     
-    private let topicWithCommentCellViewNibName = "TopicMasterTableViewCellTwo"
-    private let topicWithCommentCellViewIdentifier = "topicCellTwo"
-    private let topicWithCommentCellViewHeight = CGFloat(96)
+    private let topicCellViewNibName = "TopicMasterTableViewCellTwo"
+    private let topicCellViewIdentifier = "topicCellTwo"
+    private let topicCellViewHeight = CGFloat(96)
     
     private let topicWithImageCellViewNibName = "TopicMasterTableViewCellThree"
     private let topicWithImageCellViewIdentifier = "topicCellThree"
@@ -545,8 +545,8 @@ class UserDetailViewController: TableViewController {
         let nib1 = UINib(nibName: followStatsCellViewNibName, bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: followStatsCellViewIdentifer)
         
-        let nib3 = UINib(nibName: topicWithCommentCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: topicWithCommentCellViewIdentifier)
+        let nib3 = UINib(nibName: topicCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: topicCellViewIdentifier)
         
         let nib4 = UINib(nibName: topicWithImageCellViewNibName, bundle: nil)
         tableView.registerNib(nib4, forCellReuseIdentifier: topicWithImageCellViewIdentifier)
@@ -801,7 +801,7 @@ class UserDetailViewController: TableViewController {
             height = displayOptionsCellViewHeight
             
         case .TopicNoImage:
-            height = topicWithCommentCellViewHeight
+            height = topicCellViewHeight
             
         case .TopicWithImage:
             height = topicWithImageCellViewHeight
@@ -870,9 +870,9 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
-        func initializeTopicWithCommentCell(topic: Topic) -> UITableViewCell {
+        func initializetopicCell(topic: Topic) -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(topicWithCommentCellViewIdentifier) as! TopicMasterTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(topicCellViewIdentifier) as! TopicMasterTableViewCell
             cell.displayedTopic = topic
             return cell
         }
@@ -922,7 +922,7 @@ class UserDetailViewController: TableViewController {
         case .TopicNoImage:
             
             let topic = authoredTopics[indexPath.row]
-            cell = initializeTopicWithCommentCell(topic)
+            cell = initializetopicCell(topic)
             
         case .TopicWithImage:
             

@@ -128,8 +128,6 @@ class TableViewCell: UITableViewCell {
         
         if let locationDetails = authoredObject.locationDetails {
             
-            print("location details = \(locationDetails)")
-            
             var text = ""
             if let areaOfInterest = locationDetails[CLPlacemark.Keys.AreaOfInterest.rawValue] as? String {
                 text = areaOfInterest
