@@ -68,7 +68,8 @@ struct LocationCondition: OperationCondition {
                 error = NSError(code: .ConditionFailed, userInfo: [
                     OperationConditionKey: self.dynamicType.name,
                     self.dynamicType.locationServicesEnabledKey: enabled,
-                    self.dynamicType.authorizationStatusKey: Int(actual.rawValue)
+                    self.dynamicType.authorizationStatusKey: Int(actual.rawValue),
+                    NSLocalizedDescriptionKey: "Location services error."
                 ])
         }
         

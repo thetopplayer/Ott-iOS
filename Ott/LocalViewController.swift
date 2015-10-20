@@ -112,7 +112,9 @@ class LocalViewController: TopicMasterViewController {
                     self.displayStatus()
                     
                     if let error = error {
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving data from server", actionHandler: nil)
+                        if self.isVisible() {
+                            self.presentOKAlertWithError(error, messagePreamble: "Error retrieving local topics.", actionHandler: nil)
+                        }
                     }
                 }
             })

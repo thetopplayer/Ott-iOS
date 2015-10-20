@@ -159,17 +159,13 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     
     var title: String? {
+        
         get {
-            return textField.text
-//            let text = textField.text?.stringByReplacingOccurrencesOfString("#", withString: "")
-//            return text
+            return textField.text!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
         }
         
         set {
             textField.text = newValue
-//            if let text = newValue?.stringByReplacingOccurrencesOfString("#", withString: "") {
-//                textField.text = "#" + text
-//            }
         }
     }
     

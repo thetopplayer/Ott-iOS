@@ -426,7 +426,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             myPost.comment = comment
         }
         myPost.location = LocationManager.sharedInstance.location
-        myPost.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
+        myPost.locationDetails = LocationManager.sharedInstance.placemark?.toDictionary()
         
         let postOperation = UploadPostOperation(post: myPost, topic: topic!) {
             

@@ -10,7 +10,7 @@ import UIKit
 
 class ParseServerOperation: ParseOperation {
 
-    init(timeout: NSTimeInterval = 15) {
+    init(timeout: NSTimeInterval = 60) {
         
         super.init()
         

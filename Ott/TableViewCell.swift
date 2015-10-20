@@ -119,29 +119,51 @@ class TableViewCell: UITableViewCell {
         let s2 = NSAttributedString(string: separator, attributes: separatorAttributes)
         s.appendAttributedString(s2)
         
+        
+        guard let location = authoredObject.location else {
+            return s
+        }
+        
         var locationText = ""
         
-        if let location = authoredObject.location {
+        if let locationDetails = authoredObject.locationDetails {
+            
+            print("location details = \(locationDetails)")
+            
+            var text = ""
+            if let areaOfInterest = locationDetails[CLPlacemark.Keys.AreaOfInterest.rawValue] as? String {
+                text = areaOfInterest
+            }
+            else if let locality = locationDetails[CLPlacemark.Keys.Locality.rawValue] as? String {
+                
+                // if it's reasonably close by, add major street name
+                if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(location) {
+                    
+                    if metersAway < 10000 {
+                        
+                        if let thoroughfare = locationDetails[CLPlacemark.Keys.Thoroughfare.rawValue] as? String {
+                            
+                            text = thoroughfare + ", "
+                        }
+                    }
+                }
+                
+                if let adminArea = locationDetails[CLPlacemark.Keys.AdministativeArea.rawValue] as? String {
+                    text += locality + ", " + adminArea
+                }
+                else {
+                    text = locality
+                }
+            }
+            
+            locationText += text
+        }
+        else {
             
             if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(location) {
                 
                 let distance = metersAway / 1000
-                
-                if distance < 1.0 {
-                    locationText += "nearby"
-                }
-                else if distance < 15.0 {
-                    locationText += relativeDistanceString(distance)
-                }
-                else {
-                    
-                    if let locationName = authoredObject.locationName {
-                        locationText += locationName
-                    }
-                    else {
-                        locationText += relativeDistanceString(distance)
-                    }
-                }
+                locationText += relativeDistanceString(distance)
             }
         }
         
@@ -151,50 +173,50 @@ class TableViewCell: UITableViewCell {
     }
     
     
-    func updatedTimeAndLocationAttributedString(topic: Topic) -> NSAttributedString {
-        
-        if topic.numberOfPosts == 0 {
-            return timeAndLocationAttributedString(topic)
-        }
-        
-        let s = NSMutableAttributedString(string: "updated ", attributes: normalAttributes)
-        
-        let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: strongAttributes)
-        
-        s.appendAttributedString(s1)
-        
-        let s2 = NSAttributedString(string: " \u{00b7} ", attributes: separatorAttributes)
-        s.appendAttributedString(s2)
-        
-        var locationText = ""
-        
-        if let lastPostLocation = topic.lastPostLocation {
-            
-            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(lastPostLocation) {
-                
-                let distance = metersAway / 1000
-                
-                if distance < 1.0 {
-                    locationText += "nearby"
-                }
-                else if distance < 15.0 {
-                    locationText += relativeDistanceString(distance)
-                }
-                else {
-                    
-                    if let locationName = topic.lastPostLocationName {
-                        locationText += locationName
-                    }
-                    else {
-                        locationText += relativeDistanceString(distance)
-                    }
-                }
-            }
-        }
-        
-        let s3 = NSAttributedString(string: locationText, attributes: strongAttributes)
-        s.appendAttributedString(s3)
-        return s
-    }
+//    func updatedTimeAndLocationAttributedString(topic: Topic) -> NSAttributedString {
+//        
+//        if topic.numberOfPosts == 0 {
+//            return timeAndLocationAttributedString(topic)
+//        }
+//        
+//        let s = NSMutableAttributedString(string: "updated ", attributes: normalAttributes)
+//        
+//        let s1 = NSAttributedString(string: dateToString(topic.updatedAt), attributes: strongAttributes)
+//        
+//        s.appendAttributedString(s1)
+//        
+//        let s2 = NSAttributedString(string: " \u{00b7} ", attributes: separatorAttributes)
+//        s.appendAttributedString(s2)
+//        
+//        var locationText = ""
+//        
+//        if let lastPostLocation = topic.lastPostLocation {
+//            
+//            if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(lastPostLocation) {
+//                
+//                let distance = metersAway / 1000
+//                
+//                if distance < 1.0 {
+//                    locationText += "nearby"
+//                }
+//                else if distance < 15.0 {
+//                    locationText += relativeDistanceString(distance)
+//                }
+//                else {
+//                    
+//                    if let locationName = topic.lastPostLocationName {
+//                        locationText += locationName
+//                    }
+//                    else {
+//                        locationText += relativeDistanceString(distance)
+//                    }
+//                }
+//            }
+//        }
+//        
+//        let s3 = NSAttributedString(string: locationText, attributes: strongAttributes)
+//        s.appendAttributedString(s3)
+//        return s
+//    }
     
 }

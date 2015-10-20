@@ -23,18 +23,8 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.5" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="One To Ten" textAlignment="center" lineBreakMode="middleTruncation" baselineAdjustment="alignBaselines" minimumFontSize="18" translatesAutoresizingMaskIntoConstraints="NO" id="GJd-Yh-RWb">
-                                <rect key="frame" x="200" y="229" width="200" height="42"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="width" constant="200" id="nhL-w3-UGk"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" name="HelveticaNeue" family="Helvetica Neue" pointSize="36"/>
-                                <color key="textColor" red="0.37647058823529411" green="0.51764705882352935" blue="0.92156862745098034" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
                             <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="hqK-Ol-GAL">
-                                <rect key="frame" x="260" y="125" width="80" height="80"/>
+                                <rect key="frame" x="260" y="180" width="80" height="80"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="DHm-I8-3mh"/>
@@ -46,12 +36,10 @@
                         <color key="backgroundColor" red="1" green="0.99215686274509807" blue="0.94901960784313721" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
-                            <constraint firstItem="GJd-Yh-RWb" firstAttribute="top" secondItem="hqK-Ol-GAL" secondAttribute="bottom" constant="24" id="JtT-Fz-bPM"/>
-                            <constraint firstAttribute="centerX" secondItem="GJd-Yh-RWb" secondAttribute="centerX" id="Q3B-4B-g5h"/>
                             <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="20" symbolic="YES" id="SfN-ll-jLj"/>
                             <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
                             <constraint firstItem="hqK-Ol-GAL" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="d6Q-jA-QVN"/>
-                            <constraint firstItem="hqK-Ol-GAL" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="105" id="dMg-fk-NpD"/>
+                            <constraint firstItem="hqK-Ol-GAL" firstAttribute="top" secondItem="Llm-lL-Icb" secondAttribute="bottom" constant="160" id="dMg-fk-NpD"/>
                         </constraints>
                     </view>
                 </viewController>

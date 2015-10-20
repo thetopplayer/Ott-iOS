@@ -43,18 +43,16 @@ extension DataKeys {
         return "comment"
     }
     
-    
     static var Image: String {
         return "image"
     }
-
     
     static var Location: String {
         return "location"
     }
     
-    static var LocationName: String {
-        return "locationName"
+    static var LocationDetails: String {
+        return "locationDetails"
     }
     
     static var Rating: String {
@@ -77,7 +75,7 @@ class AuthoredObject: DataObject, MKAnnotation {
     @NSManaged var authorHandle: String?
     @NSManaged var authorBio: String?
     @NSManaged var comment: String?
-    @NSManaged var locationName: String?
+    @NSManaged var locationDetails: NSDictionary?
     
     var location: CLLocation? {
         

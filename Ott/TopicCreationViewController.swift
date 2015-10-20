@@ -80,7 +80,7 @@ class TopicCreationViewController: TableViewController, UINavigationControllerDe
         }
         topic.setImage(image)
         topic.location = LocationManager.sharedInstance.location
-        topic.locationName = LocationManager.sharedInstance.nameForCurrentLocation()
+        topic.locationDetails = LocationManager.sharedInstance.placemark?.toDictionary()
         
         let uploadOperation = UploadTopicOperation(topic: topic)
         PostQueue.sharedInstance.addOperation(uploadOperation)

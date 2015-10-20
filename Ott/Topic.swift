@@ -66,7 +66,6 @@ class Topic: AuthoredObject, PFSubclassing {
         let topic = Topic()
         topic.numberOfPosts = 0
         topic.averageRating = 0
-        topic.lastPostLocationName = ""
         topic.currentUserDidPostTo = true
         return topic
     }
@@ -82,7 +81,9 @@ class Topic: AuthoredObject, PFSubclassing {
             
             if let theName = newValue {
                 
-                let truncatedName = theName.length > self.dynamicType.maximumNameLength ? theName.substring(startingAt: 0, length: self.dynamicType.maximumNameLength) : theName
+                let trimmedName = theName.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                
+                let truncatedName = trimmedName.length > self.dynamicType.maximumNameLength ? trimmedName.substring(startingAt: 0, length: self.dynamicType.maximumNameLength) : trimmedName
                 
                 self[DataKeys.Name] = truncatedName
                 self[DataKeys.AllCapsName] = truncatedName.uppercaseString
@@ -106,49 +107,49 @@ class Topic: AuthoredObject, PFSubclassing {
     
     // because Parse only allows one geoPoint per record, use this to store
     // additional location information
-    struct LocationCoordinates {
-        
-        let _myLocation: CLLocation
-        
-        init(withLocation: CLLocation) {
-            _myLocation = withLocation
-        }
-        
-        init(withCoordinateArray coordinateArray: [CLLocationDegrees]) {
-            _myLocation = CLLocation(latitude: coordinateArray.first!, longitude: coordinateArray.last!)
-        }
-        
-        func toArray() -> [CLLocationDegrees] {
-            return [location().coordinate.latitude, location().coordinate.longitude]
-        }
-        
-        func location() -> CLLocation {
-            return _myLocation
-        }
-    }
-    
-    
-    var lastPostLocation: CLLocation? {
-        
-        get {
-            var clvalue: CLLocation?
-            if let coordinateArray = self[DataKeys.LastPostLocation] as? [CLLocationDegrees] {
-                let theLoc = LocationCoordinates(withCoordinateArray: coordinateArray)
-                clvalue = theLoc.location()
-            }
-            return clvalue
-        }
-        
-        set {
-            if let theLoc = newValue {
-                self[DataKeys.LastPostLocation] = LocationCoordinates(withLocation: theLoc).toArray()
-            }
-            else {
-                self[DataKeys.LastPostLocation] = NSNull()
-            }
-        }
-    }
-
+//    struct LocationCoordinates {
+//        
+//        let _myLocation: CLLocation
+//        
+//        init(withLocation: CLLocation) {
+//            _myLocation = withLocation
+//        }
+//        
+//        init(withCoordinateArray coordinateArray: [CLLocationDegrees]) {
+//            _myLocation = CLLocation(latitude: coordinateArray.first!, longitude: coordinateArray.last!)
+//        }
+//        
+//        func toArray() -> [CLLocationDegrees] {
+//            return [location().coordinate.latitude, location().coordinate.longitude]
+//        }
+//        
+//        func location() -> CLLocation {
+//            return _myLocation
+//        }
+//    }
+//
+//    
+//    var lastPostLocation: CLLocation? {
+//        
+//        get {
+//            var clvalue: CLLocation?
+//            if let coordinateArray = self[DataKeys.LastPostLocation] as? [CLLocationDegrees] {
+//                let theLoc = LocationCoordinates(withCoordinateArray: coordinateArray)
+//                clvalue = theLoc.location()
+//            }
+//            return clvalue
+//        }
+//        
+//        set {
+//            if let theLoc = newValue {
+//                self[DataKeys.LastPostLocation] = LocationCoordinates(withLocation: theLoc).toArray()
+//            }
+//            else {
+//                self[DataKeys.LastPostLocation] = NSNull()
+//            }
+//        }
+//    }
+//
 }
 
 

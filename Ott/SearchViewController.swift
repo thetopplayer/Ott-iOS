@@ -118,7 +118,7 @@ class SearchViewController: TopicMasterViewController, UISearchBarDelegate {
                 self.displayStatus()
                 
                 if let error = error {
-                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving data from server", actionHandler: nil)
+                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving search results.", actionHandler: nil)
                 }
            }
         }

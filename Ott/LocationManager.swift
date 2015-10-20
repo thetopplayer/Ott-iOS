@@ -9,6 +9,69 @@
 import UIKit
 import CoreLocation
 
+
+//MARK: - Placemark
+
+extension CLPlacemark {
+    
+    enum Keys: String {
+        
+        case Name = "name"
+        case AreaOfInterest = "areaOfInterest"
+        case Thoroughfare = "thoroughfare"
+        case Locality = "locality"
+        case SubLocality = "subLocality"
+        case AdministativeArea = "adminArea"
+        case SubAdministativeArea = "subAdminArea"
+        case Country = "country"
+    }
+    
+    
+    func toDictionary() -> NSDictionary {
+        
+        var results = [String: String]()
+        
+        if let name = name {
+            results[Keys.Name.rawValue] = name
+        }
+        
+        if let areaOfInterest = areasOfInterest?.first {
+            results[Keys.AreaOfInterest.rawValue] = areaOfInterest
+        }
+        
+        if let thoroughfare = thoroughfare {
+            results[Keys.Thoroughfare.rawValue] = thoroughfare
+        }
+        
+        if let locality = locality {
+            results[Keys.Locality.rawValue] = locality
+        }
+        
+        if let subLocality = subLocality {
+            results[Keys.SubLocality.rawValue] = subLocality
+        }
+        
+        if let administrativeArea = administrativeArea {
+            results[Keys.AdministativeArea.rawValue] = administrativeArea
+        }
+        
+        if let subAdministrativeArea = subAdministrativeArea {
+            results[Keys.SubAdministativeArea.rawValue] = subAdministrativeArea
+        }
+        
+        if let country = country {
+            results[Keys.Country.rawValue] = country
+        }
+        
+        return results
+    }
+}
+
+
+
+
+//MARK: - LocationManager
+
 class LocationManager: CLLocationManager, CLLocationManagerDelegate {
 
     struct Notifications {
@@ -58,7 +121,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     //MARK: - Data
     
     private let placemarkArchive = documentsDirectory() + "/placemark"
-    private var currentPlacemark: CLPlacemark? {
+    var placemark: CLPlacemark? {
     
         set {
             let didArchive = NSKeyedArchiver.archiveRootObject(newValue!, toFile: placemarkArchive)
@@ -75,7 +138,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     private func placemarkIsWithinDistance(distance: CLLocationDistance) -> Bool {
     
-        if let placemark = currentPlacemark {
+        if let placemark = placemark {
             return distanceFromCurrentLocation(placemark.location!) <= distance
         }
         else {
@@ -86,7 +149,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     private func shouldReverseGeocodeLocation() -> Bool {
         
-        if let placemark = currentPlacemark {
+        if let placemark = placemark {
             
             let meaningfulNameDistance = CLLocationDistance(100)
             return distanceFromCurrentLocation(placemark.location!) <= meaningfulNameDistance
@@ -97,52 +160,6 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         }
     }
     
-    
-    func nameForCurrentLocation() -> String? {
-        
-//        func placemarkIsGood() -> Bool {
-//            
-//            let validNameDistance = CLLocationDistance(100)
-//            return placemarkIsWithinDistance(validNameDistance)
-//        }
-        
-        guard let placemark = currentPlacemark else {
-            return nil
-        }
-        
-//        if placemarkIsGood() == false {
-//            return nil
-//        }
-        
-        var result: String?
-        if let areaOfInterest = placemark.areasOfInterest?.first {
-            return areaOfInterest
-        }
-        
-        var parts = [String]()
-        
-        if placemark.thoroughfare != nil {
-            parts.append(placemark.thoroughfare!)
-        }
-        if placemark.locality != nil {
-            parts.append(placemark.locality!)
-        }
-        if placemark.administrativeArea != nil {
-            parts.append(placemark.administrativeArea!)
-        }
-        
-        for placemarkPart in parts {
-            
-            if result != nil {
-                result! += ", " + placemarkPart
-            }
-            else {
-                result = placemarkPart
-            }
-        }
-        
-        return result
-    }
     
     private var isGeocoding = false
     func reverseGeocodeCurrentLocation() {
@@ -162,7 +179,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
             
             if error == nil {
                 if let placemarks = placemarks {
-                    self.currentPlacemark = placemarks.first
+                    self.placemark = placemarks.first
                 }
             }
             
@@ -198,7 +215,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        if let lastLocation = currentPlacemark?.location {
+        if let lastLocation = placemark?.location {
             if distanceFromCurrentLocation(lastLocation) < notificationFilterDistance {
                 return
            }

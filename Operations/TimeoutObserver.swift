@@ -38,7 +38,8 @@ struct TimeoutObserver: OperationObserver {
             */
             if !operation.finished && !operation.cancelled {
                 let error = NSError(code: .ExecutionFailed, userInfo: [
-                    self.dynamicType.timeoutKey: self.timeout
+                    self.dynamicType.timeoutKey: self.timeout,
+                    NSLocalizedDescriptionKey: "Operation timed out."
                 ])
 
                 operation.cancelWithError(error)

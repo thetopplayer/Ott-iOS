@@ -54,8 +54,8 @@ class TableViewController: UITableViewController {
     }
     
     
-    override func viewDidDisappear(animated: Bool) {
-        super.viewDidDisappear(animated)
+    override func viewWillDisappear(animated: Bool) {
+        super.viewWillDisappear(animated)
         _isVisible = false
     }
     
