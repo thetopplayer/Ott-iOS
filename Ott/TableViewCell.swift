@@ -137,7 +137,7 @@ class TableViewCell: UITableViewCell {
                 // if it's reasonably close by, add major street name
                 if let metersAway = LocationManager.sharedInstance.distanceFromCurrentLocation(location) {
                     
-                    if metersAway < 10000 {
+                    if metersAway < 1000 {
                         
                         if let thoroughfare = locationDetails[CLPlacemark.Keys.Thoroughfare.rawValue] as? String {
                             

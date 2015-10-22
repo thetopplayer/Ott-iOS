@@ -867,6 +867,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private func setupMapView() {
         
         mapView.delegate = self
+        mapView.rotateEnabled = false
     }
     
     
@@ -886,13 +887,128 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func reloadMapView() {
         
-        let allObjects: [AuthoredObject] = [topic!] + posts
+        mapSectors.removeAll()
+        mapSectorIDs.removeAll()
+        mapPosts.removeAll()
         
         mapView.removeAnnotations(mapView.annotations)
-        mapView.addAnnotations(allObjects)
-//        mapView.showAnnotations(allObjects, animated: true)
+        mapView.removeOverlays(mapView.overlays)
+        
+        mapView.addAnnotations([topic!])
     }
     
+    
+    //MARK: - Displaying Map Sectors
+    
+    var mapSectors = [MapSector]()
+    var mapSectorIDs = Set<String>()
+    
+    
+    var sectorFetchTimer: NSTimer?
+    func handleTimerFire(timer: NSTimer?) {
+        fetchAndDisplaySectorsForRegion()
+    }
+    
+    
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
+        sectorFetchTimer?.invalidate()
+        sectorFetchTimer = NSTimer.scheduledTimerWithTimeInterval(0.5, target: self, selector: "handleTimerFire:", userInfo: nil, repeats: false)
+    }
+    
+    private var isFetchingSectors = false
+    private func fetchAndDisplaySectorsForRegion() {
+        
+        if isFetchingSectors {
+            return
+        }
+        
+        let mapRect: [Double] = {
+            
+            let region = mapView.region
+            let latitudeDelta = region.span.latitudeDelta
+            let longitudeDelta = region.span.longitudeDelta
+            let minLat = region.center.latitude - latitudeDelta / 2.0
+            let minLong = region.center.longitude - longitudeDelta / 2.0
+            
+            return [minLat, minLong, latitudeDelta, longitudeDelta]
+        }()
+        
+        print("map mapRect = \(mapRect)")
+
+        isFetchingSectors = true
+        let params: [String: AnyObject] = ["topicID": topic!.objectId!, "mapRect": mapRect]
+        
+        PFCloud.callFunctionInBackground("sectorIDsForMapRect", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
+            
+            guard let response = response else {
+                
+                self.isFetchingSectors = false
+                print("error fetching IDS:  no response from server")
+                return
+            }
+            
+            guard let fetchedIDs = response["IDs"] as? [String] else {
+                
+                self.isFetchingSectors = false
+                if let error = error {
+                    print("error fetching IDS = \(error)")
+                }
+                return;
+            }
+            
+            var sectorsThatNeedToBeFetched = [String]()
+            for anID in fetchedIDs {
+                if self.mapSectorIDs.contains(anID) == false {
+                    sectorsThatNeedToBeFetched.append(anID)
+                }
+            }
+            
+            print("sectorsThatNeedToBeFetched = \(sectorsThatNeedToBeFetched)")
+            
+            if sectorsThatNeedToBeFetched.count == 0 {
+                return
+            }
+            
+            let query: PFQuery = {
+                
+                let q = MapSector.query()!
+                q.whereKey(DataKeys.SectorID, containedIn: sectorsThatNeedToBeFetched)
+                q.limit = sectorsThatNeedToBeFetched.count
+                return q
+            }()
+            
+            query.findObjectsInBackgroundWithBlock({ (fetchedSectors, error) -> Void in
+                
+                self.isFetchingSectors = false
+                
+                if let fetchedSectors = fetchedSectors as? [MapSector] {
+                    
+                    // because sectors may not exist for all of the sectorIDs provided in the query, add all of those from the query to the list of IDs that we've fetched
+                    
+                    self.mapSectorIDs.unionInPlace(sectorsThatNeedToBeFetched)
+                    
+                    self.mapSectors += fetchedSectors
+                    dispatch_async(dispatch_get_main_queue()) {
+                        
+                        print("fetched sectors = \(fetchedSectors)")
+                    }
+                }
+                else if let error = error {
+                    
+                    print("error fetching sectors = \(error)")
+                }
+            })
+        }
+    }
+    
+    
+    //MARK: - Displaying Map Posts
+    
+    // only display annotations for posts when zoomed smaller than the smallest sector
+    // annotation for topic creation location should always be visible
+    
+    var mapPosts = [Post]()
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
@@ -920,6 +1036,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+
     
     //MARK: -  Observations {
     
