@@ -23,6 +23,26 @@ extension DataKeys {
     static var SectorID: String {
         return "sectorID"
     }
+    
+    static var SectorSize: String {
+        return "size"
+    }
+    
+    static var MinLat: String {
+        return "minLat"
+    }
+    
+    static var MaxLat: String {
+        return "maxLat"
+    }
+    
+    static var MinLong: String {
+        return "minLong"
+    }
+    
+    static var MaxLong: String {
+        return "maxLong"
+    }
 }
 
 
@@ -38,11 +58,13 @@ class MapSector: DataObject, PFSubclassing, MKOverlay {
             self.registerSubclass()
         }
     }
-    
-    
+        
     class func parseClassName() -> String {
         return "MapSector"
     }
+    
+    
+    static let sizes = [0.05, 0.1, 0.2, 0.4, 1.6, 6.4]
     
     
     //MARK: - Attributes

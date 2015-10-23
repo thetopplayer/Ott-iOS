@@ -894,7 +894,30 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         mapView.addAnnotations([topic!])
         
         adjustMapRegionForTopic()
+        fetchSectorsForTopic()
     }
+    
+    
+    private func fetchSectorsForTopic() {
+        
+        let fetchOperation = FetchSectorsOperation(topic: topic!, offset: 0, limit: 30) {
+            
+            (fetchResults, error) in
+            
+            if let fetchResults = fetchResults as? [MapSector] {
+                self.mapSectors = fetchResults
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    
+                    print("fetched sectors = \n \(self.mapSectors)")
+                    self.updateMapOverlays()
+                }
+            }
+        }
+        
+        FetchQueue.sharedInstance.addOperation(fetchOperation)
+    }
+    
     
     
     //MARK: - Displaying Map Sectors
@@ -903,7 +926,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var mapSectorIDs = Set<String>()
     var currentSectorSize: Float = 0
     
-    
+    /*
     var sectorFetchTimer: NSTimer?
     func handleTimerFire(timer: NSTimer?) {
         fetchAndDisplaySectorsForRegion()
@@ -1028,31 +1051,35 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
     }
-    
+    */
     
     private func updateMapOverlays() {
         
-        let currentlyDisplayedSectors = mapView.overlays as! [MapSector]
-        var sectorsToAdd = [MapSector]()
-        var sectorsToRemove = [MapSector]()
-        
-        for sector in mapSectors {
-            
-            if currentlyDisplayedSectors.contains(sector) {
-                if sector.size != currentSectorSize {
-                    sectorsToRemove.append(sector)
-                }
-            }
-            else if sector.size == currentSectorSize {
-                sectorsToAdd.append(sector)
-            }
-        }
-        
-        mapView.removeOverlays(sectorsToRemove)
-        mapView.addOverlays(sectorsToAdd)
-        
-        print("removing = \(sectorsToRemove)")
-        print("adding = \(sectorsToAdd)")
+        mapView.removeOverlays(mapView.overlays)
+        mapView.addOverlays(mapSectors)
+
+//        
+//        let currentlyDisplayedSectors = mapView.overlays as! [MapSector]
+//        var sectorsToAdd = [MapSector]()
+//        var sectorsToRemove = [MapSector]()
+//        
+//        for sector in mapSectors {
+//            
+//            if currentlyDisplayedSectors.contains(sector) {
+//                if sector.size != currentSectorSize {
+//                    sectorsToRemove.append(sector)
+//                }
+//            }
+//            else if sector.size == currentSectorSize {
+//                sectorsToAdd.append(sector)
+//            }
+//        }
+//        
+//        mapView.removeOverlays(sectorsToRemove)
+//        mapView.addOverlays(sectorsToAdd)
+//        
+//        print("removing = \(sectorsToRemove)")
+//        print("adding = \(sectorsToAdd)")
     }
     
     

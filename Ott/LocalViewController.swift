@@ -94,6 +94,7 @@ class LocalViewController: TopicMasterViewController {
             let theQuery: PFQuery = {
                 
                 let query = Topic.query()!
+                query.limit = 20
                 query.orderByDescending(DataKeys.CreatedAt)
                 query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
                 
