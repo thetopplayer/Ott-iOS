@@ -48,18 +48,32 @@ class MapSector: DataObject, PFSubclassing, MKOverlay {
     //MARK: - Attributes
 
     @NSManaged var sectorID: String
-    @NSManaged var averageRating: Double
+    @NSManaged var averageRating: Float
     @NSManaged var numberOfPosts: Int
     
-    @NSManaged var size: Double
+    @NSManaged var size: Float
     @NSManaged var minLat: Double
     @NSManaged var maxLat: Double
     @NSManaged var minLong: Double
     @NSManaged var maxLong: Double
     
     
+    func color() -> UIColor {
+        return Rating(withFloat: averageRating / 10).color()
+    }
+    
     
     //MARK: - MKOverlay
+    
+    var title: String? {
+        return "\(averageRating)"
+    }
+    
+    
+    var subTitle: String? {
+        return nil
+    }
+
     
     var coordinate: CLLocationCoordinate2D {
         
@@ -78,6 +92,20 @@ class MapSector: DataObject, PFSubclassing, MKOverlay {
         
         let mapRect = MKMapRectMake(fmin(p1.x, p2.x), fmin(p1.y, p2.y), fabs(p1.x-p2.x), fabs(p1.y-p2.y))
         return mapRect
+    }
+    
+    
+    func polygon() -> MKPolygon {
+        
+        let coordinate1 = CLLocationCoordinate2DMake(minLat, minLong)
+        let coordinate2 = CLLocationCoordinate2DMake(minLat, maxLong)
+        let coordinate3 = CLLocationCoordinate2DMake(maxLat, maxLong)
+        let coordinate4 = CLLocationCoordinate2DMake(maxLat, minLong)
+        
+        var coordinates = [coordinate1, coordinate2, coordinate3, coordinate4]
+        
+        let p = MKPolygon(coordinates: &coordinates, count: coordinates.count)
+        return p
     }
 }
 

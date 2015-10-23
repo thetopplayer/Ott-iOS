@@ -123,7 +123,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         navigationItem.title = topic.name!
         displayType = .List
-        adjustMapRegionForTopic()
+        initializeMapViewForTopic()
         
         didInitializeViewForTopic = true
     }
@@ -403,7 +403,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             if let thePosts = fetchResults as? [Post] {
                 
                 self.refreshTableView(withUpdatedPosts: thePosts)
-                self.reloadMapView()
             }
             
             // TODO;  ALLOW ADDITIONAL FETCHING FROM OFFSET
@@ -869,23 +868,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         mapView.delegate = self
         mapView.rotateEnabled = false
     }
+
     
-    
-    private func adjustMapRegionForTopic() {
+    private func initializeMapViewForTopic() {
         
-        guard let bounds = topic!.bounds else {
-            return
+        func adjustMapRegionForTopic() {
+            
+            guard let bounds = topic!.bounds else {
+                return
+            }
+            
+            let centerCoordinate = CLLocationCoordinate2DMake(bounds[0] + (bounds[2] / 2), bounds[1] + (bounds[3] / 2))
+            let span = MKCoordinateSpanMake(bounds[2], bounds[3])
+            let coordinateRegion = MKCoordinateRegionMake(centerCoordinate, span)
+            
+            mapView.setRegion(coordinateRegion, animated: false)
         }
-        
-        let centerCoordinate = CLLocationCoordinate2DMake(bounds[0] + (bounds[2] / 2), bounds[1] + (bounds[3] / 2))
-        let span = MKCoordinateSpanMake(bounds[2], bounds[3])
-        let coordinateRegion = MKCoordinateRegionMake(centerCoordinate, span)
-        
-        mapView.setRegion(coordinateRegion, animated: false)
-    }
-    
-    
-    private func reloadMapView() {
         
         mapSectors.removeAll()
         mapSectorIDs.removeAll()
@@ -893,8 +891,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
-        
         mapView.addAnnotations([topic!])
+        
+        adjustMapRegionForTopic()
     }
     
     
@@ -902,6 +901,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     var mapSectors = [MapSector]()
     var mapSectorIDs = Set<String>()
+    var currentSectorSize: Float = 0
     
     
     var sectorFetchTimer: NSTimer?
@@ -941,20 +941,47 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         PFCloud.callFunctionInBackground("sectorIDsForMapRect", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
             
-            guard let response = response else {
-                
+            func finishPresentingErrorMessage(message: String? = nil) {
                 self.isFetchingSectors = false
-                print("error fetching IDS:  no response from server")
+                if let message = message {
+                    print(message)
+                }
+            }
+            
+            if let error = error {
+                finishPresentingErrorMessage(error.localizedDescription)
                 return
             }
             
+            guard let response = response else {
+                finishPresentingErrorMessage("error fetching IDS:  no response from server")
+                return
+            }
+            
+            print("response = \n \(response)")
+            
+            
+            
+            guard let numberOfSectors = response["count"] as? Int else {
+                finishPresentingErrorMessage()
+                return
+            }
+            
+            if numberOfSectors == 0 {
+                finishPresentingErrorMessage("number of sectors is 0")
+                return
+            }
+            
+            guard let sectorSize = response["size"] as? Float else {
+                finishPresentingErrorMessage("error:  no sector size provided")
+                return
+            }
+            
+            self.currentSectorSize = sectorSize
+            
             guard let fetchedIDs = response["IDs"] as? [String] else {
-                
-                self.isFetchingSectors = false
-                if let error = error {
-                    print("error fetching IDS = \(error)")
-                }
-                return;
+                finishPresentingErrorMessage("error:  no fetched IDs")
+                return
             }
             
             var sectorsThatNeedToBeFetched = [String]()
@@ -964,9 +991,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 }
             }
             
-            print("sectorsThatNeedToBeFetched = \(sectorsThatNeedToBeFetched)")
-            
             if sectorsThatNeedToBeFetched.count == 0 {
+                finishPresentingErrorMessage()
                 return
             }
             
@@ -987,11 +1013,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     // because sectors may not exist for all of the sectorIDs provided in the query, add all of those from the query to the list of IDs that we've fetched
                     
                     self.mapSectorIDs.unionInPlace(sectorsThatNeedToBeFetched)
-                    
                     self.mapSectors += fetchedSectors
+                    
                     dispatch_async(dispatch_get_main_queue()) {
                         
-                        print("fetched sectors = \(fetchedSectors)")
+                        print("fetched sectors = \n \(fetchedSectors)")
+                        self.updateMapOverlays()
                     }
                 }
                 else if let error = error {
@@ -1001,6 +1028,44 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
     }
+    
+    
+    private func updateMapOverlays() {
+        
+        let currentlyDisplayedSectors = mapView.overlays as! [MapSector]
+        var sectorsToAdd = [MapSector]()
+        var sectorsToRemove = [MapSector]()
+        
+        for sector in mapSectors {
+            
+            if currentlyDisplayedSectors.contains(sector) {
+                if sector.size != currentSectorSize {
+                    sectorsToRemove.append(sector)
+                }
+            }
+            else if sector.size == currentSectorSize {
+                sectorsToAdd.append(sector)
+            }
+        }
+        
+        mapView.removeOverlays(sectorsToRemove)
+        mapView.addOverlays(sectorsToAdd)
+        
+        print("removing = \(sectorsToRemove)")
+        print("adding = \(sectorsToAdd)")
+    }
+    
+    
+    func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
+        
+        let mapSector = overlay as! MapSector
+        let renderer = MKPolygonRenderer(polygon: mapSector.polygon())
+        renderer.alpha = 0.25
+        renderer.fillColor = mapSector.color()
+        
+        return renderer
+    }
+    
     
     
     //MARK: - Displaying Map Posts
