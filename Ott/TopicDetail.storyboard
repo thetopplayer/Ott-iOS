@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
@@ -19,13 +19,16 @@
                         <subviews>
                             <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG">
                                 <rect key="frame" x="4" y="0.0" width="592" height="556"/>
+                                <animations/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
                             </tableView>
                             <mapView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" mapType="standard" translatesAutoresizingMaskIntoConstraints="NO" id="6Ch-ty-LY7">
                                 <rect key="frame" x="0.0" y="0.0" width="600" height="556"/>
+                                <animations/>
                             </mapView>
                             <toolbar opaque="NO" clearsContextBeforeDrawing="NO" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="fhB-VS-06h">
                                 <rect key="frame" x="0.0" y="556" width="600" height="44"/>
+                                <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="5q8-72-KFW"/>
                                 </constraints>
@@ -58,6 +61,7 @@
                                                     <subviews>
                                                         <textView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" bounces="NO" scrollEnabled="NO" showsHorizontalScrollIndicator="NO" text="comment" translatesAutoresizingMaskIntoConstraints="NO" id="7bz-61-Iij" customClass="TextView" customModule="Ott" customModuleProvider="target">
                                                             <rect key="frame" x="15" y="8" width="572" height="34"/>
+                                                            <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="38" id="7JD-gY-lQJ"/>
                                                             </constraints>
@@ -71,9 +75,11 @@
                                                         </textView>
                                                         <slider opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" value="0.5" minValue="0.0" maxValue="1" translatesAutoresizingMaskIntoConstraints="NO" id="piC-Pq-FMf">
                                                             <rect key="frame" x="13" y="44" width="506" height="31"/>
+                                                            <animations/>
                                                         </slider>
                                                         <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Post" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="PbW-de-Mei">
                                                             <rect key="frame" x="531" y="48" width="56" height="31"/>
+                                                            <animations/>
                                                             <constraints>
                                                                 <constraint firstAttribute="height" constant="31" id="R6R-Bz-k0Q"/>
                                                                 <constraint firstAttribute="width" constant="56" id="fK2-gX-W9k"/>
@@ -83,6 +89,7 @@
                                                             <nil key="highlightedColor"/>
                                                         </label>
                                                     </subviews>
+                                                    <animations/>
                                                     <constraints>
                                                         <constraint firstAttribute="trailing" secondItem="PbW-de-Mei" secondAttribute="trailing" constant="15" id="A9a-c0-Hu6"/>
                                                         <constraint firstAttribute="trailing" secondItem="7bz-61-Iij" secondAttribute="trailing" constant="15" id="F3R-wm-iU1"/>
@@ -95,9 +102,11 @@
                                                         <constraint firstItem="PbW-de-Mei" firstAttribute="leading" secondItem="piC-Pq-FMf" secondAttribute="trailing" constant="18" id="t50-Sw-Jdw"/>
                                                     </constraints>
                                                 </view>
+                                                <animations/>
                                                 <blurEffect style="light"/>
                                             </visualEffectView>
                                         </subviews>
+                                        <animations/>
                                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                         <constraints>
                                             <constraint firstItem="ghs-Vp-iyw" firstAttribute="top" secondItem="urz-ip-t9q" secondAttribute="top" id="HsF-ts-xAb"/>
@@ -107,6 +116,7 @@
                                         </constraints>
                                     </view>
                                 </subviews>
+                                <animations/>
                                 <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstItem="urz-ip-t9q" firstAttribute="top" secondItem="N7I-Dk-brQ" secondAttribute="top" id="5Sg-2D-yW2"/>
@@ -124,6 +134,7 @@
                                 </connections>
                             </view>
                         </subviews>
+                        <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="Y5K-j4-5dG" secondAttribute="trailing" constant="-16" id="9Ra-hf-xhb"/>

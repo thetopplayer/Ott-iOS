@@ -12,6 +12,6 @@
 #import <Parse/Parse.h>
 #import <Parse/PFObject+Subclass.h>
 #import <Bolts/BFTask.h>
-//#import <TelerikUI/TelerikUI.h>
+#import "JTSImageViewController.h"
 
 #endif /* Ott_Bridging_Header_h */

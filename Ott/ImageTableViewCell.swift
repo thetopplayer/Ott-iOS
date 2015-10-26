@@ -23,6 +23,16 @@ class ImageTableViewCell: TableViewCell {
         if roundedBorder {
             topicImageView.addRoundedBorder()
         }
+        
+        let tapGR: UIGestureRecognizer = {
+            
+            let gr = UITapGestureRecognizer()
+            gr.addTarget(self, action: "displayImageDetail:")
+            return gr
+        }()
+        
+        topicImageView.addGestureRecognizer(tapGR)
+        topicImageView.userInteractionEnabled = true
     }
     
 
@@ -37,18 +47,25 @@ class ImageTableViewCell: TableViewCell {
     private func updateContents() {
         
         if let topic = displayedTopic {
-            
             topicImageView!.displayImageInFile(topic.imageFile)
-//            if topic.hasImage() {
-//                
-//                topic.getImage() {(success, image) in
-//                    
-//                    if success {
-//                        self.topicImageView!.image = image
-//                    }
-//                }
-//            }
         }
+    }
+    
+    
+    @IBAction func displayImageDetail(sender: AnyObject?) {
+        
+        guard let imageView = topicImageView else {
+            return
+        }
+        
+        let imageInfo = JTSImageInfo()
+        imageInfo.image = imageView.image
+        imageInfo.referenceRect = self.frame
+        imageInfo.referenceView = topmostViewController()?.view
+        
+        let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.Blurred)
+        
+        imageViewer.showFromViewController(topmostViewController(), transition: JTSImageViewControllerTransition.FromOriginalPosition)
     }
     
 }
