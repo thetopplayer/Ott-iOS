@@ -10,9 +10,7 @@ import UIKit
 
 class TopicAuthorTableViewCell: TableViewCell {
 
-    @IBOutlet var authorNameLabel: UILabel!
-    @IBOutlet var authorHandleLabel: UILabel!
-    @IBOutlet var authorBioLabel: UILabel!
+    @IBOutlet var label: UILabel!
     @IBOutlet var authorImageView: ParseImageView!
     
     
@@ -31,17 +29,6 @@ class TopicAuthorTableViewCell: TableViewCell {
         authorImageView.addRoundedBorder()
         authorImageView.addGestureRecognizer(tapGR)
         authorImageView.userInteractionEnabled = true
-        
-        let tapGR1: UIGestureRecognizer = {
-            
-            let gr = UITapGestureRecognizer()
-            gr.addTarget(self, action: "displayAuthorDetail:")
-            return gr
-            }()
-        
-        authorHandleLabel.textColor = UIColor.tint()
-        authorHandleLabel.addGestureRecognizer(tapGR1)
-        authorHandleLabel.userInteractionEnabled = true
     }
     
     
@@ -66,10 +53,41 @@ class TopicAuthorTableViewCell: TableViewCell {
             return
         }
         
-        authorNameLabel.text = topic.authorName
-        authorHandleLabel.text = topic.authorHandle
-        authorBioLabel.text = topic.authorBio
+        label.attributedText = attributedContent(topic)
         authorImageView.displayImageInFile(topic.authorAvatarFile)
+    }
+    
+    
+    private func attributedContent(topic: Topic) -> NSAttributedString {
+        
+        let nameColor = UIColor.blackColor()
+        let handleColor = UIColor.brownColor()
+        let bioColor = UIColor.darkGrayColor()
+        
+        let nameFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        let nameAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : nameColor, NSFontAttributeName: nameFont]
+        
+        let handleFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+        let handleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : handleColor, NSFontAttributeName: handleFont]
+        
+        let nameString = topic.authorName! + "  "
+        let fullAttrString = NSMutableAttributedString(string: nameString, attributes: nameAttributes)
+        
+        let handleString = "" + topic.authorHandle! + " \n"
+        let handleAttrString = NSAttributedString(string: handleString, attributes: handleAttributes)
+        
+        fullAttrString.appendAttributedString(handleAttrString)
+        
+        if let bio = topic.authorBio {
+            
+            let bioFont = UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote)
+            let bioAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : bioColor, NSFontAttributeName: bioFont]
+            
+            let bioAttrString = NSAttributedString(string: bio, attributes: bioAttributes)
+            fullAttrString.appendAttributedString(bioAttrString)
+        }
+
+        return fullAttrString
     }
     
     

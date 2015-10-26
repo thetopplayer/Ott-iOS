@@ -24,14 +24,20 @@ class TopicStatisticsTableViewCell: TableViewCell {
         super.awakeFromNib()
         
         contentView.backgroundColor = UIColor.background()
-        innerContentContainer?.backgroundColor = UIColor.whiteColor()
-        innerContentContainer?.addBorder()
-        innerContentContainer?.addDownShadow()
+        innerContentContainer?.backgroundColor = UIColor.background()
         countTitleLabel.text = "Posts"
+        
         countLabel.text = ""
-        countLabel.textColor = UIColor.brownColor()
+        countLabel.layer.cornerRadius = 12
+        countLabel.layer.masksToBounds = true
+        countLabel.backgroundColor = UIColor.brownColor()
+        countLabel.textColor = UIColor.whiteColor()
+        
         ratingTitleLabel.text = "Average"
         ratingLabel.text = ""
+        ratingLabel.layer.cornerRadius = 12
+        ratingLabel.layer.masksToBounds = true
+        ratingLabel.textColor = UIColor.whiteColor()
     }
     
     
@@ -46,9 +52,9 @@ class TopicStatisticsTableViewCell: TableViewCell {
     private func updateContents() {
         
         if let topic = displayedTopic {
-            countLabel.text = "\(topic.numberOfPosts)"
-            ratingLabel.text = String.localizedStringWithFormat("%.1f", topic.averageRating)
-            ratingLabel.textColor = Rating(withFloat: topic.averageRating / 10).color()
+            countLabel.text = " \(topic.numberOfPosts) "
+            ratingLabel.text = String.localizedStringWithFormat(" %.1f ", topic.averageRating)
+            ratingLabel.backgroundColor = Rating(withFloat: topic.averageRating / 10).color()
         }
     }
 

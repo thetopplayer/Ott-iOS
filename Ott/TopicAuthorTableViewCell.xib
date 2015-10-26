@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -25,8 +25,8 @@
                                     <constraint firstAttribute="height" constant="52" id="VEl-v4-BHk"/>
                                 </constraints>
                             </imageView>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
-                                <rect key="frame" x="82" y="7" width="367" height="20"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
+                                <rect key="frame" x="82" y="7" width="504" height="20"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="9YA-fW-X9V"/>
@@ -34,58 +34,24 @@
                                 <fontDescription key="fontDescription" type="system" pointSize="16"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="bio info" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="Avr-ze-dIT">
-                                <rect key="frame" x="82" y="33" width="505" height="29"/>
-                                <animations/>
-                                <fontDescription key="fontDescription" type="system" pointSize="13"/>
-                                <color key="textColor" red="0.20000000298023224" green="0.20000000298023224" blue="0.20000000298023224" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
-                            </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="@handlesuperlong" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="LOS-bD-3Bi">
-                                <rect key="frame" x="457" y="7" width="130" height="20"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="20" id="FD0-pG-qTS"/>
-                                    <constraint firstAttribute="width" constant="130" id="r8x-f0-RHg"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <color key="textColor" red="0.29803922772407532" green="0.29803922772407532" blue="0.29803922772407532" alpha="1" colorSpace="calibratedRGB"/>
-                                <nil key="highlightedColor"/>
+                                <variation key="default">
+                                    <mask key="constraints">
+                                        <exclude reference="9YA-fW-X9V"/>
+                                    </mask>
+                                </variation>
                             </label>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
                         <constraints>
-                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="7" id="1zr-07-ALc"/>
-                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="leading" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="8" id="3rg-SJ-ffm"/>
-                            <constraint firstAttribute="bottom" secondItem="Avr-ze-dIT" secondAttribute="bottom" constant="6" id="4HO-Qh-sNa"/>
-                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="7Nl-ik-6mL"/>
                             <constraint firstItem="IZQ-U4-WaG" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="14" id="Gls-ao-2G0"/>
-                            <constraint firstItem="LOS-bD-3Bi" firstAttribute="top" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="2" id="JVq-2N-jo6"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="leading" secondItem="LOS-bD-3Bi" secondAttribute="leading" id="b5h-8G-0Wa"/>
-                            <constraint firstAttribute="trailing" secondItem="LOS-bD-3Bi" secondAttribute="trailing" constant="15" id="d2O-kU-2pB"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="trailing" secondItem="LOS-bD-3Bi" secondAttribute="trailing" id="eVC-N5-T4B"/>
-                            <constraint firstAttribute="trailing" secondItem="Avr-ze-dIT" secondAttribute="trailing" constant="15" id="fDd-fj-rCh"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="top" secondItem="LOS-bD-3Bi" secondAttribute="bottom" constant="6" id="fiu-ed-JDA"/>
+                            <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="7" id="Xh1-U1-XXK"/>
                             <constraint firstItem="yu5-IZ-XAd" firstAttribute="centerY" secondItem="wVt-mt-xss" secondAttribute="centerY" id="g7K-Hi-7Is"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="leading" secondItem="yu5-IZ-XAd" secondAttribute="trailing" constant="6" id="geJ-Xj-IJr"/>
                             <constraint firstItem="IZQ-U4-WaG" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="7" id="gvO-3P-q0V"/>
                             <constraint firstItem="yu5-IZ-XAd" firstAttribute="leading" secondItem="wVt-mt-xss" secondAttribute="leading" constant="16" id="hr8-pQ-P3P"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="top" secondItem="LOS-bD-3Bi" secondAttribute="bottom" constant="4" id="lD4-Oa-gki"/>
-                            <constraint firstItem="Avr-ze-dIT" firstAttribute="leading" secondItem="IZQ-U4-WaG" secondAttribute="leading" id="mm4-98-h3e"/>
+                            <constraint firstAttribute="trailing" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="16" id="nmb-ha-PrL"/>
                             <constraint firstAttribute="height" constant="68" id="wn0-p5-XFJ"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="b5h-8G-0Wa"/>
-                                <exclude reference="eVC-N5-T4B"/>
-                                <exclude reference="geJ-Xj-IJr"/>
-                                <exclude reference="lD4-Oa-gki"/>
-                                <exclude reference="7Nl-ik-6mL"/>
-                                <exclude reference="JVq-2N-jo6"/>
-                            </mask>
-                        </variation>
                     </view>
                 </subviews>
                 <animations/>
@@ -98,11 +64,9 @@
             </tableViewCellContentView>
             <animations/>
             <connections>
-                <outlet property="authorBioLabel" destination="Avr-ze-dIT" id="4oi-vd-u73"/>
-                <outlet property="authorHandleLabel" destination="LOS-bD-3Bi" id="evy-Qo-YyE"/>
                 <outlet property="authorImageView" destination="yu5-IZ-XAd" id="Mbg-Yc-t8p"/>
-                <outlet property="authorNameLabel" destination="IZQ-U4-WaG" id="rtF-zA-1VD"/>
                 <outlet property="innerContentContainer" destination="wVt-mt-xss" id="4Bm-hq-4Ld"/>
+                <outlet property="label" destination="IZQ-U4-WaG" id="ul1-Rq-H8A"/>
             </connections>
             <point key="canvasLocation" x="241" y="495.5"/>
         </tableViewCell>

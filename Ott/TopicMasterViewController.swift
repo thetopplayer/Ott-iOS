@@ -23,6 +23,10 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         super.viewDidLoad()
         
         setupTableView()
+        var insets = tableView.contentInset
+        insets.bottom -= tabBarController!.tabBar.frame.size.height
+        tableView.contentInset = insets
+
 //        view.addSubview(statusLabel)
         startObservations()
     }

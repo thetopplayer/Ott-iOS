@@ -23,8 +23,8 @@
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="0.29999999999999999" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
                             </label>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="hqK-Ol-GAL">
-                                <rect key="frame" x="260" y="260" width="80" height="80"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" ambiguous="YES" misplaced="YES" image="launch" translatesAutoresizingMaskIntoConstraints="NO" id="hqK-Ol-GAL">
+                                <rect key="frame" x="260" y="180" width="80" height="80"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="80" id="DHm-I8-3mh"/>
@@ -36,7 +36,6 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="obG-Y5-kRd" secondAttribute="centerX" id="5cz-MP-9tL"/>
-                            <constraint firstItem="hqK-Ol-GAL" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="KqZ-mF-K8P"/>
                             <constraint firstItem="obG-Y5-kRd" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" constant="20" symbolic="YES" id="SfN-ll-jLj"/>
                             <constraint firstAttribute="bottom" secondItem="obG-Y5-kRd" secondAttribute="bottom" constant="20" id="Y44-ml-fuU"/>
                             <constraint firstItem="hqK-Ol-GAL" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="d6Q-jA-QVN"/>

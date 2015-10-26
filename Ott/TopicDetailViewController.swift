@@ -564,7 +564,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private let topicStatsCellViewNibName = "TopicStatisticsTableViewCell"
     private let topicStatsCellViewIdentifer = "topicStats"
-    private let topicStatsCellViewHeight = CGFloat(100)
+    private let topicStatsCellViewHeight = CGFloat(92)
     
     private let postCellNibName = "PostDetailTableViewCell"
     private let postCellIdentifier = "postCell"
