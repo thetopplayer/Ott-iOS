@@ -15,7 +15,7 @@ Abstract class used to fetch topics
 import Foundation
 
 
-class FetchTopicsOperation: FetchOperation, TopicOperationProtocol {
+class FetchTopicsOperation: FetchOperation {
     
 
     /// fully override super in order to check each topic downloaded from the server to see if the current user posted to them
@@ -39,10 +39,10 @@ class FetchTopicsOperation: FetchOperation, TopicOperationProtocol {
             if let data = (try query.findObjects()) as? [Topic] {
                 
                 if dataSource == .Server {
-                    for topic in data {
-                        topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
-                        topic.currentUserViewedAt = currentUserLastViewedTopic(topic)
-                    }
+//                    for topic in data {
+//                        topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
+//                        topic.currentUserViewedAt = currentUserLastViewedTopic(topic)
+//                    }
                 }
                 fetchedData = data
             }

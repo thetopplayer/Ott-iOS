@@ -37,26 +37,26 @@ extension TopicOperationProtocol {
     }
     
     
-    func currentUserLastViewedTopic(topic: Topic) -> NSDate? {
-        
-        let query: PFQuery = {
-            
-            let query = ViewHistory.query()!
-            query.fromPinWithName(UpdateViewHistoryOperation.pinName())
-            query.limit = 1
-            
-            return query
-            }()
-        
-        query.whereKey(DataKeys.Topic, equalTo: topic)
-        if let views = try? query.findObjects() {
-            
-            if let theView = views.first as? ViewHistory {
-                return theView.viewedAt
-            }
-            return nil
-        }
-        
-        return nil
-    }
+//    func currentUserLastViewedTopic(topic: Topic) -> NSDate? {
+//        
+//        let query: PFQuery = {
+//            
+//            let query = ViewHistory.query()!
+//            query.fromPinWithName(UpdateViewHistoryOperation.pinName())
+//            query.limit = 1
+//            
+//            return query
+//            }()
+//        
+//        query.whereKey(DataKeys.Topic, equalTo: topic)
+//        if let views = try? query.findObjects() {
+//            
+//            if let theView = views.first as? ViewHistory {
+//                return theView.viewedAt
+//            }
+//            return nil
+//        }
+//        
+//        return nil
+//    }
 }

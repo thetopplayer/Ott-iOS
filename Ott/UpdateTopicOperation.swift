@@ -10,7 +10,7 @@
 import Foundation
 
 
-class UpdateTopicOperation: UpdateOperation, TopicOperationProtocol {
+class UpdateTopicOperation: UpdateOperation {
 
     init(topic: Topic, completion: UpdateCompletionBlock?) {
         
@@ -45,7 +45,7 @@ class UpdateTopicOperation: UpdateOperation, TopicOperationProtocol {
             
             try topic.fetch()
             
-            topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
+//            topic.currentUserDidPostTo = currentUserDidPostToTopic(topic)
             
             if let topicPinName = topicPinName {
                 topic.pinName = topicPinName

@@ -14,6 +14,7 @@ class MaintenanceQueue: OperationQueue {
        
         let queue = MaintenanceQueue()
         queue.qualityOfService = .Background
+//        queue.maxConcurrentOperationCount = 1
         return queue
     }()
 }

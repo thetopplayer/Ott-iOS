@@ -79,8 +79,17 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     
     @IBAction func cancelSearch(sender: AnyObject?) {
         
-        searchBar!.resignFirstResponder()
-        showCreateButton()
+        users.removeAll()
+        topics.removeAll()
+        noResultsLabel.hidden = true
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.searchBar!.text = ""
+            self.searchBar!.resignFirstResponder()
+            self.showCreateButton()
+            self.tableView.reloadData()
+        }
     }
     
     

@@ -13,7 +13,7 @@ class FetchQueue: OperationQueue {
     static let sharedInstance: FetchQueue = {
         
         let queue = FetchQueue()
-        queue.qualityOfService = .UserInitiated
+        queue.qualityOfService = .Utility
         return queue
     }()
 }

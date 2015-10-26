@@ -78,9 +78,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewWillDisappear(animated)
         endObservations()
-        
-        // record when this topic was viewed
-        MaintenanceQueue.sharedInstance.addOperation(UpdateViewHistoryOperation(topic: topic!, viewedAt: NSDate()))
     }
     
     
@@ -118,8 +115,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
-        displayedData = topic.currentUserDidPostTo ? .TopicAndPosts : .Topic
-        displayMode = topic.currentUserDidPostTo ? .View : .Edit
+        if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
+            
+            displayedData = currentUserDidPostToTopic ? .TopicAndPosts : .Topic
+            displayMode = currentUserDidPostToTopic ? .View : .Edit
+        }
+        else {
+            
+            currentUser().didPostToTopic(topic, completion: { (didPost) -> Void in
+                
+                topic.currentUserDidPostTo = didPost
+                self.displayedData = didPost ? .TopicAndPosts : .Topic
+                self.displayMode = didPost ? .View : .Edit
+            })
+        }
         
         navigationItem.title = topic.name!
         displayType = .List
@@ -353,8 +362,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         didSet {
             
-            guard let theTopic = topic else {
-                return;
+            if topic == nil {
+                return
             }
             
             didInitializeViewForTopic = false
@@ -362,9 +371,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 initializeViewForTopic()
             }
             
-            if theTopic.currentUserDidPostTo {
-                fetchPosts()
-            }
+            fetchPosts()
         }
     }
     
@@ -602,6 +609,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
+    
     func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
         
         guard displayedData == .TopicAndPosts else {
@@ -672,7 +680,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if displayedData == .TopicAndPosts {
             return TableViewSections.maximumNumberOfSections()
         }
-        return 1
+        return 2
     }
     
     

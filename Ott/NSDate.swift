@@ -56,7 +56,8 @@ extension NSDate {
     
     func minutesFromNow(absolute absolute: Bool = false) -> Int {
         
-        return unitsFromNow(.Minute)
+        let minutes = unitsFromNow(.Minute)
+        return absolute ? abs(minutes) : minutes
     }
     
     

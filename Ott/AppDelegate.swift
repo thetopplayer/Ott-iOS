@@ -58,7 +58,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             PrivateUserData.initialize()
             Topic.initialize()
             User.initialize()
-            ViewHistory.initialize()
             MapSector.initialize()
             
             Parse.enableLocalDatastore()

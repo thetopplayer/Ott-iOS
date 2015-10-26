@@ -9,12 +9,11 @@
 import UIKit
 
 
-class TopicMasterViewController: TableViewController {
+class TopicMasterViewController: ViewController, UITableViewDelegate, UITableViewDataSource {
 
-    struct Notification {
-        static let selectionDidChange = "topicMasterViewSelectionDidChange"
-    }
     
+    @IBOutlet var tableView: UITableView!
+    var refreshControl: UIRefreshControl?
     
     
     //MARK: - Lifecycle
@@ -24,7 +23,7 @@ class TopicMasterViewController: TableViewController {
         super.viewDidLoad()
         
         setupTableView()
-        view.addSubview(statusLabel)
+//        view.addSubview(statusLabel)
         startObservations()
     }
 
@@ -39,7 +38,7 @@ class TopicMasterViewController: TableViewController {
     override func viewDidLayoutSubviews() {
         
         super.viewDidLayoutSubviews()
-        statusLabel.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
+//        statusLabel.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
     }
     
 
@@ -67,14 +66,14 @@ class TopicMasterViewController: TableViewController {
     
     //MARK: - Display
     
-    lazy var statusLabel: UILabel = {
-        
-        let label = UILabel(frame: CGRectZero)
-        label.textAlignment = .Center
-        label.textColor = UIColor.lightGrayColor()
-        label.text = "No Topics"
-        return label
-    }()
+//    lazy var statusLabel: UILabel = {
+//        
+//        let label = UILabel(frame: CGRectZero)
+//        label.textAlignment = .Center
+//        label.textColor = UIColor.lightGrayColor()
+//        label.text = "No Topics"
+//        return label
+//    }()
     
     
     enum StatusType {
@@ -82,21 +81,25 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    func displayStatus(type: StatusType = .Default) {
+    var defaultNavigationItemTitle: String?
+    
+    func displayStatus(type: StatusType) {
         
-        statusLabel.hidden = displayedTopics.count > 0
-        
-        switch type {
-            
-        case .Fetching:
-            statusLabel.text = "Fetching Topics..."
-            
-        case .NoData:
-            statusLabel.text = "No Topics"
-            
-        default:
-            statusLabel.text = ""
-        }
+//        switch type {
+//            
+//        case .Fetching:
+//            navigationItem.title = "Fetching..."
+//            
+//        case .NoData:
+//            if let title = defaultNavigationItemTitle {
+//                navigationItem.title = title
+//            }
+//            
+//        default:
+//            if let title = defaultNavigationItemTitle {
+//                navigationItem.title = title
+//            }
+//        }
     }
     
     
@@ -151,11 +154,14 @@ class TopicMasterViewController: TableViewController {
     
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(0.1)
-    var footerViewHeight = CGFloat(1.0)
+    var footerViewHeight = CGFloat(0.1)
     
     private var lastRefreshedTableView: NSDate?
     
     private func setupTableView() {
+        
+        tableView.delegate = self
+        tableView.dataSource = self
         
         tableView.backgroundColor = UIColor.background()
         tableView.showsHorizontalScrollIndicator = false
@@ -167,6 +173,8 @@ class TopicMasterViewController: TableViewController {
             rc.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
             return rc
         }()
+        
+        tableView.insertSubview(refreshControl!, atIndex: 0)
         
         let nib2 = UINib(nibName: cellNibName2, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)
@@ -204,12 +212,12 @@ class TopicMasterViewController: TableViewController {
     }
 
     
-    override func numberOfSectionsInTableView(tableView: UITableView) -> Int {
+    func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         return 1
     }
 
     
-    override func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
         return displayedTopics.count
     }
@@ -236,7 +244,7 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
+    func tableView(tableView: UITableView, estimatedHeightForRowAtIndexPath indexPath: NSIndexPath) -> CGFloat {
         
         var height = CGFloat(0)
         switch cellTypeForIndexPath(indexPath) {
@@ -252,7 +260,7 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
+    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         let identifier: String
         switch cellTypeForIndexPath(indexPath) {
@@ -271,17 +279,17 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         return headerViewHeight
     }
     
     
-    override func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+    func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         return footerViewHeight
     }
     
     
-    override func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    func tableView(tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         
         if let headerId = headerReuseIdentifier {
             return tableView.dequeueReusableHeaderFooterViewWithIdentifier(headerId)
@@ -293,7 +301,7 @@ class TopicMasterViewController: TableViewController {
     }
     
     
-    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
         
         selection = displayedTopics[indexPath.row]
         tableView.deselectRowAtIndexPath(indexPath, animated: false)

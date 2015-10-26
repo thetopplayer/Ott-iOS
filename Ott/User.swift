@@ -234,28 +234,28 @@ class User: PFUser {
     }
 
     
-//    // as determined by only searching local cache, which should only contain posts authored by currentUser
-//    func didPostToTopic(topic: Topic, completion: (didPost: Bool) -> Void) {
-//        
-//        let query = Post.query()!
-//        query.whereKey(DataKeys.Topic, equalTo: topic)
-//        query.fromPinWithName(FetchAuthoredPostsOperation.pinName())
-//        query.limit = 1
-//        
-//        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
-//            
-//            dispatch_async(dispatch_get_main_queue()) {
-//
-//                if let _ = (objects as? [Post])?.first {
-//                    completion(didPost: true)
-//                }
-//                else {
-//                    completion(didPost: false)
-//                }
-//            }
-//        }
-//    }
-//    
+    // as determined by only searching local cache, which should only contain posts authored by currentUser
+    func didPostToTopic(topic: Topic, completion: (didPost: Bool) -> Void) {
+        
+        let query = Post.query()!
+        query.whereKey(DataKeys.Topic, equalTo: topic)
+        query.fromPinWithName(FetchCurrentUserAuthoredPostsOperation.pinName())
+        query.limit = 1
+        
+        query.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+
+                if let _ = (objects as? [Post])?.first {
+                    completion(didPost: true)
+                }
+                else {
+                    completion(didPost: false)
+                }
+            }
+        }
+    }
+    
     
     func getFollowStatusForUserWithHandle(handle: String, completion: (following: Bool) -> Void) {
         

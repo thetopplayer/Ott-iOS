@@ -39,6 +39,10 @@ extension DataKeys {
     static var LastPostLocationName: String {
         return "lastPostLocationName"
     }
+    
+    static var CurrentUserDidPostTo: String {
+        return "currentUserDidPostTo"
+    }
 }
 
 
@@ -101,8 +105,17 @@ class Topic: AuthoredObject, PFSubclassing {
     @NSManaged var lastPostLocationName: String?
     @NSManaged var lastPostDate: NSDate?
 
-    @NSManaged var currentUserDidPostTo: Bool  // only for local use
-    @NSManaged var currentUserViewedAt: NSDate?  // only for local use
+    // used internally
+    var currentUserDidPostTo: Bool? {
+        
+        get {
+            return self[DataKeys.CurrentUserDidPostTo] as? Bool
+        }
+        
+        set {
+            self[DataKeys.CurrentUserDidPostTo] = newValue
+        }
+    }
     
     
     // because Parse only allows one geoPoint per record, use this to store

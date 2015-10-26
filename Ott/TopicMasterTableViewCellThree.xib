@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <objects>
@@ -17,16 +17,17 @@
                     <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="NAz-LN-5WF">
                         <rect key="frame" x="0.0" y="8" width="592" height="100"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="smallDot" translatesAutoresizingMaskIntoConstraints="NO" id="Rmm-b4-QWo">
-                                <rect key="frame" x="4" y="7" width="14" height="14"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="arrowBack" translatesAutoresizingMaskIntoConstraints="NO" id="Rmm-b4-QWo">
+                                <rect key="frame" x="8" y="6" width="14" height="14"/>
                                 <animations/>
+                                <color key="tintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="14" id="XgZ-JF-J6f"/>
                                     <constraint firstAttribute="height" constant="14" id="whz-RS-Rnd"/>
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" textAlignment="justified" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="KzQ-iX-zOU">
-                                <rect key="frame" x="21" y="3" width="465" height="22"/>
+                                <rect key="frame" x="25" y="3" width="461" height="22"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="27" id="2ls-ge-KHw"/>
@@ -64,22 +65,14 @@
                                 </constraints>
                             </view>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="status" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="fgg-CL-jmY">
-                                <rect key="frame" x="21" y="84" width="465" height="13"/>
+                                <rect key="frame" x="25" y="85" width="465" height="12"/>
                                 <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="17" id="tON-rN-gt7"/>
-                                </constraints>
                                 <fontDescription key="fontDescription" type="system" pointSize="10"/>
                                 <color key="textColor" red="0.0" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                                 <nil key="highlightedColor"/>
-                                <variation key="default">
-                                    <mask key="constraints">
-                                        <exclude reference="tON-rN-gt7"/>
-                                    </mask>
-                                </variation>
                             </label>
-                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" text="author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCb-bl-Gch">
-                                <rect key="frame" x="21" y="62" width="465" height="14"/>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="author" textAlignment="natural" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsLetterSpacingToFitWidth="YES" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="cCb-bl-Gch">
+                                <rect key="frame" x="25" y="67" width="461" height="14"/>
                                 <animations/>
                                 <fontDescription key="fontDescription" style="UICTFontTextStyleCaption1"/>
                                 <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
@@ -90,29 +83,23 @@
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="fgg-CL-jmY" firstAttribute="top" secondItem="cCb-bl-Gch" secondAttribute="bottom" constant="4" id="53b-qs-Q1q"/>
-                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="6u0-Rz-W73"/>
-                            <constraint firstItem="cCb-bl-Gch" firstAttribute="top" secondItem="KzQ-iX-zOU" secondAttribute="bottom" constant="12" id="8hi-Jv-uvY"/>
+                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="25" id="6u0-Rz-W73"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="KzQ-iX-zOU" secondAttribute="trailing" constant="8" id="GJa-a6-yDj"/>
                             <constraint firstAttribute="trailing" secondItem="Sas-A0-Gtz" secondAttribute="trailing" constant="8" id="HGY-QG-q3C"/>
                             <constraint firstItem="KzQ-iX-zOU" firstAttribute="top" secondItem="NAz-LN-5WF" secondAttribute="top" constant="3" id="J65-Si-PG9"/>
                             <constraint firstAttribute="trailing" secondItem="YwD-yG-Uhz" secondAttribute="trailing" id="NnG-GU-wOS"/>
                             <constraint firstItem="cCb-bl-Gch" firstAttribute="top" relation="greaterThanOrEqual" secondItem="KzQ-iX-zOU" secondAttribute="bottom" constant="12" id="QsR-Qb-urq"/>
                             <constraint firstAttribute="bottom" secondItem="fgg-CL-jmY" secondAttribute="bottom" constant="3" id="bTc-DB-pIJ"/>
-                            <constraint firstItem="cCb-bl-Gch" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="d0h-nF-qmL"/>
-                            <constraint firstItem="Rmm-b4-QWo" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="4" id="dyX-L0-eDk"/>
+                            <constraint firstItem="cCb-bl-Gch" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="25" id="d0h-nF-qmL"/>
+                            <constraint firstItem="Rmm-b4-QWo" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="8" id="dyX-L0-eDk"/>
                             <constraint firstAttribute="height" constant="100" id="fYb-Aw-Tja"/>
+                            <constraint firstItem="Rmm-b4-QWo" firstAttribute="top" secondItem="NAz-LN-5WF" secondAttribute="top" constant="6" id="gFs-CZ-cfd"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="cCb-bl-Gch" secondAttribute="trailing" constant="8" id="l0I-23-o8b"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="centerY" secondItem="NAz-LN-5WF" secondAttribute="centerY" id="lkD-eU-foK"/>
                             <constraint firstItem="YwD-yG-Uhz" firstAttribute="top" secondItem="NAz-LN-5WF" secondAttribute="top" id="mde-1z-Z0F"/>
-                            <constraint firstItem="fgg-CL-jmY" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="21" id="v9g-uA-Ote"/>
-                            <constraint firstItem="KzQ-iX-zOU" firstAttribute="centerY" secondItem="Rmm-b4-QWo" secondAttribute="centerY" id="wPe-bE-2qj"/>
+                            <constraint firstItem="fgg-CL-jmY" firstAttribute="leading" secondItem="NAz-LN-5WF" secondAttribute="leading" constant="25" id="v9g-uA-Ote"/>
                             <constraint firstItem="Sas-A0-Gtz" firstAttribute="leading" secondItem="fgg-CL-jmY" secondAttribute="trailing" constant="8" id="xL8-EO-Wty"/>
                         </constraints>
-                        <variation key="default">
-                            <mask key="constraints">
-                                <exclude reference="8hi-Jv-uvY"/>
-                            </mask>
-                        </variation>
                     </view>
                 </subviews>
                 <animations/>
@@ -126,17 +113,17 @@
             <animations/>
             <connections>
                 <outlet property="authorLabel" destination="cCb-bl-Gch" id="NuK-I1-wbT"/>
+                <outlet property="didPostImageView" destination="Rmm-b4-QWo" id="z9A-Dy-aze"/>
                 <outlet property="innerContentContainer" destination="NAz-LN-5WF" id="VjY-BY-dmR"/>
                 <outlet property="ratingView" destination="YwD-yG-Uhz" id="KaD-Vo-OKT"/>
                 <outlet property="statusLabel" destination="fgg-CL-jmY" id="dih-EY-fAB"/>
                 <outlet property="titleLabel" destination="KzQ-iX-zOU" id="dEl-df-oqk"/>
                 <outlet property="topicImageView" destination="Sas-A0-Gtz" id="jz2-9w-Bnc"/>
-                <outlet property="updatedIndicatorImageView" destination="Rmm-b4-QWo" id="hEe-vJ-Jb7"/>
             </connections>
             <point key="canvasLocation" x="376" y="302.5"/>
         </tableViewCell>
     </objects>
     <resources>
-        <image name="smallDot" width="20" height="20"/>
+        <image name="arrowBack" width="30" height="30"/>
     </resources>
 </document>

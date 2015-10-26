@@ -10,7 +10,12 @@ import UIKit
 
 class LocalViewController: TopicMasterViewController {
 
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
+    
     var aTopicWasUpdated = false
+    var lastUpdated: NSDate?
+    var fetchOffset = 0
+    var moreToFetch = false
     
     
     //MARK: - Lifecycle
@@ -22,7 +27,7 @@ class LocalViewController: TopicMasterViewController {
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.rightBarButtonItem = createButton
         
-        fetchTopics(.CacheThenServer)
+        defaultNavigationItemTitle = "Local"
     }
 
     
@@ -30,131 +35,108 @@ class LocalViewController: TopicMasterViewController {
         
         super.viewDidAppear(animated)
         
-        if aTopicWasUpdated {
-            aTopicWasUpdated = false
-            fetchTopics(.Cache)
+        if lastUpdated != nil {
+            
+            if lastUpdated!.minutesFromNow(absolute: true) > 2 {
+                
+                showActivityFadingOut()
+                fetchTopics()
+            }
+            
+            if aTopicWasUpdated {
+                aTopicWasUpdated = false
+                fetchTopics()
+            }
         }
-        
-//        startAutomaticallyUpdatingFetches()
+        else {
+            
+            showActivityFadingOut()
+            fetchTopics()
+        }
     }
     
     
-    override func viewDidDisappear(animated: Bool) {
+    private func showActivityFadingOut() {
         
-        super.viewDidDisappear(animated)
-//        stopAutomaticallyUpdatingFetches()
+        activityIndicator.startAnimating()
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.tableView.alpha = 0
+        })
+    }
+    
+    
+    private func hideActivityFadingIn() {
+        
+        activityIndicator.stopAnimating()
+        UIView.animateWithDuration(0.3, animations: { () -> Void in
+            self.tableView.alpha = 1
+        })
     }
     
     
     
     //MARK: - Data
     
-    private enum FetchType {
-        case Cache, CacheThenServer, Server
-    }
+    var fetchTime: NSDate?
     
-    
-    private func fetchTopics(type: FetchType) {
-        
-        let localRadius = Double(20)
-        
-        func fetchFromCacheOperationThenServer(fetchingFromServerNext: Bool) -> Operation {
-            
-            let theQuery: PFQuery = {
-                
-                let query = Topic.query()!
-                query.orderByDescending(DataKeys.CreatedAt)
-                return query
-                }()
-
-            
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Cache, query: theQuery, completion: { (fetchResults, error) -> Void in
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    if let topics = fetchResults as? [Topic] {
-                        self.refreshTableView(withTopics: topics, replacingDatasourceData: true)
-                    }
-                    self.hideRefreshControl()
-                    self.displayStatus()
-                    
-                    // fetch from server now that we can be sure that table has been updated
-                    if fetchingFromServerNext {
-                        self.fetchTopics(.Server)
-                    }
-                }
-            })
-            
-            return fetchOperation
-        }
-        
-        
-        func initializeServerFetchOperation(location: CLLocation) -> Operation {
-            
-            let theQuery: PFQuery = {
-                
-                let query = Topic.query()!
-                query.limit = 20
-                query.orderByDescending(DataKeys.CreatedAt)
-                query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
-                
-                return query
-                }()
-            
-            
-            let fetchOperation = FetchLocalTopicsOperation(dataSource: .Server, query: theQuery, completion: { (fetchResults, error) -> Void in
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    if let topics = fetchResults as? [Topic] {
-                        self.refreshTableView(withTopics: topics)
-                    }
-                    self.hideRefreshControl()
-                    self.displayStatus()
-                    
-                    if let error = error {
-                        if self.isVisible() {
-                            self.presentOKAlertWithError(error, messagePreamble: "Error retrieving local topics.", actionHandler: nil)
-                        }
-                    }
-                }
-            })
-            
-            return fetchOperation
-        }
-        
+    private func fetchTopics(offset: Int = 0) {
         
         guard let location = LocationManager.sharedInstance.location else {
             print("call to fetch update but have no location")
             return
         }
         
-        
         displayStatus(.Fetching)
         
-        switch type {
+        let localRadius = Double(20)
+        
+        let theQuery: PFQuery = {
             
-        case .Cache:
+            let query = Topic.query()!
+            query.limit = 20
+            query.skip = offset
+            query.orderByDescending(DataKeys.CreatedAt)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             
-            let cacheOperation = fetchFromCacheOperationThenServer(false)
-            FetchQueue.sharedInstance.addOperation(cacheOperation)
+            return query
+        }()
+        
+        theQuery.findObjectsInBackgroundWithBlock { (fetchResults, error) -> Void in
             
+            guard let topics = fetchResults as? [Topic] else {
+                print("no local topics fetched")
+                return
+            }
             
-        case .CacheThenServer:
-
-            let cacheOperation = fetchFromCacheOperationThenServer(true)
-            FetchQueue.sharedInstance.addOperation(cacheOperation)
+            let replaceExistingData = self.lastUpdated == nil
+            self.lastUpdated = NSDate()
+            self.moreToFetch = topics.count < theQuery.limit
+            self.fetchOffset += theQuery.skip
             
-        case .Server:
+            self.displayStatus(.Default)
             
-            let serverOperation = initializeServerFetchOperation(location)
-            FetchQueue.sharedInstance.addOperation(serverOperation)
+            if replaceExistingData {
+                self.reloadTableView(withTopics: topics)
+            }
+            else {
+                self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
+            }
+            
+            self.hideActivityFadingIn()
+            self.hideRefreshControl()
+            
+            if let error = error {
+                if self.isVisible() {
+                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving local topics.", actionHandler: nil)
+                }
+            }
         }
     }
     
     
     override func update() {
-        fetchTopics(.Server)
+        
+        fetchTopics()
     }
     
     
@@ -195,8 +177,9 @@ class LocalViewController: TopicMasterViewController {
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
-        fetchTopics(.Server)
+        update()
     }
+
     
     // this notification is typically received when the view is not visible, since topics are updated after the user has posted to them in the detailed topic view
     func handleDidUpdateTopicNotification(notification: NSNotification) {

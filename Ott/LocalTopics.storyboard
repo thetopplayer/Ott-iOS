@@ -1,34 +1,54 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nKo-eU-42h">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="nKo-eU-42h">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--Local-->
-        <scene sceneID="bRR-6a-BIN">
+        <scene sceneID="epN-yQ-Uep">
             <objects>
-                <tableViewController title="Local" id="iv5-LA-iIu" customClass="LocalViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="GkX-E3-WzC">
+                <viewController id="5wi-YZ-tXA" customClass="LocalViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="5QM-oE-Ybd"/>
+                        <viewControllerLayoutGuide type="bottom" id="R1g-0Y-Q3h"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="rcH-Fi-EK5">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="Py5-Od-d2Q">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                            <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="idO-rP-tEo">
+                                <rect key="frame" x="0.0" y="290" width="20" height="20"/>
+                                <animations/>
+                            </activityIndicatorView>
+                        </subviews>
                         <animations/>
-                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <connections>
-                            <outlet property="dataSource" destination="iv5-LA-iIu" id="ohc-8G-w30"/>
-                            <outlet property="delegate" destination="iv5-LA-iIu" id="0Zf-kL-cKw"/>
-                        </connections>
-                    </tableView>
-                    <navigationItem key="navigationItem" title="Local" id="Tx2-na-enK">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="HUQ-4E-Xpw">
-                            <connections>
-                                <action selector="presentTopicCreationViewController:" destination="iv5-LA-iIu" id="OEq-EF-eVg"/>
-                            </connections>
-                        </barButtonItem>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="Py5-Od-d2Q" firstAttribute="top" secondItem="rcH-Fi-EK5" secondAttribute="topMargin" id="0hT-89-wlT"/>
+                            <constraint firstItem="idO-rP-tEo" firstAttribute="centerX" secondItem="rcH-Fi-EK5" secondAttribute="centerX" id="95d-5J-e8m"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="Py5-Od-d2Q" secondAttribute="trailing" constant="-20" id="Gyk-Ba-6h5"/>
+                            <constraint firstItem="idO-rP-tEo" firstAttribute="centerY" secondItem="rcH-Fi-EK5" secondAttribute="centerY" id="Kpi-I7-vYK"/>
+                            <constraint firstItem="R1g-0Y-Q3h" firstAttribute="top" secondItem="Py5-Od-d2Q" secondAttribute="bottom" id="bzg-89-uJf"/>
+                            <constraint firstItem="Py5-Od-d2Q" firstAttribute="leading" secondItem="rcH-Fi-EK5" secondAttribute="leadingMargin" constant="-20" id="f3h-f9-wk5"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="Local" id="TSx-Qu-Ngg">
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="MKE-ZA-YZm"/>
                     </navigationItem>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="ZjJ-Bb-3D1" userLabel="First Responder" sceneMemberID="firstResponder"/>
+                    <connections>
+                        <outlet property="activityIndicator" destination="idO-rP-tEo" id="upN-pg-ReK"/>
+                        <outlet property="tableView" destination="Py5-Od-d2Q" id="aIo-eW-G5v"/>
+                    </connections>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="Wfa-Sy-y9f" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="183" y="-676"/>
+            <point key="canvasLocation" x="-38" y="-676"/>
         </scene>
         <!--Local Nav Controller-->
         <scene sceneID="yZ0-Gs-TAb">
@@ -41,7 +61,7 @@
                         <animations/>
                     </navigationBar>
                     <connections>
-                        <segue destination="iv5-LA-iIu" kind="relationship" relationship="rootViewController" id="DlJ-FX-uYN"/>
+                        <segue destination="5wi-YZ-tXA" kind="relationship" relationship="rootViewController" id="ph7-0N-n3z"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="uTZ-vd-c4o" userLabel="First Responder" sceneMemberID="firstResponder"/>

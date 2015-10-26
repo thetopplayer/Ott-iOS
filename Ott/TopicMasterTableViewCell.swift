@@ -17,32 +17,28 @@ class TopicMasterTableViewCell: TableViewCell {
     @IBOutlet var authorLabel: UILabel?
     @IBOutlet var ratingView: LabeledDotView!
     @IBOutlet var topicImageView: ParseImageView?
-    @IBOutlet var updatedIndicatorImageView: UIImageView!
+    @IBOutlet var didPostImageView: UIImageView!
     
 
     override func awakeFromNib() {
         
         super.awakeFromNib()
         
-        separatorInset = UIEdgeInsetsMake(0, 21, 0, 0)
-
+        separatorInset = UIEdgeInsetsMake(0, 25, 0, 0)
         contentView.backgroundColor = UIColor.whiteColor()
         
-        updatedIndicatorImageView.tintColor = UIColor.tint()
+        didPostImageView.tintColor = UIColor.lightGrayColor()
         
         ratingView.textColor = UIColor.whiteColor()
         ratingView.borderColor = UIColor.whiteColor()
         ratingView.borderWidth = 2
         ratingView.font = UIFont.boldSystemFontOfSize(15)
-        ratingView.hidden = true
         
         authorLabel?.textColor = UIColor(white: 0.05, alpha: 1.0)
         
         if let topicImageView = topicImageView {
-            
             topicImageView.contentMode = .ScaleAspectFill
             topicImageView.clipsToBounds = true
-//            topicImageView.addRoundedBorder(withColor: UIColor.whiteColor())
         }
 
         selectionStyle = .None
@@ -53,23 +49,13 @@ class TopicMasterTableViewCell: TableViewCell {
         
         super.prepareForReuse()
         topicImageView?.clear()
+        didPostImageView.hidden = true
     }
-    
-    
-    static var didRespondImage: UIImage = {
-        return UIImage(named: "arrowBack")!
-        }()
-    
-    
-    static var didNotRespondImage: UIImage = {
-        return UIImage(named: "smallDot")!
-        }()
     
     
     var displayedTopic: Topic? {
         
         didSet {
-            
             updateContents()
         }
     }
@@ -82,43 +68,36 @@ class TopicMasterTableViewCell: TableViewCell {
     
     private func updateContents() {
         
-        if let topic = displayedTopic {
-            
-            titleLabel.attributedText = attributedTitle()
-            authorLabel?.text = (topic.authorName)?.uppercaseString
-            
-            if let lastPostDate = topic.lastPostDate {
-                if let lastViewedDate = topic.currentUserViewedAt {
-                    updatedIndicatorImageView.hidden = lastPostDate.earlierDate(lastViewedDate) == lastPostDate
-                }
-                else {
-                    updatedIndicatorImageView.hidden = false
-                }
-            }
-            else {
-                updatedIndicatorImageView.hidden = false
-            }
-            
-            if topicImageView != nil {
-                statusLabel.attributedText = timeAndLocationAttributedString(topic, separator: "\n")
-            }
-            else {
-                statusLabel.attributedText = timeAndLocationAttributedString(topic)
-            }
+        guard let topic = displayedTopic else {
+            return
+        }
+        
+        titleLabel.attributedText = attributedTitle()
+        authorLabel?.text = (topic.authorName)?.uppercaseString
+        
+        let rating = self.topicRating()
+        self.ratingView?.fillColor = rating.color()
+        self.ratingView?.text = rating.text()
 
-            if topic.currentUserDidPostTo {
-                
-                let rating = self.topicRating()
-                self.ratingView?.fillColor = rating.color()
-                self.ratingView?.text = rating.text()
-                self.ratingView?.hidden = false
-            }
-            else {
-                self.ratingView?.hidden = true
-            }
+        if topicImageView != nil {
+            statusLabel.attributedText = timeAndLocationAttributedString(topic, separator: "\n")
+        }
+        else {
+            statusLabel.attributedText = timeAndLocationAttributedString(topic)
+        }
+        
+        let imageFile = topic.imageFile
+        topicImageView?.displayImageInFile(imageFile)
+        
+        if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
             
-            let imageFile = topic.imageFile
-            topicImageView?.displayImageInFile(imageFile)
+            didPostImageView.hidden = !currentUserDidPostToTopic
+        }
+        else {
+            currentUser().didPostToTopic(topic, completion: { (didPost) -> Void in
+                topic.currentUserDidPostTo = didPost
+                self.didPostImageView.hidden = !didPost
+            })
         }
     }
     

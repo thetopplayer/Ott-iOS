@@ -10,6 +10,7 @@ import UIKit
 
 class FollowedTopicsViewController: TopicMasterViewController {
 
+    @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     //MARK: - Lifecycle
     
@@ -29,6 +30,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
             title = "Following \(number) Users"
         }
         navigationItem.title = title
+        defaultNavigationItemTitle = title
 
         fetchTopics(.CachedThenUpdate)
     }
@@ -54,13 +56,14 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchedObjects as? [Topic] {
-                        self.refreshTableView(withTopics: topics)
+                        self.reloadTableView(withTopics: topics)
                     }
                     
-                    self.hideRefreshControl()
-                    self.displayStatus()
-                    
                     if let error = error {
+                        
+                        self.hideRefreshControl()
+                        self.displayStatus(.Default)
+                        
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
                     }
                     else {
@@ -85,11 +88,11 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 dispatch_async(dispatch_get_main_queue()) {
                     
                     if let topics = fetchedObjects as? [Topic] {
-                        self.refreshTableView(withTopics: topics)
+                        self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
                     }
                     
                     self.hideRefreshControl()
-                    self.displayStatus()
+                    self.displayStatus(.Default)
                     
                     if let error = error {
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving followee topics from server", actionHandler: nil)
