@@ -26,7 +26,7 @@ class TopicAuthorTableViewCell: TableViewCell {
             return gr
             }()
 
-        authorImageView.addRoundedBorder()
+        authorImageView.addRoundedBorder(withColor: UIColor.clearColor())
         authorImageView.addGestureRecognizer(tapGR)
         authorImageView.userInteractionEnabled = true
     }
@@ -62,7 +62,6 @@ class TopicAuthorTableViewCell: TableViewCell {
         
         let nameColor = UIColor.blackColor()
         let handleColor = UIColor.brownColor()
-        let bioColor = UIColor.darkGrayColor()
         
         let nameFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
         let nameAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : nameColor, NSFontAttributeName: nameFont]
@@ -80,6 +79,7 @@ class TopicAuthorTableViewCell: TableViewCell {
         
         if let bio = topic.authorBio {
             
+            let bioColor = UIColor.darkGrayColor()
             let bioFont = UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote)
             let bioAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : bioColor, NSFontAttributeName: bioFont]
             

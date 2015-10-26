@@ -18,7 +18,7 @@
                         <rect key="frame" x="-1" y="0.0" width="602" height="68"/>
                         <subviews>
                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="avatar" translatesAutoresizingMaskIntoConstraints="NO" id="yu5-IZ-XAd" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
-                                <rect key="frame" x="16" y="8" width="52" height="52"/>
+                                <rect key="frame" x="8" y="8" width="52" height="52"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="width" constant="52" id="BWg-M5-RZF"/>
@@ -26,7 +26,7 @@
                                 </constraints>
                             </imageView>
                             <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="User Name" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="IZQ-U4-WaG">
-                                <rect key="frame" x="82" y="7" width="504" height="20"/>
+                                <rect key="frame" x="74" y="7" width="512" height="20"/>
                                 <animations/>
                                 <constraints>
                                     <constraint firstAttribute="height" constant="20" id="9YA-fW-X9V"/>
@@ -48,7 +48,7 @@
                             <constraint firstAttribute="bottom" relation="greaterThanOrEqual" secondItem="IZQ-U4-WaG" secondAttribute="bottom" constant="7" id="Xh1-U1-XXK"/>
                             <constraint firstItem="yu5-IZ-XAd" firstAttribute="centerY" secondItem="wVt-mt-xss" secondAttribute="centerY" id="g7K-Hi-7Is"/>
                             <constraint firstItem="IZQ-U4-WaG" firstAttribute="top" secondItem="wVt-mt-xss" secondAttribute="top" constant="7" id="gvO-3P-q0V"/>
-                            <constraint firstItem="yu5-IZ-XAd" firstAttribute="leading" secondItem="wVt-mt-xss" secondAttribute="leading" constant="16" id="hr8-pQ-P3P"/>
+                            <constraint firstItem="yu5-IZ-XAd" firstAttribute="leading" secondItem="wVt-mt-xss" secondAttribute="leading" constant="8" id="hr8-pQ-P3P"/>
                             <constraint firstAttribute="trailing" secondItem="IZQ-U4-WaG" secondAttribute="trailing" constant="16" id="nmb-ha-PrL"/>
                             <constraint firstAttribute="height" constant="68" id="wn0-p5-XFJ"/>
                         </constraints>

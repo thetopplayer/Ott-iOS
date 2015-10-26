@@ -10,12 +10,11 @@ import UIKit
 
 class PostDetailTableViewCell: TableViewCell {
 
-    @IBOutlet var topBar: UIView!
-    @IBOutlet var topBarLabel: UILabel!
     @IBOutlet var statusBar: UIView!
     @IBOutlet var statusLabel: UILabel!
     @IBOutlet var ratingLabel: UILabel!
-    @IBOutlet var commentLabel: UILabel!
+    @IBOutlet var label: UILabel!
+    @IBOutlet var authorImageView: ParseImageView!
 
     
     
@@ -34,12 +33,20 @@ class PostDetailTableViewCell: TableViewCell {
         innerContentContainer?.addBorder()
         contentView.backgroundColor = UIColor.background()
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
-
-        topBar.backgroundColor = UIColor.whiteColor()
-        topBar.addBorder(withColor: UIColor(white: 0.8, alpha: 1.0))
         statusBar.backgroundColor = UIColor.clearColor()
         
         selectionStyle = .None
+        
+        let tapGR: UIGestureRecognizer = {
+            
+            let gr = UITapGestureRecognizer()
+            gr.addTarget(self, action: "displayAuthorDetail:")
+            return gr
+        }()
+        
+        authorImageView.addRoundedBorder(withColor: UIColor.clearColor())
+        authorImageView.addGestureRecognizer(tapGR)
+        authorImageView.userInteractionEnabled = true
     }
     
     
@@ -47,28 +54,57 @@ class PostDetailTableViewCell: TableViewCell {
         
         super.prepareForReuse()
         updateContents()
+        authorImageView.clear()
     }
     
     
     private func updateContents() {
         
-        if let post = displayedPost {
-            
-            topBarLabel.attributedText = attributedDescription(post)
-            
-            ratingLabel.text = post.rating?.text()
-            ratingLabel.textColor = post.rating?.color()
-            let comment = post.comment != nil ? post.comment! : ""
-            commentLabel.text = comment
-            
-            statusLabel.attributedText = timeAndLocationAttributedString(post)
+        guard let post = displayedPost else {
+            return
         }
-        else {
+        
+        ratingLabel.text = post.rating!.text()
+        ratingLabel.textColor = post.rating!.color()
+
+        label.attributedText = attributedContent(post)
+        
+        statusLabel.attributedText = timeAndLocationAttributedString(post)
+        authorImageView.displayImageInFile(post.authorAvatarFile)
+    }
+    
+    
+    
+    private func attributedContent(post: Post) -> NSAttributedString {
+        
+        let nameColor = UIColor.blackColor()
+        let handleColor = UIColor.brownColor()
+        
+        let nameFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        let nameAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : nameColor, NSFontAttributeName: nameFont]
+        
+        let handleFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
+        let handleAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : handleColor, NSFontAttributeName: handleFont]
+        
+        let nameString = post.authorName! + "  "
+        let fullAttrString = NSMutableAttributedString(string: nameString, attributes: nameAttributes)
+        
+        let handleString = "" + post.authorHandle! + " \n"
+        let handleAttrString = NSAttributedString(string: handleString, attributes: handleAttributes)
+        
+        fullAttrString.appendAttributedString(handleAttrString)
+        
+        if let comment = post.comment {
             
-            topBarLabel.text = ""
-            ratingLabel.text = ""
-            statusLabel.text = ""
+            let commentColor = UIColor.darkGrayColor()
+            let commentFont = UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote)
+            let commentAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : commentColor, NSFontAttributeName: commentFont]
+            
+            let commentAttrString = NSAttributedString(string: comment, attributes: commentAttributes)
+            fullAttrString.appendAttributedString(commentAttrString)
         }
+        
+        return fullAttrString
     }
     
     
