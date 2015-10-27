@@ -38,7 +38,6 @@ class PostDetailTableViewCell: TableViewCell {
         selectionStyle = .None
         
         let tapGR: UIGestureRecognizer = {
-            
             let gr = UITapGestureRecognizer()
             gr.addTarget(self, action: "displayAuthorDetail:")
             return gr
@@ -72,7 +71,6 @@ class PostDetailTableViewCell: TableViewCell {
         statusLabel.attributedText = timeAndLocationAttributedString(post)
         authorImageView.displayImageInFile(post.authorAvatarFile)
     }
-    
     
     
     private func attributedContent(post: Post) -> NSAttributedString {
@@ -126,4 +124,26 @@ class PostDetailTableViewCell: TableViewCell {
         return s1
     }
 
+    
+    private func presentAuthorInfo() {
+        
+        guard let post = displayedPost else {
+            return
+        }
+        
+        if let viewController = topmostViewController() {
+            viewController.presentUserDetailViewController(withPost: post)
+        }
+    }
+    
+    
+    @IBAction func displayAuthorDetail(sender: UIGestureRecognizer) {
+        
+        if sender.state != .Ended {
+            return
+        }
+        
+        presentAuthorInfo()
+    }
+    
 }

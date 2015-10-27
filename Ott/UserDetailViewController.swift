@@ -27,11 +27,16 @@ class UserDetailViewController: TableViewController {
         tabBarController?.tabBar.hidden = true
 
         // if data has not been set, look to my navigation controller
-        if user == nil && topic == nil {
+        if user == nil && topic == nil && post == nil {
             
-            user = (navigationController as? NavigationController)?.user
-            if let topic = (navigationController as? NavigationController)?.topic {
-                fetchUserFromTopic(topic)
+            if let theUser = (navigationController as? NavigationController)?.user {
+                self.user = theUser
+            }
+            if let theTopic = (navigationController as? NavigationController)?.topic {
+                fetchUserFromTopic(theTopic)
+            }
+            else if let thePost = (navigationController as? NavigationController)?.post {
+                fetchUserFromPost(thePost)
             }
         }
         
@@ -104,9 +109,18 @@ class UserDetailViewController: TableViewController {
     func fetchUserFromTopic(topic: Topic) {
         
         voidData()
-        
         self.topic = topic
         navigationItem.title = topic.authorName
+        fetchAndPresentUserInfo()
+    }
+    
+    
+    private var post: Post?
+    func fetchUserFromPost(post: Post) {
+        
+        voidData()
+        self.post = post
+        navigationItem.title = post.authorName
         fetchAndPresentUserInfo()
     }
     
@@ -116,7 +130,6 @@ class UserDetailViewController: TableViewController {
         didSet {
             
             dispatch_async(dispatch_get_main_queue()) {
-
                 self.displayedData = .AuthoredTopics
                 self.updateUserSection()
             }
@@ -134,18 +147,19 @@ class UserDetailViewController: TableViewController {
             return topic.authorHandle == currentUser().handle!
         }
         
+        if let post = post {
+            return post.authorHandle == currentUser().handle!
+        }
+        
         return false
     }
     
     
     private var fetchingUserInformation = false
+    
     private func fetchAndPresentUserInfo() {
         
         if fetchingUserInformation {
-            return
-        }
-        
-        guard let topic = topic else {
             return
         }
         
@@ -169,7 +183,20 @@ class UserDetailViewController: TableViewController {
         }
         else {
             
-            let fetchOperation = FetchUserByHandleOperation(handle: topic.authorHandle!, caseInsensitive: false) { (fetchResults, error) in
+            let authorHandle: String = {
+                
+                if let topic = topic {
+                    return topic.authorHandle!
+                }
+                else if let post = post {
+                    return post.authorHandle!
+                }
+                
+                assert(false)
+                return ""
+            }()
+            
+            let fetchOperation = FetchUserByHandleOperation(handle: authorHandle, caseInsensitive: false) { (fetchResults, error) in
                 
                 if let user = fetchResults?.first as? User {
                     self.user = user
@@ -177,7 +204,6 @@ class UserDetailViewController: TableViewController {
                 else if error != nil {
                     self.presentOKAlertWithError(error!)
                 }
-                
                 self.fetchingUserInformation = false
             }
             
@@ -298,7 +324,7 @@ class UserDetailViewController: TableViewController {
             }
         }
         
-        let fetchTopicsOperation: FetchTopicsOperation = {
+        let fetchTopicsOperation: FetchOperation = {
             
             if user == currentUser() {
                 
@@ -314,7 +340,7 @@ class UserDetailViewController: TableViewController {
                     return query
                     }()
                 
-                return FetchTopicsOperation(dataSource: .Server, query: theQuery, completion: handleFetchResults)
+                return FetchOperation(dataSource: .Server, query: theQuery, completion: handleFetchResults)
             }
         }()
         
@@ -602,7 +628,7 @@ class UserDetailViewController: TableViewController {
         switch section {
             
         case 0:
-            numberOfRows = topic == nil && user == nil ? 0 : 2
+            numberOfRows = topic == nil && user == nil && post == nil ? 0 : 2
             
         case 1:
             numberOfRows = numberOfDataRows()
@@ -817,18 +843,25 @@ class UserDetailViewController: TableViewController {
     }
     
 
+    var displayOptionsTableViewCell: DataDisplayOptionsTableViewCell?
+    
+    
     override func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
         func initializeUserDetailCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(userDetailCellViewIdentifer) as! UserDetailTableViewCell
             
-            if user == nil {
-                cell.fetchUserFromTopic(topic!)
-            }
-            else {
+            if user != nil {
                 cell.displayedUser = user
             }
+            else if let topic = topic {
+                cell.fetchUserFromTopic(topic)
+            }
+            else if let post = post {
+                cell.fetchUserFromPost(post)
+            }
+            
             return cell
         }
         
@@ -846,6 +879,10 @@ class UserDetailViewController: TableViewController {
         }
         
         func initializeDisplayOptionsCell() -> UITableViewCell {
+            
+            guard displayOptionsTableViewCell == nil else {
+                return displayOptionsTableViewCell!
+            }
             
             let cell = tableView.dequeueReusableCellWithIdentifier(displayOptionsCellViewIdentifier) as! DataDisplayOptionsTableViewCell
             
@@ -867,10 +904,11 @@ class UserDetailViewController: TableViewController {
                 cell.segmentedControl.selectedSegmentIndex = 0                
             }
             
+            displayOptionsTableViewCell = cell
             return cell
         }
         
-        func initializetopicCell(topic: Topic) -> UITableViewCell {
+        func initializeTopicCell(topic: Topic) -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(topicCellViewIdentifier) as! TopicMasterTableViewCell
             cell.displayedTopic = topic
@@ -922,7 +960,7 @@ class UserDetailViewController: TableViewController {
         case .TopicNoImage:
             
             let topic = authoredTopics[indexPath.row]
-            cell = initializetopicCell(topic)
+            cell = initializeTopicCell(topic)
             
         case .TopicWithImage:
             
@@ -993,11 +1031,51 @@ class UserDetailViewController: TableViewController {
             tableView.separatorColor = UIColor.separator()
         }
         
-        tableView.beginUpdates()
-        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
-        tableView.endUpdates()
+        if tableView.numberOfSections == 0 {
+            tableView.reloadData()
+        }
+        else {
+            tableView.beginUpdates()
+            tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
+            tableView.endUpdates()
+        }
         
         refreshControl?.endRefreshing()
+    }
+    
+    
+    override func tableView(tableView: UITableView, canEditRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        
+        return displayedData == .Following
+    }
+    
+
+    override func tableView(tableView: UITableView, willBeginEditingRowAtIndexPath indexPath: NSIndexPath) {
+        
+        displayOptionsTableViewCell?.selectionEnabled = false
+    }
+    
+    
+    override func tableView(tableView: UITableView, didEndEditingRowAtIndexPath indexPath: NSIndexPath) {
+        displayOptionsTableViewCell?.selectionEnabled = true
+    }
+    
+    
+    override func tableView(tableView: UITableView, commitEditingStyle editingStyle: UITableViewCellEditingStyle, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        guard editingStyle == .Delete else {
+            return
+        }
+        
+        let follow = followingOthersRelationships[indexPath.row]
+        follow.deleteInBackground()
+        self.followingOthersRelationships.removeAtIndex(indexPath.row)
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            self.tableView.beginUpdates()
+            self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
+            self.tableView.endUpdates()
+        }
     }
     
     

@@ -137,9 +137,14 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     func update() {
         //stub
     }
+    
+    
+    func showRefreshControl() {
+        refreshControl?.beginRefreshing()
+    }
+    
    
     func hideRefreshControl() {
-        
         refreshControl?.endRefreshing()
     }
     

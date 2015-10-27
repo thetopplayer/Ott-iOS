@@ -17,7 +17,7 @@ Fetching from cache returns the cached topics
 Fetching from server fetches the topics of the cached followees
 */
 
-class FetchFolloweeTopicsOperation: FetchTopicsOperation {
+class FetchFolloweeTopicsOperation: FetchOperation {
     
     override class func pinName() -> String? {
         return "followeeTopics"

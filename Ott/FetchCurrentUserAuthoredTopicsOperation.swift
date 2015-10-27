@@ -9,7 +9,7 @@
 import Foundation
 
 
-class FetchCurrentUserAuthoredTopicsOperation: FetchTopicsOperation {
+class FetchCurrentUserAuthoredTopicsOperation: FetchOperation {
     
     override class func pinName() -> String? {
         return "authoredTopics"

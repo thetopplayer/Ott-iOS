@@ -187,6 +187,12 @@ extension UIViewController {
         else if let topic = object as? Topic {
             detailViewController.topic = topic
         }
+        else if let post = object as? Post {
+            detailViewController.post = post
+        }
+        else {
+            assert(false)
+        }
         
         presentViewController(detailViewController, animated: true, completion: nil)
     }
@@ -201,6 +207,12 @@ extension UIViewController {
     func presentUserDetailViewController(withTopic topic: Topic?) {
         
         presentUserDetailViewController(withObject: topic)
+    }
+    
+    
+    func presentUserDetailViewController(withPost post: Post?) {
+        
+        presentUserDetailViewController(withObject: post)
     }
     
     

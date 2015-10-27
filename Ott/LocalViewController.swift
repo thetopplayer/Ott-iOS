@@ -52,7 +52,7 @@ class LocalViewController: TopicMasterViewController {
         }
         else {
             
-            showActivityFadingOut()
+            showRefreshControl()
             fetchTopics()
         }
     }

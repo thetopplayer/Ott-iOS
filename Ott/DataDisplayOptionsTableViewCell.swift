@@ -24,6 +24,18 @@ class DataDisplayOptionsTableViewCell: TableViewCell {
     
     //MARK: - Selection
     
+    var selectionEnabled: Bool {
+        
+        set {
+            segmentedControl.enabled = newValue
+        }
+        
+        get {
+            return segmentedControl.enabled
+        }
+    }
+    
+    
     static let selectionDidChangeNotification = "dataDisplayOptionsDidChangeNotification"
     
     enum Selection: Int {

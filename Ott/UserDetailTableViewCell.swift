@@ -54,9 +54,17 @@ class UserDetailTableViewCell: TableViewCell {
     func fetchUserFromTopic(topic: Topic) {
         
         self.topic = topic
-        
         displayingCurrentUser = topic.authorHandle == currentUser().handle!
         updateDisplayForTopic()
+    }
+    
+    
+    private var post: Post?
+    func fetchUserFromPost(post: Post) {
+        
+        self.post = post
+        displayingCurrentUser = post.authorHandle == currentUser().handle!
+        updateDisplayForPost()
     }
     
     
@@ -108,6 +116,19 @@ class UserDetailTableViewCell: TableViewCell {
         handleTextLabel.text = topic.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
         avatarImageView.displayImageInFile(topic.imageFile, defaultImage: defaultAvatarImage)
+    }
+    
+    
+    private func updateDisplayForPost() {
+        
+        guard let post = post else {
+            return
+        }
+        
+        settingsButton.hidden = displayingCurrentUser == false
+        handleTextLabel.text = post.authorHandle
+        bioTextLabel.attributedText = attributedTextForBio(post.authorBio)
+        avatarImageView.displayImageInFile(post.imageFile, defaultImage: defaultAvatarImage)
     }
     
     
