@@ -42,6 +42,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         case Unknown, Topic, User
     }
     
+
     var objectType: ObjectType {
         
         if let object = objectToExport {

@@ -12,6 +12,7 @@ import AVFoundation
 
 class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate {
 
+    
     //MARK: - Lifecycle
     
     override func viewDidAppear(animated: Bool) {

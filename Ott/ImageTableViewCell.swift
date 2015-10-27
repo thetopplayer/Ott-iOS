@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ImageTableViewCell: TableViewCell {
+class ImageTableViewCell: TableViewCell, JTSImageViewControllerOptionsDelegate {
     
     @IBOutlet var topicImageView: ParseImageView!
     
@@ -60,12 +60,25 @@ class ImageTableViewCell: TableViewCell {
         
         let imageInfo = JTSImageInfo()
         imageInfo.image = imageView.image
-        imageInfo.referenceRect = self.frame
-        imageInfo.referenceView = topmostViewController()?.view
+        imageInfo.referenceRect = imageView.frame
+        imageInfo.referenceView = self
         
-        let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.Blurred)
+        let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.None)
+        
+//        imageViewer.optionsDelegate = self
         
         imageViewer.showFromViewController(topmostViewController(), transition: JTSImageViewControllerTransition.FromOriginalPosition)
     }
     
+    
+    //MARK: - JTSImageViewControllerOptionsDelegate
+    
+//    func alphaForBackgroundDimmingOverlayInImageViewer(viewer: JTSImageViewController) -> CGFloat {
+//        return CGFloat(0.5)
+//    }
+//    
+//    
+//    func backgroundBlurRadiusForImageViewer(viewer: JTSImageViewController) -> CGFloat {
+//        return CGFloat(4.0)
+//    }
 }

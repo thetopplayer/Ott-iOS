@@ -16,14 +16,23 @@ struct Rating {
     
     var value: Int?
     
+    // float is between 0 and 1.0
     init(withFloat floatValue: Float?) {
         
-        if let fv = floatValue {
-            
-            let tempValue = Int(1 + floor(fv * 9))
-            if Rating.withinRange(tempValue) {
-                value = tempValue
-            }
+        guard let floatValue = floatValue else {
+            value = nil
+            return
+        }
+        
+        if floatValue == 0.0 {
+            value = nil
+        }
+        else if floatValue > 1.0 {
+            value = nil
+            assert(false)
+        }
+        else {
+            value = Int(1 + floor(floatValue * 9))
         }
     }
     
@@ -32,6 +41,9 @@ struct Rating {
         
         if Rating.withinRange(value) {
             self.value = value
+        }
+        else {
+            self.value = nil
         }
     }
     
@@ -62,15 +74,15 @@ struct Rating {
             }
             return color
         }
-        return UIColor.darkGrayColor()
+        return UIColor.lightGrayColor()
     }
     
     
     func text() -> String {
-        
-        if let r = value {
-            return "\(r)"
+       
+        if let value = value {
+            return "\(value)"
         }
-        return "_"
+        return "-"
     }
 }

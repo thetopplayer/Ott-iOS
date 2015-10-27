@@ -28,6 +28,8 @@ class LocalViewController: TopicMasterViewController {
         navigationItem.rightBarButtonItem = createButton
         
         defaultNavigationItemTitle = "Local"
+        // change to backgroundColor after data is first loaded
+        tableView.backgroundColor = UIColor.whiteColor()
     }
 
     
@@ -68,6 +70,8 @@ class LocalViewController: TopicMasterViewController {
     private func hideActivityFadingIn() {
         
         activityIndicator.stopAnimating()
+        tableView.backgroundColor = UIColor.background()  // should have started with white
+
         UIView.animateWithDuration(0.3, animations: { () -> Void in
             self.tableView.alpha = 1
         })

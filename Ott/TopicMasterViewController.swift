@@ -165,9 +165,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     private func setupTableView() {
         
         tableView.delegate = self
-        tableView.dataSource = self
-        
-        tableView.backgroundColor = UIColor.background()
+        tableView.dataSource = self        
         tableView.showsHorizontalScrollIndicator = false
 
         refreshControl = {
