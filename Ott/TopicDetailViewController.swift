@@ -554,13 +554,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private let textCellViewNibName = "TopicTextTableViewCell"
     private let textCellViewIdentifier = "textCell"
-    private let textCellViewHeight = CGFloat(78)
+    private let textCellViewHeight = CGFloat(133)
     private let imageCellViewNibName = "TopicDetailImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
     private let imageCellViewHeight = CGFloat(275)
-    private let authorCellViewNibName = "TopicAuthorTableViewCell"
-    private let authorCellViewIdentifer = "authorCell"
-    private let authorCellViewHeight = CGFloat(56)
     
     private let topicStatsCellViewNibName = "TopicStatisticsTableViewCell"
     private let topicStatsCellViewIdentifer = "topicStats"
@@ -570,8 +567,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let postCellIdentifier = "postCell"
     private let postCellHeight = CGFloat(125)
     
-    private let footerHeight = CGFloat(0.1)
-    
     private func setupTableView() {
         
         tableView.delegate = self
@@ -579,7 +574,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.rowHeight = UITableViewAutomaticDimension
         
         tableView.backgroundColor = UIColor.background()
-        tableView.separatorStyle = .None
+//        tableView.separatorStyle = .None
         adjustTableViewInsets(withBottom: postInputView.frame.size.height)
         
         let nib = UINib(nibName: textCellViewNibName, bundle: nil)
@@ -587,9 +582,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         let nib1 = UINib(nibName: imageCellViewNibName, bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: imageCellViewIdentifer)
-        
-        let nib2 = UINib(nibName: authorCellViewNibName, bundle: nil)
-        tableView.registerNib(nib2, forCellReuseIdentifier: authorCellViewIdentifer)
         
         let nib3 = UINib(nibName: topicStatsCellViewNibName, bundle: nil)
         tableView.registerNib(nib3, forCellReuseIdentifier: topicStatsCellViewIdentifer)
@@ -686,13 +678,37 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         
-        return 0.01
+        if section == 0 {
+            return 0.01
+        }
+        
+        return 40
+    }
+    
+    
+    func tableView(tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
+        
+        var title: String? = nil
+        
+        switch section {
+            
+        case 1:
+            title = "stats"
+            
+        case 2:
+            title = "recent posts"
+            
+        default:
+            ()
+        }
+        
+        return title
     }
     
     
     func tableView(tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
         
-        return footerHeight
+        return 0.01
     }
     
     
@@ -705,7 +721,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             switch section {
                 
             case TableViewSections.Topic.rawValue:
-                number = topic.imageFile != nil ? 3 : 2
+                number = topic.imageFile != nil ? 2 : 1
                 
             case TableViewSections.Statistics.rawValue:
                 number = 1
@@ -725,7 +741,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private enum TableCellType {
-        case TopicText, TopicImage, TopicAuthor, TopicStats, Post
+        case TopicText, TopicImage, TopicStats, Post
     }
     
     
@@ -749,15 +765,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 }
                 
             case 1:
-                if displayingImage {
                     cellType = .TopicText
-                }
-                else {
-                    cellType = .TopicAuthor
-                }
-                
-            case 2:
-                cellType = .TopicAuthor
                 
             default:
                 assert(false)
@@ -789,9 +797,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         case .TopicImage:
             height = imageCellViewHeight
             
-        case .TopicAuthor:
-            height = authorCellViewHeight
-            
         case .TopicStats:
             height = topicStatsCellViewHeight
             
@@ -816,13 +821,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         func initializeImageCell() -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
-            cell.displayedTopic = topic
-            return cell
-        }
-        
-        func initializeAuthorCell() -> UITableViewCell {
-            
-            let cell = tableView.dequeueReusableCellWithIdentifier(authorCellViewIdentifer) as! TopicAuthorTableViewCell
             cell.displayedTopic = topic
             return cell
         }
@@ -852,9 +850,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .TopicImage:
             cell = initializeImageCell()
-            
-        case .TopicAuthor:
-            cell = initializeAuthorCell()
             
         case .TopicStats:
             cell = initializeStatsCell()

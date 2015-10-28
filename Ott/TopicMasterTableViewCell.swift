@@ -14,7 +14,7 @@ class TopicMasterTableViewCell: TableViewCell {
     
     @IBOutlet var titleLabel: UILabel!
     @IBOutlet var statusLabel: UILabel!
-    @IBOutlet var authorLabel: UILabel?
+    @IBOutlet var authorLabel: UILabel!
     @IBOutlet var ratingView: LabeledDotView!
     @IBOutlet var topicImageView: ParseImageView?
     @IBOutlet var didPostImageView: UIImageView!

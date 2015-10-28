@@ -99,8 +99,11 @@ class LocalViewController: TopicMasterViewController {
             query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             
-            if let lastUpdated = lastUpdated {
-                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
+            if offset == 0 {
+                
+                if let lastUpdated = lastUpdated {
+                    query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
+                }
             }
             
             return query

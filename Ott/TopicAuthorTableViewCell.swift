@@ -17,7 +17,7 @@ class TopicAuthorTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        innerContentContainer?.addBorder()
+//        innerContentContainer?.addBorder()
         
         let tapGR: UIGestureRecognizer = {
             

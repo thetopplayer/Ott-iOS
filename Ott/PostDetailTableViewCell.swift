@@ -10,8 +10,6 @@ import UIKit
 
 class PostDetailTableViewCell: TableViewCell {
 
-    @IBOutlet var statusBar: UIView!
-    @IBOutlet var statusLabel: UILabel!
     @IBOutlet var ratingLabel: UILabel!
     @IBOutlet var label: UILabel!
     @IBOutlet var authorImageView: ParseImageView!
@@ -30,10 +28,8 @@ class PostDetailTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
-        innerContentContainer?.addBorder()
-        contentView.backgroundColor = UIColor.background()
+        separatorInset = UIEdgeInsetsMake(0, 8, 0, 0)
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
-        statusBar.backgroundColor = UIColor.clearColor()
         
         selectionStyle = .None
         
@@ -67,18 +63,16 @@ class PostDetailTableViewCell: TableViewCell {
         ratingLabel.textColor = post.rating!.color()
 
         label.attributedText = attributedContent(post)
-        
-        statusLabel.attributedText = timeAndLocationAttributedString(post)
         authorImageView.displayImageInFile(post.authorAvatarFile)
     }
     
     
     private func attributedContent(post: Post) -> NSAttributedString {
         
-        let nameColor = UIColor.blackColor()
+        let nameColor = UIColor(white: 0.05, alpha: 1.0)
         let handleColor = UIColor.brownColor()
         
-        let nameFont = UIFont.preferredFontForTextStyle(UIFontTextStyleHeadline)
+        let nameFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
         let nameAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : nameColor, NSFontAttributeName: nameFont]
         
         let handleFont = UIFont.preferredFontForTextStyle(UIFontTextStyleSubheadline)
@@ -92,13 +86,17 @@ class PostDetailTableViewCell: TableViewCell {
         
         fullAttrString.appendAttributedString(handleAttrString)
         
+        fullAttrString.appendAttributedString(timeAndLocationAttributedString(post))
+        
         if let comment = post.comment {
             
             let commentColor = UIColor.darkGrayColor()
-            let commentFont = UIFont.preferredFontForTextStyle(UIFontTextStyleFootnote)
+            let commentFont = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
             let commentAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : commentColor, NSFontAttributeName: commentFont]
             
-            let commentAttrString = NSAttributedString(string: comment, attributes: commentAttributes)
+            let paddedComment = "\n\n" + comment
+            
+            let commentAttrString = NSAttributedString(string: paddedComment, attributes: commentAttributes)
             fullAttrString.appendAttributedString(commentAttrString)
         }
         
@@ -106,7 +104,7 @@ class PostDetailTableViewCell: TableViewCell {
     }
     
     
-    private func attributedDescription(topic: Post) -> NSAttributedString {
+    private func attributedDescription(post: Post) -> NSAttributedString {
         
         let font = UIFont.systemFontOfSize(12)
         let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: font]
@@ -117,7 +115,7 @@ class PostDetailTableViewCell: TableViewCell {
         dateFormatter.dateStyle = .MediumStyle
         
         let s1 = NSMutableAttributedString(string: "by ", attributes: normalAttributes)
-        let authorName = topic.authorName != nil ? topic.authorName! : "Anonymous"
+        let authorName = post.authorName != nil ? post.authorName! : "Anonymous"
         let s2 = NSAttributedString(string: authorName, attributes: boldAttributes)
         
         s1.appendAttributedString(s2)

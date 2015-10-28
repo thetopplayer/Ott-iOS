@@ -23,8 +23,12 @@ class TopicStatisticsTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
-        contentView.backgroundColor = UIColor.background()
-        innerContentContainer?.backgroundColor = UIColor.background()
+//        contentView.backgroundColor = UIColor.background()
+//        innerContentContainer?.backgroundColor = UIColor.background()
+        contentView.backgroundColor = UIColor.whiteColor()
+//        contentView.addBorder()
+
+        innerContentContainer?.backgroundColor = UIColor.whiteColor()
         countTitleLabel.text = "Posts"
         
         countLabel.text = ""
