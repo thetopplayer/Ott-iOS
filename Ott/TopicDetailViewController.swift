@@ -130,6 +130,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
         
+        tableView.reloadData()
+        
         navigationItem.title = topic.name!
         displayType = .List
         initializeMapViewForTopic()
@@ -555,9 +557,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private let textCellViewNibName = "TopicTextTableViewCell"
     private let textCellViewIdentifier = "textCell"
     private let textCellViewHeight = CGFloat(133)
-    private let imageCellViewNibName = "TopicDetailImageTableViewCell"
+    private let imageCellViewNibName = "TopicImageTableViewCell"
     private let imageCellViewIdentifer = "imageCell"
-    private let imageCellViewHeight = CGFloat(275)
+    private let imageCellViewHeight = CGFloat(400)
     
     private let topicStatsCellViewNibName = "TopicStatisticsTableViewCell"
     private let topicStatsCellViewIdentifer = "topicStats"
@@ -574,7 +576,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.rowHeight = UITableViewAutomaticDimension
         
         tableView.backgroundColor = UIColor.background()
-//        tableView.separatorStyle = .None
         adjustTableViewInsets(withBottom: postInputView.frame.size.height)
         
         let nib = UINib(nibName: textCellViewNibName, bundle: nil)
@@ -658,12 +659,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func adjustTableViewInsets(withBottom bottom: CGFloat) {
         
-        var top = CGFloat(64.0)
-        if let navHeight = navigationController?.navigationBar.frame.size.height {
-            top = navHeight + 20
-        }
+//        var top = CGFloat(64.0)
+//        if let navHeight = navigationController?.navigationBar.frame.size.height {
+//            top = navHeight + 20
+//        }
         
-        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
+        tableView.contentInset = UIEdgeInsetsMake(0, 0, bottom, 0)
     }
     
     
@@ -714,14 +715,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let topic = topic {
+        if let _ = topic {
             
             var number = 0
             
             switch section {
                 
             case TableViewSections.Topic.rawValue:
-                number = topic.imageFile != nil ? 2 : 1
+                number = 1
                 
             case TableViewSections.Statistics.rawValue:
                 number = 1
@@ -764,8 +765,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                     cellType = .TopicText
                 }
                 
-            case 1:
-                    cellType = .TopicText
+//            case 1:
+//                    cellType = .TopicText
                 
             default:
                 assert(false)
@@ -813,14 +814,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func initializeTextCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(textCellViewIdentifier) as! TopicTextTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(textCellViewIdentifier) as! TopicDetailTableViewCell
             cell.displayedTopic = topic
             return cell
         }
         
         func initializeImageCell() -> UITableViewCell {
             
-            let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! ImageTableViewCell
+            let cell = tableView.dequeueReusableCellWithIdentifier(imageCellViewIdentifer) as! TopicDetailTableViewCell
             cell.displayedTopic = topic
             return cell
         }

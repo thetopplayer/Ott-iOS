@@ -15,7 +15,7 @@
                 <autoresizingMask key="autoresizingMask"/>
                 <subviews>
                     <imageView userInteractionEnabled="NO" contentMode="scaleAspectFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="FYN-MC-E7U" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
-                        <rect key="frame" x="8" y="8" width="40" height="40"/>
+                        <rect key="frame" x="16" y="8" width="40" height="40"/>
                         <animations/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="78B-2d-225"/>
@@ -23,7 +23,7 @@
                         </constraints>
                     </imageView>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" verticalHuggingPriority="251" text="10" textAlignment="right" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" adjustsLetterSpacingToFitWidth="YES" translatesAutoresizingMaskIntoConstraints="NO" id="zaN-WB-zF4">
-                        <rect key="frame" x="552" y="8" width="40" height="40"/>
+                        <rect key="frame" x="544" y="8" width="40" height="40"/>
                         <animations/>
                         <constraints>
                             <constraint firstAttribute="width" constant="40" id="A68-2P-Ls8"/>
@@ -34,7 +34,7 @@
                         <nil key="highlightedColor"/>
                     </label>
                     <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Label" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="e19-s5-eqe">
-                        <rect key="frame" x="56" y="8" width="488" height="40"/>
+                        <rect key="frame" x="64" y="8" width="472" height="40"/>
                         <animations/>
                         <constraints>
                             <constraint firstAttribute="height" relation="greaterThanOrEqual" constant="40" id="ihW-xA-sin"/>
@@ -54,8 +54,8 @@
                     <constraint firstItem="e19-s5-eqe" firstAttribute="top" secondItem="FYN-MC-E7U" secondAttribute="top" id="NFf-1u-V2N"/>
                     <constraint firstAttribute="bottomMargin" secondItem="e19-s5-eqe" secondAttribute="bottom" id="X4S-KL-z18"/>
                     <constraint firstItem="e19-s5-eqe" firstAttribute="leading" secondItem="FYN-MC-E7U" secondAttribute="trailing" constant="8" id="eQd-T2-L6s"/>
-                    <constraint firstItem="FYN-MC-E7U" firstAttribute="leading" secondItem="xwd-UU-ZUw" secondAttribute="leadingMargin" id="eUj-yG-DoC"/>
-                    <constraint firstItem="zaN-WB-zF4" firstAttribute="trailing" secondItem="xwd-UU-ZUw" secondAttribute="trailingMargin" id="ybi-c1-B2T"/>
+                    <constraint firstItem="FYN-MC-E7U" firstAttribute="leading" secondItem="xwd-UU-ZUw" secondAttribute="leadingMargin" constant="8" id="eUj-yG-DoC"/>
+                    <constraint firstItem="zaN-WB-zF4" firstAttribute="trailing" secondItem="xwd-UU-ZUw" secondAttribute="trailingMargin" constant="-8" id="ybi-c1-B2T"/>
                 </constraints>
             </tableViewCellContentView>
             <animations/>

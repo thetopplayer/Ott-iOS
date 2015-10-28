@@ -1,5 +1,5 @@
 //
-//  TopicTextTableViewCell.swift
+//  TopicDetailTableViewCell.swift
 //  Ott
 //
 //  Created by Max on 7/7/15.
@@ -8,8 +8,9 @@
 
 import UIKit
 
-class TopicTextTableViewCell: TableViewCell {
+class TopicDetailTableViewCell: TableViewCell, JTSImageViewControllerOptionsDelegate {
 
+    @IBOutlet var topicImageView: ParseImageView?
     @IBOutlet var contentLabel: UILabel!
     @IBOutlet var authorImageView: ParseImageView!
     @IBOutlet var authorLabel: UILabel!
@@ -31,6 +32,21 @@ class TopicTextTableViewCell: TableViewCell {
         authorImageView.addRoundedBorder(withColor: UIColor.clearColor())
         authorImageView.addGestureRecognizer(tapGR)
         authorImageView.userInteractionEnabled = true
+        
+        if let topicImageView = topicImageView {
+            
+            topicImageView.contentMode = .ScaleAspectFill
+            topicImageView.clipsToBounds = true
+            
+            let tapGR: UIGestureRecognizer = {
+                let gr = UITapGestureRecognizer()
+                gr.addTarget(self, action: "displayImageDetail:")
+                return gr
+            }()
+            
+            topicImageView.addGestureRecognizer(tapGR)
+            topicImageView.userInteractionEnabled = true
+        }
     }
 
     
@@ -38,6 +54,7 @@ class TopicTextTableViewCell: TableViewCell {
         
         super.prepareForReuse()
         authorImageView.clear()
+        topicImageView?.clear()
     }
     
     
@@ -53,6 +70,10 @@ class TopicTextTableViewCell: TableViewCell {
         
         guard let topic = displayedTopic else {
             return
+        }
+        
+        if let topicImageFile = topic.imageFile {
+            topicImageView?.displayImageInFile(topicImageFile)
         }
         
         contentLabel.attributedText = attributedContent(topic)
@@ -125,6 +146,25 @@ class TopicTextTableViewCell: TableViewCell {
         }
         
         presentAuthorInfo()
+    }
+
+    
+    @IBAction func displayImageDetail(sender: AnyObject?) {
+        
+        guard let imageView = topicImageView else {
+            return
+        }
+        
+        let imageInfo = JTSImageInfo()
+        imageInfo.image = imageView.image
+        imageInfo.referenceRect = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, 0)
+        imageInfo.referenceView = imageView
+        
+        let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.None)
+        
+        //        imageViewer.optionsDelegate = self
+        
+        imageViewer.showFromViewController(topmostViewController(), transition: JTSImageViewControllerTransition.FromOriginalPosition)
     }
 
 }

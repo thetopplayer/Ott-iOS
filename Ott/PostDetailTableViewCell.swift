@@ -28,7 +28,7 @@ class PostDetailTableViewCell: TableViewCell {
         
         super.awakeFromNib()
         
-        separatorInset = UIEdgeInsetsMake(0, 8, 0, 0)
+        separatorInset = UIEdgeInsetsMake(0, 16, 0, 0)
         innerContentContainer?.backgroundColor = UIColor.whiteColor()
         
         selectionStyle = .None
