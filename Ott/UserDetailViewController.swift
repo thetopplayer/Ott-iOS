@@ -1031,14 +1031,9 @@ class UserDetailViewController: TableViewController {
             tableView.separatorColor = UIColor.separator()
         }
         
-        if tableView.numberOfSections == 0 {
-            tableView.reloadData()
-        }
-        else {
-            tableView.beginUpdates()
-            tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
-            tableView.endUpdates()
-        }
+        tableView.beginUpdates()
+        tableView.reloadSections(NSIndexSet(index: 1), withRowAnimation: .Automatic)
+        tableView.endUpdates()
         
         refreshControl?.endRefreshing()
     }

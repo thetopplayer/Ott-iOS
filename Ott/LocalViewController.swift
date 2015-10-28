@@ -37,22 +37,19 @@ class LocalViewController: TopicMasterViewController {
         
         super.viewDidAppear(animated)
         
-        if lastUpdated != nil {
+        if let lastUpdated = lastUpdated {
             
-            if lastUpdated!.minutesFromNow(absolute: true) > 2 {
-                
-                showActivityFadingOut()
+            if lastUpdated.minutesFromNow(absolute: true) > 2 {
                 fetchTopics()
             }
-            
-            if aTopicWasUpdated {
+            else if aTopicWasUpdated {
                 aTopicWasUpdated = false
                 fetchTopics()
             }
         }
         else {
-            
-            showRefreshControl()
+        
+            showActivityFadingOut()
             fetchTopics()
         }
     }
@@ -102,6 +99,10 @@ class LocalViewController: TopicMasterViewController {
             query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             
+            if let lastUpdated = lastUpdated {
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
+            }
+            
             return query
         }()
         
@@ -112,19 +113,20 @@ class LocalViewController: TopicMasterViewController {
                 return
             }
             
-            let replaceExistingData = self.lastUpdated == nil
+//            let replaceExistingData = self.lastUpdated == nil
             self.lastUpdated = NSDate()
+            
             self.moreToFetch = topics.count < theQuery.limit
             self.fetchOffset += theQuery.skip
             
             self.displayStatus(.Default)
             
-            if replaceExistingData {
-                self.reloadTableView(withTopics: topics)
-            }
-            else {
+//            if replaceExistingData {
+//                self.reloadTableView(withTopics: topics)
+//            }
+//            else {
                 self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
-            }
+//            }
             
             self.hideActivityFadingIn()
             self.hideRefreshControl()

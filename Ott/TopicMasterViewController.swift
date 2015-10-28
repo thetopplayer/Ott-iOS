@@ -13,10 +13,41 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
 
     
     @IBOutlet var tableView: UITableView!
-    var refreshControl: UIRefreshControl?
+    
+    let refreshControl: UIRefreshControl
     
     
     //MARK: - Lifecycle
+    
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
+        
+       refreshControl = {
+            
+            let rc = UIRefreshControl()
+            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+            return rc
+        }()
+
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        
+        refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
+    }
+    
+    
+    required init?(coder aDecoder: NSCoder) {
+        
+        refreshControl = {
+            
+            let rc = UIRefreshControl()
+            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
+            return rc
+            }()
+        
+        super.init(coder: aDecoder)
+        
+        refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
+    }
+    
     
     override func viewDidLoad() {
         
@@ -27,7 +58,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         insets.bottom -= tabBarController!.tabBar.frame.size.height
         tableView.contentInset = insets
 
-//        view.addSubview(statusLabel)
         startObservations()
     }
 
@@ -140,12 +170,12 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     func showRefreshControl() {
-        refreshControl?.beginRefreshing()
+        refreshControl.beginRefreshing()
     }
     
    
     func hideRefreshControl() {
-        refreshControl?.endRefreshing()
+        refreshControl.endRefreshing()
     }
     
     
@@ -173,15 +203,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self        
         tableView.showsHorizontalScrollIndicator = false
 
-        refreshControl = {
-            
-            let rc = UIRefreshControl()
-            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
-            rc.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
-            return rc
-        }()
-        
-        tableView.insertSubview(refreshControl!, atIndex: 0)
+        tableView.insertSubview(refreshControl, atIndex: 0)
         
         let nib2 = UINib(nibName: cellNibName2, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)
@@ -200,10 +222,10 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         if replacingDatasourceData {
-            tableView.updateByReplacing(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
+            tableView.updateByReplacing(datasourceData: &topics, withData: updatedTopics, inSection: 0, sortingArraysWith: sortFn)
         }
         else {
-            tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0,sortingArraysWith: sortFn)
+            tableView.updateByAddingTo(datasourceData: &topics, withData: updatedTopics, inSection: 0, sortingArraysWith: sortFn)
         }
     }
     
