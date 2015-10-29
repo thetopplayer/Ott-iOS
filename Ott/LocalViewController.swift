@@ -13,6 +13,7 @@ class LocalViewController: TopicMasterViewController {
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     var aTopicWasUpdated = false
+    var locationDidChange = true
     var lastUpdated: NSDate?
     var fetchOffset = 0
     var moreToFetch = false
@@ -27,7 +28,7 @@ class LocalViewController: TopicMasterViewController {
         let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
         navigationItem.rightBarButtonItem = createButton
         
-        defaultNavigationItemTitle = "Local"
+        defaultStatusMessage = "Local"
         // change to backgroundColor after data is first loaded
         tableView.backgroundColor = UIColor.whiteColor()
     }
@@ -87,7 +88,7 @@ class LocalViewController: TopicMasterViewController {
             return
         }
         
-        displayStatus(.Fetching)
+        displayStatus("Fetching...")
         
         let localRadius = Double(20)
         
@@ -98,12 +99,8 @@ class LocalViewController: TopicMasterViewController {
             query.skip = offset
             query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
-            
-            if offset == 0 {
-                
-                if let lastUpdated = lastUpdated {
-                    query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
-                }
+            if let lastUpdated = lastUpdated {
+                query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
             }
             
             return query
@@ -116,27 +113,27 @@ class LocalViewController: TopicMasterViewController {
                 return
             }
             
-//            let replaceExistingData = self.lastUpdated == nil
-            self.lastUpdated = NSDate()
+            if offset == 0 {
+                self.lastUpdated = NSDate()
+            }
             
             self.moreToFetch = topics.count < theQuery.limit
             self.fetchOffset += theQuery.skip
             
-            self.displayStatus(.Default)
-            
-//            if replaceExistingData {
-//                self.reloadTableView(withTopics: topics)
-//            }
-//            else {
-                self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
-//            }
-            
-            self.hideActivityFadingIn()
-            self.hideRefreshControl()
-            
-            if let error = error {
-                if self.isVisible() {
-                    self.presentOKAlertWithError(error, messagePreamble: "Error retrieving local topics.", actionHandler: nil)
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.displayStatus()
+                
+                self.refreshTableView(withTopics: topics, replacingDatasourceData: self.locationDidChange)
+                self.locationDidChange = false
+               
+                self.hideActivityFadingIn()
+                self.hideRefreshControl()
+                
+                if let error = error {
+                    if self.isVisible() {
+                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving local topics.", actionHandler: nil)
+                    }
                 }
             }
         }
@@ -186,6 +183,7 @@ class LocalViewController: TopicMasterViewController {
     
     func handleLocationChangeNotification(notification: NSNotification) {
         
+        locationDidChange = true
         update()
     }
 

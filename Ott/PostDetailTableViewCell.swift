@@ -90,13 +90,14 @@ class PostDetailTableViewCell: TableViewCell {
         
         if let comment = post.comment {
             
+            let paddingAttrString = NSAttributedString(string: "\n\n", attributes: handleAttributes)
+            fullAttrString.appendAttributedString(paddingAttrString)
+            
             let commentColor = UIColor.darkGrayColor()
             let commentFont = UIFont.preferredFontForTextStyle(UIFontTextStyleBody)
             let commentAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : commentColor, NSFontAttributeName: commentFont]
             
-            let paddedComment = "\n" + comment
-            
-            let commentAttrString = NSAttributedString(string: paddedComment, attributes: commentAttributes)
+            let commentAttrString = NSAttributedString(string: comment, attributes: commentAttributes)
             fullAttrString.appendAttributedString(commentAttrString)
         }
         

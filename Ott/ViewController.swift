@@ -38,4 +38,24 @@ class ViewController: UIViewController {
         super.didReceiveMemoryWarning()
     }
 
+    
+    //MARK: - Display
+    
+    var defaultStatusMessage: String? {
+        
+        didSet {
+            navigationItem.title = defaultStatusMessage
+        }
+    }
+    
+    
+    func displayStatus(message: String? = nil) {
+        
+        if let messsage = message {
+            navigationItem.title = messsage
+        }
+        else {
+            navigationItem.title = defaultStatusMessage
+        }
+    }
 }

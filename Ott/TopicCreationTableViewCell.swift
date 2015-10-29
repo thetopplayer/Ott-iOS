@@ -94,6 +94,12 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
     }
     
     
+    override func isFirstResponder() -> Bool {
+        
+        return commentTextView.isFirstResponder() || nameTextField.isFirstResponder()
+    }
+    
+    
     override func didMoveToSuperview() {
         
         super.didMoveToSuperview()
@@ -103,23 +109,8 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
     }
     
     
-    //MARK: - Data Entry
     
-//    lazy var authoredTopicNames: [String] = {
-//        
-//        return currentUser().authoredTopicNames()
-//    }()
-//    
-//    
-//    func didAuthorTopicNamed(name: String?) -> Bool {
-//        
-//        if let name = name {
-//            return authoredTopicNames.contains(name)
-//        }
-//        else {
-//            return false
-//        }
-//    }
+    //MARK: - Data Entry
     
     var displayedTopic: Topic? {
         
@@ -149,8 +140,8 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
         
         let imageInfo = JTSImageInfo()
         imageInfo.image = imageView.image
-        imageInfo.referenceRect = imageView.frame
-        imageInfo.referenceView = self
+        imageInfo.referenceRect = CGRectMake(imageView.frame.origin.x, imageView.frame.origin.y, imageView.frame.size.width, 0)
+        imageInfo.referenceView = imageView
         
         let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.None)
         
@@ -158,25 +149,9 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
         
         imageViewer.showFromViewController(topmostViewController(), transition: JTSImageViewControllerTransition.FromOriginalPosition)
     }
-    
-    
-    //MARK: - JTSImageViewControllerOptionsDelegate
-    
-    //    func alphaForBackgroundDimmingOverlayInImageViewer(viewer: JTSImageViewController) -> CGFloat {
-    //        return CGFloat(0.5)
-    //    }
-    //
-    //
-    //    func backgroundBlurRadiusForImageViewer(viewer: JTSImageViewController) -> CGFloat {
-    //        return CGFloat(4.0)
-    //    }
 
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
-        
-//        if textField.text!.length == 0 {
-//            textField.text = "#"
-//        }
         
         return true
     }
@@ -184,10 +159,6 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
     
     func textField(textField: UITextField, shouldChangeCharactersInRange range: NSRange, replacementString string: String) -> Bool {
         
-//        if range.location == 0 {
-//            return false
-//        }
-//        
         if range.location > Topic.maximumNameLength {
             return false
         }
@@ -196,10 +167,6 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
             commentTextView.becomeFirstResponder()
             return false
         }
-        
-//        if string.containsCharacter(inCharacterSet: NSCharacterSet.whitespaceCharacterSet()) {
-//            return false
-//        }
         
         return true
     }

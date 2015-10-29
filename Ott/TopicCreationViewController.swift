@@ -32,22 +32,32 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
         super.viewWillAppear(animated)
         
         if didPresentImagePicker == false {
-            
-            // start fetching name for current location now
-            LocationManager.sharedInstance.reverseGeocodeCurrentLocation()
-            
             myTopic = Topic.create()
             doneButton.enabled = false
         }
         
-        tableView.reloadData()
         startObservations()
+        tableView.reloadData()
     }
 
     
-    override func viewWillDisappear(animated: Bool) {
+    override func viewDidAppear(animated: Bool) {
         
-        super.viewWillDisappear(animated)
+        super.viewDidAppear(animated)
+        
+        guard let creationCellView = creationCellView else {
+            return
+        }
+        
+        if creationCellView.isFirstResponder() == false {
+            creationCellView.becomeFirstResponder()
+        }
+    }
+    
+    
+    override func viewDidDisappear(animated: Bool) {
+        
+        super.viewDidDisappear(animated)
         endObservations()
     }
     
@@ -59,18 +69,7 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
         
         return navigationItem.rightBarButtonItem!
     }
-    
-    
-    private func adjustTableViewInsets(withBottom bottom: CGFloat) {
-        
-        var top = CGFloat(64.0)
-        if let navHeight = navigationController?.navigationBar.frame.size.height {
-            top = navHeight + 20
-        }
-        
-        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
-    }
-    
+
 
     
     
@@ -255,50 +254,20 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
     
     func handleKeyboardWillShow(notification: NSNotification) {
         
-        if isVisible() == false {
-            return
-        }
-        
         let kbFrameValue = notification.userInfo![UIKeyboardFrameEndUserInfoKey] as! NSValue
         let kbFrame = kbFrameValue.CGRectValue()
-        let durationNum = notification.userInfo![UIKeyboardAnimationDurationUserInfoKey] as! NSNumber
-        let duration = durationNum.doubleValue
-        let curve = notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! Int
+        tableView.adjustTableViewInsets(withBottom: kbFrame.size.height)
         
-        view.layoutIfNeeded()
-        UIView.animateWithDuration(duration, delay: 0, options: UIViewAnimationOptions.BeginFromCurrentState, animations: { () -> Void in
-            
-            UIView.setAnimationCurve(UIViewAnimationCurve(rawValue: curve)!)
-            self.view.layoutIfNeeded()
-            
-            }) { _ -> Void in
-                
-                self.adjustTableViewInsets(withBottom: kbFrame.size.height)
-        }
+        let indexPath = NSIndexPath(forRow: tableView.numberOfRowsInSection(0) - 1, inSection: 0)
+        tableView.scrollToRowAtIndexPath(indexPath, atScrollPosition: .Bottom, animated: false)
     }
     
     
     func handleKeyboardWillHide(notification: NSNotification) {
         
-        if isVisible() == false {
-            return
-        }
-        
-        let durationNum = notification.userInfo![UIKeyboardAnimationDurationUserInfoKey] as! NSNumber
-        let duration = durationNum.doubleValue
-        let curve = notification.userInfo![UIKeyboardAnimationCurveUserInfoKey] as! Int
-        
-        view.layoutIfNeeded()
-        UIView.animateWithDuration(duration, delay: 0, options: UIViewAnimationOptions.BeginFromCurrentState, animations: { () -> Void in
-            
-            UIView.setAnimationCurve(UIViewAnimationCurve(rawValue: curve)!)
-            self.view.layoutIfNeeded()
-            
-            }) { _ -> Void in
-                
-                self.adjustTableViewInsets(withBottom: 0)
-        }
+        tableView.adjustTableViewInsets(withBottom: 0)
     }
+    
     
     
     //MARK: - Navigation
@@ -363,7 +332,7 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
         self.myTopic!.setImage(image.resized(toSize: defaultImageSize))
         picker.dismissViewControllerAnimated(true) {
         
-            self.tableView.reloadData()
+//            self.tableView.reloadData()
         }
     }
     

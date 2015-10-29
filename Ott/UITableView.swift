@@ -10,6 +10,36 @@ import UIKit
 
 extension UITableView {
 
+    
+    func adjustTableViewInsets(withBottom bottom: CGFloat, var top: CGFloat = 64) {
+        
+        if let navHeight = topmostViewController()?.navigationController?.navigationBar.frame.size.height {
+            top = navHeight + 20
+        }
+        
+        contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
+    }
+    
+    
+    func scrollToBottom(animated animated: Bool = false) {
+        
+        guard numberOfSections > 0 else {
+            return
+        }
+        
+        let rowCount = numberOfRowsInSection(numberOfSections - 1)
+        if rowCount == 0 {
+            return
+        }
+        
+        let ip = NSIndexPath(forRow: rowCount - 1, inSection: numberOfSections - 1)
+        scrollToRowAtIndexPath(ip, atScrollPosition: .Bottom, animated: animated)
+    }
+    
+    
+    
+    //MARK: - Data
+    
     func updateByReplacing<T: Hashable> (inout datasourceData datasourceData: [T], withData updatedData: [T], inSection section: Int, sortingArraysWith isOrderedBefore: (T, T) -> Bool) {
         
         _update(datasourceData: &datasourceData, withData: updatedData, replacingdatasourceData: true, inSection: section, sortingArraysWith: isOrderedBefore)

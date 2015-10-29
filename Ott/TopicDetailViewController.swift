@@ -105,7 +105,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private var didInitializeViewForTopic = false
-    private func initializeViewForTopic() {
+    private func initializeViewForTopic(reloadingData reloadingData: Bool = true) {
         
         guard let topic = topic else {
             return
@@ -114,6 +114,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if didInitializeViewForTopic {
             return
         }
+        didInitializeViewForTopic = true
         
         if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
             
@@ -130,13 +131,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
         
-        tableView.reloadData()
         
         navigationItem.title = topic.name!
         displayType = .List
-        initializeMapViewForTopic()
         
-        didInitializeViewForTopic = true
+        if reloadingData {
+            tableView.reloadData()
+            initializeMapViewForTopic()
+            fetchPosts()
+        }
     }
     
     
@@ -195,17 +198,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         func showPostInputView() {
             
-            func animations() {
+            view.layoutIfNeeded()
+            UIView.animateWithDuration(animationDuration, animations: { () -> Void in
                 
                 self.postInputViewBottomConstraint.constant = 0
                 self.toolbarBottomConstraint.constant = -self.toolbar.frame.size.height
-                
                 let bottom = self.postInputView.frame.size.height
-                self.adjustTableViewInsets(withBottom: bottom)
+                self.tableView.adjustTableViewInsets(withBottom: bottom)
                 self.view.layoutIfNeeded()
+                
+                }) { (_) -> Void in
+                    
             }
-            
-            UIView.animateWithDuration(animationDuration, animations: animations)
         }
         
         
@@ -215,13 +219,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
                 self.postInputViewBottomConstraint.constant = -self.postInputView.frame.size.height
                 self.toolbarBottomConstraint.constant = 0
-                
-                let bottom = self.toolbar.frame.size.height
-                self.adjustTableViewInsets(withBottom: bottom)
+                self.tableView.adjustTableViewInsets(withBottom: 0)
                 self.view.layoutIfNeeded()
             }
             
-            UIView.animateWithDuration(animationDuration, animations: animations)
+            UIView.animateWithDuration(animationDuration, animations: animations) { (_) -> Void in
+                
+            }
         }
         
         
@@ -360,20 +364,27 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - Data
     
+    private var _oldTopic: Topic?
     var topic: Topic? {
+        
+        willSet {
+            _oldTopic = newValue
+        }
         
         didSet {
             
-            if topic == nil {
-                return
-            }
+            let isNewTopic: Bool = {
+                
+                if let oldTopic = self._oldTopic {
+                    return oldTopic.isEqual(self.topic) == false
+                }
+                return true
+            }()
             
             didInitializeViewForTopic = false
             if isVisible() {
-                initializeViewForTopic()
+                initializeViewForTopic(reloadingData: isNewTopic)
             }
-            
-            fetchPosts()
         }
     }
     
@@ -404,14 +415,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         didFetchPosts = true
         
-        let fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 50) {
+        let fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 20) {
             
             (fetchResults, error) in
             
             self.displayStatus(type: .Normal)
             if let thePosts = fetchResults as? [Post] {
                 
-                self.refreshTableView(withUpdatedPosts: thePosts)
+                self.refreshTableView(replacingPosts: thePosts)
             }
             
             // TODO;  ALLOW ADDITIONAL FETCHING FROM OFFSET
@@ -438,14 +449,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         let postOperation = UploadPostOperation(post: myPost, topic: topic!) {
             
-            (post, error) in
+            (postedObject, error) in
          
             self.displayStatus(type: .Normal)
-            if post != nil {
+            if let post = postedObject as? Post {
+                
+                self.posts.insert(post, atIndex: 0)
                 
                 self.displayedData = .TopicAndPosts
                 self.displayMode = .View
-                
+                self.refreshTableView(replacingPosts: self.posts)
                 self.refreshTopic()
             }
             else if let error = error {
@@ -574,10 +587,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
-        
         tableView.backgroundColor = UIColor.background()
-        adjustTableViewInsets(withBottom: postInputView.frame.size.height)
-        
+
         let nib = UINib(nibName: textCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: textCellViewIdentifier)
         
@@ -603,14 +614,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func refreshTableView(withUpdatedPosts updatedPosts: [Post]) {
+    func refreshTableView(replacingPosts replacementPosts: [Post]) {
         
         guard displayedData == .TopicAndPosts else {
-            print("ERROR - trying to update table view but posts are not allowed")
             return
         }
         
-        posts = updatedPosts
+        posts = replacementPosts
 
         self.tableView.beginUpdates()
         let numberOfSectionsThatWillBeDisplayed = numberOfSectionsInTableView(tableView)
@@ -621,16 +631,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
             case 1:
                 
-                self.tableView.reloadSections(NSIndexSet(index:  TableViewSections.Topic.rawValue), withRowAnimation: .Fade)
+                self.tableView.reloadSections(NSIndexSet(index: TableViewSections.Topic.rawValue), withRowAnimation: .None)
                 
             case 2:
                 
-                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Statistics.rawValue), withRowAnimation: .Fade)
+                tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .None)
                 
             case 3:
                 
-                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Statistics.rawValue), withRowAnimation: .Fade)
-                tableView.reloadSections(NSIndexSet(index:  TableViewSections.Posts.rawValue), withRowAnimation: .Automatic)
+                tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .None)
+                tableView.reloadSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Fade)
                 
             default:
                 assert(false)
@@ -647,24 +657,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 tableView.insertSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
             }
             
-            tableView.insertSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Automatic)
+            tableView.insertSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Bottom)
         }
         else {
             assert(false)
         }
         
         self.tableView.endUpdates()
-    }
-    
-    
-    private func adjustTableViewInsets(withBottom bottom: CGFloat) {
-        
-        var top = CGFloat(64.0)
-        if let navHeight = navigationController?.navigationBar.frame.size.height {
-            top = navHeight + 20
-        }
-        
-        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
     }
     
     
@@ -694,7 +693,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         switch section {
             
         case 1:
-            title = "stats"
+            title = "statistics"
             
         case 2:
             title = "recent posts"
@@ -891,11 +890,10 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         mapSectors.removeAll()
         mapSectorIDs.removeAll()
-        mapPosts.removeAll()
+        mapAnnotations.removeAll()
         
         mapView.removeAnnotations(mapView.annotations)
         mapView.removeOverlays(mapView.overlays)
-        mapView.addAnnotations([topic!])
         
         adjustMapRegionForTopic()
         fetchSectorsForTopic()
@@ -908,8 +906,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             (fetchResults, error) in
             
-            if let fetchResults = fetchResults as? [MapSector] {
-                self.mapSectors = fetchResults
+            if let fetchedSectors = fetchResults as? [MapSector] {
+                
+                self.mapSectors = fetchedSectors
+                if let aSector = fetchedSectors.first {
+                    self.currentSectorSize = Double(aSector.size)
+                }
                 
                 dispatch_async(dispatch_get_main_queue()) {
                     
@@ -928,7 +930,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     var mapSectors = [MapSector]()
     var mapSectorIDs = Set<String>()
-    var currentSectorSize: Float = 0
+    var currentSectorSize: Double?
     
     /*
     var sectorFetchTimer: NSTimer?
@@ -1059,6 +1061,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func updateMapOverlays() {
         
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.addAnnotations([topic!])
+        
         mapView.removeOverlays(mapView.overlays)
         mapView.addOverlays(mapSectors)
 
@@ -1098,13 +1103,102 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    var fetchTimer: NSTimer?
+    func handleTimerFire(timer: NSTimer?) {
+        
+        guard let currentSectorSize = currentSectorSize else {
+            return
+        }
+        
+        let minSpan = min(mapView.region.span.latitudeDelta, mapView.region.span.longitudeDelta)
+        if minSpan <= currentSectorSize {
+            fetchAndDisplayAnnotations()
+        }
+        else {
+            updateMapOverlays()
+        }
+    }
+
     
-    //MARK: - Displaying Map Posts
+    func mapView(mapView: MKMapView, regionDidChangeAnimated animated: Bool) {
+        
+        fetchTimer?.invalidate()
+        fetchTimer = NSTimer.scheduledTimerWithTimeInterval(0.75, target: self, selector: "handleTimerFire:", userInfo: nil, repeats: false)
+    }
     
-    // only display annotations for posts when zoomed smaller than the smallest sector
-    // annotation for topic creation location should always be visible
     
-    var mapPosts = [Post]()
+    private var currentlyFetchingPosts = false
+    func fetchAndDisplayAnnotations() {
+        
+        guard currentlyFetchingPosts == false else {
+            return
+        }
+        currentlyFetchingPosts = true
+        
+        func geoPointsForBox() -> (sw: PFGeoPoint, ne: PFGeoPoint) {
+            
+            let span = mapView.region.span
+            let center = mapView.region.center
+            let southWestCorner: PFGeoPoint = {
+                
+                let latitude = center.latitude - span.latitudeDelta / 2.0
+                let longitude = center.longitude - span.longitudeDelta / 2.0
+                return PFGeoPoint(latitude: latitude, longitude: longitude)
+            }()
+            
+            let northEastCorner: PFGeoPoint = {
+                
+                let latitude = center.latitude + span.latitudeDelta / 2.0
+                let longitude = center.longitude + span.longitudeDelta / 2.0
+                return PFGeoPoint(latitude: latitude, longitude: longitude)
+            }()
+            
+            return (southWestCorner, northEastCorner)
+        }
+        
+        
+        // TODO;  determine sectors and fetch posts from them instead of georects, caching the sector ids so we don't repeat the fetching
+        
+        
+        let query: PFQuery = {
+            
+            let theQuery = Post.query()!
+            theQuery.limit = 25
+            theQuery.whereKey(DataKeys.Topic, equalTo: topic!)
+            let corners = geoPointsForBox()
+            theQuery.whereKey(DataKeys.Location, withinGeoBoxFromSouthwest: corners.sw, toNortheast: corners.ne)
+            
+            return theQuery
+        }()
+        
+        displayStatus(type: .Fetching)
+        query.findObjectsInBackgroundWithBlock { (fetchedObjects, error) -> Void in
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                self.displayStatus(type: .Normal)
+            }
+            
+            if let posts = fetchedObjects as? [Post] {
+                
+                self.mapAnnotations += posts
+                self.displayMapAnnotations()
+            }
+            
+            self.currentlyFetchingPosts = false
+        }
+    }
+    
+    
+    var mapAnnotations = [Post]()
+    
+    func displayMapAnnotations() {
+        
+        mapView.removeOverlays(self.mapView.overlays)
+        mapView.removeAnnotations(mapView.annotations)
+        mapView.addAnnotations(mapAnnotations)
+        mapView.addAnnotation(topic!)
+    }
+    
     
     func mapView(mapView: MKMapView, viewForAnnotation annotation: MKAnnotation) -> MKAnnotationView? {
         
@@ -1173,7 +1267,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }) { _ -> Void in
                 
                 let bottom = self.postInputView.frame.size.height + kbFrame.size.height
-                self.adjustTableViewInsets(withBottom: bottom)
+                self.tableView.adjustTableViewInsets(withBottom: bottom)
         }
     }
     
@@ -1203,18 +1297,19 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             if keyboardIsCoveringContent() == false {
                 // only animate if not covering content to avoid drawing artifacts
-                let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
-                self.adjustTableViewInsets(withBottom: bottom)
+                let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : 0
+                self.tableView.adjustTableViewInsets(withBottom: bottom)
             }
             
             self.view.layoutIfNeeded()
             
             }) { _ -> Void in
                 
-                if keyboardIsCoveringContent() {
-                    
-                    let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : self.toolbar.frame.size.height
-                    self.adjustTableViewInsets(withBottom: bottom)
-                }}
+//                if keyboardIsCoveringContent() {
+//                    
+//                    let bottom = self.displayMode == .Edit ? self.postInputView.frame.size.height : 0
+//                    self.tableView.adjustTableViewInsets(withBottom: bottom)
+//                }
+        }
     }
 }

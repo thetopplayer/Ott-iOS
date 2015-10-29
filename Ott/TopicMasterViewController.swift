@@ -115,28 +115,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    var defaultNavigationItemTitle: String?
-    
-    func displayStatus(type: StatusType) {
-        
-//        switch type {
-//            
-//        case .Fetching:
-//            navigationItem.title = "Fetching..."
-//            
-//        case .NoData:
-//            if let title = defaultNavigationItemTitle {
-//                navigationItem.title = title
-//            }
-//            
-//        default:
-//            if let title = defaultNavigationItemTitle {
-//                navigationItem.title = title
-//            }
-//        }
-    }
-    
-    
     func setHeaderView(nibName nib: String, reuseIdentifier: String, height: CGFloat) {
         
         let nib = UINib(nibName: nib, bundle: nil)

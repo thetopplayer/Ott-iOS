@@ -29,8 +29,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
         else {
             title = "Following \(number) Users"
         }
-        navigationItem.title = title
-        defaultNavigationItemTitle = title
+        defaultStatusMessage = title
 
         fetchTopics(.CachedThenUpdate)
     }
@@ -62,7 +61,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     if let error = error {
                         
                         self.hideRefreshControl()
-                        self.displayStatus(.Default)
+                        self.displayStatus()
                         
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
                     }
@@ -92,7 +91,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     }
                     
                     self.hideRefreshControl()
-                    self.displayStatus(.Default)
+                    self.displayStatus()
                     
                     if let error = error {
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving followee topics from server", actionHandler: nil)
@@ -107,7 +106,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
         }
         
 
-        displayStatus(.Fetching)
+        displayStatus("Fetching...")
         
         switch type {
             
