@@ -92,7 +92,7 @@ class TopicDetailTableViewCell: TableViewCell, JTSImageViewControllerOptionsDele
             let nameString = topic.authorName! + "  "
             let fullAttrString = NSMutableAttributedString(string: nameString, attributes: nameAttributes)
             
-            let handleString = "" + topic.authorHandle! + " \n"
+            let handleString = topic.authorHandle! + " \n"
             let handleAttrString = NSAttributedString(string: handleString, attributes: handleAttributes)
             
             fullAttrString.appendAttributedString(handleAttrString)

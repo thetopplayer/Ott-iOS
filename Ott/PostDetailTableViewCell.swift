@@ -81,7 +81,7 @@ class PostDetailTableViewCell: TableViewCell {
         let nameString = post.authorName! + "  "
         let fullAttrString = NSMutableAttributedString(string: nameString, attributes: nameAttributes)
         
-        let handleString = "" + post.authorHandle! + " \n"
+        let handleString = post.authorHandle! + " \n"
         let handleAttrString = NSAttributedString(string: handleString, attributes: handleAttributes)
         
         fullAttrString.appendAttributedString(handleAttrString)

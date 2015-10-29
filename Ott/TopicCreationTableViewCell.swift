@@ -1,5 +1,5 @@
 //
-//  TopicCreationTitleTableViewCell.swift
+//  TopicCreationTableViewCell.swift
 //  Ott
 //
 //  Created by Max on 7/6/15.
@@ -9,32 +9,47 @@
 import UIKit
 
 
-protocol TopicCreationTitleTableViewCellDelegate {
+protocol TopicCreationTableViewCellDelegate {
     
     func validNameWasEntered(isValid: Bool) -> Void
 }
 
 
-class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITextViewDelegate {
+class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextFieldDelegate {
 
-    @IBOutlet weak var textField: UITextField!
-    @IBOutlet weak var textView: UITextView!
-    @IBOutlet weak var warningLabel: UILabel!
+    @IBOutlet var topicImageView: ParseImageView?
+    @IBOutlet weak var nameTextField: UITextField!
+    @IBOutlet weak var commentTextView: UITextView!
 
-    var delegate: TopicCreationTitleTableViewCellDelegate?
+    var delegate: TopicCreationTableViewCellDelegate?
     
     override func awakeFromNib() {
         
         super.awakeFromNib()
 
-        warningLabel.hidden = true
-        warningLabel.text = "\u{26A0}  You already authored this topic"
+        contentView.addBorder()
         
-        textField.delegate = self
-        textField.placeholder = "topic name"
+        nameTextField.delegate = self
+        nameTextField.placeholder = "topic name"
         
-        textView.addRoundedBorder()
-        textView.delegate = self
+        commentTextView.addRoundedBorder()
+        commentTextView.delegate = self
+        
+        if let topicImageView = topicImageView {
+            
+            topicImageView.contentMode = .ScaleAspectFill
+            topicImageView.clipsToBounds = true
+            
+            let tapGR: UIGestureRecognizer = {
+                
+                let gr = UITapGestureRecognizer()
+                gr.addTarget(self, action: "displayImageDetail:")
+                return gr
+            }()
+            
+            topicImageView.addGestureRecognizer(tapGR)
+            topicImageView.userInteractionEnabled = true
+        }
         
         startObservations()
     }
@@ -56,14 +71,14 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         if ok {
             if let length = title?.length {
                 if length > 0 {
-                    textView.becomeFirstResponder()
+                    commentTextView.becomeFirstResponder()
                 }
                 else {
-                    textField.becomeFirstResponder()
+                    nameTextField.becomeFirstResponder()
                 }
             }
             else {
-                textField.becomeFirstResponder()
+                nameTextField.becomeFirstResponder()
             }
          }
         
@@ -73,12 +88,19 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     override func resignFirstResponder() -> Bool {
         
-        textField.resignFirstResponder()
-        textView.resignFirstResponder()
+        nameTextField.resignFirstResponder()
+        commentTextView.resignFirstResponder()
         return true
     }
     
     
+    override func didMoveToSuperview() {
+        
+        super.didMoveToSuperview()
+        if superview != nil {
+            becomeFirstResponder()
+        }
+    }
     
     
     //MARK: - Data Entry
@@ -99,6 +121,56 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
 //        }
 //    }
     
+    var displayedTopic: Topic? {
+        
+        didSet {
+            updateContents()
+        }
+    }
+    
+    
+    private func updateContents() {
+        
+        guard let topic = displayedTopic else {
+            return
+        }
+        
+        title = topic.name
+        comment = topic.comment
+        topicImageView?.displayImageInFile(topic.imageFile)
+    }
+    
+    
+    @IBAction func displayImageDetail(sender: AnyObject?) {
+        
+        guard let imageView = topicImageView else {
+            return
+        }
+        
+        let imageInfo = JTSImageInfo()
+        imageInfo.image = imageView.image
+        imageInfo.referenceRect = imageView.frame
+        imageInfo.referenceView = self
+        
+        let imageViewer = JTSImageViewController(imageInfo: imageInfo, mode:JTSImageViewControllerMode.Image, backgroundStyle: JTSImageViewControllerBackgroundOptions.None)
+        
+        //        imageViewer.optionsDelegate = self
+        
+        imageViewer.showFromViewController(topmostViewController(), transition: JTSImageViewControllerTransition.FromOriginalPosition)
+    }
+    
+    
+    //MARK: - JTSImageViewControllerOptionsDelegate
+    
+    //    func alphaForBackgroundDimmingOverlayInImageViewer(viewer: JTSImageViewController) -> CGFloat {
+    //        return CGFloat(0.5)
+    //    }
+    //
+    //
+    //    func backgroundBlurRadiusForImageViewer(viewer: JTSImageViewController) -> CGFloat {
+    //        return CGFloat(4.0)
+    //    }
+
     
     func textFieldShouldBeginEditing(textField: UITextField) -> Bool {
         
@@ -121,7 +193,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         }
         
         if string.containsCharacter(inCharacterSet: NSCharacterSet.newlineCharacterSet()) {
-            textView.becomeFirstResponder()
+            commentTextView.becomeFirstResponder()
             return false
         }
         
@@ -135,17 +207,17 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     private var isDisplayingTextViewPlaceholder = true
     private func displayTextViewPlaceholder() {
         
-        textView.textColor = UIColor.lightGrayColor()
-        textView.text = "Comment"
-        textView.selectedRange = NSRange(location: 0, length: 0)
+        commentTextView.textColor = UIColor.lightGrayColor()
+        commentTextView.text = "Comment"
+        commentTextView.selectedRange = NSRange(location: 0, length: 0)
         isDisplayingTextViewPlaceholder = true
     }
     
     
     private func hideTextViewPlaceholder() {
         
-        textView.textColor = UIColor.darkGrayColor()
-        textView.text = ""
+        commentTextView.textColor = UIColor.darkGrayColor()
+        commentTextView.text = ""
         isDisplayingTextViewPlaceholder = false
     }
     
@@ -161,21 +233,22 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     var title: String? {
         
         get {
-            return textField.text!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            return nameTextField.text!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
         }
         
         set {
-            textField.text = newValue
+            nameTextField.text = newValue
         }
     }
     
     
     var comment: String? {
+        
         get {
             if isDisplayingTextViewPlaceholder {
                 return nil
             }
-            let text = textView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+            let text = commentTextView.text.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             if text.length == 0 {
                 return nil
             }
@@ -185,7 +258,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
         set {
             if newValue != nil {
                 hideTextViewPlaceholder()
-                textView.text = newValue!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                commentTextView.text = newValue!.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
             }
             else {
                 displayTextViewPlaceholder()
@@ -199,7 +272,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
     
     private func startObservations() {
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: textField)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleTextFieldDidChange:", name: UITextFieldTextDidChangeNotification, object: nameTextField)
     }
     
     
@@ -221,7 +294,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
             }
         }
         
-        if let topicName = textField.text {
+        if let topicName = nameTextField.text {
             
             if topicName.length == 0 {
                 notifyDelegate(false)
@@ -232,7 +305,7 @@ class TopicCreationTitleTableViewCell: TableViewCell, UITextFieldDelegate, UITex
                     
                     (isNew) in
                     
-                    self.warningLabel.hidden = isNew
+//                    self.warningLabel.hidden = isNew
                     notifyDelegate(isNew)
                 }
             }

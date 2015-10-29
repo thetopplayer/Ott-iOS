@@ -80,7 +80,7 @@
                                         </constraints>
                                     </view>
                                     <animations/>
-                                    <blurEffect style="light"/>
+                                    <blurEffect style="extraLight"/>
                                 </visualEffectView>
                             </subviews>
                             <animations/>
@@ -92,7 +92,7 @@
                             </constraints>
                         </view>
                         <animations/>
-                        <blurEffect style="light"/>
+                        <blurEffect style="extraLight"/>
                     </visualEffectView>
                 </subviews>
                 <animations/>

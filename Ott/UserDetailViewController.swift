@@ -1007,7 +1007,7 @@ class UserDetailViewController: TableViewController {
             
         case .AuthoredPosts:
             
-            tableView.separatorColor = UIColor.background()
+            tableView.separatorColor = UIColor.separator()
             
         case .Following:
             

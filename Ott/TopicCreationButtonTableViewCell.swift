@@ -31,7 +31,7 @@ class TopicCreationButtonTableViewCell: TableViewCell {
     override func awakeFromNib() {
         
         super.awakeFromNib()
-        contentView.backgroundColor = UIColor.whiteColor()
+        contentView.backgroundColor = UIColor.background()
         
         cameraButton.addTarget(self, action: "handleCameraAction:", forControlEvents: UIControlEvents.TouchUpInside)
         photosButton.addTarget(self, action: "handlePhotosAction:", forControlEvents: UIControlEvents.TouchUpInside)

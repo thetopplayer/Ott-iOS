@@ -10,6 +10,14 @@ import UIKit
 
 class FollowTableViewCell: UserTableViewCell {
 
+    
+    override func awakeFromNib() {
+        
+        super.awakeFromNib()
+        separatorInset = UIEdgeInsetsMake(0, 16, 0, 0)
+    }
+    
+    
     var displayedFollow: Follow? {
         
         didSet {
@@ -23,9 +31,13 @@ class FollowTableViewCell: UserTableViewCell {
             return
         }
         
-        nameLabel.text = follow.followeeName
-        handleTextLabel.text = follow.followeeHandle
-        bioTextLabel.attributedText = attributedTextForBio(follow.followeeBio)
-        self.avatarImageView!.displayImageInFile(follow.followeeAvatarFile)
+        nameLabel.attributedText = attributedStringForUsername(follow.followeeName!, handle: follow.followeeHandle!, bio: follow.followeeBio)
+        
+        if let avatarFile = follow.followeeAvatarFile {
+            self.avatarImageView.displayImageInFile(avatarFile)
+        }
+        else {
+            self.avatarImageView.image = UIImage(named: "avatar")
+        }
     }
 }

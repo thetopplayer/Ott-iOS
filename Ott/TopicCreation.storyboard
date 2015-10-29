@@ -2,6 +2,7 @@
 <document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="VhW-19-YNM">
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
         <!--View Topic Nav Controller-->
@@ -14,51 +15,59 @@
                         <animations/>
                     </navigationBar>
                     <connections>
-                        <segue destination="Ybo-CA-EXp" kind="relationship" relationship="rootViewController" id="R2j-RI-b7f"/>
+                        <segue destination="lbB-Ic-sn8" kind="relationship" relationship="rootViewController" id="rnS-YI-MRg"/>
                     </connections>
                 </navigationController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="UgC-r6-9XO" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="-805" y="2397"/>
         </scene>
-        <!--Topic-->
-        <scene sceneID="Kp1-t1-qDD">
+        <!--New Topic-->
+        <scene sceneID="vcc-3g-dFS">
             <objects>
-                <tableViewController title="Topic" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Ybo-CA-EXp" customClass="TopicCreationViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="none" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="10" sectionFooterHeight="10" id="jkE-Xa-vOn">
+                <viewController id="lbB-Ic-sn8" customClass="TopicCreationViewController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <layoutGuides>
+                        <viewControllerLayoutGuide type="top" id="jdx-yy-x93"/>
+                        <viewControllerLayoutGuide type="bottom" id="uY0-yI-m6F"/>
+                    </layoutGuides>
+                    <view key="view" contentMode="scaleToFill" id="RLo-bP-MVO">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="default" rowHeight="44" sectionHeaderHeight="28" sectionFooterHeight="28" translatesAutoresizingMaskIntoConstraints="NO" id="jQR-4c-zuY">
+                                <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
+                                <animations/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                            </tableView>
+                        </subviews>
                         <animations/>
-                        <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
-                        <color key="separatorColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                        <inset key="separatorInset" minX="0.0" minY="0.0" maxX="0.0" maxY="0.0"/>
-                        <connections>
-                            <outlet property="dataSource" destination="Ybo-CA-EXp" id="Fox-0Y-MFe"/>
-                            <outlet property="delegate" destination="Ybo-CA-EXp" id="fPZ-NG-TQC"/>
-                        </connections>
-                    </tableView>
-                    <toolbarItems/>
-                    <navigationItem key="navigationItem" title="New Topic" id="TOH-GS-d47">
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <constraints>
+                            <constraint firstItem="jQR-4c-zuY" firstAttribute="top" secondItem="RLo-bP-MVO" secondAttribute="topMargin" id="0Jl-PQ-BDM"/>
+                            <constraint firstItem="uY0-yI-m6F" firstAttribute="top" secondItem="jQR-4c-zuY" secondAttribute="bottom" id="Fdt-uN-x3m"/>
+                            <constraint firstItem="jQR-4c-zuY" firstAttribute="leading" secondItem="RLo-bP-MVO" secondAttribute="leadingMargin" constant="-20" id="Mj5-Zn-0xj"/>
+                            <constraint firstAttribute="trailingMargin" secondItem="jQR-4c-zuY" secondAttribute="trailing" constant="-20" id="gQs-j9-OEB"/>
+                        </constraints>
+                    </view>
+                    <navigationItem key="navigationItem" title="New Topic" id="AZk-BP-NX5">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="pcf-1Z-lzg">
                             <connections>
-                                <action selector="handleCancelAction:" destination="Ybo-CA-EXp" id="RD5-vr-zSy"/>
+                                <action selector="handleCancelAction:" destination="lbB-Ic-sn8" id="ban-Ql-BJS"/>
                             </connections>
                         </barButtonItem>
                         <barButtonItem key="rightBarButtonItem" title="Post" style="done" id="nXJ-40-NPL">
                             <connections>
-                                <action selector="handleDoneAction:" destination="Ybo-CA-EXp" id="lI5-bg-obt"/>
+                                <action selector="handleDoneAction:" destination="lbB-Ic-sn8" id="iLR-Zh-RYP"/>
                             </connections>
                         </barButtonItem>
                     </navigationItem>
-                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <segue destination="uUm-FU-xvg" kind="unwind" identifier="unwindToMasterView" unwindAction="unwindForSegue:towardsViewController:" id="q5m-v8-GCf"/>
+                        <outlet property="tableView" destination="jQR-4c-zuY" id="0MS-Qw-qWk"/>
                     </connections>
-                </tableViewController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="l6r-cb-bT7" userLabel="First Responder" sceneMemberID="firstResponder"/>
-                <exit id="uUm-FU-xvg" userLabel="Exit" sceneMemberID="exit"/>
+                </viewController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="NzP-a0-Joq" userLabel="First Responder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="217" y="2397"/>
+            <point key="canvasLocation" x="27" y="2397"/>
         </scene>
     </scenes>
 </document>

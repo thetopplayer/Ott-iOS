@@ -659,12 +659,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func adjustTableViewInsets(withBottom bottom: CGFloat) {
         
-//        var top = CGFloat(64.0)
-//        if let navHeight = navigationController?.navigationBar.frame.size.height {
-//            top = navHeight + 20
-//        }
+        var top = CGFloat(64.0)
+        if let navHeight = navigationController?.navigationBar.frame.size.height {
+            top = navHeight + 20
+        }
         
-        tableView.contentInset = UIEdgeInsetsMake(0, 0, bottom, 0)
+        tableView.contentInset = UIEdgeInsetsMake(top, 0, bottom, 0)
     }
     
     
