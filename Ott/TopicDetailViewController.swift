@@ -866,8 +866,16 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     //MARK: - MapView
     
+    private func setupMapView() {
+        
+        mapView.delegate = self
+        mapView.rotateEnabled = false
+    }
+    
     private var mapAnnotations = [Post]()
     private var mapSectorIDsOfDownloadedAnnotations = Set<String>()
+    
+    private var fewAnnotations = false
     
     private var mapSectorsBySize: [SectorSize: Array<MapSector>] = {
         
@@ -922,6 +930,41 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private func initializeMapViewForTopic() {
+        
+        guard let topic = topic else {
+            return
+        }
+        
+        func adjustMapRegionForTopic() {
+            
+            guard let bounds = topic.bounds else {
+                return
+            }
+            
+            let centerCoordinate = CLLocationCoordinate2DMake(bounds[0] + (bounds[2] / 2), bounds[1] + (bounds[3] / 2))
+            let span = MKCoordinateSpanMake(bounds[2], bounds[3])
+            let coordinateRegion = MKCoordinateRegionMake(centerCoordinate, span)
+            
+            mapView.setRegion(coordinateRegion, animated: false)
+        }
+        
+        fewAnnotations = topic.numberOfPosts < 100
+        
+        clearMapSectorData()
+        mapAnnotations.removeAll()
+        mapSectorIDsOfDownloadedAnnotations.removeAll()
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            self.mapView.removeAnnotations(self.mapView.annotations)
+            self.mapView.removeOverlays(self.mapView.overlays)
+            self.mapView.addAnnotation(self.topic!)
+        }
+        
+        adjustMapRegionForTopic()
+    }
+    
+    
     private func removeAnnotationsLeavingTopic() {
         
         var annotations = self.mapView.annotations as! [AuthoredObject]
@@ -970,6 +1013,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func appropriateDataTypeForRegion(region: MKCoordinateRegion) -> MapDataType {
         
+        // TODO - implememnt after debugging
+//        if fewAnnotations {
+//            return .Annotations
+//        }
+        
         var type: MapDataType = .None
         
         let minimumSpan = max(region.span.latitudeDelta, region.span.longitudeDelta)
@@ -989,46 +1037,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         print("min span = \(type)")
         
         return type
-    }
-    
-    
-    private func setupMapView() {
-        
-        mapView.delegate = self
-        mapView.rotateEnabled = false
-    }
-
-    
-    private func initializeMapViewForTopic() {
-        
-        guard let topic = topic else {
-            return
-        }
-        
-        func adjustMapRegionForTopic() {
-            
-            guard let bounds = topic.bounds else {
-                return
-            }
-            
-            let centerCoordinate = CLLocationCoordinate2DMake(bounds[0] + (bounds[2] / 2), bounds[1] + (bounds[3] / 2))
-            let span = MKCoordinateSpanMake(bounds[2], bounds[3])
-            let coordinateRegion = MKCoordinateRegionMake(centerCoordinate, span)
-            
-            mapView.setRegion(coordinateRegion, animated: false)
-        }
-        
-        clearMapSectorData()
-        mapAnnotations.removeAll()
-        mapSectorIDsOfDownloadedAnnotations.removeAll()
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            self.mapView.removeAnnotations(self.mapView.annotations)
-            self.mapView.removeOverlays(self.mapView.overlays)
-            self.mapView.addAnnotation(self.topic!)
-        }
-        
-        adjustMapRegionForTopic()
     }
     
     

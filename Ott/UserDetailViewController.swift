@@ -553,10 +553,6 @@ class UserDetailViewController: TableViewController {
     
     private func setupTableView() {
         
-        tableView.separatorColor = UIColor.separator()
-        tableView.backgroundColor = UIColor.background()
-        tableView.showsHorizontalScrollIndicator = false
-        
         refreshControl = {
             
             let rc = UIRefreshControl()

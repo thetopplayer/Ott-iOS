@@ -12,42 +12,10 @@ import UIKit
 class TopicMasterViewController: ViewController, UITableViewDelegate, UITableViewDataSource {
 
     
-    @IBOutlet var tableView: UITableView!
-    
-    let refreshControl: UIRefreshControl
-    
+    @IBOutlet var tableView: TableView!
     
     //MARK: - Lifecycle
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        
-       refreshControl = {
-            
-            let rc = UIRefreshControl()
-            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
-            return rc
-        }()
 
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        
-        refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
-    }
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        
-        refreshControl = {
-            
-            let rc = UIRefreshControl()
-            rc.tintColor = UIColor.blackColor().colorWithAlphaComponent(0.9)
-            return rc
-            }()
-        
-        super.init(coder: aDecoder)
-        
-        refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
-    }
-    
     
     override func viewDidLoad() {
         
@@ -148,12 +116,12 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     func showRefreshControl() {
-        refreshControl.beginRefreshing()
+        tableView.refreshControl.beginRefreshing()
     }
     
    
     func hideRefreshControl() {
-        refreshControl.endRefreshing()
+        tableView.refreshControl.endRefreshing()
     }
     
     
@@ -181,7 +149,8 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self        
         tableView.showsHorizontalScrollIndicator = false
 
-        tableView.insertSubview(refreshControl, atIndex: 0)
+        tableView.useRefreshControl()
+        tableView.refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
         
         let nib2 = UINib(nibName: cellNibName2, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)

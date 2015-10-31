@@ -10,7 +10,7 @@ import UIKit
 
 class SearchViewController: ViewController, UITableViewDataSource, UITableViewDelegate, UISearchBarDelegate {
     
-    @IBOutlet var tableView: UITableView!
+    @IBOutlet var tableView: TableView!
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     @IBOutlet var noResultsLabel: UILabel!
     
@@ -214,10 +214,6 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
         
         tableView.delegate = self
         tableView.dataSource = self
-        
-        tableView.separatorColor = UIColor.separator()
-        tableView.backgroundColor = UIColor.background()
-        tableView.showsHorizontalScrollIndicator = false
         
         let nib = UINib(nibName: userCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: userCellViewIdentifer)
