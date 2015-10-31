@@ -18,10 +18,6 @@ extension DataKeys {
     static var TopicName: String {
         return "topicName"
     }
-    
-    static var TopicID: String {
-        return "topicID"
-    }
 }
 
 
@@ -54,6 +50,7 @@ class Post: AuthoredObject, PFSubclassing {
     //MARK: - Attributes
     
     @NSManaged var topicName: String?
+    @NSManaged var sectorID: String?
     
     func setTopic(topic: Topic) {
         

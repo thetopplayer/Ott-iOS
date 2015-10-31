@@ -17,11 +17,11 @@ class FetchSectorsOperation: FetchOperation {
 
     convenience init(topic: Topic, offset: Int, limit: Int, completion: FetchCompletionBlock?) {
         
-        self.init(topic: topic, offset: offset, limit: limit, region: nil, sectorSize: nil, completion: completion)
+        self.init(topic: topic, offset: offset, limit: limit, region: nil, sectorSize: 0, completion: completion)
     }
     
     
-    init(topic: Topic, offset: Int, limit: Int, region: MKCoordinateRegion?, sectorSize: Float?, completion: FetchCompletionBlock?) {
+    init(topic: Topic, offset: Int, limit: Int, region: MKCoordinateRegion?, sectorSize: Int?, completion: FetchCompletionBlock?) {
         
         let theQuery: PFQuery = {
             
@@ -29,6 +29,7 @@ class FetchSectorsOperation: FetchOperation {
             query.skip = offset
             query.limit = limit
             query.whereKey(DataKeys.Topic, equalTo: topic)
+            query.whereKey(DataKeys.SectorSize, equalTo: sectorSize!)
             return query
         }()
         
@@ -46,13 +47,6 @@ class FetchSectorsOperation: FetchOperation {
             theQuery.whereKey(DataKeys.MaxLat, lessThanOrEqualTo: maxLat)
             theQuery.whereKey(DataKeys.MinLong, greaterThanOrEqualTo: minLong)
             theQuery.whereKey(DataKeys.MaxLong, lessThanOrEqualTo: maxLong)
-        }
-        
-        if let sectorSize = sectorSize {
-            theQuery.whereKey(DataKeys.SectorSize, equalTo: sectorSize)
-        }
-        else {
-            theQuery.whereKey(DataKeys.SectorSize, equalTo: MapSector.sizes.first!)
         }
         
         super.init(dataSource: .Server, query: theQuery, completion: completion)

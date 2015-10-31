@@ -17,6 +17,7 @@ import UIKit
 import MapKit
 
 
+typealias SectorSize = Int
 
 extension DataKeys {
     
@@ -26,6 +27,10 @@ extension DataKeys {
     
     static var SectorSize: String {
         return "size"
+    }
+    
+    static var SectorActualSize: String {
+        return "actualSize"
     }
     
     static var MinLat: String {
@@ -64,7 +69,22 @@ class MapSector: DataObject, PFSubclassing, MKOverlay {
     }
     
     
-    static let sizes = [0.05, 0.1, 0.2, 0.4, 1.6, 6.4]
+    
+    //MARK: - Sizes
+    
+    static let sizes: [SectorSize] = [0, 1, 2, 3, 4, 5]
+    
+    class func actualSizeForSize(size: SectorSize) -> Double {
+        
+        let actualSizes = [0.05, 0.1, 0.2, 0.4, 1.6, 6.4]
+        
+        if size < 0 || size >= actualSizes.count {
+            assert(false)
+        }
+        
+        return actualSizes[size]
+    }
+    
     
     
     //MARK: - Attributes
@@ -73,7 +93,8 @@ class MapSector: DataObject, PFSubclassing, MKOverlay {
     @NSManaged var averageRating: Float
     @NSManaged var numberOfPosts: Int
     
-    @NSManaged var size: Float
+    @NSManaged var size: Int
+    @NSManaged var actualSize: Double
     @NSManaged var minLat: Double
     @NSManaged var maxLat: Double
     @NSManaged var minLong: Double
