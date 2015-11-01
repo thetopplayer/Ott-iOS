@@ -17,7 +17,7 @@
                         <rect key="frame" x="0.0" y="0.0" width="600" height="600"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG">
+                            <tableView clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" dataMode="prototypes" style="grouped" separatorStyle="default" allowsSelection="NO" rowHeight="44" sectionHeaderHeight="18" sectionFooterHeight="18" translatesAutoresizingMaskIntoConstraints="NO" id="Y5K-j4-5dG" customClass="TableView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="4" y="0.0" width="592" height="556"/>
                                 <animations/>
                                 <color key="backgroundColor" red="0.93725490199999995" green="0.93725490199999995" blue="0.95686274510000002" alpha="1" colorSpace="calibratedRGB"/>
@@ -32,20 +32,7 @@
                                 <constraints>
                                     <constraint firstAttribute="height" constant="44" id="5q8-72-KFW"/>
                                 </constraints>
-                                <items>
-                                    <barButtonItem systemItem="compose" id="EPd-Fv-TC7">
-                                        <connections>
-                                            <action selector="handleEnterEditModeAction:" destination="JRp-B9-rK5" id="73A-aL-KGx"/>
-                                        </connections>
-                                    </barButtonItem>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="mA2-sl-hGk"/>
-                                    <barButtonItem style="plain" systemItem="flexibleSpace" id="EGT-UX-YVu"/>
-                                    <barButtonItem systemItem="action" id="cbm-85-Wze">
-                                        <connections>
-                                            <action selector="handleExportAction:" destination="JRp-B9-rK5" id="2Bp-KY-WII"/>
-                                        </connections>
-                                    </barButtonItem>
-                                </items>
+                                <items/>
                             </toolbar>
                             <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="N7I-Dk-brQ" customClass="PostInputView" customModule="Ott" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="510" width="600" height="90"/>

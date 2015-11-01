@@ -56,9 +56,9 @@ class TopicStatisticsTableViewCell: TableViewCell {
     private func updateContents() {
         
         if let topic = displayedTopic {
-            countLabel.text = " \(topic.numberOfPosts) "
-            ratingLabel.text = String.localizedStringWithFormat(" %.1f ", topic.averageRating)
-            ratingLabel.backgroundColor = Rating(withFloat: topic.averageRating / 10).color()
+            countLabel.text = " \(topic.localNumberOfPosts) "
+            ratingLabel.text = String.localizedStringWithFormat(" %.1f ", topic.localAverageRating)
+            ratingLabel.backgroundColor = Rating(withFloat: topic.localAverageRating / 10).color()
         }
     }
 

@@ -105,7 +105,45 @@ class Topic: AuthoredObject, PFSubclassing {
     @NSManaged var lastPostLocationName: String?
     @NSManaged var lastPostDate: NSDate?
 
-    // used internally
+    
+    // for local use
+    
+    private var _localNumberOfPosts: Int?
+    var localNumberOfPosts: Int {
+        
+        get {
+            if let _localNumberOfPosts = _localNumberOfPosts {
+                return _localNumberOfPosts
+            }
+            else {
+                return numberOfPosts
+            }
+        }
+        
+        set {
+            _localNumberOfPosts = newValue
+        }
+    }
+    
+    
+    private var _localAverageRating: Float?
+    var localAverageRating: Float {
+        
+        get {
+            if let _localAverageRating = _localAverageRating {
+                return _localAverageRating
+            }
+            else {
+                return averageRating
+            }
+        }
+        
+        set {
+            _localAverageRating = newValue
+        }
+    }
+    
+    
     var currentUserDidPostTo: Bool? {
         
         get {

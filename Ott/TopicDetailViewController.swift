@@ -20,7 +20,7 @@ import MapKit
 
 class TopicDetailViewController: ViewController, UITableViewDelegate, UITableViewDataSource, MKMapViewDelegate, PostInputViewDelegate {
     
-    @IBOutlet weak var tableView: UITableView!
+    @IBOutlet weak var tableView: TableView!
     @IBOutlet weak var mapView: MKMapView!
     @IBOutlet weak var toolbar: UIToolbar!
     @IBOutlet weak var postInputView: PostInputView!
@@ -37,12 +37,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         postInputView.delegate = self
         postInputView.maximumViewHeight = 200
-        
-        var items = toolbar.items
-        let statusBarButtonItem = UIBarButtonItem(customView: statusLabel)
-        statusBarButtonItem.width = 120
-        items?.insert(statusBarButtonItem, atIndex: 2)
-        toolbar.setItems(items!, animated: false)
         
         setupTableView()
         setupMapView()
@@ -131,7 +125,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
         
-        
         navigationItem.title = topic.name!
         displayType = .List
         
@@ -174,13 +167,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             navigationItem.leftBarButtonItem = cancelButton
         }
         
-        
         func showDoneButton() {
             
             let doneButton = UIBarButtonItem(barButtonSystemItem: .Done, target: self, action: "handleDoneAction:")
             navigationItem.leftBarButtonItem = doneButton
         }
-        
         
         func showBackButton() {
             
@@ -194,7 +185,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             let backButton = UIBarButtonItem(customView: button)
             navigationItem.leftBarButtonItem = backButton
         }
-        
         
         func showPostInputView() {
             
@@ -212,7 +202,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
         
-        
         func showToolbar() {
             
             func animations() {
@@ -227,7 +216,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
             }
         }
-        
         
         let mapToggleButton = navigationItem.rightBarButtonItem
         mapToggleButton?.enabled = displayedData == .TopicAndPosts
@@ -267,7 +255,64 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private func mapToolbarButtonForLocationSetting() -> UIBarButtonItem {
+        
+        let image = displayUserLocation ? UIImage(named: "locationFull") : UIImage(named: "locationEmpty")
+        return UIBarButtonItem(image: image, style: .Plain, target: self, action: "toggleUserLocationDisplay:")
+    }
+    
+    
+    var displayUserLocation = false {
+        
+        didSet {
+            
+            if displayType == .Map {
+                var items = toolbar.items!
+                items.removeFirst()
+                items.insert(mapToolbarButtonForLocationSetting(), atIndex: 0)
+                toolbar.setItems(items, animated: true)
+            }
+            
+            mapView.showsUserLocation = displayUserLocation
+            
+            // TODO = ZOOM TO ENCOMPASS LOCATION
+        }
+    }
+    
+    
     private func _setDisplayType(type: DisplayType) {
+        
+        func showListTools() {
+            
+            let items: [UIBarButtonItem] = {
+                
+                let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "enterEditMode:")
+                let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
+                let status = UIBarButtonItem(customView: statusLabel)
+                status.width = 120
+                let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
+                let exportButton = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "presentExportView:")
+                return [createButton, space1, status, space2, exportButton]
+            }()
+            
+            toolbar.setItems(items, animated: true)
+        }
+        
+        func showMapTools() {
+            
+            let items: [UIBarButtonItem] = {
+                
+                let locationButton = mapToolbarButtonForLocationSetting()
+                let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
+                let status = UIBarButtonItem(customView: statusLabel)
+                status.width = 120
+                let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
+                let infoButton = UIBarButtonItem(image: UIImage(named: "info"), style: .Plain, target: self, action: "presentMapViewOptions:")
+                return [locationButton, space1, status, space2, infoButton]
+            }()
+            
+            toolbar.setItems(items, animated: true)
+        }
         
         switch type {
             
@@ -275,15 +320,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             mapView.alpha = 0
             mapView.hidden = false
+            showMapTools()
             UIView.animateWithDuration(0.25, animations: { () -> Void in
-                
                 self.mapView.alpha = 1.0
             })
             
         case .List:
             
+            showListTools()
             UIView.animateWithDuration(0.25, animations: { () -> Void in
-                
                 self.mapView.alpha = 0
                 }, completion: { (_) -> Void in
                     self.mapView.hidden = true
@@ -374,7 +419,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         didSet {
             
             let isNewTopic: Bool = {
-                
                 if let oldTopic = self._oldTopic {
                     return oldTopic.isEqual(self.topic) == false
                 }
@@ -391,25 +435,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var posts = [Post]()
     private var didFetchPosts = false
     private var dateOfMostRecentPost: NSDate?
-    
-    private func refreshTopic() {
-        
-        let reloadTopicOperation = UpdateTopicOperation(topic: topic!) {
-            
-            (refreshedObject, error) in
-            
-            self.displayStatus(type: .Normal)
-            if let refreshedTopic = refreshedObject as? Topic {
-                
-                // setting the topic to the refreshedTopic will force a re-fetch of the posts
-                self.topic = refreshedTopic
-            }
-        }
-        
-        displayStatus(type: .Updating)
-        FetchQueue.sharedInstance.addOperation(reloadTopicOperation)
-    }
-    
     
     private func fetchPosts(offset: Int = 0) {
         
@@ -436,10 +461,25 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     private func savePost() {
         
+        guard let topic = topic else {
+            assert(false)
+            return
+        }
+        
+        func refreshTopicWithPost(post: Post) {
+            
+            // update topic values seen by the user:  not the actual ones, which are set by the server
+            
+            let updatedNumberOfPosts = topic.localNumberOfPosts + 1
+            let updatedAverage = (topic.localAverageRating * Float(topic.localNumberOfPosts) + Float(post.rating!.value!)) / Float(updatedNumberOfPosts)
+            topic.localNumberOfPosts = updatedNumberOfPosts
+            topic.localAverageRating = updatedAverage
+        }
+        
         displayMode = .View
         displayStatus(type: .Posting)
         
-        let myPost = Post.createForTopic(topic!)
+        let myPost = Post.createForTopic(topic)
         myPost.rating = postInputView.rating
         if let comment = postInputView.comment {
             myPost.comment = comment
@@ -447,19 +487,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationDetails = LocationManager.sharedInstance.placemark?.toDictionary()
         
-        let postOperation = UploadPostOperation(post: myPost, topic: topic!) {
+        let postOperation = UploadPostOperation(post: myPost, topic: topic) {
             
             (postedObject, error) in
          
             self.displayStatus(type: .Normal)
             if let post = postedObject as? Post {
                 
-                self.posts.insert(post, atIndex: 0)
-                
                 self.displayedData = .TopicAndPosts
                 self.displayMode = .View
+                
+                refreshTopicWithPost(post)
+                self.addMapAnnotation(post)
+                self.posts.insert(post, atIndex: 0)
                 self.refreshTableView(replacingPosts: self.posts)
-                self.refreshTopic()
             }
             else if let error = error {
                 
@@ -501,13 +542,35 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    @IBAction func handleEnterEditModeAction(sender: AnyObject) {
+    @IBAction func enterEditMode(sender: AnyObject) {
         
         displayMode = .Edit
     }
     
     
-    @IBAction func handleExportAction(sender: AnyObject) {
+    @IBAction func toggleUserLocationDisplay(sender: AnyObject) {
+        
+        displayUserLocation = !displayUserLocation
+    }
+    
+    
+    @IBAction func presentMapViewOptions(sender: AnyObject) {
+        
+        let alertViewController = UIAlertController(title: "Map Type", message: nil, preferredStyle: .ActionSheet)
+        
+        let a1 = UIAlertAction(title: "Standard", style: UIAlertActionStyle.Default, handler: { action in self.mapView.mapType = .Standard })
+        let a2 = UIAlertAction(title: "Satellite", style: UIAlertActionStyle.Default, handler: { action in self.mapView.mapType = .Satellite })
+        let a3 = UIAlertAction(title: "Hybrid", style: UIAlertActionStyle.Default, handler: { action in self.mapView.mapType = .Hybrid })
+        
+        alertViewController.addAction(a1)
+        alertViewController.addAction(a2)
+        alertViewController.addAction(a3)
+        
+        presentViewController(alertViewController, animated: true, completion: nil)
+    }
+    
+    
+    @IBAction func presentExportView(sender: AnyObject) {
         
         if let navController = navigationController as? NavigationController {
             navController.presentExportViewController(withTopic: topic!)
@@ -965,10 +1028,23 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private func addMapAnnotation(post: Post) {
+        
+        self.mapAnnotations.append(post)
+        if mapDataType == .Annotations {
+            mapView.addAnnotation(post)
+        }
+    }
+    
+    
     private func removeAnnotationsLeavingTopic() {
         
+        guard let topic = topic else {
+            return
+        }
+        
         var annotations = self.mapView.annotations as! [AuthoredObject]
-        if let topicIndex = annotations.indexOf(topic!) {
+        if let topicIndex = annotations.indexOf(topic) {
             annotations.removeAtIndex(topicIndex)
         }
         self.mapView.removeAnnotations(annotations)
@@ -1032,6 +1108,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         else if minimumSpan < MapSector.actualSizeForSize(5) {
             type = .Sector2
+        }
+        else {
+            type = .Sector3
         }
 
         print("min span = \(type)")
@@ -1233,76 +1312,26 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
     }
-    
-    /*
-    private var currentlyFetchingPosts = false
-    func fetchAndDisplayAnnotations() {
-        
-        guard currentlyFetchingPosts == false else {
-            return
-        }
-        currentlyFetchingPosts = true
-        
-        func geoPointsForBox() -> (sw: PFGeoPoint, ne: PFGeoPoint) {
-            
-            let span = mapView.region.span
-            let center = mapView.region.center
-            let southWestCorner: PFGeoPoint = {
-                
-                let latitude = center.latitude - span.latitudeDelta / 2.0
-                let longitude = center.longitude - span.longitudeDelta / 2.0
-                return PFGeoPoint(latitude: latitude, longitude: longitude)
-            }()
-            
-            let northEastCorner: PFGeoPoint = {
-                
-                let latitude = center.latitude + span.latitudeDelta / 2.0
-                let longitude = center.longitude + span.longitudeDelta / 2.0
-                return PFGeoPoint(latitude: latitude, longitude: longitude)
-            }()
-            
-            return (southWestCorner, northEastCorner)
-        }
-        
-        
-        // TODO;  determine sectors and fetch posts from them instead of georects, caching the sector ids so we don't repeat the fetching
-        
-        
-        let query: PFQuery = {
-            
-            let theQuery = Post.query()!
-            theQuery.limit = 25
-            theQuery.whereKey(DataKeys.Topic, equalTo: topic!)
-            let corners = geoPointsForBox()
-            theQuery.whereKey(DataKeys.Location, withinGeoBoxFromSouthwest: corners.sw, toNortheast: corners.ne)
-            
-            return theQuery
-        }()
-        
-        displayStatus(type: .Fetching)
-        query.findObjectsInBackgroundWithBlock { (fetchedObjects, error) -> Void in
-            
-            dispatch_async(dispatch_get_main_queue()) {
-                self.displayStatus(type: .Normal)
-            }
-            
-            if let posts = fetchedObjects as? [Post] {
-                
-                self.mapAnnotations += posts
-                self.displayMapAnnotations()
-            }
-            
-            self.currentlyFetchingPosts = false
-        }
-    }
-*/
+
     
     func mapView(mapView: MKMapView, rendererForOverlay overlay: MKOverlay) -> MKOverlayRenderer {
         
         let mapSector = overlay as! MapSector
         let renderer = MKPolygonRenderer(polygon: mapSector.polygon())
-        renderer.alpha = 0.25
+        
         renderer.fillColor = mapSector.color()
+        renderer.alpha = {
+            
+            let minAlpha = CGFloat(0.25)
+            let maxAlpha = CGFloat(0.80)
+            
+            guard mapSector.numberOfPosts < topic!.numberOfPosts else {
+                return maxAlpha
+            }
+            
+            let fractionOfTotal = CGFloat(mapSector.numberOfPosts) / CGFloat(topic!.numberOfPosts)
+            return minAlpha + (fractionOfTotal * (maxAlpha - minAlpha))
+        }()
         
         return renderer
     }

@@ -62,7 +62,7 @@ class TopicMasterTableViewCell: TableViewCell {
     
 
     private func topicRating() -> Rating {
-        return Rating(withFloat: displayedTopic!.averageRating / 10.0)
+        return Rating(withFloat: displayedTopic!.localAverageRating / 10.0)
     }
     
     

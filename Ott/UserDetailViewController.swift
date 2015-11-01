@@ -16,7 +16,6 @@ class UserDetailViewController: TableViewController {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        view.backgroundColor = UIColor.whiteColor()
         setupTableView()
     }
     
