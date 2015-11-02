@@ -96,6 +96,10 @@ class User: PFUser {
     }
 
     
+    static let defaultAvatarImage = UIImage(named: "avatar")!
+    static let defaultBackgroundImage = UIImage(named: "blurryBlue")!
+    
+    
     
     //MARK: - Core Attributes
     
@@ -144,12 +148,6 @@ class User: PFUser {
         
         setImage(avatar, forKey: DataKeys.Avatar)
     }
-    
-    
-    static var defaultBackgroundImage: UIImage = {
-        
-        return UIImage(named:"blurryBlue")!
-        }()
     
     
     var backgroundImageFile: PFFile? {

@@ -173,6 +173,13 @@ extension UIViewController {
     
     private func presentUserDetailViewController(withObject object: PFObject?) {
         
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
+        
         let detailViewController: NavigationController = {
             
             let storyboard = UIStoryboard(name: "UserDetail", bundle: nil)
@@ -217,6 +224,13 @@ extension UIViewController {
     
     
     private func pushUserDetailViewController(withObject object: PFObject?) {
+        
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
         
         let detailViewController: UserDetailViewController = {
             

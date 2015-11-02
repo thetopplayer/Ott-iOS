@@ -82,6 +82,18 @@ class LocalViewController: TopicMasterViewController {
             return
         }
         
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+                
+                if self.activityIndicator.isAnimating() {
+                    self.hideActivityFadingIn()
+                }
+            })
+            
+            return
+        }
+        
         guard moreToFetch == false else {
             return
         }

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SystemConfiguration
 
 
 //MARK: - Vars
@@ -136,6 +137,21 @@ func performOnMainQueueAfterDelay(delay: NSTimeInterval, block: () -> Void) {
     dispatch_after(dispatch_time(DISPATCH_TIME_NOW, Int64(delay * Double(NSEC_PER_SEC))), dispatch_get_main_queue(), block)
 }
 
+
+func serverIsReachable() -> Bool {
+    
+    let reachability: SCNetworkReachability = {
+        let hostName = "https://api.parse.com".UTF8String
+        return SCNetworkReachabilityCreateWithName(nil, hostName)!
+    }()
+    
+    var isReachable = false
+    var flags: SCNetworkReachabilityFlags = []
+    if SCNetworkReachabilityGetFlags(reachability, &flags) != false {
+        isReachable = flags.contains(.Reachable)
+    }
+    return isReachable
+}
 
 
 

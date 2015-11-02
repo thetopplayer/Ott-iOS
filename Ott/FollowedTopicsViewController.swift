@@ -91,7 +91,6 @@ class FollowedTopicsViewController: TopicMasterViewController {
                     }
                     
                     self.hideRefreshControl()
-                    self.displayStatus()
                     
                     if let error = error {
                         self.presentOKAlertWithError(error, messagePreamble: "Error retrieving followee topics from server", actionHandler: nil)
@@ -105,9 +104,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
             return fetchOperation
         }
         
-
-        displayStatus("Fetching...")
-        
+        showRefreshControl()
         switch type {
             
         case .CachedThenUpdate:

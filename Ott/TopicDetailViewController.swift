@@ -61,7 +61,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
-        displayMode = .View
         initializeViewForTopic()
         startObservations()
     }
@@ -113,6 +112,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             displayMode = currentUserDidPostToTopic ? .View : .Edit
         }
         else {
+            displayMode = .View
             currentUser().didPostToTopic(topic, completion: { (didPost) -> Void in
                 topic.currentUserDidPostTo = didPost
                 self.displayMode = didPost ? .View : .Edit
@@ -120,7 +120,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
         
         defaultStatusMessage = topic.name!
-        displayType = .List
         
         if reloadingData {
             tableView.reloadData()
@@ -390,6 +389,13 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
+        
         displayStatus("Fetching posts...")
         
         let theQuery: PFQuery = {
@@ -424,6 +430,15 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
+        
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
+        
+
         func refreshTopicWithPost(post: Post) {
             
             // update topic values seen by the user:  not the actual ones, which are set by the server

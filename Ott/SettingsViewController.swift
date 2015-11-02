@@ -12,22 +12,47 @@ import UIKit
 // note that a lot of this is copied from AccountSetupViewController
 
 
-class SettingsViewController: TableViewController, UITextFieldDelegate, UITextViewDelegate {
+class SettingsViewController: TableViewController, UITextFieldDelegate, UITextViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
 
+    @IBOutlet weak var captionImageView: ParseImageView!
+    @IBOutlet weak var avatarImageView: ParseImageView!
     @IBOutlet weak var handleTextField: UITextField!
     @IBOutlet weak var nameTextField: UITextField!
-    @IBOutlet weak var handleExistsLabel: UILabel!
     @IBOutlet weak var handleEntryStatusImageView: UIImageView!
     @IBOutlet weak var nameEntryStatusImageView: UIImageView!
     @IBOutlet weak var bioTextView: UITextView!
     @IBOutlet weak var validatingHandleActivityIndicator: UIActivityIndicatorView!
 
     
+    enum SelectedImageType {
+        case None, Avatar, Background
+    }
+    var selectedImage: SelectedImageType = .None
+    
+    
     override func viewDidLoad() {
         
         super.viewDidLoad()
         
         tableView.backgroundColor = UIColor.background()
+        
+        let avatarGR: UITapGestureRecognizer = {
+            let tapGR = UITapGestureRecognizer()
+            tapGR.addTarget(self, action: "changeAvatar:")
+            return tapGR
+        }()
+        avatarImageView.addGestureRecognizer(avatarGR)
+        avatarImageView.userInteractionEnabled = true
+        avatarImageView.addBorder(withColor: UIColor.whiteColor(), width: 2.0)
+        
+        let backgroundGR: UITapGestureRecognizer = {
+            let tapGR = UITapGestureRecognizer()
+            tapGR.addTarget(self, action: "changeBackground:")
+            return tapGR
+        }()
+        captionImageView.addGestureRecognizer(backgroundGR)
+        captionImageView.userInteractionEnabled = true
+        captionImageView.layer.masksToBounds = true
         
         bioTextView.backgroundColor = UIColor.clearColor()
         bioTextView.addRoundedBorder()
@@ -37,19 +62,27 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         bioTextView.delegate = self
         saveButton.enabled = false
         
-        nameTextField.text = currentUser().name
-        handleTextField.text = currentUser().handle
-        bioTextView.text = currentUser().bio
-        
         // need to start off with nil to get the tint to behave correctly when the images are set
         handleEntryStatusImageView.image = nil
         nameEntryStatusImageView.image = nil
 
-        handleExistsLabel.hidden = true
         isDirty = false
         startObservations()
+        
+        updateDisplayForUser(currentUser())
     }
 
+    
+    func updateDisplayForUser(user: User) {
+        
+        avatarImageView.displayImageInFile(currentUser().avatarFile, defaultImage: User.defaultAvatarImage)
+        captionImageView.displayImageInFile(currentUser().backgroundImageFile, defaultImage: User.defaultBackgroundImage)
+        
+        nameTextField.text = currentUser().name
+        handleTextField.text = currentUser().handle
+        bioTextView.text = currentUser().bio
+    }
+    
     
     deinit {
         
@@ -120,6 +153,47 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     
     //MARK: - Actions
 
+    
+    private func presentImageOptions() {
+        
+        let alertViewController = UIAlertController(title: nil, message: nil, preferredStyle: .ActionSheet)
+        
+        let libraryAction = UIAlertAction(title: "Photo Library", style: UIAlertActionStyle.Default, handler: { action in
+            
+            self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .PhotoLibrary))
+        })
+        
+        let cameraAction = UIAlertAction(title: "Take Photo", style: UIAlertActionStyle.Default, handler: { action in
+            
+            self.operationQueue.addOperation(CameraOperation(presentationController: self, sourceType: .Camera))
+        })
+        
+        let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in
+            
+        })
+        
+        alertViewController.addAction(libraryAction)
+        alertViewController.addAction(cameraAction)
+        alertViewController.addAction(cancelAction)
+        
+        presentViewController(alertViewController, animated: true, completion: nil)
+    }
+    
+    
+    @IBAction func changeAvatar(sender: AnyObject) {
+        
+        selectedImage = .Avatar
+        presentImageOptions()
+    }
+    
+    
+    @IBAction func changeBackground(sender: AnyObject) {
+        
+        selectedImage = .Background
+        presentImageOptions()
+    }
+    
+    
     @IBAction func handleSaveAction(sender: AnyObject) {
         
         saveChanges()
@@ -174,6 +248,7 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         tableView.deselectRowAtIndexPath(indexPath, animated: true)
         logout()
     }
+    
     
     
     //MARK: - Observations and Delegate Methods
@@ -234,14 +309,12 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
                 
                 (fetchResults, error) in
                 
-                var handleIsUnique = true
                 if let _ = fetchResults?.first {
-                    handleIsUnique = false
+                    self.handleIsUnique = false
                 }
                 
                 dispatch_async(dispatch_get_main_queue()) {
                 
-                    self.handleExistsLabel.hidden = handleIsUnique
                     self.validatingHandleActivityIndicator.stopAnimating()
                     self.handleEntryStatusImageView.hidden = false
                     
@@ -262,7 +335,6 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
             }
             else {
                 indicateHandleOK(false)
-                handleExistsLabel.hidden = true
             }
         }
         else if (notification.object as! UITextField) == nameTextField {
@@ -283,5 +355,40 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
         
         isDirty = true
     }
+
+    
+    
+    //MARK: - UIImagePickerControllerDelegate
+    
+    func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
+        
+        dispatch_async(dispatch_get_main_queue()) {
+            
+            if self.selectedImage == .Avatar {
+                
+                let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
+                currentUser().setAvatar(resizedImage)
+                self.avatarImageView.image = image
+            }
+            else if self.selectedImage == .Background {
+                
+                let resizedImage = image.resized(toSize: CGSizeMake(800, 800))
+                currentUser().setBackgroundImage(resizedImage)
+                self.captionImageView.image = image
+            }
+            
+            self.isDirty = true
+            self.selectedImage = .None
+            picker.dismissViewControllerAnimated(true, completion: nil)
+        }
+    }
+    
+    
+    func imagePickerControllerDidCancel(picker: UIImagePickerController) {
+        
+        selectedImage = .None
+        picker.dismissViewControllerAnimated(true, completion: nil)
+    }
+    
 
 }

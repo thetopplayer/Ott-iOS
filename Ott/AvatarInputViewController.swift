@@ -9,7 +9,6 @@
 import UIKit
 
 class AvatarInputViewController: ViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
-
     
     @IBOutlet weak var contentContainer: UIView!
     @IBOutlet weak var label: UILabel!
@@ -96,10 +95,11 @@ class AvatarInputViewController: ViewController, UINavigationControllerDelegate,
         let resizedImage = image.resized(toSize: CGSizeMake(200, 200))
         currentUser().setAvatar(resizedImage)
         
-        imageView.image = image
-        doneButton.setTitle("Next", forState: .Normal)
-
-        picker.dismissViewControllerAnimated(true, completion: nil)
+        dispatch_async(dispatch_get_main_queue()) {
+            self.imageView.image = image
+            self.doneButton.setTitle("Next", forState: .Normal)
+            picker.dismissViewControllerAnimated(true, completion: nil)
+        }
     }
     
     

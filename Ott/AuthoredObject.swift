@@ -70,11 +70,32 @@ class AuthoredObject: DataObject, MKAnnotation {
     
     //MARK: - Attributes
 
+    static var maximumCommentLength: Int = 800
+    
     @NSManaged var author: User?
     @NSManaged var authorName: String?
     @NSManaged var authorHandle: String?
     @NSManaged var authorBio: String?
-    @NSManaged var comment: String?
+    
+    var comment: String? {
+        
+        set {
+            
+            if let theComment = newValue {
+                
+                let trimmedComment = theComment.stringByTrimmingCharactersInSet(NSCharacterSet.whitespaceAndNewlineCharacterSet())
+                
+                let truncatedComment = trimmedComment.length > self.dynamicType.maximumCommentLength ? trimmedComment.substring(startingAt: 0, length: self.dynamicType.maximumCommentLength) : trimmedComment
+                
+                self[DataKeys.Comment] = truncatedComment
+            }
+        }
+        
+        get {
+            return self[DataKeys.Comment] as? String
+        }
+    }
+    
     @NSManaged var locationDetails: NSDictionary?
     
     var location: CLLocation? {

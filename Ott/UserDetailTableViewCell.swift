@@ -103,9 +103,6 @@ class UserDetailTableViewCell: TableViewCell {
         }
     }
     
-    private let defaultAvatarImage = UIImage(named: "avatar")!
-    private let defaultBackgroundImage = UIImage(named: "blurryBlue")!
-    
     private func updateDisplayForTopic() {
         
         guard let topic = topic else {
@@ -115,7 +112,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = topic.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
-        avatarImageView.displayImageInFile(topic.imageFile, defaultImage: defaultAvatarImage)
+        avatarImageView.displayImageInFile(topic.imageFile, defaultImage: User.defaultAvatarImage)
     }
     
     
@@ -128,7 +125,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = post.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(post.authorBio)
-        avatarImageView.displayImageInFile(post.imageFile, defaultImage: defaultAvatarImage)
+        avatarImageView.displayImageInFile(post.imageFile, defaultImage: User.defaultAvatarImage)
     }
     
     
@@ -141,8 +138,8 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = user.handle
         bioTextLabel.attributedText = attributedTextForBio(user.bio)
-        avatarImageView.displayImageInFile(user.avatarFile, defaultImage: defaultAvatarImage)
-        captionImageView.displayImageInFile(user.backgroundImageFile, defaultImage: defaultBackgroundImage)
+        avatarImageView.displayImageInFile(user.avatarFile, defaultImage: User.defaultAvatarImage)
+        captionImageView.displayImageInFile(user.backgroundImageFile, defaultImage: User.defaultBackgroundImage)
     }
     
     

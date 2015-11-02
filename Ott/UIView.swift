@@ -32,10 +32,11 @@ extension UIView {
     }
     
     
-    func addBorder(withColor color: UIColor) {
+    func addBorder(withColor color: UIColor, width: CGFloat = 0.5) {
         
         self.layer.borderColor = color.CGColor
-        self.layer.borderWidth = 0.5
+        self.layer.borderWidth = width
+        self.layer.masksToBounds = true
     }
     
     
@@ -45,11 +46,10 @@ extension UIView {
     }
 
     
-    func addRoundedBorder(withColor color: UIColor) {
+    func addRoundedBorder(withColor color: UIColor, width: CGFloat = 0.5) {
         
         self.layer.cornerRadius = 4.0
-        self.layer.masksToBounds = true
-        addBorder(withColor: color)
+        addBorder(withColor: color, width: width)
     }
     
     

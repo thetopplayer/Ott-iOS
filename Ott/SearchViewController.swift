@@ -142,6 +142,13 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     
     private func fetchObjectsWithSearchPhrase(searchPhrase: String, limit: Int = 10) {
         
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
+        
         activityIndicator.startAnimating()
         
         let lowercaseString = searchPhrase.lowercaseString

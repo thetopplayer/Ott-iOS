@@ -171,6 +171,17 @@ class TopicCreationTableViewCell: TableViewCell, UITextViewDelegate, UITextField
         return true
     }
     
+    
+    func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
+        
+        if range.location > Topic.maximumCommentLength {
+            return false
+        }
+        
+        return true
+    }
+    
+    
     private var isDisplayingTextViewPlaceholder = true
     private func displayTextViewPlaceholder() {
         

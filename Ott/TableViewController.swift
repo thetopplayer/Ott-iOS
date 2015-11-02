@@ -10,7 +10,12 @@ import UIKit
 
 class TableViewController: UITableViewController {
 
-
+    lazy var operationQueue: OperationQueue = {
+        let queue = OperationQueue()
+        return queue
+    }()
+    
+    
     //MARK: - Lifecycle
     
     override init(style: UITableViewStyle) {

@@ -83,6 +83,13 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
             return
         }
         
+        guard serverIsReachable() else {
+            
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
+            })
+            return
+        }
+        
         doneButton.enabled = false
         
         topic.name = creationCellView!.title
@@ -329,10 +336,9 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
     func imagePickerController(picker: UIImagePickerController, didFinishPickingImage image: UIImage, editingInfo: [String : AnyObject]?) {
         
         let defaultImageSize = CGSizeMake(800, 800)
-        self.myTopic!.setImage(image.resized(toSize: defaultImageSize))
-        picker.dismissViewControllerAnimated(true) {
-        
-//            self.tableView.reloadData()
+        dispatch_async(dispatch_get_main_queue()) {
+            self.myTopic!.setImage(image.resized(toSize: defaultImageSize))
+            picker.dismissViewControllerAnimated(true, completion: nil)
         }
     }
     
