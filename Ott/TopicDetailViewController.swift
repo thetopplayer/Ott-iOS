@@ -119,7 +119,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             })
         }
         
-        navigationItem.title = topic.name!
+        defaultStatusMessage = topic.name!
         displayType = .List
         
         if reloadingData {
@@ -130,22 +130,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
 
-    private var statusLabel: UILabel? {
-        
-        didSet {
-            statusLabel?.text = statusMessage
-        }
-    }
-    
-    
-    private var statusMessage: String? {
-        
-        didSet {
-            statusLabel?.text = statusMessage
-        }
-    }
-
-    
     private enum DisplayMode {
         case View, Edit
     }
@@ -279,26 +263,26 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
 
-    private let listToolbarStatusLabel: UILabel = {
-        
-        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
-        label.font = UIFont.systemFontOfSize(13)
-        label.textAlignment = .Center
-        label.textColor = UIColor.darkGrayColor()
-        return label
-    }()
-    
-
-    private let mapToolbarStatusLabel: UILabel = {
-        
-        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
-        label.font = UIFont.systemFontOfSize(13)
-        label.textAlignment = .Center
-        label.textColor = UIColor.darkGrayColor()
-        return label
-    }()
-
-    
+//    private let listToolbarStatusLabel: UILabel = {
+//        
+//        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
+//        label.font = UIFont.systemFontOfSize(13)
+//        label.textAlignment = .Center
+//        label.textColor = UIColor.darkGrayColor()
+//        return label
+//    }()
+//    
+//
+//    private let mapToolbarStatusLabel: UILabel = {
+//        
+//        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
+//        label.font = UIFont.systemFontOfSize(13)
+//        label.textAlignment = .Center
+//        label.textColor = UIColor.darkGrayColor()
+//        return label
+//    }()
+//
+//    
     private func _setDisplayType(type: DisplayType) {
         
         func showListTools() {
@@ -307,15 +291,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
                 let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "enterEditMode:")
                 let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
-                let status = UIBarButtonItem(customView: listToolbarStatusLabel)
-                status.width = 120
-                let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
                 let exportButton = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "presentExportView:")
-                return [createButton, space1, status, space2, exportButton]
+                return [createButton, space1, exportButton]
             }()
             
             toolbar.setItems(listToolbarItems, animated: true)
-            statusLabel = listToolbarStatusLabel
         }
         
         func showMapTools() {
@@ -324,15 +304,11 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
                 let locationButton = mapToolbarButtonForLocationSetting()
                 let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
-                let status = UIBarButtonItem(customView: mapToolbarStatusLabel)
-                status.width = 120
-                let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
                 let infoButton = UIBarButtonItem(image: UIImage(named: "info"), style: .Plain, target: self, action: "presentMapViewOptions:")
-                return [locationButton, space1, status, space2, infoButton]
+                return [locationButton, space1, infoButton]
             }()
             
             toolbar.setItems(mapToolbarItems, animated: true)
-            statusLabel = mapToolbarStatusLabel
         }
         
         switch type {
@@ -414,7 +390,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
-        statusMessage = "Fetching posts..."
+        displayStatus("Fetching posts...")
         
         let theQuery: PFQuery = {
             
@@ -434,7 +410,8 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 self.postFetchOffset += thePosts.count
                 self.allPostsFetched = thePosts.count < theQuery.limit
             }
-            self.statusMessage = ""
+            
+            self.displayStatus()
             self.didFetchPosts = true
         }
     }
@@ -473,7 +450,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         
         displayMode = .View
-        statusMessage = "Posting..."
+        displayStatus("Posting...")
         
         let myPost = Post.createForTopic(topic)
         myPost.rating = postInputView.rating
@@ -487,7 +464,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             (postedObject, error) in
          
-            self.statusMessage = ""
+            self.displayStatus()
             if let post = postedObject as? Post {
                 
                 refreshTopicWithPost(post)
