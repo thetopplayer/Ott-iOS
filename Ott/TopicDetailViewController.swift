@@ -61,6 +61,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
+        displayMode = .View
         initializeViewForTopic()
         startObservations()
     }

@@ -198,12 +198,12 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     private let userCellViewIdentifer = "userCell"
     private let userCellViewHeight = CGFloat(69)
     
-    private let topicCellViewNibName = "TopicMasterTableViewCellTwo"
-    private let topicCellViewIdentifier = "topicCellTwo"
+    private let topicCellViewNibName = "TopicMasterTableViewCell"
+    private let topicCellViewIdentifier = "topicMaster"
     private let topicCellViewHeight = CGFloat(96)
     
-    private let topicWithImageCellViewNibName = "TopicMasterTableViewCellThree"
-    private let topicWithImageCellViewIdentifier = "topicCellThree"
+    private let topicWithImageCellViewNibName = "TopicWithImageMasterTableViewCell"
+    private let topicWithImageCellViewIdentifier = "topicImageMaster"
     private let topicWithImageCellViewHeight = CGFloat(117)
     
     private let loadingDataCellViewNibName = "LoadingTableViewCell"

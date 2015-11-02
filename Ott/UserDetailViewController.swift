@@ -41,14 +41,7 @@ class UserDetailViewController: TableViewController {
         
         startObservations()
     }
-    
-    
-    override func viewDidAppear(animated: Bool) {
-        
-        super.viewDidAppear(animated)
-        updateCurrentlyDisplayedData()
-    }
-    
+
     
     override func viewWillDisappear(animated: Bool) {
         
@@ -130,7 +123,7 @@ class UserDetailViewController: TableViewController {
             
             dispatch_async(dispatch_get_main_queue()) {
                 self.displayedData = .AuthoredTopics
-                self.updateUserSection()
+                self.updateCurrentlyDisplayedData()
             }
         }
     }
@@ -246,7 +239,7 @@ class UserDetailViewController: TableViewController {
                     updateDataSection()
                 }
                 else if fetchStatus_followingOthersRelationships == .NotFetched {
-                    fetchfollowingOthersRelationships()
+                    fetchFollowingOthersRelationships()
                 }
                 
             case .Followers:
@@ -397,7 +390,7 @@ class UserDetailViewController: TableViewController {
     }
     
     
-    private func fetchfollowingOthersRelationships() {
+    private func fetchFollowingOthersRelationships() {
 
         if fetchStatus_followingOthersRelationships == .Fetching {
             return
@@ -489,7 +482,7 @@ class UserDetailViewController: TableViewController {
             fetchAuthoredPosts()
             
         case .Following:
-            fetchfollowingOthersRelationships()
+            fetchFollowingOthersRelationships()
             
         case .Followers:
             fetchUsersfollowingMeRelationships()
@@ -526,12 +519,12 @@ class UserDetailViewController: TableViewController {
     private let followStatsCellViewIdentifer = "followStatsCell"
     private let followStatsCellViewHeight = CGFloat(44)
     
-    private let topicCellViewNibName = "TopicMasterTableViewCellTwo"
-    private let topicCellViewIdentifier = "topicCellTwo"
+    private let topicCellViewNibName = "TopicMasterTableViewCell"
+    private let topicCellViewIdentifier = "topicMaster"
     private let topicCellViewHeight = CGFloat(96)
     
-    private let topicWithImageCellViewNibName = "TopicMasterTableViewCellThree"
-    private let topicWithImageCellViewIdentifier = "topicCellThree"
+    private let topicWithImageCellViewNibName = "TopicWithImageMasterTableViewCell"
+    private let topicWithImageCellViewIdentifier = "topicImageMaster"
     private let topicWithImageCellViewHeight = CGFloat(117)
     
     private let postCellNibName = "PostDetailTableViewCell"
@@ -1002,7 +995,12 @@ class UserDetailViewController: TableViewController {
             
         case .AuthoredPosts:
             
-            tableView.separatorColor = UIColor.separator()
+            if fetchStatus_AuthoredPosts == .Fetching || authoredPosts.count == 0 {
+                tableView.separatorColor = UIColor.background()
+            }
+            else {
+                tableView.separatorColor = UIColor.separator()
+            }
             
         case .Following:
             
@@ -1065,6 +1063,28 @@ class UserDetailViewController: TableViewController {
             self.tableView.beginUpdates()
             self.tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Automatic)
             self.tableView.endUpdates()
+        }
+    }
+    
+    
+    override func tableView(tableView: UITableView, shouldHighlightRowAtIndexPath indexPath: NSIndexPath) -> Bool {
+        
+        if displayedData == .AuthoredTopics {
+            return indexPath.section == 1
+        }
+        
+        return false
+    }
+    
+    
+    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+        
+        if displayedData == .AuthoredTopics {
+            
+            let selection = authoredTopics[indexPath.row]
+            presentTopicDetailViewController(withTopic: selection)
         }
     }
     

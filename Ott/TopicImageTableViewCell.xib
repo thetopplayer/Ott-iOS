@@ -17,7 +17,6 @@
                     <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="uKw-Kg-CNy" customClass="ParseImageView" customModule="Ott" customModuleProvider="target">
                         <rect key="frame" x="0.0" y="0.0" width="600" height="399"/>
                         <animations/>
-                        <color key="backgroundColor" red="1" green="0.80784313730000001" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
                         <constraints>
                             <constraint firstAttribute="height" constant="399" id="7uh-3r-RvX"/>
                         </constraints>
