@@ -21,14 +21,17 @@ class LocalViewController: TopicMasterViewController {
         
         super.viewDidLoad()
 
-        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
-        navigationItem.rightBarButtonItem = createButton
-        
         defaultStatusMessage = "Local"
-        // change to backgroundColor after data is first loaded
-        tableView.backgroundColor = UIColor.whiteColor()
+        tableView.backgroundColor = UIColor.whiteColor() // change to backgroundColor after data is first loaded
     }
 
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.hidden = false
+    }
+    
     
     override func viewDidAppear(animated: Bool) {
         

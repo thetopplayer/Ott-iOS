@@ -55,7 +55,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Following" id="idP-OS-K1Q">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="9mj-6H-kpg"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="9mj-6H-kpg">
+                            <connections>
+                                <action selector="presentTopicCreationAction:" destination="Yov-Rn-gO0" id="mIH-hx-Aer"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="SqY-Pk-Znx" id="ZzM-Zw-ZUk"/>

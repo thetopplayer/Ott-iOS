@@ -39,7 +39,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Local" id="TSx-Qu-Ngg">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="MKE-ZA-YZm"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="MKE-ZA-YZm">
+                            <connections>
+                                <action selector="presentTopicCreationAction:" destination="5wi-YZ-tXA" id="Gn1-lE-qLm"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="idO-rP-tEo" id="upN-pg-ReK"/>

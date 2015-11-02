@@ -48,6 +48,7 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     override func viewWillAppear(animated: Bool) {
         
         super.viewWillAppear(animated)
+        tabBarController?.tabBar.hidden = false
     }
     
     
@@ -151,19 +152,25 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
         
         activityIndicator.startAnimating()
         
-        let lowercaseString = searchPhrase.lowercaseString
-        let cleanedString = lowercaseString.stringByRemovingCharactersInString(".,;:\"")
-        let wordArray = cleanedString.componentsSeparatedByString(" ")
+        var cleanedWords = [String]()
+        for word in searchPhrase.componentsSeparatedByString(" ") {
+            
+            let w1 = word.lowercaseString
+            let w2 = w1.stringByRemovingCharactersInSet(NSCharacterSet.alphanumericCharacterSet().invertedSet)
+            cleanedWords.append(w2)
+        }
+        
+        print("search words = \(cleanedWords)")
         
         let userQuery = User.query()!
         let topicQuery = Topic.query()!
         
         let theQueries: [PFQuery] = [userQuery, topicQuery]
         
-        userQuery.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: wordArray)
+        userQuery.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: cleanedWords)
         for query in theQueries {
             
-            query.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: wordArray)
+            query.whereKey(DataKeys.SearchWords, containsAllObjectsInArray: cleanedWords)
             query.orderByDescending(DataKeys.CreatedAt)
             query.limit = limit
         }
@@ -233,16 +240,6 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-    enum SectionType {
-        case User, Topic
-    }
-    
-    
-    enum CellType {
-        case User, TopicNoImage, TopicWithImage
-    }
-    
-    
     private func isDisplayingUsers() -> Bool {
         return users.count > 0
     }
@@ -267,6 +264,11 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     }
     
     
+    enum SectionType {
+        case User, Topic
+    }
+    
+    // cannot use fixed section numbers, since the number of sections will depend on the search restuls
     private func sectionTypeForSection(section: Int) -> SectionType {
         
         var type: SectionType?
@@ -290,6 +292,11 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
         }
         
         return type!
+    }
+    
+    
+    enum CellType {
+        case User, TopicNoImage, TopicWithImage
     }
     
     
@@ -417,13 +424,21 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
     }
     
     
-    
-    //
-    //    override func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
-    //
-    //        super.tableView(tableView, didSelectRowAtIndexPath: indexPath)
-    //        presentTopicDetailViewController(withTopic: selection)
-    //    }
+    func tableView(tableView: UITableView, didSelectRowAtIndexPath indexPath: NSIndexPath) {
+        
+        tableView.deselectRowAtIndexPath(indexPath, animated: false)
+
+        if sectionTypeForSection(indexPath.section) == .User {
+            
+            let user = users[indexPath.row]
+            presentUserDetailViewController(withUser: user)
+        }
+        else if sectionTypeForSection(indexPath.section) == .Topic {
+            
+            let topic = topics[indexPath.row]
+            presentTopicDetailViewController(withTopic: topic)
+        }
+    }
     
     
     
@@ -433,15 +448,5 @@ class SearchViewController: ViewController, UITableViewDataSource, UITableViewDe
         
         presentTopicCreationViewController()
     }
-    
-    
-    @IBAction func presentTopicScanViewController(sender: AnyObject) {
-        
-        if let navController = navigationController as? NavigationController {
-            navController.presentTopicScanViewController()
-        }
-    }
-    
-    
 }
 

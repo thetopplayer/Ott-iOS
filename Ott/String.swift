@@ -84,6 +84,12 @@ extension String {
     }
     
     
+    func stringByRemovingCharactersInSet(characterSet: NSCharacterSet) -> String {
+        
+        return self.componentsSeparatedByCharactersInSet(characterSet).joinWithSeparator("")
+    }
+    
+    
     func stringByRemovingCharactersInString(string: String) -> String {
         
         let characterSet = NSCharacterSet(charactersInString: string)

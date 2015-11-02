@@ -18,22 +18,22 @@ class FollowedTopicsViewController: TopicMasterViewController {
         
         super.viewDidLoad()
 
-        let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "presentTopicCreationAction:")
-        navigationItem.rightBarButtonItem = createButton
-        
-        let title: String
-        let number = currentUser().followingCount
-        if number == 1 {
-            title = "Following \(number) User"
-        }
-        else {
-            title = "Following \(number) Users"
-        }
-        defaultStatusMessage = title
+        defaultStatusMessage = {
+            let number = currentUser().followingCount
+            return number == 1 ? "Following \(number) User" : "Following \(number) Users"
+            }()
 
         fetchTopics(.CachedThenUpdate)
     }
 
+    
+    override func viewWillAppear(animated: Bool) {
+        
+        super.viewWillAppear(animated)
+        tabBarController?.tabBar.hidden = false
+    }
+    
+    
 
     
     

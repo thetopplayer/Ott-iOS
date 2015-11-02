@@ -48,7 +48,11 @@
                         </constraints>
                     </view>
                     <navigationItem key="navigationItem" title="Search" id="eVM-Sb-Klb">
-                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Umf-dW-sCS"/>
+                        <barButtonItem key="rightBarButtonItem" systemItem="compose" id="Umf-dW-sCS">
+                            <connections>
+                                <action selector="presentTopicCreationAction:" destination="NDd-VH-KGY" id="bAv-eh-NAF"/>
+                            </connections>
+                        </barButtonItem>
                     </navigationItem>
                     <connections>
                         <outlet property="activityIndicator" destination="fwD-7J-Wte" id="l9N-nh-5SP"/>
