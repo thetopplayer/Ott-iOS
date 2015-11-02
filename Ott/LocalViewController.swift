@@ -74,7 +74,7 @@ class LocalViewController: TopicMasterViewController {
     private var lastUpdated: NSDate?
     private var fetchOffset = 0
     private var moreToFetch = false
-    let private fetchLimit = 100
+    private let fetchLimit = 100
     
     private func fetchTopics() {
         

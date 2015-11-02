@@ -1267,20 +1267,20 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return nil
         }
         
-        let topicIdentifier = "topicAnnotation"
-        let postIdentifier = "postAnnotation"
-        
-        let isTopic = (annotation as! AuthoredObject) is Topic
-        let identifier = isTopic ? topicIdentifier : postIdentifier
-        
+        let identifier = "annotationViewIdentifier"
         var annotationView: MKPinAnnotationView
         if let view = mapView.dequeueReusableAnnotationViewWithIdentifier(identifier) as? MKPinAnnotationView {
-            
             annotationView = view
         }
         else {
             annotationView = MKPinAnnotationView(annotation: annotation, reuseIdentifier: identifier)
-            annotationView.pinTintColor = isTopic ? UIColor.purpleColor() : UIColor.redColor()
+        }
+        
+        if annotation is Topic {
+            annotationView.pinTintColor = UIColor.purpleColor()
+        }
+        else {
+            annotationView.pinTintColor = (annotation as! Post).rating?.color()
         }
         
         return annotationView
