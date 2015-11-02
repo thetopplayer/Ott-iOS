@@ -27,6 +27,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     @IBOutlet weak var postInputViewBottomConstraint: NSLayoutConstraint!
     @IBOutlet weak var toolbarBottomConstraint: NSLayoutConstraint!
     
+    struct Notifications {
+        
+        static let DidPostToTopic = "didPostToTopic"
+        static let Topic = "post"
+    }
+    
+    
+    
     
     //MARK: - Lifecycle
     
@@ -58,14 +66,14 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    override func viewDidAppear(animated: Bool) {
-        
-        super.viewDidAppear(animated)
-        
-        performOnMainQueueAfterDelay(1) {
-            self.remindUserToPost()
-        }
-    }
+//    override func viewDidAppear(animated: Bool) {
+//        
+//        super.viewDidAppear(animated)
+//        
+//        performOnMainQueueAfterDelay(1) {
+//            self.remindUserToPost()
+//        }
+//    }
     
     
     override func viewWillDisappear(animated: Bool) {
@@ -84,18 +92,18 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     var exitMethod = ExitMethod.Back
     
     
-    private func remindUserToPost() {
-        
-        let maximumNumberOfPrompts = 2
-        let numberOfPrompts = Globals.sharedInstance.remindersToPostToTopic
-        if numberOfPrompts >= maximumNumberOfPrompts {
-            return
-        }
-        
-        presentOKAlert(title: "Create a Post", message: "See what others have said about this topic by first posting your take on it.", actionHandler: nil)
-        
-        Globals.sharedInstance.remindersToPostToTopic = numberOfPrompts + 1
-    }
+//    private func remindUserToPost() {
+//        
+//        let maximumNumberOfPrompts = 2
+//        let numberOfPrompts = Globals.sharedInstance.remindersToPostToTopic
+//        if numberOfPrompts >= maximumNumberOfPrompts {
+//            return
+//        }
+//        
+//        presentOKAlert(title: "Create a Post", message: "See what others have said about this topic by first posting your take on it.", actionHandler: nil)
+//        
+//        Globals.sharedInstance.remindersToPostToTopic = numberOfPrompts + 1
+//    }
     
     
     private var didInitializeViewForTopic = false
@@ -111,8 +119,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         didInitializeViewForTopic = true
         
         if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
-            
-            displayedData = currentUserDidPostToTopic ? .TopicAndPosts : .Topic
             displayMode = currentUserDidPostToTopic ? .View : .Edit
         }
         else {
@@ -120,7 +126,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             currentUser().didPostToTopic(topic, completion: { (didPost) -> Void in
                 
                 topic.currentUserDidPostTo = didPost
-                self.displayedData = didPost ? .TopicAndPosts : .Topic
                 self.displayMode = didPost ? .View : .Edit
             })
         }
@@ -134,14 +139,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             fetchPosts()
         }
     }
-    
-    
-    private enum DisplayedData {
-        case Topic, TopicAndPosts
-    }
-    
-    
-    private var displayedData: DisplayedData = .Topic
     
     
     private enum DisplayMode {
@@ -216,9 +213,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 
             }
         }
-        
-        let mapToggleButton = navigationItem.rightBarButtonItem
-        mapToggleButton?.enabled = displayedData == .TopicAndPosts
         
         switch mode {
             
@@ -474,7 +468,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             let updatedAverage = (topic.localAverageRating * Float(topic.localNumberOfPosts) + Float(post.rating!.value!)) / Float(updatedNumberOfPosts)
             topic.localNumberOfPosts = updatedNumberOfPosts
             topic.localAverageRating = updatedAverage
+            
+            let userinfo = [Notifications.Topic: topic]
+            let notification = NSNotification(name: Notifications.DidPostToTopic, object: self, userInfo: userinfo)
+            NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostNow)
         }
+        
+        func updateTableWithPost(post: Post) {
+            
+            self.posts.insert(post, atIndex: 0)
+            
+            tableView.beginUpdates()
+            tableView.reloadRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: TableViewSections.Statistics.rawValue)], withRowAnimation: .None)
+            tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: TableViewSections.Posts.rawValue)], withRowAnimation: .Fade)
+            tableView.endUpdates()
+        }
+        
         
         displayMode = .View
         displayStatus(type: .Posting)
@@ -494,13 +503,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             self.displayStatus(type: .Normal)
             if let post = postedObject as? Post {
                 
-                self.displayedData = .TopicAndPosts
-                self.displayMode = .View
-                
                 refreshTopicWithPost(post)
+                updateTableWithPost(post)
                 self.addMapAnnotation(post)
-                self.posts.insert(post, atIndex: 0)
-                self.refreshTableView(replacingPosts: self.posts)
             }
             else if let error = error {
                 
@@ -598,13 +603,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             goodbye()
         }
         else {
-            
-            if displayedData == .Topic {
-                goodbye()
-            }
-            else {
-                displayMode = .View
-            }
+            displayMode = .View
         }
     }
     
@@ -650,7 +649,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.delegate = self
         tableView.dataSource = self
         tableView.rowHeight = UITableViewAutomaticDimension
-        tableView.backgroundColor = UIColor.background()
 
         let nib = UINib(nibName: textCellViewNibName, bundle: nil)
         tableView.registerNib(nib, forCellReuseIdentifier: textCellViewIdentifier)
@@ -670,72 +668,31 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         case Topic = 0
         case Statistics = 1
         case Posts = 2
-        
-        static func maximumNumberOfSections() -> Int {
-            return 3
-        }
     }
     
     
     func refreshTableView(replacingPosts replacementPosts: [Post]) {
         
-        guard displayedData == .TopicAndPosts else {
-            return
-        }
-        
         posts = replacementPosts
-
-        self.tableView.beginUpdates()
-        let numberOfSectionsThatWillBeDisplayed = numberOfSectionsInTableView(tableView)
         
-        if tableView.numberOfSections == numberOfSectionsThatWillBeDisplayed {
-            
-            switch numberOfSectionsInTableView(tableView) {
-                
-            case 1:
-                
-                self.tableView.reloadSections(NSIndexSet(index: TableViewSections.Topic.rawValue), withRowAnimation: .None)
-                
-            case 2:
-                
-                tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .None)
-                
-            case 3:
-                
-                tableView.reloadSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .None)
-                tableView.reloadSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Fade)
-                
-            default:
-                assert(false)
-            }
-            
-        }
-        else if numberOfSectionsThatWillBeDisplayed == 2 {
-            
-            tableView.insertSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
-        }
-        else if numberOfSectionsThatWillBeDisplayed == 3 {
-            
-            if tableView.numberOfSections == 1 {
-                tableView.insertSections(NSIndexSet(index: TableViewSections.Statistics.rawValue), withRowAnimation: .Automatic)
-            }
-            
-            tableView.insertSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Bottom)
+        if tableView.numberOfSections == 0 {
+            tableView.reloadData()
         }
         else {
-            assert(false)
+            
+            self.tableView.beginUpdates()
+            tableView.reloadSections(NSIndexSet(index: TableViewSections.Posts.rawValue), withRowAnimation: .Fade)
+            self.tableView.endUpdates()
         }
-        
-        self.tableView.endUpdates()
     }
     
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
         
-        if displayedData == .TopicAndPosts {
-            return TableViewSections.maximumNumberOfSections()
+        if topic == nil {
+            return 0
         }
-        return 2
+        return 3
     }
     
     
@@ -744,7 +701,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         if section == 0 {
             return 0.01
         }
-        
         return 40
     }
     
@@ -777,29 +733,28 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         
-        if let _ = topic {
-            
-            var number = 0
-            
-            switch section {
-                
-            case TableViewSections.Topic.rawValue:
-                number = 1
-                
-            case TableViewSections.Statistics.rawValue:
-                number = 1
-                
-            case TableViewSections.Posts.rawValue:
-                number = posts.count
-                
-            default:
-                assert(false)
-            }
-            
-            return number
+        guard topic != nil else {
+            return 0
         }
         
-        return 0
+        var number = 0
+        
+        switch section {
+            
+        case TableViewSections.Topic.rawValue:
+            number = 1
+            
+        case TableViewSections.Statistics.rawValue:
+            number = 1
+            
+        case TableViewSections.Posts.rawValue:
+            number = posts.count
+            
+        default:
+            assert(false)
+        }
+        
+        return number
     }
     
     
@@ -815,24 +770,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         switch indexPath.section {
             
         case TableViewSections.Topic.rawValue:
-            
-            let displayingImage = topic!.imageFile != nil
-            switch indexPath.row {
-                
-            case 0:
-                if displayingImage {
-                    cellType = .TopicImage
-                }
-                else {
-                    cellType = .TopicText
-                }
-                
-//            case 1:
-//                    cellType = .TopicText
-                
-            default:
-                assert(false)
-            }
+            cellType = topic!.imageFile != nil ? .TopicImage : .TopicText
             
         case TableViewSections.Statistics.rawValue:
             cellType = .TopicStats

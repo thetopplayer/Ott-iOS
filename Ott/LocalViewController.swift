@@ -12,7 +12,6 @@ class LocalViewController: TopicMasterViewController {
 
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
-    var aTopicWasUpdated = false
     var locationDidChange = true
     var lastUpdated: NSDate?
     var fetchOffset = 0
@@ -41,10 +40,6 @@ class LocalViewController: TopicMasterViewController {
         if let lastUpdated = lastUpdated {
             
             if lastUpdated.minutesFromNow(absolute: true) > 2 {
-                fetchTopics()
-            }
-            else if aTopicWasUpdated {
-                aTopicWasUpdated = false
                 fetchTopics()
             }
         }
@@ -174,10 +169,7 @@ class LocalViewController: TopicMasterViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidChange, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUpdateTopicNotification:", name: UpdateTopicOperation.Notifications.DidUpdate, object: nil)
-        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
-
     }
     
     
@@ -188,15 +180,9 @@ class LocalViewController: TopicMasterViewController {
     }
 
     
-    // this notification is typically received when the view is not visible, since topics are updated after the user has posted to them in the detailed topic view
-    func handleDidUpdateTopicNotification(notification: NSNotification) {
-        
-        aTopicWasUpdated = true
-    }
-
-    
     func handleDidUploadTopicNotification(notification: NSNotification) {
         
         update()
     }
+    
 }

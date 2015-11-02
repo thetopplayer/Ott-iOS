@@ -23,13 +23,13 @@ class ViewController: UIViewController {
     
     
     override func viewDidAppear(animated: Bool) {
-        super.viewWillAppear(animated)
+        super.viewDidAppear(animated)
         _isVisible = true
     }
     
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
         _isVisible = false
     }
     

@@ -37,23 +37,16 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    override func viewDidLayoutSubviews() {
-        
-        super.viewDidLayoutSubviews()
-//        statusLabel.frame = CGRectMake(0, 180, view.bounds.size.width, 32)
-    }
-    
-
-    override func viewWillDisappear(animated: Bool) {
-        
-        super.viewWillDisappear(animated)
+    override func viewDidAppear(animated: Bool) {
+        super.viewDidAppear(animated)
+        reloadCellsAtIndexPaths()
     }
     
     
     override func didReceiveMemoryWarning() {
         
         super.didReceiveMemoryWarning()
-        
+
         // todo:  this was being triggered in the middle of a table load
 //        if isVisible() == false {
 //            topics.removeAll()
@@ -93,6 +86,31 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private var indexPathsToReload = [NSIndexPath]()
+    func reloadCellsAtIndexPaths(paths: [NSIndexPath]? = nil) {
+        
+        if let paths = paths {
+            indexPathsToReload += paths
+        }
+        
+        if indexPathsToReload.count == 0 {
+            return
+        }
+        
+        if isVisible() {
+            
+            dispatch_async(dispatch_get_main_queue()) {
+                
+                self.tableView.beginUpdates()
+                self.tableView.reloadRowsAtIndexPaths(self.indexPathsToReload, withRowAnimation: .Automatic)
+                self.tableView.endUpdates()
+                
+                self.indexPathsToReload.removeAll()
+            }
+        }
+    }
+    
+    
     
     //MARK: - Data
     
@@ -101,14 +119,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         return topics
     }
     
-    var selection: Topic? {
-        
-        didSet {
-//            let notification = NSNotification(name: TopicMasterViewController.Notification.selectionDidChange, object: self)
-//            NSNotificationCenter.defaultCenter().postNotification(notification)
-        }
-    }
-    
+    var selection: Topic?    
     
     func update() {
         //stub
@@ -291,6 +302,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostToTopicNotification:", name: TopicDetailViewController.Notifications.DidPostToTopic, object: nil)
     }
     
     
@@ -311,6 +323,17 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
+    
+    func handleDidPostToTopicNotification(notification: NSNotification) {
+        
+        let topic = notification.userInfo![TopicDetailViewController.Notifications.Topic] as! Topic
+        if let index = displayedTopics.indexOf(topic) {
+            
+            let ip = NSIndexPath(forRow: index, inSection: 0)
+            reloadCellsAtIndexPaths([ip])
+        }
+    }
+
 
 
     // MARK: - Navigation

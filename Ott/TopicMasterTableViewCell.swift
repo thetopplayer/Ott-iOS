@@ -75,9 +75,9 @@ class TopicMasterTableViewCell: TableViewCell {
         titleLabel.attributedText = attributedTitle()
         authorLabel?.text = (topic.authorName)?.uppercaseString
         
-        let rating = self.topicRating()
-        self.ratingView?.fillColor = rating.color()
-        self.ratingView?.text = rating.text()
+        let rating = topicRating()
+        self.ratingView.fillColor = rating.color()
+        self.ratingView.text = rating.text()
 
         if topicImageView != nil {
             statusLabel.attributedText = timeAndLocationAttributedString(topic, separator: "\n")

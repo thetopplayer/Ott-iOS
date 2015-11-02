@@ -43,7 +43,6 @@ class UploadPostOperation: UploadOperation {
     override func finished(errors: [NSError]) {
         
         super.finished(errors)
-        
     }
 
 }
