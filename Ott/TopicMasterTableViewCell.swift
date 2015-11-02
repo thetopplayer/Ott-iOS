@@ -90,7 +90,6 @@ class TopicMasterTableViewCell: TableViewCell {
         topicImageView?.displayImageInFile(imageFile)
         
         if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
-            
             didPostImageView.hidden = !currentUserDidPostToTopic
         }
         else {

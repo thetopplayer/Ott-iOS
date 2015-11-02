@@ -66,16 +66,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-//    override func viewDidAppear(animated: Bool) {
-//        
-//        super.viewDidAppear(animated)
-//        
-//        performOnMainQueueAfterDelay(1) {
-//            self.remindUserToPost()
-//        }
-//    }
-    
-    
     override func viewWillDisappear(animated: Bool) {
         
         super.viewWillDisappear(animated)
@@ -122,9 +112,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             displayMode = currentUserDidPostToTopic ? .View : .Edit
         }
         else {
-            
             currentUser().didPostToTopic(topic, completion: { (didPost) -> Void in
-                
                 topic.currentUserDidPostTo = didPost
                 self.displayMode = didPost ? .View : .Edit
             })
@@ -140,6 +128,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
+
+    private var statusLabel: UILabel? {
+        
+        didSet {
+            statusLabel?.text = statusMessage
+        }
+    }
+    
+    
+    private var statusMessage: String? {
+        
+        didSet {
+            statusLabel?.text = statusMessage
+        }
+    }
+
     
     private enum DisplayMode {
         case View, Edit
@@ -273,39 +277,61 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         }
     }
     
+
+    private let listToolbarStatusLabel: UILabel = {
+        
+        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
+        label.font = UIFont.systemFontOfSize(13)
+        label.textAlignment = .Center
+        label.textColor = UIColor.darkGrayColor()
+        return label
+    }()
+    
+
+    private let mapToolbarStatusLabel: UILabel = {
+        
+        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
+        label.font = UIFont.systemFontOfSize(13)
+        label.textAlignment = .Center
+        label.textColor = UIColor.darkGrayColor()
+        return label
+    }()
+
     
     private func _setDisplayType(type: DisplayType) {
         
         func showListTools() {
             
-            let items: [UIBarButtonItem] = {
+            let listToolbarItems: [UIBarButtonItem] = {
                 
                 let createButton = UIBarButtonItem(barButtonSystemItem: .Compose, target: self, action: "enterEditMode:")
                 let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
-                let status = UIBarButtonItem(customView: statusLabel)
+                let status = UIBarButtonItem(customView: listToolbarStatusLabel)
                 status.width = 120
                 let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
                 let exportButton = UIBarButtonItem(barButtonSystemItem: .Action, target: self, action: "presentExportView:")
                 return [createButton, space1, status, space2, exportButton]
             }()
             
-            toolbar.setItems(items, animated: true)
+            toolbar.setItems(listToolbarItems, animated: true)
+            statusLabel = listToolbarStatusLabel
         }
         
         func showMapTools() {
             
-            let items: [UIBarButtonItem] = {
+            let mapToolbarItems: [UIBarButtonItem] = {
                 
                 let locationButton = mapToolbarButtonForLocationSetting()
                 let space1 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
-                let status = UIBarButtonItem(customView: statusLabel)
+                let status = UIBarButtonItem(customView: mapToolbarStatusLabel)
                 status.width = 120
                 let space2 = UIBarButtonItem(barButtonSystemItem: .FlexibleSpace, target: nil, action: "")
                 let infoButton = UIBarButtonItem(image: UIImage(named: "info"), style: .Plain, target: self, action: "presentMapViewOptions:")
                 return [locationButton, space1, status, space2, infoButton]
             }()
             
-            toolbar.setItems(items, animated: true)
+            toolbar.setItems(mapToolbarItems, animated: true)
+            statusLabel = mapToolbarStatusLabel
         }
         
         switch type {
@@ -349,57 +375,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    lazy var statusLabel: UILabel = {
-        
-        let label = UILabel(frame: CGRectMake(0, 0, 120, 32))
-        label.font = UIFont.systemFontOfSize(13)
-        label.textAlignment = .Center
-        label.textColor = UIColor.darkGrayColor()
-        return label
-        }()
-    
-    
-    private enum StatusType {
-        case Normal, Updating, Fetching, Posting
-    }
-    
-    private func displayStatus(type type: StatusType = .Normal) {
-        
-        func attributedStatus() -> NSAttributedString {
-            
-            let boldAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.darkGrayColor(), NSFontAttributeName: UIFont.boldSystemFontOfSize(13)]
-            
-            let normalAttributes : [String : AnyObject] = [NSForegroundColorAttributeName : UIColor.grayColor(), NSFontAttributeName: UIFont.systemFontOfSize(13)]
-            
-            let numberOfPosts = posts.count
-            let s1 = NSMutableAttributedString(string: "\(numberOfPosts)", attributes: boldAttributes)
-            
-            let text = numberOfPosts == 1 ? " post" : " posts"
-            let s2 = NSAttributedString(string: text, attributes: normalAttributes)
-            s1.appendAttributedString(s2)
-            return s1
-        }
-        
-        dispatch_async(dispatch_get_main_queue()) {
-            
-            switch type {
-                
-            case .Normal:
-                self.statusLabel.text = ""
-                
-            case .Updating:
-                self.statusLabel.text = "Updating..."
-                
-            case .Fetching:
-                self.statusLabel.text = "Fetching Posts..."
-                
-            case .Posting:
-                self.statusLabel.text = "Posting..."
-            }
-        }
-    }
-    
-    
     
     //MARK: - Data
     
@@ -429,27 +404,38 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var posts = [Post]()
     private var didFetchPosts = false
     private var dateOfMostRecentPost: NSDate?
+    private var postFetchOffset = 0
+    private var allPostsFetched = false
     
     private func fetchPosts(offset: Int = 0) {
         
-        didFetchPosts = true
-        
-        let fetchPostsForTopicOperation = FetchPostsForTopicOperation(topic: topic!, offset: offset, limit: 20) {
-            
-            (fetchResults, error) in
-            
-            self.displayStatus(type: .Normal)
-            if let thePosts = fetchResults as? [Post] {
-                
-                self.refreshTableView(replacingPosts: thePosts)
-            }
-            
-            // TODO;  ALLOW ADDITIONAL FETCHING FROM OFFSET
-            
+        guard allPostsFetched == false else {
+            return
         }
         
-        displayStatus(type: .Fetching)
-        FetchQueue.sharedInstance.addOperation(fetchPostsForTopicOperation)
+        statusMessage = "Fetching posts..."
+        
+        let theQuery: PFQuery = {
+            
+            let query = Post.query()!
+            query.skip = offset
+            query.limit = 20
+            query.orderByDescending(DataKeys.CreatedAt)
+            query.whereKey(DataKeys.Topic, equalTo: topic!)
+            return query
+        }()
+        
+        theQuery.findObjectsInBackgroundWithBlock { (fetchResults, error) -> Void in
+            
+            if let thePosts = fetchResults as? [Post] {
+                self.refreshTableView(replacingPosts: thePosts)
+                
+                self.postFetchOffset += thePosts.count
+                self.allPostsFetched = thePosts.count < theQuery.limit
+            }
+            self.statusMessage = ""
+            self.didFetchPosts = true
+        }
     }
     
     
@@ -486,7 +472,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         
         displayMode = .View
-        displayStatus(type: .Posting)
+        statusMessage = "Posting..."
         
         let myPost = Post.createForTopic(topic)
         myPost.rating = postInputView.rating
@@ -500,7 +486,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             
             (postedObject, error) in
          
-            self.displayStatus(type: .Normal)
+            self.statusMessage = ""
             if let post = postedObject as? Post {
                 
                 refreshTopicWithPost(post)

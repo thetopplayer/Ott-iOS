@@ -71,11 +71,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
 //    }()
     
     
-    enum StatusType {
-        case Fetching, NoData, Default
-    }
-    
-    
     func setHeaderView(nibName nib: String, reuseIdentifier: String, height: CGFloat) {
         
         let nib = UINib(nibName: nib, bundle: nil)
@@ -136,17 +131,45 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
+    private var _isFetching = false
+    var isFetching = false {
+        
+        didSet {
+            if _isFetching == isFetching {
+                return
+            }
+            
+            _isFetching = isFetching
+            dispatch_async(dispatch_get_main_queue()) {
+                if self.isFetching {
+                    self.tableView.insertSections(NSIndexSet(index: Sections.LoadingStatus.rawValue), withRowAnimation: .Automatic)
+                }
+                else {
+                    self.tableView.deleteSections(NSIndexSet(index: Sections.LoadingStatus.rawValue), withRowAnimation: .Automatic)
+                }
+            }
+        }
+    }
+    
     
     // MARK: - Table View
     
-    private let cellNibName2 = "TopicMasterTableViewCellTwo"
-    private let cellIdentifier2 = "topicCellTwo"
-    private let cellNibName3 = "TopicMasterTableViewCellThree"
-    private let cellIdentifier3 = "topicCellThree"
+    enum Sections: Int {
+        case Data = 0
+        case LoadingStatus = 1
+    }
     
-    private let cellHeight = CGFloat(72)
-    private let cellHeightWithComment = CGFloat(96)
-    private let imageCellHeight = CGFloat(117)
+    private let topicCellNibName = "TopicMasterTableViewCell"
+    private let topicCellIdentifier = "topicMaster"
+    private let topicCellHeight = CGFloat(96)
+    
+    private let topicWithImageCellNibName = "TopicWithImageMasterTableViewCell"
+    private let topicWithImageCellIdentifier = "topicImageMaster"
+    private let topicWithImageCellHeight = CGFloat(117)
+    
+    private let loadingDataCellViewNibName = "LoadingTableViewCell"
+    private let loadingDataCellViewIdentifier = "loadingCell"
+    private let loadingDataCellViewHeight = CGFloat(44)
     
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(0.1)
@@ -163,10 +186,12 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.useRefreshControl()
         tableView.refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
         
-        let nib2 = UINib(nibName: cellNibName2, bundle: nil)
-        tableView.registerNib(nib2, forCellReuseIdentifier: cellIdentifier2)
-        let nib3 = UINib(nibName: cellNibName3, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: cellIdentifier3)
+        let nib1 = UINib(nibName: topicCellNibName, bundle: nil)
+        tableView.registerNib(nib1, forCellReuseIdentifier: topicCellIdentifier)
+        let nib2 = UINib(nibName: topicWithImageCellNibName, bundle: nil)
+        tableView.registerNib(nib2, forCellReuseIdentifier: topicWithImageCellIdentifier)
+        let nib3 = UINib(nibName: loadingDataCellViewNibName, bundle: nil)
+        tableView.registerNib(nib3, forCellReuseIdentifier: loadingDataCellViewIdentifier)
     }
 
     
@@ -200,7 +225,9 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
 
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        return 1
+        
+        let number = isFetching ? 2 : 1
+        return number
     }
 
     
@@ -211,20 +238,19 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private enum CellType {
-        case NoImage, Image
+        case NoImage, Image, Loading
     }
     
 
     private func cellTypeForIndexPath(indexPath: NSIndexPath) -> CellType {
         
-        let theTopic = displayedTopics[indexPath.row]
         var type: CellType
-        
-        if theTopic.imageFile != nil {
-            type = .Image
+        if indexPath.section == Sections.Data.rawValue {
+            let theTopic = displayedTopics[indexPath.row]
+            type = theTopic.imageFile != nil ? .Image : .NoImage
         }
         else {
-            type = .NoImage
+            type = .Loading
         }
         
         return type
@@ -237,10 +263,13 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         switch cellTypeForIndexPath(indexPath) {
             
         case .NoImage:
-            height = cellHeightWithComment
+            height = topicCellHeight
             
         case .Image:
-            height = imageCellHeight
+            height = topicWithImageCellHeight
+            
+        case .Loading:
+            height = loadingDataCellViewHeight
         }
         
         return height
@@ -249,19 +278,25 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
         
-        let identifier: String
+        var cell: UITableViewCell
+        
         switch cellTypeForIndexPath(indexPath) {
             
         case .NoImage:
-            identifier = cellIdentifier2
+            let theCell = tableView.dequeueReusableCellWithIdentifier(topicCellIdentifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
+            theCell.displayedTopic = displayedTopics[indexPath.row]
+            cell = theCell
             
         case .Image:
-            identifier = cellIdentifier3
+            let theCell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellIdentifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
+            theCell.displayedTopic = displayedTopics[indexPath.row]
+            cell = theCell
+            
+        case .Loading:
+            let theCell = tableView.dequeueReusableCellWithIdentifier(loadingDataCellViewIdentifier, forIndexPath: indexPath) as! LoadingTableViewCell
+            cell = theCell
         }
         
-        let cell = tableView.dequeueReusableCellWithIdentifier(identifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
-        cell.displayedTopic = displayedTopics[indexPath.row]
-
         return cell
     }
     
@@ -293,7 +328,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         selection = displayedTopics[indexPath.row]
         tableView.deselectRowAtIndexPath(indexPath, animated: false)
     }
-    
+
     
     
     //MARK: - Observations

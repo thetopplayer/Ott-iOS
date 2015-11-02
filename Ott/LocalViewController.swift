@@ -13,9 +13,6 @@ class LocalViewController: TopicMasterViewController {
     @IBOutlet var activityIndicator: UIActivityIndicatorView!
     
     var locationDidChange = true
-    var lastUpdated: NSDate?
-    var fetchOffset = 0
-    var moreToFetch = false
     
     
     //MARK: - Lifecycle
@@ -74,16 +71,29 @@ class LocalViewController: TopicMasterViewController {
     
     //MARK: - Data
     
-    var fetchTime: NSDate?
+    private var lastUpdated: NSDate?
+    private var fetchOffset = 0
+    private var moreToFetch = false
+    let private fetchLimit = 100
     
-    private func fetchTopics(offset: Int = 0) {
+    private func fetchTopics() {
+        
+        guard isFetching == false else {
+            return
+        }
+        
+        guard moreToFetch == false else {
+            return
+        }
+        
+        guard fetchOffset < fetchLimit else {
+            return
+        }
         
         guard let location = LocationManager.sharedInstance.location else {
             print("call to fetch update but have no location")
             return
         }
-        
-        displayStatus("Fetching...")
         
         let localRadius = Double(20)
         
@@ -91,7 +101,7 @@ class LocalViewController: TopicMasterViewController {
             
             let query = Topic.query()!
             query.limit = 20
-            query.skip = offset
+            query.skip = fetchOffset
             query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
             if let lastUpdated = lastUpdated {
@@ -101,14 +111,17 @@ class LocalViewController: TopicMasterViewController {
             return query
         }()
         
+        isFetching = true
         theQuery.findObjectsInBackgroundWithBlock { (fetchResults, error) -> Void in
+            
+            self.isFetching = false
             
             guard let topics = fetchResults as? [Topic] else {
                 print("no local topics fetched")
                 return
             }
             
-            if offset == 0 {
+            if self.fetchOffset == 0 {
                 self.lastUpdated = NSDate()
             }
             
@@ -116,8 +129,6 @@ class LocalViewController: TopicMasterViewController {
             self.fetchOffset += theQuery.skip
             
             dispatch_async(dispatch_get_main_queue()) {
-                
-                self.displayStatus()
                 
                 self.refreshTableView(withTopics: topics, replacingDatasourceData: self.locationDidChange)
                 self.locationDidChange = false
@@ -137,6 +148,7 @@ class LocalViewController: TopicMasterViewController {
     
     override func update() {
         
+        fetchOffset = 0
         fetchTopics()
     }
     
@@ -150,7 +162,19 @@ class LocalViewController: TopicMasterViewController {
         presentTopicDetailViewController(withTopic: selection)
     }
     
-    
+
+    func tableView(tableView: UITableView, willDisplayCell cell: UITableViewCell, forRowAtIndexPath indexPath: NSIndexPath) {
+        
+        if indexPath.section != Sections.Data.rawValue {
+            return
+        }
+        
+        if indexPath.row == displayedTopics.count - 1 {
+            fetchTopics()
+        }
+    }
+
+
     
     //MARK: - Actions
     
