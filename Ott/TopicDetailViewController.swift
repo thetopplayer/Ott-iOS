@@ -61,10 +61,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = true
-        initializeViewForTopic()
+        
+        if topic == nil {
+            topic = (navigationController as? NavigationController)!.topic
+        }
+        else {
+            presentData()
+        }
         startObservations()
     }
     
+    
+    override func viewDidAppear(animated: Bool) {
+        
+        super.viewDidAppear(animated)
+        
+    }
     
     override func viewWillDisappear(animated: Bool) {
         
@@ -79,7 +91,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     enum ExitMethod {
         case Back, Dismiss
     }
-    var exitMethod = ExitMethod.Back
+    var exitMethod = ExitMethod.Dismiss
     
     
 //    private func remindUserToPost() {
@@ -96,17 +108,22 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
 //    }
     
     
-    private var didInitializeViewForTopic = false
-    private func initializeViewForTopic(reloadingData reloadingData: Bool = true) {
+    private var didPresentData = false
+    private func presentData(reloadingData reloadingData: Bool = true) {
+        
+        if didPresentData {
+            return
+        }
+        
+        guard willAppear() else {
+            return
+        }
         
         guard let topic = topic else {
             return
         }
         
-        if didInitializeViewForTopic {
-            return
-        }
-        didInitializeViewForTopic = true
+        didPresentData = true
         
         if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
             displayMode = currentUserDidPostToTopic ? .View : .Edit
@@ -357,10 +374,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     private var _oldTopic: Topic?
     var topic: Topic? {
         
-        willSet {
-            _oldTopic = newValue
-        }
-        
         didSet {
             
             let isNewTopic: Bool = {
@@ -370,10 +383,9 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
                 return true
             }()
             
-            didInitializeViewForTopic = false
-            if isVisible() {
-                initializeViewForTopic(reloadingData: isNewTopic)
-            }
+            _oldTopic = topic
+            didPresentData = false
+            presentData(reloadingData: isNewTopic)
         }
     }
     
@@ -489,9 +501,6 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             else if let error = error {
                 
                 self.presentOKAlertWithError(error, messagePreamble: "An error occurred uploading your post.", actionHandler: { () -> Void in
-                    
-                    self.didInitializeViewForTopic = false
-                    self.initializeViewForTopic()
                 })
             }
         }

@@ -52,15 +52,19 @@ extension UIViewController {
     
     //MARK: - Alerts
     
-    func presentOKAlert(title title: String?, message: String?, actionHandler: AlertPresentionHandler?) {
+    func presentOKAlert(title title: String?, message: String?, actionHandler: AlertPresentionHandler? = nil) {
         
         let alertViewController = UIAlertController(title: title, message: message, preferredStyle: .Alert)
         
         let okAction = UIAlertAction(title: "OK", style: UIAlertActionStyle.Default, handler: {
             action in
-            dispatch_async(dispatch_get_main_queue()) {
-                actionHandler?()
-            }})
+            
+            if let actionHandler = actionHandler {
+                
+                dispatch_async(dispatch_get_main_queue()) {
+                    actionHandler()
+                }           }
+        })
         alertViewController.addAction(okAction)
         
         presentViewController(alertViewController, animated: true, completion: nil)
@@ -82,6 +86,7 @@ extension UIViewController {
         presentOKAlert(title: title, message: message, actionHandler: actionHandler)
     }    
 
+    
     
     //MARK: - Navigation
     
@@ -124,31 +129,44 @@ extension UIViewController {
     
     func presentTopicDetailViewController(withTopic topic: Topic?, exitMethod: TopicDetailViewController.ExitMethod = .Back) {
         
-        let detailViewController: TopicDetailViewController = {
+        let detailViewController: UIViewController = {
             
-            // if one is already on the stack, use it
-            var theController: TopicDetailViewController? = nil
-            for vc in navigationController!.viewControllers {
-                if vc is TopicDetailViewController {
-                    theController = vc as? TopicDetailViewController
+            var controller: UIViewController
+            
+            if exitMethod == .Back {
+                
+                // if one is already on the stack, use it
+                var detailController: TopicDetailViewController? = nil
+                for vc in navigationController!.viewControllers {
+                    if vc is TopicDetailViewController {
+                        detailController = vc as? TopicDetailViewController
+                    }
                 }
+                
+                if detailController == nil {
+                    
+                    let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
+                    detailController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as? TopicDetailViewController
+                }
+                
+                detailController!.topic = topic
+                detailController!.exitMethod = .Back
+                controller = detailController!
+            }
+            else {
+                
+                let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
+                let navController: NavigationController = (storyboard.instantiateViewControllerWithIdentifier("initialViewController") as? NavigationController)!
+                
+                navController.topic = topic                
+                controller = navController
             }
             
-            if let theController = theController {
-                return theController
-            }
-            
-            // else instantiate it
-            let storyboard = UIStoryboard(name: "TopicDetail", bundle: nil)
-            theController = storyboard.instantiateViewControllerWithIdentifier("topicDetailViewController") as? TopicDetailViewController
-            
-            return theController!
+            return controller
             }()
         
+        
         func presentController() {
-            
-            detailViewController.exitMethod = exitMethod
-            detailViewController.topic = topic
             
             if exitMethod == .Back {
                 navigationController!.pushViewController(detailViewController, animated: true)

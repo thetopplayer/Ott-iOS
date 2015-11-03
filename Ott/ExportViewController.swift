@@ -89,7 +89,7 @@ class ExportViewController: ViewController, UIPrintInteractionControllerDelegate
         
         let generateImageOperation = NSBlockOperation { () -> Void in
             
-            self.codeText = ScanTransformer.sharedInstance.codeForObject(theObject)
+            self.codeText = ScanTransformer.sharedInstance.URLForObject(theObject)
             let textForImage = self.includeCaption ? self.textForObject() : nil
             
             if let image = ScanTransformer.sharedInstance.imageForObject(theObject, backgroundColor: self.imageBackgroundColor, color: self.imageColor, size: self.imageSize, withCaption: textForImage) {

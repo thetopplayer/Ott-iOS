@@ -10,8 +10,8 @@
 /*
     Used to encode and decode PFObject objectIds from AztecCodes
 
-    objectId -> code encoding a prefix and identifier for class type -> AztecCode
-    AztecCode -> code -> PFQuery for appropriate class and objectID
+    objectId -> code encoding a url, the last component of which comprises a single character prefix which identifies a class type and the remainder of which is an objectID -> AztecCode
+    AztecCode -> url -> PFQuery for appropriate class and objectID
 
 */
 
@@ -83,17 +83,11 @@ class ScanTransformer {
     
     static let sharedInstance = ScanTransformer()
     
+    static let urlPrefix = "ott:"
     
-    static let codePrefix = "ott://"
-    private let fullPrefixLength: Int = {
-        return codePrefix.length + 1  // prefix plus query code
-    }()
-    
-    private let queryCodePosition: Int = {
-        return codePrefix.length
-    }()
     
     enum QueryType: Character {
+        
         case User = "0"
         case Topic = "1"
         
@@ -104,9 +98,13 @@ class ScanTransformer {
     }
     
 
-    private func queryTypeForCode(text: String) -> QueryType? {
+    private func queryTypeForURL(url: String) -> QueryType? {
         
-        if let char = text.characterAtIndex(queryCodePosition) {
+        guard let code = url.componentsSeparatedByString("/").last else {
+            return nil
+        }
+
+        if let char = code.characterAtIndex(0) {
             return QueryType(rawValue: char)
         }
         return nil
@@ -132,53 +130,55 @@ class ScanTransformer {
     }
 
     
-    func codeAppearsValid(code: String) -> Bool {
+    func URLAppearsValid(url: String) -> Bool {
         
-        if code.hasPrefix(ScanTransformer.codePrefix) {
-            return queryTypeForCode(code) != nil
+        guard let prefix = url.componentsSeparatedByString("/").first else {
+            return false
         }
-        return false
+        
+        if prefix != ScanTransformer.urlPrefix {
+            return false
+        }
+
+        return queryTypeForURL(url) != nil
     }
     
     
     
-    //MARK: - Object From Code
+    //MARK: - Object From URL
     
-    private func objectID(fromCode code: String) -> String? {
+    private func objectIDFromURL(url: String) -> String? {
         
-        return code.substringToEnd(startingAt: fullPrefixLength)
+        guard let url = url.componentsSeparatedByString("/").last else {
+            return nil
+        }
+        
+        return url.substringToEnd(startingAt: 1)
     }
     
     
-    func queryForCode(code: String) -> PFQuery? {
+    func queryForURL(url: String) -> PFQuery? {
         
-        let query: PFQuery = {
-            
-            switch queryTypeForCode(code)! {
-                
-            case .User:
-                return User.query()!
-                
-            case .Topic:
-                return Topic.query()!
-             }
-        }()
+        guard let queryType = queryTypeForURL(url) else {
+            return nil
+        }
+        
+        let query: PFQuery = queryType == .User ? User.query()! : Topic.query()!
+        
+        guard let objectID = objectIDFromURL(url) else {
+            return nil
+        }
         
         query.limit = 1
-        
-        if let objectID = objectID(fromCode: code) {
-            query.whereKey("objectId", equalTo: objectID)
-            return query
-        }
-        
-        return nil
+        query.whereKey("objectId", equalTo: objectID)
+        return query
     }
-
+    
     
     
     //MARK: - Code and Image Generation
     
-    func codeForObject(object: PFObject) -> String? {
+    func URLForObject(object: PFObject) -> String? {
         
         guard let objectID = object.objectId else {
             print ("Error:  object has no Id")
@@ -186,9 +186,9 @@ class ScanTransformer {
         }
         
         if let theType = queryTypeForObject(object) {
-            var result = ScanTransformer.codePrefix
-            result.append(theType.rawValue)
-            return result + objectID
+            
+            let url = ScanTransformer.urlPrefix + "//" + "\(theType.rawValue)" + objectID
+            return url
         }
         
         return nil
@@ -324,7 +324,7 @@ class ScanTransformer {
     
     func imageForObject(object: PFObject, backgroundColor: UIColor, color: UIColor, size: ImageSize, withCaption text: String?) -> UIImage? {
         
-        let code = codeForObject(object)
+        let code = URLForObject(object)
         return image(fromCode: code, backgroundColor: backgroundColor, color: color, size: size, withCaption: text)
     }
 }

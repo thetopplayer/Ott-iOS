@@ -189,7 +189,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
         
         func fetchObject() {
             
-            if let query = ScanTransformer.sharedInstance.queryForCode(code) {
+            if let query = ScanTransformer.sharedInstance.queryForURL(code) {
                 
                 do {
                     
@@ -207,15 +207,13 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
                         self.fetchingAlertViewController.dismissViewControllerAnimated(true, completion: { () -> Void in
                             
                             let theObject = objects.first!
-                            switch theObject {
-                                
-                            case is User:
-                                self.displayDetailsForUser(theObject as! User)
-                                
-                            case is Topic:
-                                self.displayDetailsForTopic(theObject as! Topic)
-                                
-                            default:
+                            if let user = theObject as? User {
+                                self.displayDetailsForUser(user)
+                            }
+                            else if let topic = theObject as? Topic {
+                                self.displayDetailsForTopic(topic)
+                            }
+                            else {
                                 self.handleCodeIsNotRecognized()
                             }
                         })
@@ -267,7 +265,7 @@ class ScanViewController: ViewController, AVCaptureMetadataOutputObjectsDelegate
     
     private func handleRecognition(ofCode code: String) {
         
-        if ScanTransformer.sharedInstance.codeAppearsValid(code) {
+        if ScanTransformer.sharedInstance.URLAppearsValid(code) {
             
             presentViewController(fetchingAlertViewController, animated: true) { action in
                 self.fetchObject(forCode: code)

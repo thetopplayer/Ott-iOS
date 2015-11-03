@@ -5,6 +5,23 @@
         <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
     </dependencies>
     <scenes>
+        <!--Navigation Controller-->
+        <scene sceneID="CQO-36-61A">
+            <objects>
+                <navigationController storyboardIdentifier="initialViewController" useStoryboardIdentifierAsRestorationIdentifier="YES" id="0hp-Hm-1Hk" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
+                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="qE4-Vp-Gew">
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <animations/>
+                    </navigationBar>
+                    <connections>
+                        <segue destination="JRp-B9-rK5" kind="relationship" relationship="rootViewController" id="mc7-QA-EHd"/>
+                    </connections>
+                </navigationController>
+                <placeholder placeholderIdentifier="IBFirstResponder" id="HKo-ro-6Sa" userLabel="First Responder" sceneMemberID="firstResponder"/>
+            </objects>
+            <point key="canvasLocation" x="1074" y="-83"/>
+        </scene>
         <!--Topic Detail-->
         <scene sceneID="QCB-yv-4Wc">
             <objects>
