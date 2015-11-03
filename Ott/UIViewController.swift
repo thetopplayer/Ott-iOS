@@ -189,6 +189,7 @@ extension UIViewController {
     }
     
     
+    // this is always presented modally
     private func presentUserDetailViewController(withObject object: PFObject?) {
         
         guard serverIsReachable() else {

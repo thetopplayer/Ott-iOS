@@ -76,7 +76,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
 
     struct Notifications {
         
-        static let LocationDidChange = "LocationDidChange"
+        static let LocationDidSignificantlyChange = "LocationDidSignificantlyChange"
         static let PermissionDidChange = "PermissionDidChange"
     }
     
@@ -85,8 +85,6 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     lazy private var geoCoder: CLGeocoder = {
         return CLGeocoder()
     }()
-    
-    private let notificationFilterDistance = CLLocationDistance(500)
 
     
     //MARK: - Lifecycle
@@ -95,7 +93,6 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
         
         super.init()
         delegate = self
-        distanceFilter = notificationFilterDistance
     }
     
     
@@ -113,12 +110,15 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     
     func stop() {
-        
         stopUpdatingLocation()
     }
     
     
+    
     //MARK: - Data
+    
+    let deltaDistanceToGeocode = CLLocationDistance(50)  // change in meters necessary to trigger geocoding of location
+    let significantLocationChange = CLLocationDistance(1000) // change necessary to post a notification
     
     private let placemarkArchive = documentsDirectory() + "/placemark"
     var placemark: CLPlacemark? {
@@ -150,12 +150,9 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     private func shouldReverseGeocodeLocation() -> Bool {
         
         if let placemark = placemark {
-            
-            let meaningfulNameDistance = CLLocationDistance(100)
-            return distanceFromCurrentLocation(placemark.location!) <= meaningfulNameDistance
+            return distanceFromCurrentLocation(placemark.location!) <= deltaDistanceToGeocode
         }
         else {
-            
             return true
         }
     }
@@ -168,10 +165,6 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
             return
         }
 
-        if placemarkIsWithinDistance(CLLocationDistance(25)) {
-            return
-        }
-        
         print("reverse geocoding")
         
         isGeocoding = true
@@ -215,15 +208,13 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
     
     func locationManager(manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         
-        if let lastLocation = placemark?.location {
-            if distanceFromCurrentLocation(lastLocation) < notificationFilterDistance {
-                return
-           }
+        if shouldReverseGeocodeLocation() {
+            reverseGeocodeCurrentLocation()
         }
         
-        reverseGeocodeCurrentLocation()
-
-        NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidChange, object: self)
+        if placemarkIsWithinDistance(significantLocationChange) {
+            NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidSignificantlyChange, object: self)
+        }
     }
     
     
