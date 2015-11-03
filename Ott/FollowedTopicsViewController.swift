@@ -22,8 +22,6 @@ class FollowedTopicsViewController: TopicMasterViewController {
             let number = currentUser().followingCount
             return number == 1 ? "Following \(number) User" : "Following \(number) Users"
             }()
-
-        fetchTopics(.CachedThenUpdate)
     }
 
     
@@ -31,95 +29,107 @@ class FollowedTopicsViewController: TopicMasterViewController {
         
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = false
+        
+        fetchTopics()
     }
     
     
 
-    
-    
     //MARK: - Data
     
-    private enum FetchType {
-        case CachedThenUpdate, Update
-    }
-    
-    
-    private func fetchTopics(type: FetchType) {
-
-        func fetchCachedTopicsOperation() -> Operation {
+    private func fetchTopics() {
+        
+        guard serverIsReachable() else {
             
-            let fetchOperation = FetchFolloweeTopicsOperation(dataSource: .Cache, offset: 0, sinceDate: nil, completion: {
-                
-                (fetchedObjects, error) in
-                
-                dispatch_async(dispatch_get_main_queue()) {
-                    
-                    if let topics = fetchedObjects as? [Topic] {
-                        self.reloadTableView(withTopics: topics)
-                    }
-                    
-                    if let error = error {
-                        
-                        self.hideRefreshControl()
-                        self.displayStatus()
-                        
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving cached data", actionHandler: nil)
-                    }
-                    else {
-                        
-                        // now that we've refreshed the display, fetch from server
-                        FetchQueue.sharedInstance.addOperation(fetchTopicsFromServerOperation())
-                    }
-                }
+            presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
             })
-            
-            return fetchOperation
+            return
+        }
+        
+        let numberOfFollowees = currentUser().followingCount
+        
+        if numberOfFollowees == 0 {
+            return
         }
         
         
-        func fetchTopicsFromServerOperation() -> Operation {
+        // users being followed (followees) are cached in the background by the CacheManager:  fetch these, then iterature through them to retrieve the topics authored since our last fetch
+        
+        func fetchTopicsForFollows(follows: [Follow]) {
             
-            let now = NSDate()
-            let lastFetched = Globals.sharedInstance.lastUpdatedFolloweeTopics
+            if follows.count == 0 {
+                return
+            }
             
-            let fetchOperation = FetchFolloweeTopicsOperation(dataSource: .Server, offset: 0, sinceDate: lastFetched, completion: { (fetchedObjects, error) in
+            var createdSince: NSDate
+            if let lastFetched = Globals.sharedInstance.lastUpdatedFolloweeTopics {
+                createdSince = lastFetched
+            }
+            else {
+                createdSince = NSDate().daysFrom(-7)
+            }
+
+            var topicQueryOffset = 0
+            var didFetchAllTopics = false
+            while didFetchAllTopics == false {
                 
-                dispatch_async(dispatch_get_main_queue()) {
+                let topicQuery: PFQuery = {
+                    
+                    let query = Topic.query()!
+                    query.whereKey(DataKeys.AuthorHandle, containedIn: follows)
+                    query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: createdSince)
+                    return query
+                }()
+                
+                topicQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
                     
                     if let topics = fetchedObjects as? [Topic] {
-                        self.refreshTableView(withTopics: topics, replacingDatasourceData: false)
+                        
+                        dispatch_async(dispatch_get_main_queue()) {
+                            self.refreshTableView(withTopics: topics)
+                        }
+                        topicQueryOffset += topics.count
+                        didFetchAllTopics = topics.count < topicQuery.limit
                     }
-                    
-                    self.hideRefreshControl()
                     
                     if let error = error {
-                        self.presentOKAlertWithError(error, messagePreamble: "Error retrieving followee topics from server", actionHandler: nil)
+                        print("error fetching topics = \(error)")
                     }
-                    else {
-                        Globals.sharedInstance.lastUpdatedFolloweeTopics = now
-                    }
-                }
-            })
+                    
+                })
+            }
             
-            return fetchOperation
         }
         
         showRefreshControl()
-        switch type {
+        
+        for var followeeQueryOffset = 0; followeeQueryOffset < numberOfFollowees; followeeQueryOffset += 25 {
             
-        case .CachedThenUpdate:
-
-            FetchQueue.sharedInstance.addOperation(fetchCachedTopicsOperation())
+            let followeeQuery: PFQuery = {
+                
+                let query = Follow.query()!
+                query.fromPinWithName(CacheManager.PinNames.FollowedByUser)
+                query.skip = followeeQueryOffset
+                query.orderByDescending(DataKeys.CreatedAt)
+                query.whereKey(DataKeys.Follower, equalTo: currentUser())
+                return query
+            }()
             
-        case .Update:
-            
-            FetchQueue.sharedInstance.addOperation(fetchTopicsFromServerOperation())
+            followeeQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
+                
+                if let followees = fetchedObjects as? [Follow] {
+                    fetchTopicsForFollows(followees)
+                }
+            })
         }
+        
+        Globals.sharedInstance.lastUpdatedFolloweeTopics = NSDate()
+        hideRefreshControl()
     }
     
     
     override func update() {
-        fetchTopics(.Update)
+        fetchTopics()
     }
     
     

@@ -44,7 +44,6 @@ class UpdateUserOperation: ParseServerOperation {
         catch let error as NSError {
             finishWithError(error)
         }
-
     }
     
     

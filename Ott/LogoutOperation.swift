@@ -25,11 +25,7 @@ class LogoutOperation: ParseServerOperation {
         
         logBackgroundTask()
         
-        FetchCurrentUserAuthoredTopicsOperation.purgeCache()
-        FetchCurrentUserAuthoredPostsOperation.purgeCache()
-        FetchCurrentUserFolloweesOperation.purgeCache()
-        FetchFolloweeTopicsOperation.purgeCache()
-        
+        CacheManager.sharedInstance.unpinAllData()
         User.logOut()
         
         finishWithError(nil)

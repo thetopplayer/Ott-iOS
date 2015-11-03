@@ -79,6 +79,9 @@ class FetchOperation: ParseServerOperation {
             if let pinName = self.dynamicType.pinName() {
                 query.fromPinWithName(pinName)
             }
+            else {
+                assert(false)
+            }
         }
         
         do {

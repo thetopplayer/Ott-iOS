@@ -1,5 +1,5 @@
 //
-//  UploadPostOperation.swift
+//  SavePostOperation.swift
 //  Ott
 //
 //  Created by Max on 9/9/15.
@@ -8,12 +8,12 @@
 
 import UIKit
 
-class UploadPostOperation: UploadOperation {
+class SavePostOperation: SaveOperation {
 
     let post: Post
     let topic: Topic
     
-    init(post: Post, topic: Topic, completion: UploadCompletionBlock?) {
+    init(post: Post, topic: Topic, completion: SaveCompletionBlock?) {
         
         self.post = post
         self.topic = topic
@@ -29,9 +29,9 @@ class UploadPostOperation: UploadOperation {
             
             try post.save()
             try post.fetchIfNeeded()
-            try post.pinWithName(FetchCurrentUserAuthoredPostsOperation.pinName()!)
+            try post.pinWithName(CacheManager.PinNames.UserPosts)
             
-            uploadedObject = post
+            savedObject = post
             finishWithError(nil)
         }
         catch let error as NSError {

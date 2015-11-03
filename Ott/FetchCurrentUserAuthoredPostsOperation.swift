@@ -12,7 +12,7 @@ import Foundation
 class FetchCurrentUserAuthoredPostsOperation: FetchOperation {
     
     override class func pinName() -> String? {
-        return "authoredPosts"
+        return CacheManager.PinNames.UserPosts
     }
     
     init(dataSource: ParseOperation.DataSource, offset: Int, completion: FetchCompletionBlock?) {

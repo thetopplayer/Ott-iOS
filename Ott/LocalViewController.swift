@@ -208,7 +208,7 @@ class LocalViewController: TopicMasterViewController {
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidSignificantlyChange, object: nil)
         
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidSaveTopicNotification:", name: TopicCreationViewController.Notifications.DidCreateTopic, object: nil)
     }
     
     
@@ -219,7 +219,7 @@ class LocalViewController: TopicMasterViewController {
     }
 
     
-    func handleDidUploadTopicNotification(notification: NSNotification) {
+    func handleDidSaveTopicNotification(notification: NSNotification) {
         
         update()
     }

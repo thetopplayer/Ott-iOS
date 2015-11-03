@@ -11,11 +11,21 @@ import UIKit
 
 class TopicCreationViewController: ViewController, UITableViewDataSource, UITableViewDelegate, UINavigationControllerDelegate, UIImagePickerControllerDelegate, TopicCreationTableViewCellDelegate, TopicCreationButtonTableViewCellDelegate {
 
-    
     @IBOutlet var tableView: UITableView!
     
     private var creationCellView: TopicCreationTableViewCell?
     private var didPresentImagePicker = false
+    
+    
+    struct Notifications {
+        
+        static let DidCreateTopic = "didCreateTopic"
+        static let TopicCreationDidFail = "topicCreationDidFail"
+        static let Topic = "topic"
+        static let Error = "error"
+    }
+    
+
     
     
     //MARK: - Lifecycle
@@ -100,8 +110,26 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
         topic.location = LocationManager.sharedInstance.location
         topic.locationDetails = LocationManager.sharedInstance.placemark?.toDictionary()
         
-        let uploadOperation = UploadTopicOperation(topic: topic)
-        PostQueue.sharedInstance.addOperation(uploadOperation)
+        let saveOperation = SaveTopicOperation(topic: topic) {
+            
+            (savedObject, error) in
+            
+            if let topic = savedObject as? Topic {
+                
+                let userinfo = [Notifications.Topic: topic]
+                let notification = NSNotification(name: Notifications.DidCreateTopic, object: self, userInfo: userinfo)
+                
+                NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostWhenIdle)
+            }
+            else if let error = error {
+                
+                let userinfo = [Notifications.Error: error]
+                let notification = NSNotification(name: Notifications.TopicCreationDidFail, object: self, userInfo: userinfo)
+                
+                NSNotificationQueue.defaultQueue().enqueueNotification(notification, postingStyle: .PostWhenIdle)
+            }
+        }
+        PostQueue.sharedInstance.addOperation(saveOperation)
     }
     
     private func discardChanges() {
@@ -235,9 +263,9 @@ class TopicCreationViewController: ViewController, UITableViewDataSource, UITabl
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleKeyboardWillHide:", name: UIKeyboardWillHideNotification, object: nil)
 
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: UploadTopicOperation.Notifications.DidUpload, object: nil)
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFailNotification:", name: UploadTopicOperation.Notifications.UploadDidFail, object: nil)
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidUploadTopicNotification:", name: SaveTopicOperation.Notifications.DidUpload, object: nil)
+//        
+//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleUploadDidFailNotification:", name: SaveTopicOperation.Notifications.UploadDidFail, object: nil)
     }
     
     

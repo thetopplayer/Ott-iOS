@@ -12,7 +12,7 @@ import Foundation
 class FetchCurrentUserAuthoredTopicsOperation: FetchOperation {
     
     override class func pinName() -> String? {
-        return "authoredTopics"
+        return CacheManager.PinNames.UserTopics
     }
     
     

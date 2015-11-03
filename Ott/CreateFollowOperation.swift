@@ -52,11 +52,9 @@ class CreateFollowOperation: ParseOperation {
             let follow = Follow()
             follow.followeeHandle = followeeHandle
             
-           try follow.save()
-            try follow.fetch() // fetch since saving operation adds data to record
-            
-            let pinName = FetchCurrentUserFolloweesOperation.pinName()!
-            try follow.pinWithName(pinName) // add to local cache
+            try follow.save()
+            try follow.fetch() // fetch since server saving operation adds data to record
+            try follow.pinWithName(CacheManager.PinNames.FollowedByUser) // add to local cache
             
             let _ = try? currentUser().fetch()  // update current user
             finishWithError(nil)

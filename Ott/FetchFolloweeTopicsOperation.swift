@@ -20,7 +20,7 @@ Fetching from server fetches the topics of the cached followees
 class FetchFolloweeTopicsOperation: FetchOperation {
     
     override class func pinName() -> String? {
-        return "followeeTopics"
+        return CacheManager.PinNames.FollowedByUser
     }
     
     let offset: Int

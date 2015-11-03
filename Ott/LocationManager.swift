@@ -212,7 +212,7 @@ class LocationManager: CLLocationManager, CLLocationManagerDelegate {
             reverseGeocodeCurrentLocation()
         }
         
-        if placemarkIsWithinDistance(significantLocationChange) {
+        if placemarkIsWithinDistance(significantLocationChange) == false {
             NSNotificationCenter.defaultCenter().postNotificationName(LocationManager.Notifications.LocationDidSignificantlyChange, object: self)
         }
     }

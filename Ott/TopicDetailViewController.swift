@@ -30,7 +30,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
     struct Notifications {
         
         static let DidPostToTopic = "didPostToTopic"
-        static let Topic = "post"
+        static let Topic = "topic"
     }
     
     
@@ -472,8 +472,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             tableView.insertRowsAtIndexPaths([NSIndexPath(forRow: 0, inSection: TableViewSections.Posts.rawValue)], withRowAnimation: .Fade)
             tableView.endUpdates()
         }
-        
-        
+                
         displayMode = .View
         displayStatus("Posting...")
         
@@ -485,12 +484,12 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
         myPost.location = LocationManager.sharedInstance.location
         myPost.locationDetails = LocationManager.sharedInstance.placemark?.toDictionary()
         
-        let postOperation = UploadPostOperation(post: myPost, topic: topic) {
+        let saveOperation = SavePostOperation(post: myPost, topic: topic) {
             
-            (postedObject, error) in
+            (savedObject, error) in
          
             self.displayStatus()
-            if let post = postedObject as? Post {
+            if let post = savedObject as? Post {
                 
                 refreshTopicWithPost(post)
                 updateTableWithPost(post)
@@ -503,7 +502,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             }
         }
         
-        PostQueue.sharedInstance.addOperation(postOperation)
+        PostQueue.sharedInstance.addOperation(saveOperation)
     }
     
     

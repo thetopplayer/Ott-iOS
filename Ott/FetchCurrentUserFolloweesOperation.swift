@@ -12,25 +12,19 @@ import Foundation
 class FetchCurrentUserFolloweesOperation: FetchOperation {
 
     override class func pinName() -> String? {
-        return "followees"
+        return CacheManager.PinNames.FollowedByUser
     }
     
     
-    
-    convenience init(dataSource: ParseOperation.DataSource, offset: Int, completion: FetchCompletionBlock?) {
-    
-        self.init(dataSource: dataSource, offset: offset, updatedSince: nil, completion: completion)
-    }
-    
-    
-    init(dataSource: ParseOperation.DataSource, offset: Int, updatedSince: NSDate?, completion: FetchCompletionBlock?) {
+    init(dataSource: ParseOperation.DataSource, updatedSince: NSDate?, completion: FetchCompletionBlock?) {
         
         let theQuery: PFQuery = {
             
             let query = Follow.query()!
-            query.skip = offset
-            query.orderByDescending(DataKeys.CreatedAt)
             query.whereKey(DataKeys.Follower, equalTo: currentUser())
+            if let updatedSince = updatedSince {
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: updatedSince)
+            }
             
             return query
             }()

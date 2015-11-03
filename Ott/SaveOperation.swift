@@ -1,5 +1,5 @@
 //
-//  UploadOperation.swift
+//  SaveOperation.swift
 //  Ott
 //
 //  Created by Max on 9/9/15.
@@ -8,15 +8,15 @@
 
 import UIKit
 
-class UploadOperation: ParseServerOperation {
+class SaveOperation: ParseServerOperation {
 
-    typealias UploadCompletionBlock = (uploadedObject: PFObject?, error: NSError?) -> Void
-    var completionHandler: UploadCompletionBlock?
+    typealias SaveCompletionBlock = (savedObject: PFObject?, error: NSError?) -> Void
+    var completionHandler: SaveCompletionBlock?
     
-    var uploadedObject: PFObject?
+    var savedObject: PFObject?
     
     
-    init(completion: UploadCompletionBlock?) {
+    init(completion: SaveCompletionBlock?) {
         
         completionHandler = completion
         super.init(timeout: 60)
@@ -42,7 +42,7 @@ class UploadOperation: ParseServerOperation {
         
         if let completionHandler = completionHandler {
             dispatch_async(dispatch_get_main_queue()) {
-                completionHandler(uploadedObject: self.uploadedObject, error: errors.first)
+                completionHandler(savedObject: self.savedObject, error: errors.first)
             }
         }
     }
