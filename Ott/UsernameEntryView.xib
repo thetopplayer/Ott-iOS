@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+    <dependencies>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
+    </dependencies>
+    <objects>
+        <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="UsernameEntryViewController" customModule="Ott" customModuleProvider="target">
+            <connections>
+                <outlet property="label" destination="ANB-9k-KBB" id="WXS-cc-XjN"/>
+                <outlet property="nameEntryStatusImageView" destination="Vwy-0U-FcX" id="Sl1-W1-aPS"/>
+                <outlet property="textField" destination="UI6-u4-UIQ" id="NMd-q6-MS2"/>
+                <outlet property="view" destination="jk4-fS-gdI" id="wnf-nU-6BA"/>
+            </connections>
+        </placeholder>
+        <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
+        <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="jk4-fS-gdI">
+            <rect key="frame" x="0.0" y="0.0" width="300" height="150"/>
+            <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+            <subviews>
+                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter a user name.  This can be changed later at any time." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="ANB-9k-KBB">
+                    <rect key="frame" x="8" y="16" width="284" height="50"/>
+                    <animations/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="50" id="LfQ-pq-2J8"/>
+                    </constraints>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
+                    <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <nil key="highlightedColor"/>
+                </label>
+                <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="9wm-Md-O1w" userLabel="View - name">
+                    <rect key="frame" x="8" y="74" width="284" height="44"/>
+                    <subviews>
+                        <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" placeholder="name" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="UI6-u4-UIQ">
+                            <rect key="frame" x="8" y="5" width="232" height="34"/>
+                            <animations/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="34" id="fqv-Zm-eJ8"/>
+                            </constraints>
+                            <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                            <fontDescription key="fontDescription" type="system" pointSize="21"/>
+                            <textInputTraits key="textInputTraits" autocapitalizationType="words" autocorrectionType="no" spellCheckingType="no"/>
+                        </textField>
+                        <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="tick" translatesAutoresizingMaskIntoConstraints="NO" id="Vwy-0U-FcX">
+                            <rect key="frame" x="248" y="8" width="28" height="28"/>
+                            <animations/>
+                            <color key="tintColor" red="1" green="0.0" blue="0.0" alpha="1" colorSpace="calibratedRGB"/>
+                            <constraints>
+                                <constraint firstAttribute="height" constant="28" id="R1i-IK-87i"/>
+                                <constraint firstAttribute="width" constant="28" id="hug-Mf-naM"/>
+                            </constraints>
+                        </imageView>
+                    </subviews>
+                    <animations/>
+                    <color key="backgroundColor" white="1" alpha="0.5" colorSpace="calibratedWhite"/>
+                    <constraints>
+                        <constraint firstItem="UI6-u4-UIQ" firstAttribute="centerY" secondItem="9wm-Md-O1w" secondAttribute="centerY" id="SCT-9t-0JJ"/>
+                        <constraint firstAttribute="trailing" secondItem="Vwy-0U-FcX" secondAttribute="trailing" constant="8" id="TV8-tm-lCQ"/>
+                        <constraint firstItem="UI6-u4-UIQ" firstAttribute="leading" secondItem="9wm-Md-O1w" secondAttribute="leading" constant="8" id="jY3-Ae-VfI"/>
+                        <constraint firstItem="Vwy-0U-FcX" firstAttribute="leading" secondItem="UI6-u4-UIQ" secondAttribute="trailing" constant="8" id="mYw-55-jdf"/>
+                        <constraint firstItem="Vwy-0U-FcX" firstAttribute="centerY" secondItem="9wm-Md-O1w" secondAttribute="centerY" id="t1h-v1-r3A"/>
+                        <constraint firstAttribute="height" constant="44" id="zMx-UO-x6R"/>
+                    </constraints>
+                </view>
+            </subviews>
+            <animations/>
+            <constraints>
+                <constraint firstItem="9wm-Md-O1w" firstAttribute="leading" secondItem="jk4-fS-gdI" secondAttribute="leading" constant="8" id="Ks9-2Q-pDr"/>
+                <constraint firstItem="9wm-Md-O1w" firstAttribute="top" secondItem="ANB-9k-KBB" secondAttribute="bottom" constant="8" id="Tec-Ez-z1A"/>
+                <constraint firstItem="ANB-9k-KBB" firstAttribute="top" secondItem="jk4-fS-gdI" secondAttribute="top" constant="16" id="YIc-UK-wXK"/>
+                <constraint firstAttribute="trailing" secondItem="ANB-9k-KBB" secondAttribute="trailing" constant="8" id="gkh-nb-R0D"/>
+                <constraint firstItem="ANB-9k-KBB" firstAttribute="leading" secondItem="jk4-fS-gdI" secondAttribute="leading" constant="8" id="lor-6b-OVz"/>
+                <constraint firstAttribute="trailing" secondItem="9wm-Md-O1w" secondAttribute="trailing" constant="8" id="vqE-Ek-cQg"/>
+            </constraints>
+            <nil key="simulatedStatusBarMetrics"/>
+            <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
+            <point key="canvasLocation" x="306" y="273"/>
+        </view>
+    </objects>
+    <resources>
+        <image name="tick" width="30" height="30"/>
+    </resources>
+</document>

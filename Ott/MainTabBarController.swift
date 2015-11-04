@@ -41,47 +41,46 @@ class MainTabBarController: UITabBarController {
     }
 
     
-    private lazy var noPermissionViewController: UIViewController = {
+    private let noPermissionViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "LocationNoPermissionViewController", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
     
-    private lazy var scanViewController: UIViewController = {
+    private let scanViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "Scan", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("scanViewController")
         }()
     
     
-    private lazy var localTopicsViewController: UIViewController = {
+    private let localTopicsViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "LocalTopics", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
     
-    private lazy var searchViewController: UIViewController = {
+    private let searchViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "Search", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
     
-    private lazy var followingViewController: UIViewController = {
+    private let followingViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "Following", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
     
     
-    private lazy var userSummaryViewController: UIViewController = {
+    private let userSummaryViewController: UIViewController = {
         
         let storyboard = UIStoryboard(name: "User", bundle: nil)
         return storyboard.instantiateViewControllerWithIdentifier("initialViewController")
         }()
-    
     
     
     var didLoadViewControllers = false

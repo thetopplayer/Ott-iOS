@@ -107,6 +107,7 @@ extension String {
     }
     
     
+    // this does not consider length:  just the characters in the string
     func isSuitableForUserName() -> Bool {
         
         if length > _maximumUserNameLength {

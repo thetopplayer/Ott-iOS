@@ -25,12 +25,7 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         
         super.viewDidLoad()
-        
         textField.delegate = self
-
-        button.setTitle("Enter Code", forState: UIControlState.Disabled)
-        button.setTitle("Next", forState: UIControlState.Normal)
-        button.enabled = false
     }
 
     
@@ -39,9 +34,12 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     private func resetDisplay() {
         
+        self.collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
+
         textField.text = ""
-        button.setTitle("Enter Code", forState: UIControlState.Disabled)
-        button.enabled = false
+        textField.placeholder = "Enter Code"
+        textField.enabled = true
+        textField.becomeFirstResponder()
         activityIndicator.stopAnimating()
     }
     
@@ -49,11 +47,16 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     //MARK: - Main
     
+    override func willShow() {
+        
+        super.willShow()
+        resetDisplay()
+    }
+    
     override func didShow() {
         
         super.didShow()
         startObservations()
-        tasksCompleted = false
         textField.becomeFirstResponder()
     }
     
@@ -63,13 +66,17 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
         super.willHide()
         endObservations()
         textField.resignFirstResponder()
-        resetDisplay()
+    }
+    
+    
+    override func didTapNextButton() {
+        
+        collectionController?.enableNextButton(false)
+        verifyPhoneNumber(textField.text!)
     }
     
     
     private func signUpWithPassword(password: String) {
-        
-        self.button.setTitle("Creating account...", forState: UIControlState.Disabled)
         
         let signupOperation = SignUpOperation(phoneNumber: Globals.sharedInstance.phoneNumberUsedToLogin, handle: Globals.sharedInstance.handleUsedToLogin, nickname: Globals.sharedInstance.nameUsedToLogin, password: password)
         MaintenanceQueue.sharedInstance.addOperation(signupOperation)
@@ -78,14 +85,14 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     private func loginWithPassword(password: String) {
         
-        self.button.setTitle("Logging in...", forState: UIControlState.Disabled)
-        
         let logInOperation = LogInOperation(handle: Globals.sharedInstance.handleUsedToLogin, password: password)
         MaintenanceQueue.sharedInstance.addOperation(logInOperation)
     }
     
     
     private func verifyPhoneNumber(verificationCode: String) {
+        
+        self.collectionController?.enableNextButton(false)
         
         let params: [String: String] = ["phoneNumber": Globals.sharedInstance.phoneNumberUsedToLogin, "verificationCode": verificationCode]
         PFCloud.callFunctionInBackground("verifyPhoneNumber", withParameters: params) {(response: AnyObject?, error: NSError?) -> Void in
@@ -107,14 +114,17 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
                         switch self.successAction {
                             
                         case .SignUp:
+                            self.collectionController?.pageViewControllerStatusMessageDidChange(self, message: "Creating Account...")
                             self.signUpWithPassword(password)
                             
                         case .LogIn:
+                            self.collectionController?.pageViewControllerStatusMessageDidChange(self, message: "Logging In...")
                             self.loginWithPassword(password)
                         }
                     }
                     else {
                         
+                        self.collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
                         self.presentOKAlert(title: "Error", message: "There was an error signing in.  Please try again", actionHandler: {
                             
                             self.resetDisplay()
@@ -128,28 +138,35 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     }
     
     
-    @IBAction func handleButtonClick(sender: AnyObject) {
+    func textFieldShouldReturn(textField: UITextField) -> Bool {
         
-        func presentErrorAlert() {
-            
-            let alertViewController = UIAlertController(title: "Validation Error", message: "The code you entered does not match the one we sent.", preferredStyle: .Alert)
-            
-            let tryAgainAction = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { action in print("try again") })
-            
-            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in print("cancel") })
-            
-            alertViewController.addAction(tryAgainAction)
-            alertViewController.addAction(cancelAction)
-            
-            presentViewController(alertViewController, animated: true, completion: nil)
+        guard textField.text!.length > 0 else {
+            return false
         }
         
-        button.enabled = false
-        button.setTitle("Validating...", forState: UIControlState.Disabled)
         activityIndicator.startAnimating()
-        
         verifyPhoneNumber(textField.text!)
+        return true
     }
+    
+    
+//    func textFieldDidEndEditing(textField: UITextField) {
+//        
+//        func presentErrorAlert() {
+//            
+//            let alertViewController = UIAlertController(title: "Validation Error", message: "The code you entered does not match the one we sent.", preferredStyle: .Alert)
+//            
+//            let tryAgainAction = UIAlertAction(title: "Try Again", style: UIAlertActionStyle.Default, handler: { action in print("try again") })
+//            
+//            let cancelAction = UIAlertAction(title: "Cancel", style: UIAlertActionStyle.Cancel, handler: { action in print("cancel") })
+//            
+//            alertViewController.addAction(tryAgainAction)
+//            alertViewController.addAction(cancelAction)
+//            
+//            presentViewController(alertViewController, animated: true, completion: nil)
+//        }
+//        
+//    }
 
     
     
@@ -175,20 +192,21 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     func handleTextFieldDidChange(notification: NSNotification) {
         
-        button.enabled = textField.text!.length > 0
+        collectionController?.enableNextButton(textField.text!.length > 0)
     }
 
     
     func handleDidSignUpNotification(notification: NSNotification) {
         
+        collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
         self.activityIndicator.stopAnimating()
-        self.tasksCompleted = true
-        gotoNextPage()
+        collectionController?.presentNextView()
     }
     
     
     func handleSignUpDidFailNotification(notification: NSNotification) {
         
+        collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
         let userinfo: [NSObject: AnyObject] = notification.userInfo!
         let error = userinfo[SignUpOperation.Notifications.ErrorKey] as! NSError
         
@@ -198,14 +216,15 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     func handleDidLogInNotification(notification: NSNotification) {
         
+        collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
         self.activityIndicator.stopAnimating()
-        self.tasksCompleted = true
-        gotoNextPage()
+        collectionController?.presentNextView()
     }
     
     
     func handleLoginDidFailNotification(notification: NSNotification) {
         
+        collectionController?.pageViewControllerStatusMessageDidChange(self, message: nil)
         let userinfo: [NSObject: AnyObject] = notification.userInfo!
         let error = userinfo[LogInOperation.Notifications.ErrorKey] as! NSError
         

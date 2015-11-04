@@ -1,5 +1,5 @@
 //
-//  AvatarInputViewController.swift
+//  UserDetailsInputViewController.swift
 //  Ott
 //
 //  Created by Max on 7/31/15.
@@ -8,7 +8,7 @@
 
 import UIKit
 
-class AvatarInputViewController: ViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
+class UserDetailsInputViewController: ViewController, UINavigationControllerDelegate, UIImagePickerControllerDelegate {
     
     @IBOutlet weak var contentContainer: UIView!
     @IBOutlet weak var label: UILabel!

@@ -16,11 +16,38 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
     @IBOutlet weak var scrollViewHeightConstraint: NSLayoutConstraint!
     @IBOutlet weak var scrollView: UIScrollView!
     @IBOutlet weak var pageControl: UIPageControl?
-    @IBOutlet weak var backButton: UIButton?
+    @IBOutlet weak var backButton: UIBarButtonItem?
+    @IBOutlet weak var nextButton: UIBarButtonItem?
     
-    
-    
+    var allowDismissalOnFirstPage = true
     var currentPage = 0
+    
+    
+    var titleView: UIView?
+    func displayTitleView() -> Bool {
+        
+        guard let titleView = titleView else {
+            return false
+        }
+        navigationItem.titleView = titleView
+        return true
+    }
+    
+    var navigationTitle: String?
+    func displayStatus(message: String?) {
+        
+        guard let message = message else {
+            
+            if displayTitleView() == false {
+                navigationItem.title = navigationTitle
+            }
+            return
+        }
+        
+        navigationItem.titleView = nil
+        navigationItem.title = message
+    }
+    
     
     var pageViewControllers : [PageViewController] = [] {
         
@@ -29,6 +56,7 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
             var pageViews : [UIView] = []
             for controller in pageViewControllers {
                 
+                controller.collectionController = self
                 addChildViewController(controller)
                 pageViews.append(controller.view)
             }
@@ -45,6 +73,14 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
     }
     
     
+    func enableNextButton(enable: Bool = true) {
+        
+        nextButton?.enabled = enable
+    }
+    
+    
+    
+    
     //MARK: - Lifecycle
     
     override func viewDidLoad() {
@@ -54,18 +90,16 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
         scrollView.scrollEnabled = false
         scrollView.showsHorizontalScrollIndicator = false
         scrollView.showsVerticalScrollIndicator = false
-
+        
         let leftGR = UISwipeGestureRecognizer()
         leftGR.direction = UISwipeGestureRecognizerDirection.Left
-        leftGR.addTarget(self, action: "next:")
+        leftGR.addTarget(self, action: "handleLeftSwipe:")
         view.addGestureRecognizer(leftGR)
         
         let rightGR = UISwipeGestureRecognizer()
         rightGR.direction = UISwipeGestureRecognizerDirection.Right
         rightGR.addTarget(self, action: "previous:")
         view.addGestureRecognizer(rightGR)
-        
-        backButton?.hidden = true
     }
     
     
@@ -91,51 +125,67 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
             scrollView.addSubview(view)
         }
         
-        if pageControl != nil {
-            pageControl!.numberOfPages = numberOfPages
+        if let pageControl = pageControl {
+            pageControl.numberOfPages = numberOfPages
         }
     }
     
     
-    @IBAction func next (sender: AnyObject) {
-        
-        if (numberOfPages == 0) {
+    func handleLeftSwipe(sender: AnyObject) {
+    
+        guard let nextButton = nextButton else {
             return
         }
         
-        if pageViewControllers[currentPage].tasksCompleted {
-        
-            if currentPage == numberOfPages - 1 {
-                
-                handleCompletion()
-            }
-            else {
-                
-                var offset = self.scrollView.contentOffset
-                offset.x += self.scrollView.bounds.size.width
-                self.scrollView.setContentOffset(offset, animated: true)
-                
-                currentPage++
-                pageViewPreferredSizeDidChange(pageViewControllers[currentPage])
-            }
+        if nextButton.enabled {
+            next(self)
         }
+    }
+    
+ 
+    @IBAction func next(sender: AnyObject) {
+        
+        pageViewControllers[currentPage].didTapNextButton()
+    }
+    
+    
+    func presentNextView() {
+        
+        guard currentPage < numberOfPages - 1 else {
+            handleCompletion()
+            return
+        }
+        
+        pageViewControllers[currentPage].willHide()
+        pageViewControllers[currentPage + 1].willShow()
+        
+        var offset = self.scrollView.contentOffset
+        offset.x += self.scrollView.bounds.size.width
+        self.scrollView.setContentOffset(offset, animated: true)
+        
+        currentPage++
+        pageViewPControllerPreferredSizeDidChange(pageViewControllers[currentPage])
     }
     
     
     @IBAction func previous (sender: AnyObject) {
         
-        if (currentPage == 0) {
+        guard currentPage > 0 else {
+            if allowDismissalOnFirstPage {
+                navigationController?.popViewControllerAnimated(true)
+            }
             return
         }
         
         pageViewControllers[currentPage].willHide()
+        pageViewControllers[currentPage - 1].willShow()
         
         var offset = self.scrollView.contentOffset
         offset.x -= self.scrollView.bounds.size.width
         self.scrollView.setContentOffset(offset, animated: true)
         
         currentPage--
-        pageViewPreferredSizeDidChange(pageViewControllers[currentPage])
+        pageViewPControllerPreferredSizeDidChange(pageViewControllers[currentPage])
     }
     
     
@@ -151,20 +201,17 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
     var scrollViewHeight: CGFloat {
         
         get {
-            
             return scrollView.frame.size.height
         }
         
         set {
             
             if let superViewHeight = scrollView.superview?.frame.size.height {
-                
                 let allowedHeight = superViewHeight - scrollView.frame.origin.y - scrollViewBottomSpacing
                 
                 scrollViewHeightConstraint.constant = min(allowedHeight, newValue)
             }
             else {
-                
                 scrollViewHeightConstraint.constant = newValue
             }
         }
@@ -177,22 +224,11 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
 
         set {
             _scrollViewBottomSpacing = newValue + 20.0
-            pageViewPreferredSizeDidChange(pageViewControllers[currentPage])
+            pageViewPControllerPreferredSizeDidChange(pageViewControllers[currentPage])
         }
         
         get {
             return _scrollViewBottomSpacing
-        }
-    }
-    
-
-    func pageViewPreferredSizeDidChange(controller: PageViewController) {
-        
-        if pageViewControllers[currentPage] == controller {
-            
-            if let height = controller.preferredSize?.height {
-                scrollViewHeight = height
-            }
         }
     }
     
@@ -203,11 +239,33 @@ class PageCollectionViewController: UIViewController, UIScrollViewDelegate {
     
     func scrollViewDidEndScrollingAnimation(scrollView: UIScrollView) {
         
-        if let pc = pageControl {
-            pc.currentPage = currentPage
-            backButton?.hidden = currentPage == 0
-        }
-        
         pageViewControllers[currentPage].didShow()
+        pageControl?.currentPage = currentPage
     }
+    
+    
+    
+    
+    func pageViewPControllerPreferredSizeDidChange(controller: PageViewController) {
+        
+        if pageViewControllers[currentPage] == controller {
+            
+            if let height = controller.preferredSize?.height {
+                scrollViewHeight = height
+            }
+        }
+    }
+    
+    
+    func pageViewControllerDidClickNext(controller: PageViewController) {
+        
+        next(controller)
+    }
+    
+    
+    func pageViewControllerStatusMessageDidChange(controller: PageViewController, message: String?) {
+        
+        displayStatus(message)
+    }
+
 }

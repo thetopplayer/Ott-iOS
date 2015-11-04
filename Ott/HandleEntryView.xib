@@ -1,13 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="8191" systemVersion="14F27" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
-        <capability name="Constraints to layout margins" minToolsVersion="6.0"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
     </dependencies>
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="HandleEntryViewController" customModule="Ott" customModuleProvider="target">
             <connections>
-                <outlet property="button" destination="rdp-E9-VEc" id="YCs-M0-7hM"/>
                 <outlet property="label" destination="EJh-zD-wi0" id="kCD-rQ-dPx"/>
                 <outlet property="textField" destination="q0g-3N-zol" id="Y6M-0B-VYp"/>
                 <outlet property="validatingHandleActivityIndicator" destination="xQq-XM-5nS" id="NQk-jq-ik6"/>
@@ -16,23 +14,24 @@
         </placeholder>
         <placeholder placeholderIdentifier="IBFirstResponder" id="-2" customClass="UIResponder"/>
         <view clearsContextBeforeDrawing="NO" contentMode="scaleToFill" id="y00-Xd-Kel">
-            <rect key="frame" x="0.0" y="0.0" width="300" height="300"/>
+            <rect key="frame" x="0.0" y="0.0" width="300" height="150"/>
             <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
             <subviews>
                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="Enter your handle to log in." textAlignment="center" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" translatesAutoresizingMaskIntoConstraints="NO" id="EJh-zD-wi0">
-                    <rect key="frame" x="16" y="16" width="268" height="70"/>
+                    <rect key="frame" x="16" y="16" width="268" height="50"/>
+                    <animations/>
                     <constraints>
-                        <constraint firstAttribute="height" constant="70" id="ZmO-Qc-b5X"/>
+                        <constraint firstAttribute="height" constant="50" id="ZmO-Qc-b5X"/>
                     </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <color key="textColor" red="0.20000000300000001" green="0.20000000300000001" blue="0.20000000300000001" alpha="1" colorSpace="calibratedRGB"/>
+                    <fontDescription key="fontDescription" style="UICTFontTextStyleBody"/>
                     <nil key="highlightedColor"/>
                 </label>
                 <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="gTx-vY-9rM" userLabel="View - handle">
-                    <rect key="frame" x="8" y="102" width="284" height="44"/>
+                    <rect key="frame" x="8" y="74" width="284" height="44"/>
                     <subviews>
                         <textField opaque="NO" clipsSubviews="YES" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" text="@" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="q0g-3N-zol">
                             <rect key="frame" x="8" y="5" width="268" height="34"/>
+                            <animations/>
                             <constraints>
                                 <constraint firstAttribute="height" constant="34" id="3Hp-rb-LX5"/>
                             </constraints>
@@ -40,50 +39,40 @@
                             <fontDescription key="fontDescription" type="system" pointSize="21"/>
                             <textInputTraits key="textInputTraits"/>
                         </textField>
+                        <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" misplaced="YES" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="xQq-XM-5nS">
+                            <rect key="frame" x="250" y="12" width="20" height="20"/>
+                            <animations/>
+                            <constraints>
+                                <constraint firstAttribute="width" constant="20" id="3DF-Do-mJM"/>
+                                <constraint firstAttribute="height" constant="20" id="bYC-kz-3MR"/>
+                            </constraints>
+                        </activityIndicatorView>
                     </subviews>
+                    <animations/>
                     <color key="backgroundColor" white="1" alpha="0.5" colorSpace="calibratedWhite"/>
                     <constraints>
                         <constraint firstItem="q0g-3N-zol" firstAttribute="centerY" secondItem="gTx-vY-9rM" secondAttribute="centerY" id="Cng-5V-LFV"/>
                         <constraint firstItem="q0g-3N-zol" firstAttribute="leading" secondItem="gTx-vY-9rM" secondAttribute="leading" constant="8" id="Sad-nr-FAR"/>
                         <constraint firstAttribute="trailing" secondItem="q0g-3N-zol" secondAttribute="trailing" constant="8" id="VAo-vN-8p8"/>
+                        <constraint firstAttribute="trailing" secondItem="xQq-XM-5nS" secondAttribute="trailing" constant="8" id="eEO-yW-rQ0"/>
                         <constraint firstAttribute="height" constant="44" id="fmU-Im-YCH"/>
+                        <constraint firstItem="q0g-3N-zol" firstAttribute="centerY" secondItem="gTx-vY-9rM" secondAttribute="centerY" id="hg5-fA-Rle"/>
+                        <constraint firstItem="xQq-XM-5nS" firstAttribute="centerY" secondItem="gTx-vY-9rM" secondAttribute="centerY" id="mYX-7w-0x3"/>
                     </constraints>
                 </view>
-                <button opaque="NO" contentMode="scaleToFill" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="roundedRect" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="rdp-E9-VEc">
-                    <rect key="frame" x="8" y="241" width="284" height="44"/>
-                    <constraints>
-                        <constraint firstAttribute="height" constant="44" id="7UL-8U-HXN"/>
-                    </constraints>
-                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                    <state key="normal" title="Next"/>
-                    <connections>
-                        <action selector="handleButtonClick:" destination="-1" eventType="touchUpInside" id="pLl-Mi-XUb"/>
-                    </connections>
-                </button>
-                <activityIndicatorView hidden="YES" opaque="NO" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="gray" translatesAutoresizingMaskIntoConstraints="NO" id="xQq-XM-5nS">
-                    <rect key="frame" x="256" y="253" width="20" height="20"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="20" id="3DF-Do-mJM"/>
-                        <constraint firstAttribute="height" constant="20" id="bYC-kz-3MR"/>
-                    </constraints>
-                </activityIndicatorView>
             </subviews>
+            <animations/>
             <constraints>
-                <constraint firstItem="rdp-E9-VEc" firstAttribute="leading" secondItem="y00-Xd-Kel" secondAttribute="leadingMargin" id="2Lc-Gm-rUS"/>
                 <constraint firstAttribute="trailing" secondItem="EJh-zD-wi0" secondAttribute="trailing" constant="16" id="6T7-lq-CRj"/>
-                <constraint firstItem="rdp-E9-VEc" firstAttribute="trailing" secondItem="y00-Xd-Kel" secondAttribute="trailingMargin" id="EhB-dY-uGr"/>
-                <constraint firstAttribute="trailing" secondItem="xQq-XM-5nS" secondAttribute="trailing" constant="24" id="GDx-Ls-e59"/>
                 <constraint firstItem="gTx-vY-9rM" firstAttribute="leading" secondItem="y00-Xd-Kel" secondAttribute="leading" constant="8" id="NGD-e0-u9h"/>
                 <constraint firstItem="EJh-zD-wi0" firstAttribute="top" secondItem="y00-Xd-Kel" secondAttribute="top" constant="16" id="Zeb-M8-j8R"/>
-                <constraint firstItem="gTx-vY-9rM" firstAttribute="top" secondItem="EJh-zD-wi0" secondAttribute="bottom" constant="16" id="iLk-k0-vDP"/>
-                <constraint firstItem="xQq-XM-5nS" firstAttribute="centerY" secondItem="rdp-E9-VEc" secondAttribute="centerY" id="iRg-vD-W53"/>
+                <constraint firstItem="gTx-vY-9rM" firstAttribute="top" secondItem="EJh-zD-wi0" secondAttribute="bottom" constant="8" id="iLk-k0-vDP"/>
                 <constraint firstAttribute="trailing" secondItem="gTx-vY-9rM" secondAttribute="trailing" constant="8" id="j3i-cW-wfA"/>
-                <constraint firstAttribute="bottom" secondItem="rdp-E9-VEc" secondAttribute="bottom" constant="15" id="sUu-Na-La2"/>
                 <constraint firstItem="EJh-zD-wi0" firstAttribute="leading" secondItem="y00-Xd-Kel" secondAttribute="leading" constant="16" id="zj2-yJ-RZc"/>
             </constraints>
             <nil key="simulatedStatusBarMetrics"/>
             <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-            <point key="canvasLocation" x="316" y="370"/>
+            <point key="canvasLocation" x="316" y="295"/>
         </view>
     </objects>
 </document>

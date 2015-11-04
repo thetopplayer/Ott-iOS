@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="8191" systemVersion="15A284" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Wnn-2j-rBh">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="9059" systemVersion="15B42" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" initialViewController="Wnn-2j-rBh">
     <dependencies>
-        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="8154"/>
+        <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="9049"/>
     </dependencies>
     <scenes>
         <!--Sign Up-->
@@ -17,54 +17,37 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" scrollEnabled="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="B2C-5e-Zzm">
-                                <rect key="frame" x="150" y="84" width="300" height="300"/>
+                                <rect key="frame" x="150" y="84" width="300" height="150"/>
                                 <animations/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="NXc-vD-NmV"/>
+                                    <constraint firstAttribute="height" constant="150" id="NXc-vD-NmV"/>
                                     <constraint firstAttribute="width" constant="300" id="RW8-W0-WP5"/>
                                 </constraints>
                             </scrollView>
-                            <pageControl opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="4" translatesAutoresizingMaskIntoConstraints="NO" id="qUd-6m-4OT">
-                                <rect key="frame" x="273" y="379" width="55" height="37"/>
-                                <animations/>
-                                <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="currentPageIndicatorTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </pageControl>
                         </subviews>
                         <animations/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstAttribute="centerX" secondItem="B2C-5e-Zzm" secondAttribute="centerX" id="BHg-wT-Rpc"/>
                             <constraint firstItem="B2C-5e-Zzm" firstAttribute="top" secondItem="TFW-yb-sN5" secondAttribute="bottom" constant="20" id="Qcz-30-bub"/>
-                            <constraint firstItem="qUd-6m-4OT" firstAttribute="top" secondItem="B2C-5e-Zzm" secondAttribute="bottom" constant="-5" id="jXW-Fz-iaZ"/>
-                            <constraint firstItem="qUd-6m-4OT" firstAttribute="centerX" secondItem="B2C-5e-Zzm" secondAttribute="centerX" id="pLt-Vr-BND"/>
                         </constraints>
                     </view>
-                    <navigationItem key="navigationItem" title="One To Ten" id="eqD-nq-LD4">
-                        <barButtonItem key="leftBarButtonItem" id="tRM-sS-br6">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="LA6-nI-Bg1">
-                                <rect key="frame" x="20" y="6" width="75" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="6Fm-Yu-dzc"/>
-                                    <constraint firstAttribute="width" constant="75" id="Paj-nm-qQ2"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="4"/>
-                                <state key="normal" title="Back" image="halfArrowLeft">
-                                    <color key="titleColor" red="1" green="0.57647058823529407" blue="0.066666666666666666" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="previous:" destination="mFU-se-BdL" eventType="touchUpInside" id="dkn-r7-qL7"/>
-                                </connections>
-                            </button>
+                    <navigationItem key="navigationItem" title="OTT" id="eqD-nq-LD4">
+                        <barButtonItem key="leftBarButtonItem" image="halfArrowLeft" id="zxB-Or-Wne">
+                            <connections>
+                                <action selector="previous:" destination="mFU-se-BdL" id="FXB-Ha-ot8"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="AGb-MM-TqG">
+                            <connections>
+                                <action selector="next:" destination="mFU-se-BdL" id="9nY-WJ-um3"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
                     <connections>
-                        <outlet property="backButton" destination="LA6-nI-Bg1" id="9l4-rP-iA9"/>
-                        <outlet property="pageControl" destination="qUd-6m-4OT" id="GDP-cp-kPK"/>
+                        <outlet property="backButton" destination="zxB-Or-Wne" id="C3o-VM-SbN"/>
+                        <outlet property="nextButton" destination="AGb-MM-TqG" id="uv5-2b-KCF"/>
                         <outlet property="scrollView" destination="B2C-5e-Zzm" id="Ovn-SX-pra"/>
                         <segue destination="F2V-yz-fhq" kind="show" identifier="segueToAvatarCreation" id="yp7-KZ-Zuj"/>
                     </connections>
@@ -147,10 +130,10 @@
             </objects>
             <point key="canvasLocation" x="-1568" y="-466"/>
         </scene>
-        <!--Avatar Input View Controller-->
+        <!--User Details Input View Controller-->
         <scene sceneID="lta-0o-HMe">
             <objects>
-                <viewController automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" id="F2V-yz-fhq" customClass="AvatarInputViewController" customModule="Ott" sceneMemberID="viewController">
+                <viewController automaticallyAdjustsScrollViewInsets="NO" modalTransitionStyle="crossDissolve" id="F2V-yz-fhq" customClass="UserDetailsInputViewController" customModule="Ott" sceneMemberID="viewController">
                     <layoutGuides>
                         <viewControllerLayoutGuide type="top" id="gO8-6D-qwM"/>
                         <viewControllerLayoutGuide type="bottom" id="HY0-HP-tlz"/>
@@ -253,54 +236,39 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" directionalLockEnabled="YES" bounces="NO" scrollEnabled="NO" pagingEnabled="YES" showsHorizontalScrollIndicator="NO" showsVerticalScrollIndicator="NO" bouncesZoom="NO" translatesAutoresizingMaskIntoConstraints="NO" id="obc-WA-daB">
-                                <rect key="frame" x="150" y="84" width="300" height="300"/>
+                                <rect key="frame" x="150" y="84" width="300" height="150"/>
                                 <animations/>
                                 <color key="backgroundColor" red="1" green="1" blue="1" alpha="0.80000000000000004" colorSpace="calibratedRGB"/>
                                 <constraints>
-                                    <constraint firstAttribute="height" constant="300" id="GIq-aG-006"/>
+                                    <constraint firstAttribute="height" constant="150" id="GIq-aG-006"/>
                                     <constraint firstAttribute="width" constant="300" id="msm-c9-rL2"/>
                                 </constraints>
                             </scrollView>
-                            <pageControl opaque="NO" contentMode="scaleToFill" misplaced="YES" contentHorizontalAlignment="center" contentVerticalAlignment="center" numberOfPages="3" translatesAutoresizingMaskIntoConstraints="NO" id="IYv-cr-svH">
-                                <rect key="frame" x="273" y="379" width="55" height="37"/>
-                                <animations/>
-                                <color key="pageIndicatorTintColor" white="0.66666666666666663" alpha="1" colorSpace="calibratedWhite"/>
-                                <color key="currentPageIndicatorTintColor" white="0.0" alpha="1" colorSpace="calibratedWhite"/>
-                            </pageControl>
                         </subviews>
                         <animations/>
-                        <color key="backgroundColor" red="1" green="0.93693236739999997" blue="0.69106233630000002" alpha="1" colorSpace="calibratedRGB"/>
+                        <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
                         <constraints>
                             <constraint firstItem="obc-WA-daB" firstAttribute="top" secondItem="3Lz-ph-CE0" secondAttribute="bottom" constant="20" id="7Z1-M8-Fad"/>
                             <constraint firstAttribute="centerX" secondItem="obc-WA-daB" secondAttribute="centerX" id="Sbv-8o-vNo"/>
-                            <constraint firstItem="IYv-cr-svH" firstAttribute="centerX" secondItem="obc-WA-daB" secondAttribute="centerX" id="jDQ-3p-XJo"/>
-                            <constraint firstItem="IYv-cr-svH" firstAttribute="top" secondItem="obc-WA-daB" secondAttribute="bottom" constant="-5" id="kVU-jC-9ko"/>
                         </constraints>
                     </view>
+                    <toolbarItems/>
                     <navigationItem key="navigationItem" title="One To Ten" id="HRi-rc-FVh">
-                        <barButtonItem key="leftBarButtonItem" id="DjM-yh-TNq">
-                            <button key="customView" opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="left" contentVerticalAlignment="center" lineBreakMode="middleTruncation" id="B8o-cq-OPA">
-                                <rect key="frame" x="20" y="6" width="75" height="32"/>
-                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMaxY="YES"/>
-                                <animations/>
-                                <constraints>
-                                    <constraint firstAttribute="height" constant="32" id="JYK-gi-NJb"/>
-                                    <constraint firstAttribute="width" constant="75" id="XN7-P2-fgP"/>
-                                </constraints>
-                                <fontDescription key="fontDescription" type="system" pointSize="16"/>
-                                <inset key="contentEdgeInsets" minX="0.0" minY="4" maxX="0.0" maxY="4"/>
-                                <state key="normal" title="Back" image="halfArrowLeft">
-                                    <color key="titleColor" red="1" green="0.57647058819999997" blue="0.066666666669999999" alpha="1" colorSpace="calibratedRGB"/>
-                                </state>
-                                <connections>
-                                    <action selector="previous:" destination="1xR-My-HQY" eventType="touchUpInside" id="m3k-za-LJa"/>
-                                </connections>
-                            </button>
+                        <barButtonItem key="leftBarButtonItem" image="halfArrowLeft" id="Xc3-eq-w1d">
+                            <connections>
+                                <action selector="previous:" destination="1xR-My-HQY" id="1VR-nL-dGY"/>
+                            </connections>
+                        </barButtonItem>
+                        <barButtonItem key="rightBarButtonItem" title="Next" id="fM9-zB-EbQ">
+                            <connections>
+                                <action selector="next:" destination="1xR-My-HQY" id="sdy-Ip-eEV"/>
+                            </connections>
                         </barButtonItem>
                     </navigationItem>
+                    <simulatedToolbarMetrics key="simulatedBottomBarMetrics"/>
                     <connections>
-                        <outlet property="backButton" destination="B8o-cq-OPA" id="Sfj-3X-0QG"/>
-                        <outlet property="pageControl" destination="IYv-cr-svH" id="5Mv-FG-86d"/>
+                        <outlet property="backButton" destination="Xc3-eq-w1d" id="cBt-At-jqD"/>
+                        <outlet property="nextButton" destination="fM9-zB-EbQ" id="Ajg-JN-AQa"/>
                         <outlet property="scrollView" destination="obc-WA-daB" id="1hD-fl-oHn"/>
                     </connections>
                 </viewController>

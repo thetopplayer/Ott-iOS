@@ -13,26 +13,35 @@ class LoginViewController: PageCollectionViewController {
     
     override func viewDidLoad() {
         
-        func setupDialogView() {
-            
-            scrollView.addRoundedBorder()
-            
-            let vc0 = HandleEntryViewController(nibName: "HandleEntryViewController", bundle: nil)
-            
-            let vc1 = PhoneNumberEntryViewController(nibName: "PhoneNumberEntryViewController", bundle: nil)
-            vc1.verificationType = .PhoneAndHandle
-            
-            let vc2 = ConfirmCodeEntryViewController(nibName: "ConfirmCodeEntryViewController", bundle: nil)
-            vc2.successAction = .LogIn
-            
-            pageViewControllers = [vc0, vc1, vc2]
-        }
-        
         super.viewDidLoad()
+        view.backgroundColor = UIColor.background()
         backButton!.tintColor = UIColor.tint()
-        backButton!.setTitleColor(UIColor.tint(), forState: UIControlState.Normal)
+        scrollView.addRoundedBorder()
         
-        setupDialogView()
+        pageViewControllers = {
+            
+            let vc0 = HandleEntryViewController(nibName: "HandleEntryView", bundle: nil)
+            vc0.usedForHandleCreation = false
+            let vc1 = PhoneNumberEntryViewController(nibName: "PhoneNumberEntryView", bundle: nil)
+            vc1.verificationType = .PhoneAndHandle
+            let vc2 = ConfirmCodeEntryViewController(nibName: "ConfirmCodeEntryView", bundle: nil)
+            vc2.successAction = .LogIn
+            return [vc0, vc1, vc2]
+            }()
+        
+        pageControl = {
+            
+            let pc = UIPageControl(frame: CGRectZero)
+            pc.numberOfPages = pageViewControllers.count
+            pc.currentPage = 0
+            pc.pageIndicatorTintColor = UIColor.lightGrayColor()
+            pc.currentPageIndicatorTintColor = UIColor.darkGrayColor()
+            pc.sizeToFit()
+            return pc
+            }()
+        
+        titleView = pageControl
+        displayTitleView()
     }
     
     
