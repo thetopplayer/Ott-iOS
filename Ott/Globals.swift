@@ -26,6 +26,10 @@ class Globals {
     
     //MARK: - User Defaults
     
+    // radius in miles of what is local
+    let localTopicRadius = Double(35)
+    
+    
     private let lastUpdatedAuthoredTopicsKey = "lastUpdatedAuthoredTopicsKey"
     var lastUpdatedAuthoredTopics: NSDate? {
         

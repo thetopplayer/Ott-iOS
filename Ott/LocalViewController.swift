@@ -110,15 +110,13 @@ class LocalViewController: TopicMasterViewController {
             return
         }
         
-        let localRadius = Double(20)
-        
         let theQuery: PFQuery = {
             
             let query = Topic.query()!
             query.limit = 20
             query.skip = fetchOffset
             query.orderByDescending(DataKeys.CreatedAt)
-            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: localRadius)
+            query.whereKey(DataKeys.Location, nearGeoPoint: PFGeoPoint(location: location), withinMiles: Globals.sharedInstance.localTopicRadius)
             if let lastUpdated = lastUpdated {
                 query.whereKey(DataKeys.UpdatedAt, greaterThanOrEqualTo: lastUpdated)
             }
