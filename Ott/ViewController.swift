@@ -52,6 +52,7 @@ class ViewController: UIViewController {
     }
 
     
+    
     //MARK: - Display
     
     var defaultStatusMessage: String? {
@@ -64,8 +65,8 @@ class ViewController: UIViewController {
     
     func displayStatus(message: String? = nil) {
         
-        if let messsage = message {
-            navigationItem.title = messsage
+        if let message = message {
+            navigationItem.title = message
         }
         else {
             navigationItem.title = defaultStatusMessage

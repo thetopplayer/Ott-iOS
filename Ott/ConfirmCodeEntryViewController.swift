@@ -78,6 +78,12 @@ class ConfirmCodeEntryViewController: PageViewController, UITextFieldDelegate {
     
     private func signUpWithPassword(password: String) {
         
+        print("phone = \(Globals.sharedInstance.phoneNumberUsedToLogin)")
+        print("handle = \(Globals.sharedInstance.handleUsedToLogin)")
+        print("name = \(Globals.sharedInstance.nameUsedToLogin)")
+        print("password = \(password)")
+        
+        
         let signupOperation = SignUpOperation(phoneNumber: Globals.sharedInstance.phoneNumberUsedToLogin, handle: Globals.sharedInstance.handleUsedToLogin, nickname: Globals.sharedInstance.nameUsedToLogin, password: password)
         MaintenanceQueue.sharedInstance.addOperation(signupOperation)
     }

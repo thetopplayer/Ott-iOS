@@ -63,7 +63,7 @@ class PostDetailTableViewCell: TableViewCell {
         ratingLabel.textColor = post.rating!.color()
 
         label.attributedText = attributedContent(post)
-        authorImageView.displayImageInFile(post.authorAvatarFile)
+        authorImageView.displayImageInFile(post.authorAvatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
     }
     
     

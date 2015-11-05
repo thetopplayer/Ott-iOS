@@ -94,10 +94,6 @@ class User: PFUser {
    
         return super.currentUser() as? User
     }
-
-    
-    static let defaultAvatarImage = UIImage(named: "avatar")!
-    static let defaultBackgroundImage = UIImage(named: "blurryBlue")!
     
     
     
@@ -266,16 +262,17 @@ class User: PFUser {
             return query
         }()
         
-        let fetchOperation = FetchOperation(dataSource: .Cache, query: theQuery) { (follows, error) in
+        theQuery.findObjectsInBackgroundWithBlock { (objects, error) -> Void in
             
-            let isFollowing = follows == nil ? false : follows!.count > 0
+            var isFollowing = false
+            if let _ = objects?.first as? Follow {
+                isFollowing = true
+            }
             
             dispatch_async(dispatch_get_main_queue()) {
                 completion(following: isFollowing)
             }
         }
-        
-        FetchQueue.sharedInstance.addOperation(fetchOperation)
     }
 
 }

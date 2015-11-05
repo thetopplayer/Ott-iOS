@@ -39,8 +39,15 @@ class FollowedTopicsViewController: TopicMasterViewController {
     
     private func fetchTopics() {
         
+        guard isFetching == false else {
+            return
+        }
+        
+        isFetching = true
+        
         guard serverIsReachable() else {
             
+            isFetching = false
             presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
             })
             return
@@ -49,15 +56,21 @@ class FollowedTopicsViewController: TopicMasterViewController {
         let numberOfFollowees = currentUser().followingCount
         
         if numberOfFollowees == 0 {
+            isFetching = false
             return
         }
         
         
         // users being followed (followees) are cached in the background by the CacheManager:  fetch these, then iterature through them to retrieve the topics authored since our last fetch
         
-        func fetchTopicsForFollows(follows: [Follow]) {
+        // used in below to keep track of how many follow relationships have been fetched
+        let followeeQueryLimit = 25
+        var numberOfPendingFolloweeFetches: Int = Int(ceilf(Float(numberOfFollowees) / Float(followeeQueryLimit)))
+        
+        func fetchTopicsForFollowees(followees: [Follow]) {
             
-            if follows.count == 0 {
+            if followees.count == 0 {
+                isFetching = false
                 return
             }
             
@@ -68,7 +81,8 @@ class FollowedTopicsViewController: TopicMasterViewController {
             else {
                 createdSince = NSDate().daysFrom(-7)
             }
-
+            Globals.sharedInstance.lastUpdatedFolloweeTopics = NSDate()
+            
             var topicQueryOffset = 0
             var didFetchAllTopics = false
             while didFetchAllTopics == false {
@@ -76,7 +90,7 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 let topicQuery: PFQuery = {
                     
                     let query = Topic.query()!
-                    query.whereKey(DataKeys.AuthorHandle, containedIn: follows)
+                    query.whereKey(DataKeys.AuthorHandle, containedIn: followees)
                     query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: createdSince)
                     return query
                 }()
@@ -90,26 +104,25 @@ class FollowedTopicsViewController: TopicMasterViewController {
                         }
                         topicQueryOffset += topics.count
                         didFetchAllTopics = topics.count < topicQuery.limit
+                        
+                        self.isFetching = !(numberOfPendingFolloweeFetches > 0) && didFetchAllTopics
                     }
                     
                     if let error = error {
                         print("error fetching topics = \(error)")
                     }
-                    
                 })
             }
-            
         }
         
-        showRefreshControl()
-        
-        for var followeeQueryOffset = 0; followeeQueryOffset < numberOfFollowees; followeeQueryOffset += 25 {
-            
+        for var followeeQueryOffset = 0; followeeQueryOffset < numberOfFollowees; followeeQueryOffset += followeeQueryLimit {
+         
             let followeeQuery: PFQuery = {
                 
                 let query = Follow.query()!
                 query.fromPinWithName(CacheManager.PinNames.FollowedByUser)
                 query.skip = followeeQueryOffset
+                query.limit = followeeQueryLimit
                 query.orderByDescending(DataKeys.CreatedAt)
                 query.whereKey(DataKeys.Follower, equalTo: currentUser())
                 return query
@@ -118,13 +131,12 @@ class FollowedTopicsViewController: TopicMasterViewController {
             followeeQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
                 
                 if let followees = fetchedObjects as? [Follow] {
-                    fetchTopicsForFollows(followees)
+                    fetchTopicsForFollowees(followees)
                 }
+                
+                numberOfPendingFolloweeFetches -= 1
             })
         }
-        
-        Globals.sharedInstance.lastUpdatedFolloweeTopics = NSDate()
-        hideRefreshControl()
     }
     
     

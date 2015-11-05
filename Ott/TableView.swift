@@ -39,7 +39,30 @@ class TableView: UITableView {
     }()
     
     
-    func useRefreshControl() {
+    private var _useRefreshControl = false
+    func useRefreshControl(forTarget target: AnyObject, action: Selector) {
+
+        _useRefreshControl = true
+        refreshControl.addTarget(target, action: action, forControlEvents: .ValueChanged)
         insertSubview(refreshControl, atIndex: 0)
+    }
+    
+    
+    func startRefreshControlAnimation() {
+        
+        guard _useRefreshControl else {
+            return
+        }
+        
+        refreshControl.beginRefreshing()
+    }
+    
+    func stopRefreshControlAnimation() {
+        
+        guard _useRefreshControl else {
+            return
+        }
+        
+        refreshControl.endRefreshing()
     }
 }

@@ -36,18 +36,7 @@ class LocalViewController: TopicMasterViewController {
     override func viewDidAppear(animated: Bool) {
         
         super.viewDidAppear(animated)
-        
-        if let lastUpdated = lastUpdated {
-            
-            if lastUpdated.minutesFromNow(absolute: true) > 2 {
-                fetchTopics()
-            }
-        }
-        else {
-        
-            showActivityFadingOut()
-            fetchTopics()
-        }
+        reloadDataIfStale()
     }
     
     
@@ -79,14 +68,38 @@ class LocalViewController: TopicMasterViewController {
     private var moreToFetch = false
     private let fetchLimit = 100
     
-    private func fetchTopics() {
+
+    private func reloadDataIfStale() {
+        
+        if let lastUpdated = lastUpdated {
+            if lastUpdated.minutesFromNow(absolute: true) > 2 {
+                fetchTopics(fromOffset: 0)
+            }
+        }
+        else {
+            showActivityFadingOut()
+            fetchTopics(fromOffset: 0)
+        }
+    }
+
+    
+    override func update() {
+        
+        fetchTopics(fromOffset: 0)
+    }
+   
+    
+    private func fetchTopics(fromOffset offset: Int? = nil) {
         
         guard isFetching == false else {
             return
         }
         
+        isFetching = true
+        
         guard serverIsReachable() else {
             
+            isFetching = false
             presentOKAlert(title: "Offline", message: "Unable to reach server.  Please make sure you have WiFi or a cell signal and try again.", actionHandler: { () -> Void in
                 
                 if self.activityIndicator.isAnimating() {
@@ -97,15 +110,17 @@ class LocalViewController: TopicMasterViewController {
             return
         }
         
-        guard moreToFetch == false else {
-            return
+        if let offset = offset {
+            fetchOffset = offset
         }
         
-        guard fetchOffset < fetchLimit else {
+        if fetchOffset > 0 && moreToFetch == false {
+            isFetching = false
             return
         }
         
         guard let location = LocationManager.sharedInstance.location else {
+            isFetching = false
             print("call to fetch update but have no location")
             return
         }
@@ -124,10 +139,7 @@ class LocalViewController: TopicMasterViewController {
             return query
         }()
         
-        isFetching = true
         theQuery.findObjectsInBackgroundWithBlock { (fetchResults, error) -> Void in
-            
-            self.isFetching = false
             
             guard let topics = fetchResults as? [Topic] else {
                 print("no local topics fetched")
@@ -143,11 +155,12 @@ class LocalViewController: TopicMasterViewController {
             
             dispatch_async(dispatch_get_main_queue()) {
                 
+                self.isFetching = false
+                
                 self.refreshTableView(withTopics: topics, replacingDatasourceData: self.locationDidChange)
                 self.locationDidChange = false
                
                 self.hideActivityFadingIn()
-                self.hideRefreshControl()
                 
                 if let error = error {
                     if self.isVisible() {
@@ -156,13 +169,6 @@ class LocalViewController: TopicMasterViewController {
                 }
             }
         }
-    }
-    
-    
-    override func update() {
-        
-        fetchOffset = 0
-        fetchTopics()
     }
     
     
@@ -204,9 +210,17 @@ class LocalViewController: TopicMasterViewController {
         
         super.startObservations()
         
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleLocationChangeNotification:", name: LocationManager.Notifications.LocationDidSignificantlyChange, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidSaveTopicNotification:", name: TopicCreationViewController.Notifications.DidCreateTopic, object: nil)
+    }
+    
+    
+    func handleDidBecomeActiveNotification(notification: NSNotification) {
+        
+        reloadDataIfStale()
     }
     
     

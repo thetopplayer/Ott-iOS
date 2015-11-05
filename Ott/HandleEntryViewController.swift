@@ -151,6 +151,8 @@ class HandleEntryViewController: PageViewController, UITextFieldDelegate {
     
     func textFieldDidChange(notification: NSNotification) {
         
+        Globals.sharedInstance.handleUsedToLogin = textField.text!
+        
         guard usedForHandleCreation else {
             return
         }

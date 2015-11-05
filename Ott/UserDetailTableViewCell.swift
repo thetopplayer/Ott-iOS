@@ -112,7 +112,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = topic.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(topic.authorBio)
-        avatarImageView.displayImageInFile(topic.imageFile, defaultImage: User.defaultAvatarImage)
+        avatarImageView.displayImageInFile(topic.authorAvatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
     }
     
     
@@ -125,7 +125,7 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = post.authorHandle
         bioTextLabel.attributedText = attributedTextForBio(post.authorBio)
-        avatarImageView.displayImageInFile(post.imageFile, defaultImage: User.defaultAvatarImage)
+        avatarImageView.displayImageInFile(post.authorAvatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
     }
     
     
@@ -138,8 +138,8 @@ class UserDetailTableViewCell: TableViewCell {
         settingsButton.hidden = displayingCurrentUser == false
         handleTextLabel.text = user.handle
         bioTextLabel.attributedText = attributedTextForBio(user.bio)
-        avatarImageView.displayImageInFile(user.avatarFile, defaultImage: User.defaultAvatarImage)
-        captionImageView.displayImageInFile(user.backgroundImageFile, defaultImage: User.defaultBackgroundImage)
+        avatarImageView.displayImageInFile(user.avatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
+        captionImageView.displayImageInFile(user.backgroundImageFile, withFade: true, defaultImage: Globals.sharedInstance.defaultBackgroundImage)
     }
     
     

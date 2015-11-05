@@ -87,7 +87,7 @@ class TopicMasterTableViewCell: TableViewCell {
         }
         
         let imageFile = topic.imageFile
-        topicImageView?.displayImageInFile(imageFile)
+        topicImageView?.displayImageInFile(imageFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
         
         if let currentUserDidPostToTopic = topic.currentUserDidPostTo {
             didPostImageView.hidden = !currentUserDidPostToTopic

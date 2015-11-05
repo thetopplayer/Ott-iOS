@@ -75,8 +75,8 @@ class SettingsViewController: TableViewController, UITextFieldDelegate, UITextVi
     
     func updateDisplayForUser(user: User) {
         
-        avatarImageView.displayImageInFile(currentUser().avatarFile, defaultImage: User.defaultAvatarImage)
-        captionImageView.displayImageInFile(currentUser().backgroundImageFile, defaultImage: User.defaultBackgroundImage)
+        avatarImageView.displayImageInFile(currentUser().avatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
+        captionImageView.displayImageInFile(currentUser().backgroundImageFile, withFade: true, defaultImage: Globals.sharedInstance.defaultBackgroundImage)
         
         nameTextField.text = currentUser().name
         handleTextField.text = currentUser().handle

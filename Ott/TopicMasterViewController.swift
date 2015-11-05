@@ -14,8 +14,9 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     @IBOutlet var tableView: TableView!
     
+    
+    
     //MARK: - Lifecycle
-
     
     override func viewDidLoad() {
         
@@ -121,31 +122,18 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     }
     
     
-    func showRefreshControl() {
-        tableView.refreshControl.beginRefreshing()
-    }
-    
-   
-    func hideRefreshControl() {
-        tableView.refreshControl.endRefreshing()
-    }
-    
-    
-    private var _isFetching = false
     var isFetching = false {
         
         didSet {
-            if _isFetching == isFetching {
-                return
-            }
-            
-            _isFetching = isFetching
             dispatch_async(dispatch_get_main_queue()) {
+                
                 if self.isFetching {
-                    self.tableView.insertSections(NSIndexSet(index: Sections.LoadingStatus.rawValue), withRowAnimation: .Automatic)
+                    self.tableView.startRefreshControlAnimation()
+                    self.displayStatus("Fetching...")
                 }
                 else {
-                    self.tableView.deleteSections(NSIndexSet(index: Sections.LoadingStatus.rawValue), withRowAnimation: .Automatic)
+                    self.tableView.stopRefreshControlAnimation()
+                    self.displayStatus()
                 }
             }
         }
@@ -156,7 +144,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     enum Sections: Int {
         case Data = 0
-        case LoadingStatus = 1
     }
     
     private let topicCellNibName = "TopicMasterTableViewCell"
@@ -166,16 +153,10 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     private let topicWithImageCellNibName = "TopicWithImageMasterTableViewCell"
     private let topicWithImageCellIdentifier = "topicImageMaster"
     private let topicWithImageCellHeight = CGFloat(117)
-    
-    private let loadingDataCellViewNibName = "LoadingTableViewCell"
-    private let loadingDataCellViewIdentifier = "loadingCell"
-    private let loadingDataCellViewHeight = CGFloat(44)
-    
+
     var headerReuseIdentifier: String?
     var headerViewHeight = CGFloat(0.1)
     var footerViewHeight = CGFloat(0.1)
-    
-    private var lastRefreshedTableView: NSDate?
     
     private func setupTableView() {
         
@@ -183,15 +164,12 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         tableView.dataSource = self        
         tableView.showsHorizontalScrollIndicator = false
 
-        tableView.useRefreshControl()
-        tableView.refreshControl.addTarget(self, action: "update", forControlEvents: UIControlEvents.ValueChanged)
+        tableView.useRefreshControl(forTarget: self, action: "update")
         
         let nib1 = UINib(nibName: topicCellNibName, bundle: nil)
         tableView.registerNib(nib1, forCellReuseIdentifier: topicCellIdentifier)
         let nib2 = UINib(nibName: topicWithImageCellNibName, bundle: nil)
         tableView.registerNib(nib2, forCellReuseIdentifier: topicWithImageCellIdentifier)
-        let nib3 = UINib(nibName: loadingDataCellViewNibName, bundle: nil)
-        tableView.registerNib(nib3, forCellReuseIdentifier: loadingDataCellViewIdentifier)
     }
 
     
@@ -225,9 +203,8 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
 
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
-        
-        let number = isFetching ? 2 : 1
-        return number
+
+        return 1
     }
 
     
@@ -238,22 +215,14 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     
     private enum CellType {
-        case NoImage, Image, Loading
+        case NoImage, Image
     }
     
 
     private func cellTypeForIndexPath(indexPath: NSIndexPath) -> CellType {
         
-        var type: CellType
-        if indexPath.section == Sections.Data.rawValue {
-            let theTopic = displayedTopics[indexPath.row]
-            type = theTopic.imageFile != nil ? .Image : .NoImage
-        }
-        else {
-            type = .Loading
-        }
-        
-        return type
+        let theTopic = displayedTopics[indexPath.row]
+        return theTopic.imageFile != nil ? .Image : .NoImage
     }
     
     
@@ -267,9 +236,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
             
         case .Image:
             height = topicWithImageCellHeight
-            
-        case .Loading:
-            height = loadingDataCellViewHeight
         }
         
         return height
@@ -290,10 +256,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         case .Image:
             let theCell = tableView.dequeueReusableCellWithIdentifier(topicWithImageCellIdentifier, forIndexPath: indexPath) as! TopicMasterTableViewCell
             theCell.displayedTopic = displayedTopics[indexPath.row]
-            cell = theCell
-            
-        case .Loading:
-            let theCell = tableView.dequeueReusableCellWithIdentifier(loadingDataCellViewIdentifier, forIndexPath: indexPath) as! LoadingTableViewCell
             cell = theCell
         }
         
@@ -347,16 +309,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
         NSNotificationCenter.defaultCenter().removeObserver(self)
     }
     
-    
-    func handleDidBecomeActiveNotification(notification: NSNotification) {
-        
-        // update table if it was last refreshed yesterday, for example
-        if let lastRefreshedToday = lastRefreshedTableView?.isToday() {
-            if lastRefreshedToday == false {
-                update()
-            }
-        }
-    }
     
     
     func handleDidPostToTopicNotification(notification: NSNotification) {

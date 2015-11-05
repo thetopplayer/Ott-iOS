@@ -34,10 +34,10 @@ class FollowTableViewCell: UserTableViewCell {
         nameLabel.attributedText = attributedStringForUsername(follow.followeeName!, handle: follow.followeeHandle!, bio: follow.followeeBio)
         
         if let avatarFile = follow.followeeAvatarFile {
-            self.avatarImageView.displayImageInFile(avatarFile)
+            self.avatarImageView.displayImageInFile(avatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
         }
         else {
-            self.avatarImageView.image = UIImage(named: "avatar")
+            self.avatarImageView.image = Globals.sharedInstance.defaultAvatarImage
         }
     }
 }

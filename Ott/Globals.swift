@@ -24,6 +24,14 @@ class Globals {
     var phoneNumberUsedToLogin = ""
     
     
+    
+    //MARK: - Images
+    
+    let defaultAvatarImage = UIImage(named: "avatar")!
+    let defaultBackgroundImage = UIImage(named: "blurryBlue")!
+
+    
+    
     //MARK: - User Defaults
     
     // radius in miles of what is local
