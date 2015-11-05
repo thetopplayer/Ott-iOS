@@ -22,15 +22,15 @@ class ViewController: UIViewController {
     }
     
     
-    private var _willAppear = false
-    func willAppear() -> Bool {
-        return _willAppear
+    private var _willBecomeVisible = false
+    func willBecomeVisible() -> Bool {
+        return _willBecomeVisible
     }
     
     
     override func viewWillAppear(animated: Bool) {
         super.viewWillAppear(animated)
-        _willAppear = true
+        _willBecomeVisible = true
     }
     
     
@@ -42,7 +42,7 @@ class ViewController: UIViewController {
     
     override func viewDidDisappear(animated: Bool) {
         super.viewDidDisappear(animated)
-        _willAppear = false
+        _willBecomeVisible = false
         _isVisible = false
     }
     

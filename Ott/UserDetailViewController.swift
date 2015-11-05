@@ -623,7 +623,7 @@ class UserDetailViewController: TableViewController {
     
     private enum TableCellType {
         
-        case UserDetail, Loading, FollowStats, DisplayOptions, TopicNoImage, TopicWithImage, Post, FolloweeOrFollower
+        case UserDetail, Loading, FollowStats, DisplayOptions, TopicNoImage, TopicWithImage, Post, Followee, Follower
     }
     
     
@@ -686,7 +686,7 @@ class UserDetailViewController: TableViewController {
                     type = .Loading
                 }
                 else {
-                    type = .FolloweeOrFollower
+                    type = .Followee
                 }
                 
             case .Followers:
@@ -695,7 +695,7 @@ class UserDetailViewController: TableViewController {
                     type = .Loading
                 }
                 else {
-                    type = .FolloweeOrFollower
+                    type = .Follower
                 }
                 
             case .None:
@@ -815,7 +815,10 @@ class UserDetailViewController: TableViewController {
         case .Post:
             height = postCellHeight
             
-        case .FolloweeOrFollower:
+        case .Followee:
+            height = followCellViewHeight
+            
+        case .Follower:
             height = followCellViewHeight
         }
         
@@ -909,10 +912,17 @@ class UserDetailViewController: TableViewController {
             return cell
         }
         
-        func initializeFolloweeFollowerCell(followRelationship: Follow) -> UITableViewCell {
+        func initializeFolloweeCell(followee: Follow) -> UITableViewCell {
             
             let cell = tableView.dequeueReusableCellWithIdentifier(followCellViewIdentifier) as! FollowTableViewCell
-            cell.displayedFollow = followRelationship
+            cell.displayFolloweeForRelationship(followee)
+            return cell
+        }
+        
+        func initializeFollowerCell(follower: Follow) -> UITableViewCell {
+            
+            let cell = tableView.dequeueReusableCellWithIdentifier(followCellViewIdentifier) as! FollowTableViewCell
+            cell.displayFollowerForRelationship(follower)
             return cell
         }
         
@@ -922,40 +932,31 @@ class UserDetailViewController: TableViewController {
         switch cellTypeForIndexPath(indexPath) {
             
         case .UserDetail:
-            
             cell = initializeUserDetailCell()
             
         case .Loading:
-            
             cell = initializeLoadingDataCell()
             
         case .FollowStats:
-            
             cell = initializeFollowStatsCell(user!)
             
         case .DisplayOptions:
-            
             cell = initializeDisplayOptionsCell()
             
         case .TopicNoImage:
-            
-            let topic = authoredTopics[indexPath.row]
-            cell = initializeTopicCell(topic)
+            cell = initializeTopicCell(authoredTopics[indexPath.row])
             
         case .TopicWithImage:
-            
-            let topic = authoredTopics[indexPath.row]
-            cell = initializeTopicWithImageCell(topic)
+            cell = initializeTopicWithImageCell(authoredTopics[indexPath.row])
             
         case .Post:
+            cell = initializePostCell(authoredPosts[indexPath.row])
             
-            let post = authoredPosts[indexPath.row]
-            cell = initializePostCell(post)
+        case .Followee:
+            cell = initializeFolloweeCell(followingOthersRelationships[indexPath.row])
             
-        case .FolloweeOrFollower:
-            
-            let theUser = displayedData == .Following ? followingOthersRelationships[indexPath.row] : followingMeRelationships[indexPath.row]
-            cell = initializeFolloweeFollowerCell(theUser)
+        case .Follower:
+            cell = initializeFollowerCell(followingMeRelationships[indexPath.row])
         }
         
         return cell

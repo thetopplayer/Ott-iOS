@@ -30,12 +30,25 @@ class FollowedTopicsViewController: TopicMasterViewController {
         super.viewWillAppear(animated)
         tabBarController?.tabBar.hidden = false
         
-        fetchTopics()
+        reloadDataIfStale()
     }
     
     
 
     //MARK: - Data
+    
+    private func reloadDataIfStale() {
+        
+        if let lastUpdated = Globals.sharedInstance.lastUpdatedFolloweeTopics {
+            if lastUpdated.minutesFromNow(absolute: true) > 2 {
+                fetchTopics()
+            }
+        }
+        else {
+            fetchTopics()
+        }
+    }
+
     
     private func fetchTopics() {
         
@@ -177,23 +190,14 @@ class FollowedTopicsViewController: TopicMasterViewController {
         
         super.startObservations()
         
-//        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidFetchTopicNotification:", name: UpdateTopicOperation.Notifications.DidUpdate, object: nil)
+        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
+        
     }
     
-
     
-//    func handleDidFetchTopicNotification(notification: NSNotification) {
-//        
-//        let userInfo = notification.userInfo as! [String: Topic]
-//        if let topic = userInfo[UpdateTopicOperation.Notifications.TopicKey] {
-//            
-//            if let rowForTopic = displayedTopics.indexOf(topic) {
-//                
-//                tableView.beginUpdates()
-//                let indexPath = NSIndexPath(forRow: rowForTopic, inSection: 0)
-//                tableView.reloadRowsAtIndexPaths([indexPath], withRowAnimation: .None)
-//                tableView.endUpdates()
-//            }
-//        }
-//    }
+    func handleDidBecomeActiveNotification(notification: NSNotification) {
+        
+        reloadDataIfStale()
+    }
+
 }

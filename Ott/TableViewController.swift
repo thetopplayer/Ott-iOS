@@ -17,39 +17,22 @@ class TableViewController: UITableViewController {
     
     
     //MARK: - Lifecycle
-    
-    override init(style: UITableViewStyle) {
-        super.init(style: style)
-    }
-    
-    
-    required init?(coder aDecoder: NSCoder) {
-        _viewWasLoaded = false
-        super.init(coder: aDecoder)
-    }
-    
-    
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: NSBundle?) {
-        _viewWasLoaded = false
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-    }
-    
-    
-    private var _viewWasLoaded = false
-    func viewWasLoaded() -> Bool {
-        return _viewWasLoaded
-    }
-    
-    
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        _viewWasLoaded = true
-    }
-    
-    
+        
     private var _isVisible = false
     func isVisible() -> Bool {
         return _isVisible
+    }
+    
+    
+    private var _willBecomeVisible = false
+    func willBecomeVisible() -> Bool {
+        return _willBecomeVisible
+    }
+    
+    
+    override func viewWillAppear(animated: Bool) {
+        super.viewWillAppear(animated)
+        _willBecomeVisible = true
     }
     
     
@@ -59,11 +42,12 @@ class TableViewController: UITableViewController {
     }
     
     
-    override func viewWillDisappear(animated: Bool) {
-        super.viewWillDisappear(animated)
+    override func viewDidDisappear(animated: Bool) {
+        super.viewDidDisappear(animated)
+        _willBecomeVisible = false
         _isVisible = false
     }
-    
+
     
     override func didReceiveMemoryWarning() {
         super.didReceiveMemoryWarning()

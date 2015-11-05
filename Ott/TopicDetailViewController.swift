@@ -115,7 +115,7 @@ class TopicDetailViewController: ViewController, UITableViewDelegate, UITableVie
             return
         }
         
-        guard willAppear() else {
+        guard willBecomeVisible() else {
             return
         }
         

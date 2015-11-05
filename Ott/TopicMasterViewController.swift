@@ -204,7 +204,7 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     
     func numberOfSectionsInTableView(tableView: UITableView) -> Int {
 
-        return 1
+        return willBecomeVisible() ? 1 : 0
     }
 
     
@@ -296,8 +296,6 @@ class TopicMasterViewController: ViewController, UITableViewDelegate, UITableVie
     //MARK: - Observations
     
     func startObservations() {
-        
-        NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidBecomeActiveNotification:", name: UIApplicationDidBecomeActiveNotification, object: nil)
         
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "handleDidPostToTopicNotification:", name: TopicDetailViewController.Notifications.DidPostToTopic, object: nil)
     }
