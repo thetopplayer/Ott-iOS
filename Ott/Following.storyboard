@@ -9,7 +9,7 @@
         <scene sceneID="aIY-JU-nSs">
             <objects>
                 <navigationController storyboardIdentifier="initialViewController" title="Following" useStoryboardIdentifierAsRestorationIdentifier="YES" id="Gzs-Ti-ieE" customClass="NavigationController" customModule="Ott" customModuleProvider="target" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Following" image="manStar" id="wVx-PY-3Sh"/>
+                    <tabBarItem key="tabBarItem" title="Following" image="star" id="wVx-PY-3Sh"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" id="QA9-7D-KbU">
                         <rect key="frame" x="0.0" y="0.0" width="320" height="44"/>
                         <autoresizingMask key="autoresizingMask"/>
@@ -72,6 +72,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="manStar" width="29" height="30"/>
+        <image name="star" width="30" height="30"/>
     </resources>
 </document>

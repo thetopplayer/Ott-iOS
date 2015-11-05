@@ -17,13 +17,30 @@ class FollowTableViewCell: UserTableViewCell {
         separatorInset = UIEdgeInsetsMake(0, 16, 0, 0)
     }
     
-    
-    var displayedFollow: Follow? {
-        
-        didSet {
-            updateContents()
-        }
+    enum DisplayType {
+        case Followee, Follower
     }
+    
+    
+    private var displayedFollow: Follow?
+    private var displayType: DisplayType = .Followee
+    
+    
+    func displayFolloweeForRelationship(follow: Follow?) {
+        
+        displayType = .Followee
+        displayedFollow = follow
+        updateContents()
+    }
+    
+    
+    func displayFollowerForRelationship(follow: Follow?) {
+        
+        displayType = .Follower
+        displayedFollow = follow
+        updateContents()
+    }
+    
     
     private func updateContents() {
         
@@ -31,9 +48,29 @@ class FollowTableViewCell: UserTableViewCell {
             return
         }
         
-        nameLabel.attributedText = attributedStringForUsername(follow.followeeName!, handle: follow.followeeHandle!, bio: follow.followeeBio)
+        var name = String()
+        var handle = String()
+        var bio: String?
+        var avatarFile: PFFile?
         
-        if let avatarFile = follow.followeeAvatarFile {
+        if displayType == .Followee {
+            
+            name = follow.followeeName!
+            handle = follow.followeeHandle!
+            bio = follow.followeeBio
+            avatarFile = follow.followeeAvatarFile
+        }
+        else if displayType == .Follower {
+            
+            name = follow.followerName!
+            handle = follow.followerHandle!
+            bio = follow.followerBio
+            avatarFile = follow.followerAvatarFile
+        }
+        
+        nameLabel.attributedText = attributedStringForUsername(name, handle: handle, bio: bio)
+        
+        if let avatarFile = avatarFile {
             self.avatarImageView.displayImageInFile(avatarFile, withFade: true, defaultImage: Globals.sharedInstance.defaultAvatarImage)
         }
         else {

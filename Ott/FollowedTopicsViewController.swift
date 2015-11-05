@@ -61,12 +61,21 @@ class FollowedTopicsViewController: TopicMasterViewController {
         }
         
         
-        // users being followed (followees) are cached in the background by the CacheManager:  fetch these, then iterature through them to retrieve the topics authored since our last fetch
+        // users being followed (followees) are cached in the background by the CacheManager:  fetch these, then iterature through them to retrieve the topics authored since our last fetch.  note that the number of topics fetched per lump of followees is limited
         
-        // used in below to keep track of how many follow relationships have been fetched
+        var createdSince: NSDate
+        if let lastFetched = Globals.sharedInstance.lastUpdatedFolloweeTopics {
+            createdSince = lastFetched
+        }
+        else {
+            createdSince = NSDate().daysFrom(-7)
+        }
+        Globals.sharedInstance.lastUpdatedFolloweeTopics = NSDate()
+        
         let followeeQueryLimit = 25
         var numberOfPendingFolloweeFetches: Int = Int(ceilf(Float(numberOfFollowees) / Float(followeeQueryLimit)))
         
+        var topicQueryLimit = 50
         func fetchTopicsForFollowees(followees: [Follow]) {
             
             if followees.count == 0 {
@@ -74,45 +83,42 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 return
             }
             
-            var createdSince: NSDate
-            if let lastFetched = Globals.sharedInstance.lastUpdatedFolloweeTopics {
-                createdSince = lastFetched
-            }
-            else {
-                createdSince = NSDate().daysFrom(-7)
-            }
-            Globals.sharedInstance.lastUpdatedFolloweeTopics = NSDate()
+            let followeeHandles: [String] = {
+                var handles = [String]()
+                for followee in followees {
+                    handles.append(followee.followeeHandle!)
+                }
+                return handles
+            }()
             
-            var topicQueryOffset = 0
-            var didFetchAllTopics = false
-            while didFetchAllTopics == false {
+            let topicQuery: PFQuery = {
                 
-                let topicQuery: PFQuery = {
+                let query = Topic.query()!
+                query.limit = topicQueryLimit
+                query.whereKey(DataKeys.AuthorHandle, containedIn: followeeHandles)
+                query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: createdSince)
+                return query
+            }()
+            
+            topicQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
+                
+                dispatch_async(dispatch_get_main_queue()) {
                     
-                    let query = Topic.query()!
-                    query.whereKey(DataKeys.AuthorHandle, containedIn: followees)
-                    query.whereKey(DataKeys.CreatedAt, greaterThanOrEqualTo: createdSince)
-                    return query
-                }()
-                
-                topicQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
+                    print("did fetch topics")
+
+                    self.isFetching = numberOfPendingFolloweeFetches > 0
                     
                     if let topics = fetchedObjects as? [Topic] {
+                        self.refreshTableView(withTopics: topics)
+                    }
+                    else {
                         
-                        dispatch_async(dispatch_get_main_queue()) {
-                            self.refreshTableView(withTopics: topics)
+                        if let error = error {
+                            print("error fetching topics = \(error)")
                         }
-                        topicQueryOffset += topics.count
-                        didFetchAllTopics = topics.count < topicQuery.limit
-                        
-                        self.isFetching = !(numberOfPendingFolloweeFetches > 0) && didFetchAllTopics
                     }
-                    
-                    if let error = error {
-                        print("error fetching topics = \(error)")
-                    }
-                })
-            }
+                }
+            })
         }
         
         for var followeeQueryOffset = 0; followeeQueryOffset < numberOfFollowees; followeeQueryOffset += followeeQueryLimit {
@@ -123,18 +129,18 @@ class FollowedTopicsViewController: TopicMasterViewController {
                 query.fromPinWithName(CacheManager.PinNames.FollowedByUser)
                 query.skip = followeeQueryOffset
                 query.limit = followeeQueryLimit
-                query.orderByDescending(DataKeys.CreatedAt)
                 query.whereKey(DataKeys.Follower, equalTo: currentUser())
                 return query
             }()
             
             followeeQuery.findObjectsInBackgroundWithBlock({ (fetchedObjects, error) -> Void in
                 
+                numberOfPendingFolloweeFetches -= 1
+                
                 if let followees = fetchedObjects as? [Follow] {
+                    print("followees = \(followees)")
                     fetchTopicsForFollowees(followees)
                 }
-                
-                numberOfPendingFolloweeFetches -= 1
             })
         }
     }

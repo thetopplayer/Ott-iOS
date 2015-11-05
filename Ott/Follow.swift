@@ -92,7 +92,15 @@ class Follow: DataObject, PFSubclassing {
             return self[DataKeys.FolloweeAvatar] as? PFFile
         }
     }
-//    
+    
+    
+    var followerAvatarFile: PFFile? {
+        
+        get {
+            return self[DataKeys.FollowerAvatar] as? PFFile
+        }
+    }
+//
 //    
 //    func getFolloweeAvatar(completion: ((success: Bool, image: UIImage?) -> Void)?) {
 //        
